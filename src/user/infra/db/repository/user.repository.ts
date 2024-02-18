@@ -50,9 +50,9 @@ export class UserRepository implements IUserRepository {
     return result;
   }
 
-  async update(is_party, meeting_type, meeting_week, meeting_time, mbti): Promise<void> {
+  async update(): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const user = await this.userRepository.save({ is_party, meeting_type, meeting_week, meeting_time, mbti });
+      const user = await this.userRepository.save({});
 
       await manager.save(user);
     });
