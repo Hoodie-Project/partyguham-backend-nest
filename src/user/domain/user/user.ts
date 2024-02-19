@@ -6,12 +6,8 @@ export class User {
     public account: string,
     public nickname: string,
     public email: string,
-    public image: string | null = null,
-    public isParty: boolean | null = null,
-    public mbti: string | null = null,
-    public hp: number | null = null,
-    public mp: number | null = null,
-    public userSkills: UserSkillEntity[] = [],
+    public gender: string,
+    public birth: Date,
   ) {}
 
   getId(): Readonly<number> {

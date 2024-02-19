@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { AuthService } from 'src/auth/auth.service';
@@ -26,15 +26,9 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
 
     const user = await this.userRepository.findByAccount(kakaoUserInfo.data.id);
     if (!user) {
-      const save = await this.userRepository.create(
-        kakaoUserInfo.data.id,
-        kakaoUserInfo.data.kakao_account.name,
-        kakaoUserInfo.data.kakao_account.email,
-      );
-      userId = save.id;
-    } else {
-      userId = user.getId();
+      throw new NotFoundException('계정이 존재하지 않습니다.');
     }
+    userId = user.getId();
 
     const encryptUserId = await this.authService.encrypt(String(userId));
 

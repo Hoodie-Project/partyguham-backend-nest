@@ -25,9 +25,9 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    const { id, nickname, email } = userEntity;
+    const { id, nickname, email, gender, birth } = userEntity;
 
-    return this.userFactory.reconstitute(id, account, nickname, email);
+    return this.userFactory.reconstitute(id, account, nickname, email, gender, birth);
   }
 
   async findByNickname(nickname: string): Promise<User | null> {
@@ -39,15 +39,23 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    const { id, account, email } = userEntity;
+    const { id, account, email, gender, birth } = userEntity;
 
-    return this.userFactory.reconstitute(id, account, nickname, email);
+    return this.userFactory.reconstitute(id, account, nickname, email, gender, birth);
   }
 
-  async create(account: string, nickname: string, email: string): Promise<UserEntity> {
-    const result = await this.userRepository.save({ account, nickname, email });
+  async create(account: string, nickname: string, email: string, gender: string, birth: Date): Promise<User> {
+    const userEntity = await this.userRepository.save({ account, nickname, email, gender, birth });
+    const {
+      id,
+      account: createAccount,
+      nickname: createNickname,
+      email: createEmail,
+      gender: createGender,
+      birth: createBirth,
+    } = userEntity;
 
-    return result;
+    return this.userFactory.create(id, createAccount, createNickname, createEmail, createGender, createBirth);
   }
 
   async update(): Promise<void> {

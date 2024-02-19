@@ -15,15 +15,15 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute(command: CreateUserCommand) {
-    const { account, nickname, email } = command;
+    const { account, nickname, email, gender, birth } = command;
 
     const verify = await this.userRepository.findByNickname(account);
     if (verify !== null) {
       throw new ConflictException('유저가 이미 존재 합니다.');
     }
 
-    const user = await this.userRepository.create(account, nickname, email);
-    const userId = user.id;
+    const user = await this.userRepository.create(account, nickname, email, gender, birth);
+    const userId = user.getId();
     const encryptUserId = await this.authService.encrypt(String(userId));
 
     const accessToken = await this.authService.createAccessToken(encryptUserId);

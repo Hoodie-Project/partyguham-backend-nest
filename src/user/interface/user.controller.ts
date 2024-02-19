@@ -37,11 +37,11 @@ export class UserController {
   ) {}
 
   @Post('')
-  @ApiOperation({ summary: '일반 회원가입 - 카카오 로그인 안될 시 테스트용 구현, 카카오 완료시 해당 api 삭제' })
+  @ApiOperation({ summary: '일반 회원가입 (테스트 계정 구현 용도)' })
   async createUser(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
-    const { account, nickname, email } = dto;
+    const { account, nickname, email, gender, birth } = dto;
 
-    const command = new CreateUserCommand(account, nickname, email);
+    const command = new CreateUserCommand(account, nickname, email, gender, birth);
 
     const reuslt = await this.commandBus.execute(command);
 
@@ -54,9 +54,27 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
-  @Post('kakao/login')
-  @ApiOperation({ summary: 'Kakao 로그인 / 자동 회원가입' })
-  async login(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
+  @Post('')
+  @ApiOperation({ summary: '카카오 회원가입' })
+  async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
+    const { account, nickname, email, gender, birth } = dto;
+
+    const command = new CreateUserCommand(account, nickname, email, gender, birth);
+
+    const reuslt = await this.commandBus.execute(command);
+
+    res.cookie('refreshToken', reuslt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    res.send({ accessToken: reuslt.accessToken });
+  }
+
+  @Post('kakao/signin')
+  @ApiOperation({ summary: '카카오 로그인' })
+  async signinByKakao(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
     const { accessToken } = dto;
 
     const command = new KakaoLoginCommand(accessToken);
