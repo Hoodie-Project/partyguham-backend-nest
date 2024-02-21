@@ -17,7 +17,7 @@ import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UserLoginRequestDto } from './dto/request/user-login.request.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
-import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
+import { UserNicknameQueryRequestDto, UserQueryRequestDto } from './dto/request/user.query.request.dto';
 
 import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
 import { GetUserQuery } from '../application/query/get-user.query';
@@ -36,7 +36,7 @@ export class UserController {
     private queryBus: QueryBus,
   ) {}
 
-  @Post('')
+  @Post('test/signup')
   @ApiOperation({ summary: '일반 회원가입 (테스트 계정 구현 용도)' })
   async createUser(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
     const { account, nickname, email, gender, birth } = dto;
@@ -54,7 +54,7 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
-  @Post('kakao/signin')
+  @Post('signin/kakao')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
     const { accessToken } = dto;
@@ -72,7 +72,7 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
-  @Post('kakao/signup')
+  @Post('signup/kakao')
   @ApiOperation({ summary: '카카오 회원가입' })
   async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
     const { account, nickname, email, gender, birth } = dto;
@@ -91,14 +91,96 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('info')
-  @ApiOperation({ summary: '추가 정보 기입 또는 수정' })
-  async updateUser(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  @Patch('signup/optional')
+  @ApiOperation({ summary: '공통 2차 회원가입' })
+  async signUpOptional(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
     const { onlineStatus } = dto;
 
     const command = new UpdateUserCommand(payload.id, onlineStatus);
 
     return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('')
+  @ApiOperation({ summary: '회원탈퇴' })
+  async deleteUser(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
+    const { onlineStatus } = dto;
+
+    const command = new UpdateUserCommand(payload.id, onlineStatus);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('')
+  @ApiOperation({ summary: '로그아웃' })
+  async signOut(@CurrentAccount() payload: DecodedPayload): Promise<void> {}
+
+  @Get('check-nickname')
+  @ApiOperation({ summary: '닉네임 중복검사' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 유저 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async checkNickname(@Query() query: UserNicknameQueryRequestDto) {}
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('info')
+  @ApiOperation({ summary: '내정보 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 내정보 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async getMyInfo(@CurrentAccount() account: DecodedPayload): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(account.id);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+
+    return plainToInstance(UserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('info')
+  @ApiOperation({ summary: '내정보 변경' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 내정보 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async updateUser(@CurrentAccount() account: DecodedPayload): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(account.id);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+
+    return plainToInstance(UserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('image')
+  @ApiOperation({ summary: '이미지 변경' })
+  @ApiResponse({
+    status: 200,
+    description: '.',
+    type: UserResponseDto,
+  })
+  async updateImage(@CurrentAccount() account: DecodedPayload) {}
+
+  @Get('info/:nickname')
+  @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 유저 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async getUser(@Param() param: UserParamRequestDto) {
+    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
+
+    const result = this.queryBus.execute(userInfoByNickname);
+
+    return plainToInstance(UserResponseDto, result);
   }
 
   @Get('')
@@ -118,38 +200,7 @@ export class UserController {
     return plainToInstance(UserResponseDto, result);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Get('info')
-  @ApiOperation({ summary: '내정보 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 내정보 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getMyInfo(@CurrentAccount() account: DecodedPayload): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(account.id);
-
-    const result = this.queryBus.execute(getUserInfoQuery);
-
-    return plainToInstance(UserResponseDto, result);
-  }
-
-  @Get('info/:nickname')
-  @ApiOperation({ summary: '닉네임으로 유저 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getUser(@Param() param: UserParamRequestDto) {
-    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
-
-    const result = this.queryBus.execute(userInfoByNickname);
-
-    return plainToInstance(UserResponseDto, result);
-  }
-
-  // 팔로우
+  //! MVP 제외
   @UseGuards(AccessJwtAuthGuard)
   @Get('follow')
   @ApiOperation({ summary: '팔로워, 팔로잉 목록 조회' })

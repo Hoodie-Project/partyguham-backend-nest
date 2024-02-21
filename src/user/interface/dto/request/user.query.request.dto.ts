@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UserQueryRequestDto {
   @ApiProperty({
@@ -35,4 +35,16 @@ export class UserQueryRequestDto {
   @IsString()
   @IsNotEmpty()
   public order: 'ASC' | 'DESC';
+}
+
+export class UserNicknameQueryRequestDto {
+  @ApiProperty({
+    example: 'nickname',
+    description: '닉네임 2자 이상 30자 이하',
+  })
+  @MaxLength(15)
+  @MinLength(2)
+  @IsString()
+  @IsNotEmpty()
+  readonly nickname: string;
 }
