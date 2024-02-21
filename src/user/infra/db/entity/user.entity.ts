@@ -10,6 +10,12 @@ import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { PositionEntity } from 'src/position/entity/position.entity';
 import { PartyCommentEntity } from 'src/party/infra/db/entity/party/party-comment.entity';
 
+export enum OnlineStatus {
+  ONLINE = 'online',
+  OFFLINE = 'offline',
+  NONE = 'none',
+}
+
 @Entity('user')
 export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -33,8 +39,13 @@ export class UserEntity extends BaseEntity {
   @Column('varchar', { nullable: true })
   image: string;
 
-  @Column('boolean', { nullable: true })
-  online: boolean;
+  @Column({
+    type: 'enum',
+    enum: OnlineStatus,
+    default: OnlineStatus.NONE,
+    nullable: true,
+  })
+  onlineStatus: OnlineStatus | null;
 
   @Column({ nullable: true })
   positionId: number;

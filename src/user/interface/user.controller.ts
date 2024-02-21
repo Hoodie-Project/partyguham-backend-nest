@@ -54,24 +54,6 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
-  @Post('')
-  @ApiOperation({ summary: '카카오 회원가입' })
-  async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
-    const { account, nickname, email, gender, birth } = dto;
-
-    const command = new CreateUserCommand(account, nickname, email, gender, birth);
-
-    const reuslt = await this.commandBus.execute(command);
-
-    res.cookie('refreshToken', reuslt.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
-
-    res.send({ accessToken: reuslt.accessToken });
-  }
-
   @Post('kakao/signin')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
@@ -90,13 +72,31 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
+  @Post('kakao/signup')
+  @ApiOperation({ summary: '카카오 회원가입' })
+  async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
+    const { account, nickname, email, gender, birth } = dto;
+
+    const command = new CreateUserCommand(account, nickname, email, gender, birth);
+
+    const reuslt = await this.commandBus.execute(command);
+
+    res.cookie('refreshToken', reuslt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    res.send({ accessToken: reuslt.accessToken });
+  }
+
   @UseGuards(AccessJwtAuthGuard)
   @Patch('info')
   @ApiOperation({ summary: '추가 정보 기입 또는 수정' })
   async updateUser(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    const { isParty, meetingType, meetingWeek, meetingTime, mbti, skillIds } = dto;
+    const { onlineStatus } = dto;
 
-    const command = new UpdateUserCommand(payload.id, isParty, meetingType, meetingWeek, meetingTime, mbti, skillIds);
+    const command = new UpdateUserCommand(payload.id, onlineStatus);
 
     return this.commandBus.execute(command);
   }
