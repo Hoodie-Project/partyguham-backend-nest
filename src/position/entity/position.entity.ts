@@ -8,7 +8,10 @@ export class PositionEntity {
   id: number;
 
   @Column()
-  position: string;
+  main: string;
+
+  @Column()
+  sub: string;
 
   @OneToMany(() => PartyUserEntity, (position) => position.position)
   partyUsers: PartyUserEntity[];

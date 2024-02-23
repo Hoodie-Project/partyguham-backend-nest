@@ -54,6 +54,15 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
+  @Get('check-nickname')
+  @ApiOperation({ summary: '닉네임 중복검사' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 유저 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async checkNickname(@Query() query: UserNicknameQueryRequestDto) {}
+
   @Post('signin/kakao')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
@@ -116,15 +125,6 @@ export class UserController {
   @Delete('')
   @ApiOperation({ summary: '로그아웃' })
   async signOut(@CurrentAccount() payload: DecodedPayload): Promise<void> {}
-
-  @Get('check-nickname')
-  @ApiOperation({ summary: '닉네임 중복검사' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async checkNickname(@Query() query: UserNicknameQueryRequestDto) {}
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('info')

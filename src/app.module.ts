@@ -33,7 +33,7 @@ import { PositionModule } from './position/position.module';
       logging: process.env.MODE_ENV !== 'prod',
     }),
     UserModule,
-    PartyModule,
+    // PartyModule,
     SkillModule,
     PositionModule,
   ],

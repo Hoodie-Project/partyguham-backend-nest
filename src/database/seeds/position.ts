@@ -9,19 +9,19 @@ export default class PositionSeeder implements Seeder {
     await repository.insert([
       {
         id: 1,
-        position: '프론트엔드',
+        sub: '프론트엔드',
       },
       {
         id: 2,
-        position: '백엔드',
+        sub: '백엔드',
       },
       {
         id: 3,
-        position: '안드로이드',
+        sub: '안드로이드',
       },
       {
         id: 4,
-        position: 'iOS',
+        sub: 'iOS',
       },
     ]);
   }
