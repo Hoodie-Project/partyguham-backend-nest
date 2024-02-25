@@ -17,7 +17,7 @@ import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UserLoginRequestDto } from './dto/request/user-login.request.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
-import { UserNicknameQueryRequestDto, UserQueryRequestDto } from './dto/request/user.query.request.dto';
+import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
 
 import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
 import { GetUserQuery } from '../application/query/get-user.query';
@@ -27,6 +27,8 @@ import { UserResponseDto, UsersResponseDto } from './dto/response/UserResponseDt
 import { FollowQueryRequestDto } from './dto/request/follow.user.request.dto';
 import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
+import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
+import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
 
 @ApiTags('users')
 @Controller('users')
@@ -58,10 +60,22 @@ export class UserController {
   @ApiOperation({ summary: '닉네임 중복검사' })
   @ApiResponse({
     status: 200,
-    description: '성공적으로 유저 목록을 가져왔습니다.',
+    description: '사용가능한 닉네임 입니다.',
     type: UserResponseDto,
   })
-  async checkNickname(@Query() query: UserNicknameQueryRequestDto) {}
+  @ApiResponse({
+    status: 409,
+    description: '중복된 닉네임 입니다.',
+    type: UserResponseDto,
+  })
+  async checkNickname(@Query() query: NicknameQueryRequestDto) {
+    const { nickname } = query;
+    const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
+
+    await this.queryBus.execute(getUserInfoQuery);
+
+    return '사용가능한 닉네임 입니다.';
+  }
 
   @Post('signin/kakao')
   @ApiOperation({ summary: '카카오 로그인' })

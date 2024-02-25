@@ -17,7 +17,7 @@ export class UserPersonalityEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => PersonalityOptionEntity, (Personality) => Personality.userPersonalitys)
+  @ManyToOne(() => PersonalityOptionEntity, (personalityOption) => personalityOption.userPersonality)
   @JoinColumn({ name: 'personality_option_id' })
-  Personality: PersonalityOptionEntity;
+  personalityOption: PersonalityOptionEntity;
 }
