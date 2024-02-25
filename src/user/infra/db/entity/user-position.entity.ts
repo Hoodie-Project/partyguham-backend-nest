@@ -1,9 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, Unique } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { SkillEntity } from 'src/skill/entity/skill.entity';
+import { PositionEntity } from 'src/position/entity/position.entity';
 
 @Entity('user_position')
-@Unique(['userId', 'locationId'])
 export class UserPositionEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,13 +11,13 @@ export class UserPositionEntity {
   userId: number;
 
   @Column()
-  locationId: number;
+  positionId: number;
 
   @ManyToOne(() => UserEntity, (user) => user.userSkills)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => SkillEntity, (skill) => skill.userSkills)
-  @JoinColumn({ name: 'location_id' })
-  skill: SkillEntity;
+  @ManyToOne(() => PositionEntity, (position) => position.userPositions)
+  @JoinColumn({ name: 'position_id' })
+  position: PositionEntity;
 }

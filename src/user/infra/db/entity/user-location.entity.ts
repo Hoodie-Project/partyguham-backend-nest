@@ -3,7 +3,6 @@ import { UserEntity } from './user.entity';
 import { SkillEntity } from 'src/skill/entity/skill.entity';
 
 @Entity('user_location')
-@Unique(['userId', 'locationId'])
 export class UserLocationEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,5 +19,5 @@ export class UserLocationEntity {
 
   @ManyToOne(() => SkillEntity, (skill) => skill.userSkills)
   @JoinColumn({ name: 'location_id' })
-  skill: SkillEntity;
+  location: SkillEntity;
 }

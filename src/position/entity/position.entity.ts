@@ -1,5 +1,4 @@
-import { PartyUserEntity } from 'src/party/infra/db/entity/party/party-user.entity';
-import { UserEntity } from 'src/user/infra/db/entity/user.entity';
+import { UserPositionEntity } from 'src/user/infra/db/entity/user-position.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('postion')
@@ -13,9 +12,6 @@ export class PositionEntity {
   @Column()
   sub: string;
 
-  @OneToMany(() => PartyUserEntity, (position) => position.position)
-  partyUsers: PartyUserEntity[];
-
-  @OneToMany(() => UserEntity, (user) => user.positions)
-  users: UserEntity;
+  @OneToMany(() => UserPositionEntity, (userPosition) => userPosition.position)
+  userPositions: UserPositionEntity[];
 }

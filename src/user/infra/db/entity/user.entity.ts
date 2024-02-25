@@ -1,14 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
+import { BaseEntity } from 'src/common/entity/baseEntity';
 
 import { UserSkillEntity } from './user-skill.entity';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party-user.entity';
 import { FollowEntity } from 'src/user/infra/db/entity/follow.entity';
 import { PartyRequestEntity } from 'src/party/infra/db/entity/apply/party-request.entity';
 import { PartyInviteEntity } from 'src/party/infra/db/entity/apply/party-invite.entity';
-import { BaseEntity } from 'src/common/entity/baseEntity';
 import { AuthEntity } from 'src/auth/entity/auth.entity';
-import { PositionEntity } from 'src/position/entity/position.entity';
 import { PartyCommentEntity } from 'src/party/infra/db/entity/party/party-comment.entity';
+import { UserPositionEntity } from './user-position.entity';
 
 export enum OnlineStatus {
   ONLINE = 'online',
@@ -47,15 +47,8 @@ export class UserEntity extends BaseEntity {
   })
   onlineStatus: OnlineStatus | null;
 
-  @Column({ nullable: true })
-  positionId: number;
-
-  @ManyToOne(() => PositionEntity, (position) => position.users, {
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'position_id', referencedColumnName: 'id' })
-  positions: PositionEntity;
+  @OneToMany(() => UserPositionEntity, (userPosition) => userPosition.user)
+  userPositions: UserPositionEntity[];
 
   @OneToOne(() => AuthEntity, (auth) => auth.user)
   auth: AuthEntity;
