@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { PersonalityOptionEntity } from './personality-option.entity';
 
-@Entity('location')
+@Entity('personality_question')
 export class PersonalityQuestionEntity {
   @PrimaryGeneratedColumn()
   id: number;

@@ -16,7 +16,7 @@ import { PositionModule } from './position/position.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
@@ -28,7 +28,7 @@ import { PositionModule } from './position/position.module';
       extra: {
         decimalNumbers: true, //decimal number type
       },
-      bigNumberStrings: false, // bigint number type
+      // bigNumberStrings: false, // bigint number type
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.MODE_ENV !== 'prod',
     }),
