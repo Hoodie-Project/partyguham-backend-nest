@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
-import { UserEntity } from './user.entity';
+import { UserEntity } from '../../user/infra/db/entity/user.entity';
 
 export enum PlatformEnum {
   KAKAO = 'kakao',

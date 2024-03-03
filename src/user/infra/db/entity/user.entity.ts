@@ -9,7 +9,7 @@ import { PartyInviteEntity } from 'src/party/infra/db/entity/apply/party-invite.
 import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { PartyCommentEntity } from 'src/party/infra/db/entity/party/party-comment.entity';
 import { UserPositionEntity } from './user-position.entity';
-import { OauthEntity } from './oauth.entity';
+import { OauthEntity } from '../../../../auth/entity/oauth.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {

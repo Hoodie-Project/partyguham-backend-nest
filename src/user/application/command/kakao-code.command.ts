@@ -1,5 +1,5 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class KakaoLoginCommand implements ICommand {
+export class KakaoCodeCommand implements ICommand {
   constructor() {}
 }

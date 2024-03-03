@@ -7,7 +7,7 @@ import { CurrentAccount } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { DecodedPayload } from 'src/auth/jwt.payload';
 
-import { KakaoLoginCommand } from '../application/command/kakao-login.command';
+import { KakaoCodeCommand } from '../application/command/kakao-code.command';
 import { CreateUserCommand } from '../application/command/create-user.command';
 import { UpdateUserCommand } from '../application/command/update-user.command';
 import { FollowCommand } from '../application/command/follow.command';
@@ -42,9 +42,35 @@ export class UserController {
   @Post('test/signup')
   @ApiOperation({ summary: '일반 회원가입 (테스트 계정 구현 용도)' })
   async createUser(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
-    const { account, nickname, email, gender, birth } = dto;
+    const { nickname, email, gender, birth } = dto;
 
-    const command = new CreateUserCommand(account, nickname, email, gender, birth);
+    const command = new CreateUserCommand(nickname, email, gender, birth);
+
+    const reuslt = await this.commandBus.execute(command);
+
+    res.cookie('refreshToken', reuslt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+    });
+
+    res.send({ accessToken: reuslt.accessToken });
+  }
+
+  @Get('kakao')
+  @ApiOperation({ summary: '카카오 로그인' })
+  async signinByKakao(@Res() res: Response) {
+    const command = new KakaoCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @Get('kakao/callback')
+  @ApiOperation({ summary: '카카오 로그인 리다이렉트 API' })
+  async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
+    const command = new KakaoDataCommand(code);
 
     const reuslt = await this.commandBus.execute(command);
 
@@ -78,47 +104,12 @@ export class UserController {
     return '사용가능한 닉네임 입니다.';
   }
 
-  @Get('kakao')
-  @ApiOperation({ summary: '카카오 로그인' })
-  async signinByKakao(@Res() res: Response) {
-    const command = new KakaoLoginCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-
-    // res.cookie('refreshToken', reuslt.refreshToken, {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'strict',
-    // });
-
-    // res.send({ accessToken: reuslt.accessToken });
-  }
-
-  @Get('kakao/callback')
-  async kakaoCallback(@Query('code') code: string) {
-    console.log('code', code);
-
-    const command = new KakaoDataCommand(code);
-
-    const reuslt = await this.commandBus.execute(command);
-
-    // res.cookie('refreshToken', reuslt.refreshToken, {
-    //   httpOnly: true,
-    //   secure: true,
-    //   sameSite: 'strict',
-    // });
-
-    // res.send({ accessToken: reuslt.accessToken });
-  }
-
-  @Post('signup/kakao')
-  @ApiOperation({ summary: '카카오 회원가입' })
+  @Post('signup/required')
+  @ApiOperation({ summary: '회원가입 (필수)' })
   async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
-    const { account, nickname, email, gender, birth } = dto;
+    const { nickname, email, gender, birth } = dto;
 
-    const command = new CreateUserCommand(account, nickname, email, gender, birth);
+    const command = new CreateUserCommand(nickname, email, gender, birth);
 
     const reuslt = await this.commandBus.execute(command);
 
@@ -133,7 +124,7 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Patch('signup/optional')
-  @ApiOperation({ summary: '공통 2차 회원가입' })
+  @ApiOperation({ summary: '회원가입 (선택)' })
   async signUpOptional(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(payload.id);
 
