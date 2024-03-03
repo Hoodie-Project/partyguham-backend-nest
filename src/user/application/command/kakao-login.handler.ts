@@ -14,29 +14,9 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     private authService: AuthService,
   ) {}
 
-  async execute({ accessToken }: KakaoLoginCommand) {
-    let userId: number;
-
-    const kakaoUserInfo = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-      },
-    });
-
-    const user = await this.userRepository.findByAccount(kakaoUserInfo.data.id);
-    if (!user) {
-      throw new NotFoundException('계정이 존재하지 않습니다.');
-    }
-    userId = user.getId();
-
-    const encryptUserId = await this.authService.encrypt(String(userId));
-
-    const createAccessToken = await this.authService.createAccessToken(encryptUserId);
-    const createRefreshToken = await this.authService.createRefreshToken(encryptUserId);
-
-    this.authService.saveRefreshToken(userId, createRefreshToken);
-
-    return { accessToken: createAccessToken, refreshToken: createRefreshToken };
+  async execute({}: KakaoLoginCommand) {
+    const kakaoRestApiKey = process.env.KAKAO_RESTAPI_KEY;
+    const kakaoRedirectUri = process.env.KAKAO_REDIRECT_URI;
+    return `https://kauth.kakao.com/oauth/authorize?client_id=${kakaoRestApiKey}&redirect_uri=${kakaoRedirectUri}&response_type=code`;
   }
 }

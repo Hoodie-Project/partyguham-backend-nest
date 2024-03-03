@@ -1,11 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
-import { PersonalityQuestionEntity } from './personality-question';
+import { PersonalityQuestionEntity } from './personality-question.entity';
 import { UserPersonalityEntity } from 'src/user/infra/db/entity/user-personality.entity';
 
-@Entity('location')
+@Entity('personality_option')
 export class PersonalityOptionEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  personalityQuestionId: number;
 
   @Column('text')
   content: string;

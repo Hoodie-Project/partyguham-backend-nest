@@ -6,6 +6,7 @@ import { UserEntity } from '../entity/user.entity';
 import { UserFactory } from 'src/user/domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { User } from 'src/user/domain/user/user';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -16,20 +17,6 @@ export class UserRepository implements IUserRepository {
     private userFactory: UserFactory,
   ) {}
 
-  async findByAccount(account: string): Promise<User> {
-    const userEntity = await this.userRepository.findOne({
-      where: { account },
-    });
-
-    if (!userEntity) {
-      return null;
-    }
-
-    const { id, nickname, email, gender, birth } = userEntity;
-
-    return this.userFactory.reconstitute(id, account, nickname, email, gender, birth);
-  }
-
   async findByNickname(nickname: string): Promise<User | null> {
     const userEntity = await this.userRepository.findOne({
       where: { nickname },
@@ -39,23 +26,22 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    const { id, account, email, gender, birth } = userEntity;
+    const { id, email, gender, birth } = userEntity;
 
-    return this.userFactory.reconstitute(id, account, nickname, email, gender, birth);
+    return this.userFactory.reconstitute(id, nickname, email, gender, birth);
   }
 
-  async create(account: string, nickname: string, email: string, gender: string, birth: Date): Promise<User> {
-    const userEntity = await this.userRepository.save({ account, nickname, email, gender, birth });
-    const {
-      id,
-      account: createAccount,
-      nickname: createNickname,
-      email: createEmail,
-      gender: createGender,
-      birth: createBirth,
-    } = userEntity;
+  async prepare() {
+    const userEntity = await this.userRepository.save({ status: StatusEnum.INACTIVE });
 
-    return this.userFactory.create(id, createAccount, createNickname, createEmail, createGender, createBirth);
+    return userEntity.id;
+  }
+
+  async create(nickname: string, email: string, gender: string, birth: Date): Promise<User> {
+    const userEntity = await this.userRepository.save({ nickname, email, gender, birth });
+    const { id, nickname: createNickname, email: createEmail, gender: createGender, birth: createBirth } = userEntity;
+
+    return this.userFactory.create(id, createNickname, createEmail, createGender, createBirth);
   }
 
   async update(): Promise<void> {

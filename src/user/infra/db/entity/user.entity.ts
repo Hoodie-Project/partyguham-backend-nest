@@ -9,49 +9,42 @@ import { PartyInviteEntity } from 'src/party/infra/db/entity/apply/party-invite.
 import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { PartyCommentEntity } from 'src/party/infra/db/entity/party/party-comment.entity';
 import { UserPositionEntity } from './user-position.entity';
-
-export enum OnlineStatus {
-  ONLINE = 'online',
-  OFFLINE = 'offline',
-  NONE = 'none',
-}
+import { OauthEntity } from './oauth.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar', { unique: true })
-  account: string;
-
-  @Column('varchar', { nullable: false })
+  @Column('varchar', { nullable: true, unique: true })
   email: string;
 
-  @Column('varchar', { length: 15, unique: true })
+  @Column('varchar', { length: 15, nullable: true, unique: true })
   nickname: string;
 
-  @Column({ type: 'date' })
+  @Column('date', { nullable: true })
   birth: Date;
 
-  @Column({ type: 'varchar', length: 1 }) // 'M' 또는 'F'
+  @Column({ length: 1, enum: ['M', 'F'] }) // 'M' 또는 'F'
   gender: string;
+
+  @Column('boolean', { nullable: false, default: true })
+  birthVisible: Boolean;
+
+  @Column('boolean', { nullable: false, default: true })
+  genderVisible: Boolean;
 
   @Column('varchar', { nullable: true })
   image: string;
 
-  @Column({
-    type: 'enum',
-    enum: OnlineStatus,
-    default: OnlineStatus.NONE,
-    nullable: true,
-  })
-  onlineStatus: OnlineStatus | null;
+  @OneToOne(() => AuthEntity, (auth) => auth.user)
+  auth: AuthEntity;
+
+  @OneToMany(() => OauthEntity, (oauth) => oauth.user)
+  oauth: OauthEntity[];
 
   @OneToMany(() => UserPositionEntity, (userPosition) => userPosition.user)
   userPositions: UserPositionEntity[];
-
-  @OneToOne(() => AuthEntity, (auth) => auth.user)
-  auth: AuthEntity;
 
   @OneToMany(() => FollowEntity, (follow) => follow.follower)
   followers: FollowEntity[];

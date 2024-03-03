@@ -22,7 +22,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       throw new ConflictException('유저가 이미 존재 합니다.');
     }
 
-    const user = await this.userRepository.create(account, nickname, email, gender, birth);
+    const user = await this.userRepository.create(nickname, email, gender, birth);
     const userId = user.getId();
     const encryptUserId = await this.authService.encrypt(String(userId));
 

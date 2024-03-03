@@ -29,6 +29,7 @@ import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
+import { KakaoDataCommand } from '../application/command/kakao-data.command';
 
 @ApiTags('users')
 @Controller('users')
@@ -77,22 +78,39 @@ export class UserController {
     return '사용가능한 닉네임 입니다.';
   }
 
-  @Post('signin/kakao')
+  @Get('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
-  async signinByKakao(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
-    const { accessToken } = dto;
+  async signinByKakao(@Res() res: Response) {
+    const command = new KakaoLoginCommand();
 
-    const command = new KakaoLoginCommand(accessToken);
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+
+    // res.cookie('refreshToken', reuslt.refreshToken, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: 'strict',
+    // });
+
+    // res.send({ accessToken: reuslt.accessToken });
+  }
+
+  @Get('kakao/callback')
+  async kakaoCallback(@Query('code') code: string) {
+    console.log('code', code);
+
+    const command = new KakaoDataCommand(code);
 
     const reuslt = await this.commandBus.execute(command);
 
-    res.cookie('refreshToken', reuslt.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
+    // res.cookie('refreshToken', reuslt.refreshToken, {
+    //   httpOnly: true,
+    //   secure: true,
+    //   sameSite: 'strict',
+    // });
 
-    res.send({ accessToken: reuslt.accessToken });
+    // res.send({ accessToken: reuslt.accessToken });
   }
 
   @Post('signup/kakao')
@@ -117,9 +135,7 @@ export class UserController {
   @Patch('signup/optional')
   @ApiOperation({ summary: '공통 2차 회원가입' })
   async signUpOptional(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    const { onlineStatus } = dto;
-
-    const command = new UpdateUserCommand(payload.id, onlineStatus);
+    const command = new UpdateUserCommand(payload.id);
 
     return this.commandBus.execute(command);
   }
@@ -128,9 +144,7 @@ export class UserController {
   @Delete('')
   @ApiOperation({ summary: '회원탈퇴' })
   async deleteUser(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    const { onlineStatus } = dto;
-
-    const command = new UpdateUserCommand(payload.id, onlineStatus);
+    const command = new UpdateUserCommand(payload.id);
 
     return this.commandBus.execute(command);
   }
