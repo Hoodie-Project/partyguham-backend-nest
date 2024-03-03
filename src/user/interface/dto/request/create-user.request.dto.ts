@@ -3,14 +3,6 @@ import { IsEmail, IsISO8601, IsIn, IsNotEmpty, IsString, Length, MaxLength, MinL
 
 export class CreateUserRequestDto {
   @ApiProperty({
-    example: 'account',
-    description: '계정',
-  })
-  @IsString()
-  @IsNotEmpty()
-  readonly account: string;
-
-  @ApiProperty({
     example: 'nickname',
     description: '닉네임 2자 이상 30자 이하',
   })

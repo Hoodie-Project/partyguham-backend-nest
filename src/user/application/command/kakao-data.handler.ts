@@ -5,8 +5,8 @@ import { AuthService } from 'src/auth/auth.service';
 
 import axios from 'axios';
 import { KakaoDataCommand } from './kakao-data.command';
-import { IOauthRepository } from 'src/user/domain/user/repository/ioauth.repository';
-import { PlatformEnum } from 'src/user/infra/db/entity/oauth.entity';
+import { PlatformEnum } from 'src/auth/entity/oauth.entity';
+import { OauthService } from 'src/auth/oauth.service';
 
 @Injectable()
 @CommandHandler(KakaoDataCommand)
@@ -14,8 +14,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoDataCommand> {
   constructor(
     @Inject('UserRepository')
     private userRepository: IUserRepository,
-    @Inject('OauthRepository')
-    private oauthRepository: IOauthRepository,
+    private oauthService: OauthService,
     private authService: AuthService,
   ) {}
 
@@ -47,13 +46,13 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoDataCommand> {
     let userId: number;
     let uuid: string;
 
-    const oauth = await this.oauthRepository.findByExternalId(externalId);
+    const oauth = await this.oauthService.findByExternalId(externalId);
     if (oauth) {
       userId = oauth.userId;
       uuid = oauth.uuid;
     } else {
       const user = await this.userRepository.prepare();
-      const createOauth = await this.oauthRepository.create(user, externalId, PlatformEnum.KAKAO, accessToken);
+      const createOauth = await this.oauthService.create(user, externalId, PlatformEnum.KAKAO, accessToken);
       userId = createOauth.userId;
       uuid = createOauth.uuid;
     }

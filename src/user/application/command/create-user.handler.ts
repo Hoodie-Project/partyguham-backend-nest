@@ -15,9 +15,9 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute(command: CreateUserCommand) {
-    const { account, nickname, email, gender, birth } = command;
+    const { nickname, email, gender, birth } = command;
 
-    const verify = await this.userRepository.findByNickname(account);
+    const verify = await this.userRepository.findByNickname(nickname);
     if (verify !== null) {
       throw new ConflictException('유저가 이미 존재 합니다.');
     }
