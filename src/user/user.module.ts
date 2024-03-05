@@ -5,7 +5,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './infra/db/entity/user.entity';
 import { CreateUserHandler } from './application/command/create-user.handler';
-import { KakaoLoginHandler } from './application/command/kakao-login.handler';
+import { KakaoLoginHandler } from './application/command/kakao-code.handler';
 import { GetUserHandler } from './application/query/get-user.handler';
 import { UserFactory } from './domain/user/user.factory';
 import { UserRepository } from './infra/db/repository/user.repository';
