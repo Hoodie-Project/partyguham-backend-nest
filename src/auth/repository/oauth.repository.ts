@@ -12,6 +12,18 @@ export class OauthRepository {
     private oauthRepository: Repository<OauthEntity>,
   ) {}
 
+  async findById(id: number) {
+    const oauthEntity = await this.oauthRepository.findOne({
+      where: { id },
+    });
+
+    if (!oauthEntity) {
+      return null;
+    }
+
+    return oauthEntity;
+  }
+
   async findByExternalId(externalId: string) {
     const oauthEntity = await this.oauthRepository.findOne({
       where: { externalId },

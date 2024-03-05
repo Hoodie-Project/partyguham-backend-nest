@@ -7,6 +7,10 @@ import { PlatformEnum } from './entity/oauth.entity';
 export class OauthService {
   constructor(private oauthRepository: OauthRepository) {}
 
+  async findById(id: number) {
+    return this.oauthRepository.findById(id);
+  }
+
   async findByExternalId(externalId: string) {
     return this.oauthRepository.findByExternalId(externalId);
   }

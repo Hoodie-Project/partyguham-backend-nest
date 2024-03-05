@@ -8,10 +8,10 @@ export enum PlatformEnum {
 
 @Entity()
 export class OauthEntity {
-  @PrimaryGeneratedColumn('uuid')
-  uuid: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-  @Column()
+  @Column({ nullable: true, default: null })
   userId: number;
 
   @Column({ nullable: false })
