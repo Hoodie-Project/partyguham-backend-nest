@@ -7,14 +7,14 @@ import { AuthService } from './auth.service';
 import { PayloadType } from './jwt.payload';
 
 @Injectable()
-export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
+export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_ACCESS_SECRET,
+      secretOrKey: process.env.JWT_SIGNUP_SECRET,
       ignoreExpiration: false,
     });
   }
@@ -25,11 +25,7 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
       const oauth = await this.oauthService.findById(decryptUserId);
       const userId = oauth.userId;
 
-      if (!userId) {
-        throw new UnauthorizedException('필수 회원가입이 필요합니다.');
-      } else {
-        return { userId };
-      }
+      return { userId };
     } else {
       throw new UnauthorizedException('Unauthorized');
     }
