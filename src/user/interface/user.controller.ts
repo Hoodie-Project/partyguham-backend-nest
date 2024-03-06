@@ -3,9 +3,8 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuard
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentAccount } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { DecodedPayload } from 'src/auth/jwt.payload';
+import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 import { KakaoCodeCommand } from '../application/command/kakao-code.command';
 import { CreateUserCommand } from '../application/command/create-user.command';
@@ -57,7 +56,7 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
-  @Get('kakao')
+  @Post('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
@@ -83,6 +82,7 @@ export class UserController {
     res.send({ accessToken: reuslt.accessToken });
   }
 
+  @UseGuards(SignupJwtAuthGuard)
   @Get('check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
   @ApiResponse({
@@ -104,6 +104,7 @@ export class UserController {
     return '사용가능한 닉네임 입니다.';
   }
 
+  @UseGuards(SignupJwtAuthGuard)
   @Post('signup/required')
   @ApiOperation({ summary: '회원가입 (필수)' })
   async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
@@ -123,10 +124,28 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('signup/optional')
-  @ApiOperation({ summary: '회원가입 (선택)' })
-  async signUpOptional(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(payload.id);
+  @Post('location')
+  @ApiOperation({ summary: '지역' })
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('personality')
+  @ApiOperation({ summary: '성향' })
+  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('postion')
+  @ApiOperation({ summary: '포지션' })
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);
   }
@@ -134,8 +153,8 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Delete('')
   @ApiOperation({ summary: '회원탈퇴' })
-  async deleteUser(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(payload.id);
+  async deleteUser(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);
   }
@@ -143,7 +162,7 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Delete('')
   @ApiOperation({ summary: '로그아웃' })
-  async signOut(@CurrentAccount() payload: DecodedPayload): Promise<void> {}
+  async signOut(@CurrentUser() user: CurrentUserType): Promise<void> {}
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('info')
@@ -153,7 +172,7 @@ export class UserController {
     description: '성공적으로 내정보 목록을 가져왔습니다.',
     type: UserResponseDto,
   })
-  async getMyInfo(@CurrentAccount() account: DecodedPayload): Promise<UserResponseDto> {
+  async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
     const getUserInfoQuery = new GetUserQuery(account.id);
 
     const result = this.queryBus.execute(getUserInfoQuery);
@@ -169,7 +188,7 @@ export class UserController {
     description: '성공적으로 내정보 목록을 가져왔습니다.',
     type: UserResponseDto,
   })
-  async updateUser(@CurrentAccount() account: DecodedPayload): Promise<UserResponseDto> {
+  async updateUser(@CurrentUser() account): Promise<UserResponseDto> {
     const getUserInfoQuery = new GetUserQuery(account.id);
 
     const result = this.queryBus.execute(getUserInfoQuery);
@@ -185,7 +204,7 @@ export class UserController {
     description: '.',
     type: UserResponseDto,
   })
-  async updateImage(@CurrentAccount() account: DecodedPayload) {}
+  async updateImage(@CurrentUser() account) {}
 
   @Get('info/:nickname')
   @ApiOperation({ summary: '닉네임으로 유저 조회' })
@@ -229,12 +248,12 @@ export class UserController {
     type: FollowResponseDto,
   })
   async getFollow(
-    @CurrentAccount() payload: DecodedPayload,
+    @CurrentUser() user: CurrentUserType,
     @Query() query: FollowQueryRequestDto,
   ): Promise<FollowResponseDto> {
     const { page, limit, sort, order } = query;
 
-    const userInfoByNickname = new GetFollowQuery(payload.id, page, limit, sort, order);
+    const userInfoByNickname = new GetFollowQuery(user.id, page, limit, sort, order);
 
     const result = await this.queryBus.execute(userInfoByNickname);
 
@@ -248,8 +267,8 @@ export class UserController {
     status: 204,
     description: '성공적으로 팔로우 되었습니다.',
   })
-  async follow(@CurrentAccount() payload: DecodedPayload, @Param() param: UserParamRequestDto) {
-    const command = new FollowCommand(payload.id, param.nickname);
+  async follow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
+    const command = new FollowCommand(user.id, param.nickname);
 
     await this.commandBus.execute(command);
   }
@@ -261,8 +280,8 @@ export class UserController {
     status: 204,
     description: '성공적으로 언팔로우 되었습니다.',
   })
-  async unfollow(@CurrentAccount() payload: DecodedPayload, @Param() param: UserParamRequestDto) {
-    const command = new UnfollowCommand(payload.id, param.nickname);
+  async unfollow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
+    const command = new UnfollowCommand(user.id, param.nickname);
 
     await this.commandBus.execute(command);
   }
