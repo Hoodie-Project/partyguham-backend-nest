@@ -15,7 +15,7 @@ export class OauthService {
     return this.oauthRepository.findByExternalId(externalId);
   }
 
-  async create(userId: number, externalId: string, platform: PlatformEnum, accessToken: string) {
-    return this.oauthRepository.create(userId, externalId, platform, accessToken);
+  async createWithoutUserId(externalId: string, platform: PlatformEnum, accessToken: string) {
+    return this.oauthRepository.createWithoutUserId(externalId, platform, accessToken);
   }
 }

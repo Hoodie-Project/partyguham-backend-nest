@@ -14,7 +14,7 @@ import { OauthService } from './oauth.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AccessStrategy, RefreshStrategy, AuthRepository, OauthRepository, AuthService],
+  providers: [AccessStrategy, RefreshStrategy, AuthRepository, OauthRepository, AuthService, OauthService],
   imports: [
     ConfigModule.forRoot(),
     JwtModule.register({

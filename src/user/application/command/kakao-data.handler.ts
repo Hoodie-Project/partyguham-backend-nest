@@ -1,6 +1,5 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { AuthService } from 'src/auth/auth.service';
 
 import axios from 'axios';
@@ -12,8 +11,6 @@ import { OauthService } from 'src/auth/oauth.service';
 @CommandHandler(KakaoDataCommand)
 export class KakaoLoginHandler implements ICommandHandler<KakaoDataCommand> {
   constructor(
-    @Inject('UserRepository')
-    private userRepository: IUserRepository,
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
@@ -43,25 +40,23 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoDataCommand> {
 
     const externalId: string = kakaoUserInfo.data.id;
 
-    let userId: number;
-    let uuid: string;
-
     const oauth = await this.oauthService.findByExternalId(externalId);
-    if (oauth) {
-      userId = oauth.userId;
-      uuid = oauth.uuid;
+
+    if (!oauth) {
+      const createOauth = await this.oauthService.createWithoutUserId(externalId, PlatformEnum.KAKAO, accessToken);
+      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+
+      return { type: 'signup', signupAccessToken, email: 'example@hoodiev.com' };
     } else {
-      const user = await this.userRepository.prepare();
-      const createOauth = await this.oauthService.create(user, externalId, PlatformEnum.KAKAO, accessToken);
-      userId = createOauth.userId;
-      uuid = createOauth.uuid;
+      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+
+      const accessToken = await this.authService.createAccessToken(encryptOauthId);
+      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+
+      this.authService.saveRefreshToken(oauth.userId, refreshToken);
+
+      return { type: 'login', accessToken, refreshToken };
     }
-
-    const createAccessToken = await this.authService.createAccessToken(uuid);
-    const createRefreshToken = await this.authService.createRefreshToken(uuid);
-
-    this.authService.saveRefreshToken(userId, createRefreshToken);
-
-    return { accessToken: createAccessToken, refreshToken: createRefreshToken };
   }
 }
