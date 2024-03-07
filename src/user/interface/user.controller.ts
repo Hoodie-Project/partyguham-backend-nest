@@ -12,8 +12,8 @@ import { UpdateUserCommand } from '../application/command/update-user.command';
 import { FollowCommand } from '../application/command/follow.command';
 import { UnfollowCommand } from '../application/command/unfollow.command';
 
-import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UserLoginRequestDto } from './dto/request/user-login.request.dto';
+import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
 import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
@@ -45,15 +45,15 @@ export class UserController {
 
     const command = new CreateUserCommand(nickname, email, gender, birth);
 
-    const reuslt = await this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
 
-    res.cookie('refreshToken', reuslt.refreshToken, {
+    res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
 
-    res.send({ accessToken: reuslt.accessToken });
+    res.send({ accessToken: result.accessToken });
   }
 
   @Post('kakao')
@@ -71,15 +71,20 @@ export class UserController {
   async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
     const command = new KakaoDataCommand(code);
 
-    const reuslt = await this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
 
-    res.cookie('refreshToken', reuslt.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      res.status(200).send({ accessToken: result.accessToken });
+    }
 
-    res.send({ accessToken: reuslt.accessToken });
+    if (result.type === 'signup') {
+      res.status(404).send({ signupAccessToken: result.signupAccessToken, email: result.email });
+    }
   }
 
   @UseGuards(SignupJwtAuthGuard)
@@ -112,15 +117,15 @@ export class UserController {
 
     const command = new CreateUserCommand(nickname, email, gender, birth);
 
-    const reuslt = await this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
 
-    res.cookie('refreshToken', reuslt.refreshToken, {
+    res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
 
-    res.send({ accessToken: reuslt.accessToken });
+    res.send({ accessToken: result.accessToken });
   }
 
   @UseGuards(AccessJwtAuthGuard)

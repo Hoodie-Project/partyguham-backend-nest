@@ -24,6 +24,8 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
 
     const user = await this.userRepository.create(nickname, email, gender, birth);
     const userId = user.getId();
+
+    // oauth id로 토큰을 만듦
     const encryptUserId = await this.authService.encrypt(String(userId));
 
     const accessToken = await this.authService.createAccessToken(encryptUserId);

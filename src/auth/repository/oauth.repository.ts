@@ -36,8 +36,8 @@ export class OauthRepository {
     return oauthEntity;
   }
 
-  async create(userId: number, externalId: string, platform: PlatformEnum, accessToken: string) {
-    const oauthEntity = await this.oauthRepository.save({ userId, externalId, platform, accessToken });
+  async createWithoutUserId(externalId: string, platform: PlatformEnum, accessToken: string) {
+    const oauthEntity = await this.oauthRepository.save({ externalId, platform, accessToken });
 
     return oauthEntity;
   }
