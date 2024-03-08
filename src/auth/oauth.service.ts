@@ -11,11 +11,19 @@ export class OauthService {
     return this.oauthRepository.findById(id);
   }
 
+  async findBy(id: number) {
+    return this.oauthRepository.findById(id);
+  }
+
   async findByExternalId(externalId: string) {
     return this.oauthRepository.findByExternalId(externalId);
   }
 
   async createWithoutUserId(externalId: string, platform: PlatformEnum, accessToken: string) {
     return this.oauthRepository.createWithoutUserId(externalId, platform, accessToken);
+  }
+
+  async updateUserIdById(id: number, userId: number) {
+    return this.oauthRepository.updateUserIdById(id, userId);
   }
 }
