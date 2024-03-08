@@ -10,7 +10,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @UseGuards(RefreshJwtAuthGuard)
-  @Post('refresh-token')
+  @Post('access-token')
   async refreshTokens(@Headers('authorization') authorization: string, @CurrentUser() user: CurrentUserType) {
     const [, token] = authorization.split(' ');
 

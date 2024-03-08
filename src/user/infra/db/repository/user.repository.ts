@@ -31,6 +31,20 @@ export class UserRepository implements IUserRepository {
     return this.userFactory.reconstitute(id, nickname, email, gender, birth);
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    const userEntity = await this.userRepository.findOne({
+      where: { email },
+    });
+
+    if (!userEntity) {
+      return null;
+    }
+
+    const { id, nickname, gender, birth } = userEntity;
+
+    return this.userFactory.reconstitute(id, nickname, email, gender, birth);
+  }
+
   async prepare() {
     const userEntity = await this.userRepository.save({ status: StatusEnum.INACTIVE });
 

@@ -31,32 +31,14 @@ import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.q
 import { KakaoDataCommand } from '../application/command/kakao-data.command';
 
 @ApiTags('users')
-@Controller('users')
+@Controller('')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
-  @Post('test/signup')
-  @ApiOperation({ summary: '일반 회원가입 (테스트 계정 구현 용도)' })
-  async createUser(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
-    const { nickname, email, gender, birth } = dto;
-
-    const command = new CreateUserCommand(nickname, email, gender, birth);
-
-    const result = await this.commandBus.execute(command);
-
-    res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
-
-    res.send({ accessToken: result.accessToken });
-  }
-
-  @Post('kakao')
+  @Post('users/kakao')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
@@ -66,7 +48,7 @@ export class UserController {
     res.redirect(result);
   }
 
-  @Get('kakao/callback')
+  @Get('users/kakao/callback')
   @ApiOperation({ summary: '카카오 로그인 리다이렉트 API' })
   async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
     const command = new KakaoDataCommand(code);
@@ -88,7 +70,7 @@ export class UserController {
   }
 
   @UseGuards(SignupJwtAuthGuard)
-  @Get('check-nickname')
+  @Get('users/check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
   @ApiResponse({
     status: 200,
@@ -110,12 +92,16 @@ export class UserController {
   }
 
   @UseGuards(SignupJwtAuthGuard)
-  @Post('signup/required')
+  @Post('users/signup/required')
   @ApiOperation({ summary: '회원가입 (필수)' })
-  async signUpByKakao(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
+  async signUpByKakao(
+    @CurrentUser() user: CurrentUserType,
+    @Res() res: Response,
+    @Body() dto: CreateUserRequestDto,
+  ): Promise<void> {
     const { nickname, email, gender, birth } = dto;
-
-    const command = new CreateUserCommand(nickname, email, gender, birth);
+    const oauthId = user.id;
+    const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
 
     const result = await this.commandBus.execute(command);
 
@@ -129,7 +115,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('location')
+  @Post('user/info/location')
   @ApiOperation({ summary: '지역' })
   async userLocation(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
@@ -138,7 +124,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('personality')
+  @Post('user/info/personality')
   @ApiOperation({ summary: '성향' })
   async userPersonality(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
@@ -147,7 +133,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('postion')
+  @Post('user/info/postion')
   @ApiOperation({ summary: '포지션' })
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
@@ -156,7 +142,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('')
+  @Delete('user')
   @ApiOperation({ summary: '회원탈퇴' })
   async deleteUser(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
@@ -165,12 +151,12 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('')
+  @Delete('user/signout')
   @ApiOperation({ summary: '로그아웃' })
   async signOut(@CurrentUser() user: CurrentUserType): Promise<void> {}
 
   @UseGuards(AccessJwtAuthGuard)
-  @Get('info')
+  @Get('user/info')
   @ApiOperation({ summary: '내정보 조회' })
   @ApiResponse({
     status: 200,
@@ -186,7 +172,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('info')
+  @Patch('user/info')
   @ApiOperation({ summary: '내정보 변경' })
   @ApiResponse({
     status: 200,
@@ -202,7 +188,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('image')
+  @Patch('user/image')
   @ApiOperation({ summary: '이미지 변경' })
   @ApiResponse({
     status: 200,
@@ -211,7 +197,7 @@ export class UserController {
   })
   async updateImage(@CurrentUser() account) {}
 
-  @Get('info/:nickname')
+  @Get('users/:nickname')
   @ApiOperation({ summary: '닉네임으로 유저 조회' })
   @ApiResponse({
     status: 200,
@@ -226,7 +212,7 @@ export class UserController {
     return plainToInstance(UserResponseDto, result);
   }
 
-  @Get('')
+  @Get('users')
   @ApiOperation({ summary: '유저 다수 조회' })
   @ApiResponse({
     status: 200,

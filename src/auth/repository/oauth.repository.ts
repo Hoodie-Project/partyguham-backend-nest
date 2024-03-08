@@ -24,6 +24,18 @@ export class OauthRepository {
     return oauthEntity;
   }
 
+  async findByUserId(userId: number) {
+    const oauthEntity = await this.oauthRepository.findOne({
+      where: { userId },
+    });
+
+    if (!oauthEntity) {
+      return null;
+    }
+
+    return oauthEntity;
+  }
+
   async findByExternalId(externalId: string) {
     const oauthEntity = await this.oauthRepository.findOne({
       where: { externalId },
@@ -42,9 +54,9 @@ export class OauthRepository {
     return oauthEntity;
   }
 
-  async update(): Promise<void> {
+  async updateUserIdById(id: number, userId: number): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const user = await this.oauthRepository.save({});
+      const user = await this.oauthRepository.save({ userId, where: { id } });
 
       await manager.save(user);
     });
