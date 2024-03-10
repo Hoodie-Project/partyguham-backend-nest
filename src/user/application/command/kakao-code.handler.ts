@@ -4,7 +4,7 @@ import { KakaoCodeCommand } from './kakao-code.command';
 
 @Injectable()
 @CommandHandler(KakaoCodeCommand)
-export class KakaoLoginHandler implements ICommandHandler<KakaoCodeCommand> {
+export class KakaoCodeHandler implements ICommandHandler<KakaoCodeCommand> {
   constructor() {}
 
   async execute({}: KakaoCodeCommand) {

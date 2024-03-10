@@ -28,17 +28,26 @@ import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
-import { KakaoDataCommand } from '../application/command/kakao-data.command';
+import { KakaoLoginCommand } from '../application/command/kakao-data.command';
+const crypto = require('crypto');
 
 @ApiTags('users')
-@Controller('')
+@Controller('users')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
-  @Post('users/kakao')
+  @Get('key')
+  async ket(@Res() res: Response) {
+    const iv = crypto.randomBytes(16);
+
+    console.log('Initialization Vector (IV):', iv);
+    console.log('Random Key:', iv.toString('hex'));
+  }
+
+  @Get('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
@@ -48,10 +57,10 @@ export class UserController {
     res.redirect(result);
   }
 
-  @Get('users/kakao/callback')
+  @Get('kakao/callback')
   @ApiOperation({ summary: '카카오 로그인 리다이렉트 API' })
   async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
-    const command = new KakaoDataCommand(code);
+    const command = new KakaoLoginCommand(code);
 
     const result = await this.commandBus.execute(command);
 
@@ -197,20 +206,20 @@ export class UserController {
   })
   async updateImage(@CurrentUser() account) {}
 
-  @Get('users/:nickname')
-  @ApiOperation({ summary: '닉네임으로 유저 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getUser(@Param() param: UserParamRequestDto) {
-    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
+  // @Get('users/:nickname')
+  // @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '성공적으로 유저 목록을 가져왔습니다.',
+  //   type: UserResponseDto,
+  // })
+  // async getUser(@Param() param: UserParamRequestDto) {
+  //   const userInfoByNickname = new UserByNicknameQuery(param.nickname);
 
-    const result = this.queryBus.execute(userInfoByNickname);
+  //   const result = this.queryBus.execute(userInfoByNickname);
 
-    return plainToInstance(UserResponseDto, result);
-  }
+  //   return plainToInstance(UserResponseDto, result);
+  // }
 
   @Get('users')
   @ApiOperation({ summary: '유저 다수 조회' })

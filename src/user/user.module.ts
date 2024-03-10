@@ -5,7 +5,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './infra/db/entity/user.entity';
 import { CreateUserHandler } from './application/command/create-user.handler';
-import { KakaoLoginHandler } from './application/command/kakao-code.handler';
+import { KakaoCodeHandler } from './application/command/kakao-code.handler';
 import { GetUserHandler } from './application/query/get-user.handler';
 import { UserFactory } from './domain/user/user.factory';
 import { UserRepository } from './infra/db/repository/user.repository';
@@ -20,8 +20,9 @@ import { FollowFactory } from './domain/follow/follow.factory';
 import { GetFollowHandler } from './application/query/get-follow.handler';
 import { UserSkillRepository } from './infra/db/repository/user-skill.repository';
 import { UserSkillEntity } from './infra/db/entity/user-skill.entity';
+import { KakaoLoginHandler } from './application/command/kakao-data.handler';
 
-const commandHandlers = [CreateUserHandler, KakaoLoginHandler, FollowHandler, UnFollowHandler];
+const commandHandlers = [CreateUserHandler, KakaoCodeHandler, KakaoLoginHandler, FollowHandler, UnFollowHandler];
 
 const queryHandlers = [UserByNicknameHandler, GetUserHandler, GetUsersHandler, GetFollowHandler];
 
