@@ -6,7 +6,7 @@ export enum PlatformEnum {
   GOOGLE = 'google',
 }
 
-@Entity()
+@Entity({ name: 'oauth' })
 export class OauthEntity {
   @PrimaryGeneratedColumn()
   id: number;
