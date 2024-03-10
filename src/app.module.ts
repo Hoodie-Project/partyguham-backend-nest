@@ -12,6 +12,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response';
 import { SkillModule } from './skill/skill.module';
 import { PositionModule } from './position/position.module';
+import { LocationModule } from './location/location.module';
+import { PersonalityModule } from './personality/personality.module';
 
 @Module({
   imports: [
@@ -36,6 +38,8 @@ import { PositionModule } from './position/position.module';
     // PartyModule,
     SkillModule,
     PositionModule,
+    LocationModule,
+    PersonalityModule,
   ],
   controllers: [AppController],
   providers: [

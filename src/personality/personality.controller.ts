@@ -5,10 +5,10 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 @Controller('personality')
 export class PersonalityController {
   @Get('')
-  @ApiOperation({ summary: '장소 항목 조회' })
+  @ApiOperation({ summary: '성향 질문/선택지 전체 조회' })
   @ApiResponse({
     status: 200,
-    description: '장소 리스트 조회 하였습니다.',
+    description: '성향 질문/선택지 리스트 조회 하였습니다.',
   })
   async getPersonality(): Promise<void> {}
 }
