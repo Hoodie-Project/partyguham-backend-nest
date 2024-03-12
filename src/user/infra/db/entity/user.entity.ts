@@ -10,6 +10,7 @@ import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { PartyCommentEntity } from 'src/party/infra/db/entity/party/party-comment.entity';
 import { UserCareerEntity } from './user-career.entity';
 import { OauthEntity } from '../../../../auth/entity/oauth.entity';
+import { UserLocationEntity } from './user-location.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -60,6 +61,9 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
   userSkills: UserSkillEntity[];
+
+  @OneToMany(() => UserLocationEntity, (userLocation) => userLocation.user)
+  userLocation: UserLocationEntity[];
 
   @OneToMany(() => PartyRequestEntity, (userExperience) => userExperience.user)
   partyRequests: PartyRequestEntity[];

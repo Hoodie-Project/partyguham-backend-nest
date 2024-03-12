@@ -4,7 +4,7 @@ import { PersonalityService } from './personality.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PersonalityOptionEntity } from './entity/personality-option.entity';
 import { PersonalityQuestionEntity } from './entity/personality-question.entity';
-import { PersonalityQuestionRepository } from './repository/personality-option.repository';
+import { PersonalityQuestionRepository } from './repository/personality-question.repository';
 
 @Module({
   controllers: [PersonalityController],

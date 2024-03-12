@@ -11,7 +11,7 @@ export class UserPersonalityEntity {
   userId: number;
 
   @Column()
-  PersonalityId: number;
+  personalityOptionId: number;
 
   @ManyToOne(() => UserEntity, (user) => user.userSkills)
   @JoinColumn({ name: 'user_id' })
