@@ -13,5 +13,5 @@ export class CreateUserLocationRequestDto {
   @IsInt({ each: true })
   @IsPositive({ each: true })
   @IsNotEmpty()
-  readonly locationId: number[];
+  readonly locationIds: number[];
 }

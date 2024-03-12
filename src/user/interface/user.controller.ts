@@ -28,9 +28,10 @@ import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
-import { CreateUserCarrerRequestDto } from './dto/request/create-userCarrer.request.dto';
+import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
 import { CreateUserLocationRequestDto } from './dto/request/create-userlocation.request.dto';
 import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto copy';
+import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 const crypto = require('crypto');
 
 @ApiTags('users')
@@ -129,7 +130,9 @@ export class UserController {
   @Post('user/info/location')
   @ApiOperation({ summary: '지역 저장' })
   async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(user.id);
+    const { locationIds } = body;
+
+    const command = new CreateUserLocationCommand(user.id, locationIds);
 
     return this.commandBus.execute(command);
   }
@@ -149,7 +152,7 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Post('user/info/career')
   @ApiOperation({ summary: '경력 저장' })
-  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCarrerRequestDto): Promise<void> {
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);

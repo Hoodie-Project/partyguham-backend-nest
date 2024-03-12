@@ -17,6 +17,6 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
 
   async execute(command: UpdateUserCommand) {
     const { id } = command;
-    this.userRepository.update();
+    this.userRepository.updateUser();
   }
 }

@@ -1,3 +1,6 @@
+import { UserLocationEntity } from 'src/user/infra/db/entity/user-location.entity';
+
 export interface IUserLocationRepository {
-  create: (userId: number, skills: number[]) => Promise<void>;
+  findByUserId: (userId: number) => Promise<UserLocationEntity[]>;
+  bulkInsert: (userId: number, locationIds: number[]) => Promise<void>;
 }

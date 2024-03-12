@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -11,6 +11,12 @@ export class LocationRepository {
     @InjectRepository(LocationEntity)
     private locationRepository: Repository<LocationEntity>,
   ) {}
+
+  async findByIds(ids: number[]) {
+    const result = await this.locationRepository.find({ where: { id: In(ids) } });
+
+    return result;
+  }
 
   async findAll() {
     const result = await this.locationRepository.find();

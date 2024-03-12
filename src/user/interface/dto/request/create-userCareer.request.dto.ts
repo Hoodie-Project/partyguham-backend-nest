@@ -13,7 +13,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class CarrerDto {
+export class CareerDto {
   @ApiProperty({
     example: 1,
     description: 'Position id(pk)',
@@ -35,31 +35,31 @@ export class CarrerDto {
   readonly years: number;
 }
 
-export class CreateUserCarrerRequestDto {
+export class CreateUserCareerRequestDto {
   @ApiProperty({
     description: '주 경력',
-    type: CarrerDto,
+    type: CareerDto,
   })
-  @Type(() => CarrerDto)
+  @Type(() => CareerDto)
   @IsNotEmpty()
-  readonly primary: CarrerDto;
+  readonly primary: CareerDto;
 
   @ApiProperty({
     description: '부 경력',
-    type: CarrerDto,
+    type: CareerDto,
   })
-  @Type(() => CarrerDto)
+  @Type(() => CareerDto)
   @IsOptional()
-  readonly secondary: CarrerDto;
+  readonly secondary: CareerDto;
 
   @ApiProperty({
     description: '기타 경력',
-    type: CarrerDto,
+    type: CareerDto,
   })
   @ArrayMaxSize(3)
   @ArrayMinSize(1)
   @ValidateNested({ each: true }) // 중첩여부
-  @Type(() => CarrerDto)
+  @Type(() => CareerDto)
   @IsArray()
   @IsOptional()
   readonly other: number[];
