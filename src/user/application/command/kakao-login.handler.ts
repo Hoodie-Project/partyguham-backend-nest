@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthService } from 'src/auth/auth.service';
 
 import axios from 'axios';
-import { KakaoLoginCommand } from './kakao-data.command';
+import { KakaoLoginCommand } from './kakao-login.command';
 import { PlatformEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
 
