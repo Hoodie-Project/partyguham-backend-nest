@@ -29,7 +29,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
       throw new ConflictException('이미 존재하는 닉네임 입니다.');
     }
 
-    const user = await this.userRepository.create(nickname, email, gender, birth);
+    const user = await this.userRepository.createUser(nickname, email, gender, birth);
     const userId = user.getId();
     await this.oauthService.updateUserIdById(oauthId, userId);
 

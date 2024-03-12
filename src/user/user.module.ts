@@ -21,6 +21,7 @@ import { GetFollowHandler } from './application/query/get-follow.handler';
 import { UserSkillRepository } from './infra/db/repository/user-skill.repository';
 import { UserSkillEntity } from './infra/db/entity/user-skill.entity';
 import { KakaoLoginHandler } from './application/command/kakao-login.handler';
+import { LocationModule } from 'src/location/location.module';
 
 const commandHandlers = [CreateUserHandler, KakaoCodeHandler, KakaoLoginHandler, FollowHandler, UnFollowHandler];
 
@@ -39,6 +40,11 @@ const repositories = [
 @Module({
   controllers: [UserController],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
-  imports: [CqrsModule, AuthModule, TypeOrmModule.forFeature([UserEntity, FollowEntity, UserSkillEntity])],
+  imports: [
+    TypeOrmModule.forFeature([UserEntity, FollowEntity, UserSkillEntity]),
+    CqrsModule,
+    AuthModule,
+    LocationModule,
+  ],
 })
 export class UserModule {}
