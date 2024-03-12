@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ArrayMaxSize, ArrayMinSize, IsInt, IsNotEmpty, IsPositive, ValidateNested } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsInt, IsNotEmpty, IsPositive } from 'class-validator';
 
 export class CreateUserLocationRequestDto {
   @ApiProperty({
@@ -9,7 +9,7 @@ export class CreateUserLocationRequestDto {
   @IsInt()
   @ArrayMaxSize(3)
   @ArrayMinSize(1)
-  @ValidateNested({ each: true }) // 중첩여부
+  @ArrayUnique()
   @IsInt({ each: true })
   @IsPositive({ each: true })
   @IsNotEmpty()

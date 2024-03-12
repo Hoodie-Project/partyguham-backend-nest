@@ -3,6 +3,7 @@ import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
+  ArrayUnique,
   IsArray,
   IsInt,
   IsNotEmpty,
@@ -10,10 +11,9 @@ import {
   IsPositive,
   Max,
   Min,
-  ValidateNested,
 } from 'class-validator';
 
-export class CareerDto {
+class CareerDto {
   @ApiProperty({
     example: 1,
     description: 'Position id(pk)',
@@ -58,7 +58,7 @@ export class CreateUserCareerRequestDto {
   })
   @ArrayMaxSize(3)
   @ArrayMinSize(1)
-  @ValidateNested({ each: true }) // 중첩여부
+  @ArrayUnique()
   @Type(() => CareerDto)
   @IsArray()
   @IsOptional()

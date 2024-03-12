@@ -1,18 +1,18 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PersonalityQuestionEntity } from '../entity/personality-question.entity';
+import { PersonalityOptionEntity } from '../entity/personality-option.entity';
 
 @Injectable()
-export class PersonalityQuestionRepository {
+export class PersonalityOptionRepository {
   constructor(
     readonly dataSource: DataSource,
-    @InjectRepository(PersonalityQuestionEntity)
-    private positionQuestionRepository: Repository<PersonalityQuestionEntity>,
+    @InjectRepository(PersonalityOptionEntity)
+    private positionOptionRepository: Repository<PersonalityOptionEntity>,
   ) {}
 
-  async findAllWithOption() {
-    const result = await this.positionQuestionRepository.find({ relations: ['personalityOption'] });
-    return result;
+  findByIds(ids: number[]) {
+    return this.positionOptionRepository.find({ where: { id: In(ids) } });
   }
 }

@@ -30,8 +30,9 @@ import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.q
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
 import { CreateUserLocationRequestDto } from './dto/request/create-userlocation.request.dto';
-import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto copy';
+import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
+import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
 const crypto = require('crypto');
 
 @ApiTags('users')
@@ -144,7 +145,8 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @Body() body: CreateUserPersonalityRequestDto,
   ): Promise<void> {
-    const command = new UpdateUserCommand(user.id);
+    const { personality } = body;
+    const command = new CreateUserPersonalityCommand(user.id, personality);
 
     return this.commandBus.execute(command);
   }
