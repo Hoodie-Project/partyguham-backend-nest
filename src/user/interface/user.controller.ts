@@ -12,7 +12,6 @@ import { UpdateUserCommand } from '../application/command/update-user.command';
 import { FollowCommand } from '../application/command/follow.command';
 import { UnfollowCommand } from '../application/command/unfollow.command';
 
-import { UserLoginRequestDto } from './dto/request/user-login.request.dto';
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
@@ -28,7 +27,10 @@ import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
-import { KakaoLoginCommand } from '../application/command/kakao-data.command';
+import { KakaoLoginCommand } from '../application/command/kakao-login.command';
+import { CreateUserCarrerRequestDto } from './dto/request/create-userCarrer.request.dto';
+import { CreateUserLocationRequestDto } from './dto/request/create-userlocation.request.dto';
+import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto copy';
 const crypto = require('crypto');
 
 @ApiTags('users')
@@ -125,8 +127,8 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Post('user/info/location')
-  @ApiOperation({ summary: '지역' })
-  async userLocation(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  @ApiOperation({ summary: '지역 저장' })
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);
@@ -134,17 +136,20 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Post('user/info/personality')
-  @ApiOperation({ summary: '성향' })
-  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  @ApiOperation({ summary: '성향 저장' })
+  async userPersonality(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: CreateUserPersonalityRequestDto,
+  ): Promise<void> {
     const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('user/info/postion')
-  @ApiOperation({ summary: '포지션' })
-  async userPosition(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  @Post('user/info/career')
+  @ApiOperation({ summary: '경력 저장' })
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCarrerRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);
@@ -153,7 +158,7 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Delete('user')
   @ApiOperation({ summary: '회원탈퇴' })
-  async deleteUser(@CurrentUser() user: CurrentUserType, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  async deleteUser(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
 
     return this.commandBus.execute(command);

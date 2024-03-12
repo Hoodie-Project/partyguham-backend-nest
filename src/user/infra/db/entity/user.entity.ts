@@ -8,7 +8,7 @@ import { PartyRequestEntity } from 'src/party/infra/db/entity/apply/party-reques
 import { PartyInviteEntity } from 'src/party/infra/db/entity/apply/party-invite.entity';
 import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { PartyCommentEntity } from 'src/party/infra/db/entity/party/party-comment.entity';
-import { UserPositionEntity } from './user-position.entity';
+import { UserCareerEntity } from './user-career.entity';
 import { OauthEntity } from '../../../../auth/entity/oauth.entity';
 
 @Entity('user')
@@ -25,7 +25,7 @@ export class UserEntity extends BaseEntity {
   @Column('date', { nullable: true })
   birth: Date;
 
-  @Column({ length: 1, enum: ['M', 'F'] }) // 'M' 또는 'F'
+  @Column('char', { length: 1 }) // 'M' 또는 'F'
   gender: string;
 
   @Column('boolean', { nullable: false, default: true })
@@ -43,8 +43,8 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => OauthEntity, (oauth) => oauth.user)
   oauth: OauthEntity[];
 
-  @OneToMany(() => UserPositionEntity, (userPosition) => userPosition.user)
-  userPositions: UserPositionEntity[];
+  @OneToMany(() => UserCareerEntity, (userCareer) => userCareer.user)
+  userCareers: UserCareerEntity[];
 
   @OneToMany(() => FollowEntity, (follow) => follow.follower)
   followers: FollowEntity[];

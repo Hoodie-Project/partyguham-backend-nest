@@ -20,7 +20,7 @@ import { FollowFactory } from './domain/follow/follow.factory';
 import { GetFollowHandler } from './application/query/get-follow.handler';
 import { UserSkillRepository } from './infra/db/repository/user-skill.repository';
 import { UserSkillEntity } from './infra/db/entity/user-skill.entity';
-import { KakaoLoginHandler } from './application/command/kakao-data.handler';
+import { KakaoLoginHandler } from './application/command/kakao-login.handler';
 
 const commandHandlers = [CreateUserHandler, KakaoCodeHandler, KakaoLoginHandler, FollowHandler, UnFollowHandler];
 

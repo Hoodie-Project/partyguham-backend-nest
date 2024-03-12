@@ -2,8 +2,14 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, Unique }
 import { UserEntity } from './user.entity';
 import { PositionEntity } from 'src/position/entity/position.entity';
 
-@Entity('user_position')
-export class UserPositionEntity {
+export enum CareerTypeEnum {
+  PRIMARY = 'primary',
+  SECONDARY = 'secondary',
+  OTHER = 'other',
+}
+
+@Entity('user_career')
+export class UserCareerEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -13,7 +19,16 @@ export class UserPositionEntity {
   @Column()
   positionId: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.userSkills)
+  @Column()
+  year: number;
+
+  @Column('enum', {
+    enum: CareerTypeEnum,
+    nullable: false,
+  })
+  careerType: CareerTypeEnum;
+
+  @ManyToOne(() => UserEntity, (user) => user.userCareers)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
