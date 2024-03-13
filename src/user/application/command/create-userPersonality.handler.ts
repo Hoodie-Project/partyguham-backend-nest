@@ -15,25 +15,48 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
 
   async execute(command: CreateUserPersonalityCommand) {
     let { userId, personality } = command;
-    const survey = await this.personalityService.findAllPersonality();
+    const surveyPersonality = await this.personalityService.findAllPersonality();
 
-    let personalityOptionIds = [];
+    // 저장할 optionId
+    let userPersonalityOptionIds = [];
 
-    // 다중 선택 검사
-    personality.forEach((answer) => {
-      const question = survey.find((survey) => survey.id === answer.questionId);
-
-      if (question.multiple === false && answer.optionId.length > 1) {
-        throw new BadRequestException(`{questionId : ${answer.questionId}} multiple error`);
-      }
-      // optionId 유효 확인
-
-      personalityOptionIds.concat(answer.optionId);
+    const savedUserPersonality = await this.userPersonalityRepository.findByUserId(userId);
+    const saveUserPersonalityOptionIds = savedUserPersonality.map((userPersonality) => {
+      return userPersonality.personalityOptionId;
     });
 
-    // 중복 검사
-    this.userPersonalityRepository.findByPersonalityOptionIds(userId, personalityOptionIds);
+    // 유저 응답에 대한 validation 실행
+    personality.forEach(async (answer) => {
+      const surveyQuestion = surveyPersonality.find((question) => question.id === answer.questionId);
+      const surveyOption = surveyPersonality[answer.questionId].personalityOption.map((option) => option.id);
 
-    // 중복 제외 저장
+      // 이미 설문을 한 항목에 대해 취소
+      const duplicated = saveUserPersonalityOptionIds.some((saveOptionId) => surveyOption.includes(saveOptionId));
+      if (duplicated) {
+        throw new BadRequestException(`이미 설문조사를 한 항목입니다. { id : ${answer.questionId}`);
+      }
+
+      // 다중 선택 체크
+      if (surveyQuestion.multiple === false && answer.optionId.length > 1) {
+        throw new BadRequestException(`중복 선택이 되지 않습니다. { questionId : ${answer.questionId} }`);
+      }
+
+      if (surveyQuestion.multiple === true && answer.optionId.length > 2) {
+        throw new BadRequestException(`중복 선택이 2개이상 되지 않습니다. { questionId : ${answer.questionId} }`);
+      }
+
+      // optionId 유효 확인
+      answer.optionId.map((optionId) => {
+        const result = surveyOption.includes(optionId);
+
+        if (result) {
+          userPersonalityOptionIds.push(optionId);
+        } else {
+          throw new BadRequestException(`유효하지 않는 선택지 입니다.: { optionId : ${optionId} }`);
+        }
+      });
+    });
+
+    // 저장 로직 필요
   }
 }
