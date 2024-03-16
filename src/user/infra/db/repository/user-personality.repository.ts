@@ -10,20 +10,22 @@ export class UserPersonalityRepository implements IUserPersonalityRepository {
   constructor(
     readonly dataSource: DataSource,
     @InjectRepository(UserPersonalityEntity)
-    private userLocationRepository: Repository<UserPersonalityEntity>,
+    private userPersonalityRepository: Repository<UserPersonalityEntity>,
   ) {}
 
   findByPersonalityOptionIds(userId: number, personalityOptionIds: number[]) {
-    return this.userLocationRepository.find({ where: { userId, personalityOptionId: In(personalityOptionIds) } });
+    return this.userPersonalityRepository.find({ where: { userId, personalityOptionId: In(personalityOptionIds) } });
   }
 
   findByUserId(userId: number) {
-    return this.userLocationRepository.find({ where: { userId } });
+    return this.userPersonalityRepository.find({ where: { userId } });
   }
 
-  bulkInsert(userId: number, locationIds: number[]) {
-    const userLocations = locationIds.map((locationId) => ({ userId, locationId }));
+  bulkInsert(userId: number, optionIds: number[]) {
+    const userLocations = optionIds.map((locationId) => ({ userId, locationId }));
 
-    const result = this.userLocationRepository.save(userLocations);
+    const result = this.userPersonalityRepository.save(userLocations);
+
+    return result;
   }
 }

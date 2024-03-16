@@ -3,5 +3,5 @@ import { UserPersonalityEntity } from 'src/user/infra/db/entity/user-personality
 export interface IUserPersonalityRepository {
   findByPersonalityOptionIds: (userId: number, personalityOptionIds: number[]) => Promise<UserPersonalityEntity[]>;
   findByUserId: (userId: number) => Promise<UserPersonalityEntity[]>;
-  bulkInsert: (userId: number, locationIds: number[]) => void;
+  bulkInsert: (userId: number, locationIds: number[]) => Promise<UserPersonalityEntity[]>;
 }
