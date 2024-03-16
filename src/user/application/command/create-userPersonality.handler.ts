@@ -20,6 +20,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     // 저장할 optionId
     let userPersonalityOptionIds = [];
 
+    // 저장 되어있는 값 찾기
     const savedUserPersonality = await this.userPersonalityRepository.findByUserId(userId);
     const saveUserPersonalityOptionIds = savedUserPersonality.map((userPersonality) => {
       return userPersonality.personalityOptionId;
@@ -58,5 +59,8 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     });
 
     // 저장 로직 필요
+    const result = await this.userPersonalityRepository.bulkInsert(userId, userPersonalityOptionIds);
+
+    return result;
   }
 }
