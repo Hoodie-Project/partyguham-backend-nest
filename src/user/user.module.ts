@@ -5,7 +5,7 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './infra/db/entity/user.entity';
 import { CreateUserHandler } from './application/command/create-user.handler';
-import { KakaoLoginHandler } from './application/command/kakao-login.handler';
+import { KakaoCodeHandler } from './application/command/kakao-code.handler';
 import { GetUserHandler } from './application/query/get-user.handler';
 import { UserFactory } from './domain/user/user.factory';
 import { UserRepository } from './infra/db/repository/user.repository';
@@ -20,8 +20,31 @@ import { FollowFactory } from './domain/follow/follow.factory';
 import { GetFollowHandler } from './application/query/get-follow.handler';
 import { UserSkillRepository } from './infra/db/repository/user-skill.repository';
 import { UserSkillEntity } from './infra/db/entity/user-skill.entity';
+import { KakaoLoginHandler } from './application/command/kakao-login.handler';
+import { LocationModule } from 'src/location/location.module';
+import { PositionModule } from 'src/position/position.module';
+import { SkillModule } from 'src/skill/skill.module';
+import { PersonalityModule } from 'src/personality/personality.module';
+import { CreateUserLocationHandler } from './application/command/create-userLocation.handler';
+import { CreateUserPersonalityHandler } from './application/command/create-userPersonality.handler';
+import { CreateUserCareerHandler } from './application/command/create-userCareer.handler';
+import { UserLocationRepository } from './infra/db/repository/user-location.repository';
+import { UserLocationEntity } from './infra/db/entity/user-location.entity';
+import { UserCareerEntity } from './infra/db/entity/user-career.entity';
+import { UserPersonalityEntity } from './infra/db/entity/user-personality.entity';
+import { UserPersonalityRepository } from './infra/db/repository/user-personality.repository';
+import { UserCareerRepository } from './infra/db/repository/user-career.repository';
 
-const commandHandlers = [CreateUserHandler, KakaoLoginHandler, FollowHandler, UnFollowHandler];
+const commandHandlers = [
+  CreateUserHandler,
+  KakaoCodeHandler,
+  KakaoLoginHandler,
+  CreateUserLocationHandler,
+  CreateUserPersonalityHandler,
+  CreateUserCareerHandler,
+  FollowHandler,
+  UnFollowHandler,
+];
 
 const queryHandlers = [UserByNicknameHandler, GetUserHandler, GetUsersHandler, GetFollowHandler];
 
@@ -33,11 +56,29 @@ const repositories = [
   { provide: 'UserRepository', useClass: UserRepository },
   { provide: 'FollowRepository', useClass: FollowRepository },
   { provide: 'UserSkillRepository', useClass: UserSkillRepository },
+  { provide: 'UserLocationRepository', useClass: UserLocationRepository },
+  { provide: 'UserPersonalityRepository', useClass: UserPersonalityRepository },
+  { provide: 'UserCareerRepository', useClass: UserCareerRepository },
 ];
 
 @Module({
   controllers: [UserController],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
-  imports: [CqrsModule, AuthModule, TypeOrmModule.forFeature([UserEntity, FollowEntity, UserSkillEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      UserEntity,
+      FollowEntity,
+      UserSkillEntity,
+      UserLocationEntity,
+      UserCareerEntity,
+      UserPersonalityEntity,
+    ]),
+    CqrsModule,
+    AuthModule,
+    PositionModule,
+    LocationModule,
+    PersonalityModule,
+    SkillModule,
+  ],
 })
 export class UserModule {}

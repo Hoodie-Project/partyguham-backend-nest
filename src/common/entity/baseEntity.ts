@@ -1,10 +1,8 @@
 import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
-export enum StatusType {
+export enum StatusEnum {
   ACTIVE = 'active', //* 데이터가 활성화되어 사용 가능한 상태
   INACTIVE = 'inactive', //* 데이터가 비활성화되어 사용 불가능한 상태
-  SURVEY_READY = 'survey_ready', //* 설문조사 전 상태
-  SURVEY_ONGOING = 'survey_ongoing', //* 설문조사 중 상태
   DELETED = 'deleted', //* 데이터가 삭제된 상태
   PENDING = 'pending', // 데이터가 처리 대기 중인 상태
   PROCESSING = 'processing', // 데이터가 처리 중인 상태
@@ -21,10 +19,10 @@ export enum StatusType {
 export class BaseEntity {
   @Column({
     type: 'enum',
-    enum: StatusType,
-    default: StatusType.ACTIVE,
+    enum: StatusEnum,
+    default: StatusEnum.ACTIVE,
   })
-  status: StatusType;
+  status: StatusEnum;
 
   @CreateDateColumn()
   createdAt: Date;

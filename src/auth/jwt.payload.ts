@@ -1,7 +1,5 @@
-export type Payload = {
+export type PayloadType = {
   id: string;
-};
-
-export type DecodedPayload = {
-  id: number;
+  iat: number;
+  exp: number;
 };
