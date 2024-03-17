@@ -3,18 +3,16 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuard
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentAccount } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { DecodedPayload } from 'src/auth/jwt.payload';
+import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
-import { KakaoLoginCommand } from '../application/command/kakao-login.command';
+import { KakaoCodeCommand } from '../application/command/kakao-code.command';
 import { CreateUserCommand } from '../application/command/create-user.command';
 import { UpdateUserCommand } from '../application/command/update-user.command';
 import { FollowCommand } from '../application/command/follow.command';
 import { UnfollowCommand } from '../application/command/unfollow.command';
 
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
-import { UserLoginRequestDto } from './dto/request/user-login.request.dto';
 import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
 import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
@@ -27,64 +25,217 @@ import { UserResponseDto, UsersResponseDto } from './dto/response/UserResponseDt
 import { FollowQueryRequestDto } from './dto/request/follow.user.request.dto';
 import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
+import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
+import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
+import { KakaoLoginCommand } from '../application/command/kakao-login.command';
+import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
+import { CreateUserLocationRequestDto } from './dto/request/create-userlocation.request.dto';
+import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
+import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
+import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
+import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
+const crypto = require('crypto');
 
-@ApiTags('users')
-@Controller('users')
+@ApiTags('user')
+@Controller('user')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
-  @Post('')
-  @ApiOperation({ summary: '일반 회원가입 - 카카오 로그인 안될 시 테스트용 구현, 카카오 완료시 해당 api 삭제' })
-  async createUser(@Res() res: Response, @Body() dto: CreateUserRequestDto): Promise<void> {
-    const { account, nickname, email } = dto;
+  // @Get('key')
+  // async ket(@Res() res: Response) {
+  //   const iv = crypto.randomBytes(16);
 
-    const command = new CreateUserCommand(account, nickname, email);
+  //   console.log('Initialization Vector (IV):', iv);
+  //   console.log('Random Key:', iv.toString('hex'));
+  // }
 
-    const reuslt = await this.commandBus.execute(command);
+  @Get('kakao')
+  @ApiOperation({ summary: '카카오 로그인' })
+  async signinByKakao(@Res() res: Response) {
+    const command = new KakaoCodeCommand();
 
-    res.cookie('refreshToken', reuslt.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict',
-    });
+    const result = await this.commandBus.execute(command);
 
-    res.send({ accessToken: reuslt.accessToken });
+    res.redirect(result);
   }
 
-  @Post('kakao/login')
-  @ApiOperation({ summary: 'Kakao 로그인 / 자동 회원가입' })
-  async login(@Res() res: Response, @Body() dto: UserLoginRequestDto) {
-    const { accessToken } = dto;
+  @Get('kakao/callback')
+  @ApiOperation({ summary: '카카오 로그인 리다이렉트 API' })
+  async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
+    const command = new KakaoLoginCommand(code);
 
-    const command = new KakaoLoginCommand(accessToken);
+    const result = await this.commandBus.execute(command);
 
-    const reuslt = await this.commandBus.execute(command);
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+      });
+      res.status(200).send({ accessToken: result.accessToken });
+    }
 
-    res.cookie('refreshToken', reuslt.refreshToken, {
+    if (result.type === 'signup') {
+      res.status(404).send({ signupAccessToken: result.signupAccessToken, email: result.email });
+    }
+  }
+
+  @UseGuards(SignupJwtAuthGuard)
+  @Get('check-nickname')
+  @ApiOperation({ summary: '닉네임 중복검사' })
+  @ApiResponse({
+    status: 200,
+    description: '사용가능한 닉네임 입니다.',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: '중복된 닉네임 입니다.',
+    type: UserResponseDto,
+  })
+  async checkNickname(@Query() query: NicknameQueryRequestDto) {
+    const { nickname } = query;
+    const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
+
+    await this.queryBus.execute(getUserInfoQuery);
+
+    return '사용가능한 닉네임 입니다.';
+  }
+
+  @UseGuards(SignupJwtAuthGuard)
+  @Post('signup/required')
+  @ApiOperation({ summary: '회원가입 (필수)' })
+  async signUpByKakao(
+    @CurrentUser() user: CurrentUserType,
+    @Res() res: Response,
+    @Body() dto: CreateUserRequestDto,
+  ): Promise<void> {
+    const { nickname, email, gender, birth } = dto;
+    const oauthId = user.id;
+    const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
+
+    const result = await this.commandBus.execute(command);
+
+    res.cookie('refreshToken', result.refreshToken, {
       httpOnly: true,
       secure: true,
       sameSite: 'strict',
     });
 
-    res.send({ accessToken: reuslt.accessToken });
+    res.send({ accessToken: result.accessToken });
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('info')
-  @ApiOperation({ summary: '추가 정보 기입 또는 수정' })
-  async updateUser(@CurrentAccount() payload: DecodedPayload, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    const { isParty, meetingType, meetingWeek, meetingTime, mbti, skillIds } = dto;
+  @Post('me/location')
+  @ApiOperation({ summary: '지역 저장' })
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto): Promise<void> {
+    const { locationIds } = body;
 
-    const command = new UpdateUserCommand(payload.id, isParty, meetingType, meetingWeek, meetingTime, mbti, skillIds);
+    const command = new CreateUserLocationCommand(user.id, locationIds);
 
     return this.commandBus.execute(command);
   }
 
-  @Get('')
-  @ApiOperation({ summary: '유저 다수 조회' })
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('me/personality')
+  @ApiOperation({ summary: '성향 저장' })
+  async userPersonality(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: CreateUserPersonalityRequestDto,
+  ): Promise<void> {
+    const { userPersonality } = body;
+    const command = new CreateUserPersonalityCommand(user.id, userPersonality);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('me/career')
+  @ApiOperation({ summary: '경력 저장' })
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto): Promise<void> {
+    const { primary, secondary, other } = body;
+
+    const command = new CreateUserCareerCommand(user.id, primary, secondary, other);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('')
+  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
+  async deleteUser(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('signout')
+  @ApiOperation({ summary: '(개발중) 로그아웃' })
+  async signOut(@CurrentUser() user: CurrentUserType): Promise<void> {}
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/info')
+  @ApiOperation({ summary: '(개발중) 내정보 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 내정보 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(account.id);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+
+    return plainToInstance(UserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('info')
+  @ApiOperation({ summary: '(개발중) 내정보 변경' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 내정보 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async updateUser(@CurrentUser() account): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(account.id);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+
+    return plainToInstance(UserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('image')
+  @ApiOperation({ summary: '(개발중) 이미지 변경' })
+  @ApiResponse({
+    status: 200,
+    description: '.',
+    type: UserResponseDto,
+  })
+  async updateImage(@CurrentUser() account) {}
+
+  // @Get('users/:nickname')
+  // @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '성공적으로 유저 목록을 가져왔습니다.',
+  //   type: UserResponseDto,
+  // })
+  // async getUser(@Param() param: UserParamRequestDto) {
+  //   const userInfoByNickname = new UserByNicknameQuery(param.nickname);
+
+  //   const result = this.queryBus.execute(userInfoByNickname);
+
+  //   return plainToInstance(UserResponseDto, result);
+  // }
+
+  @Get('list')
+  @ApiOperation({ summary: '(개발중) 유저 다수 조회' })
   @ApiResponse({
     status: 200,
     description: '성공적으로 유저 목록을 가져왔습니다.',
@@ -100,53 +251,22 @@ export class UserController {
     return plainToInstance(UserResponseDto, result);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Get('info')
-  @ApiOperation({ summary: '내정보 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 내정보 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getMyInfo(@CurrentAccount() account: DecodedPayload): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(account.id);
-
-    const result = this.queryBus.execute(getUserInfoQuery);
-
-    return plainToInstance(UserResponseDto, result);
-  }
-
-  @Get('info/:nickname')
-  @ApiOperation({ summary: '닉네임으로 유저 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getUser(@Param() param: UserParamRequestDto) {
-    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
-
-    const result = this.queryBus.execute(userInfoByNickname);
-
-    return plainToInstance(UserResponseDto, result);
-  }
-
-  // 팔로우
+  //! MVP 제외
   @UseGuards(AccessJwtAuthGuard)
   @Get('follow')
-  @ApiOperation({ summary: '팔로워, 팔로잉 목록 조회' })
+  @ApiOperation({ summary: '(MVP 제외) 팔로워, 팔로잉 목록 조회' })
   @ApiResponse({
     status: 200,
     description: '성공적으로 팔로우 or 팔로잉이 조회 되었습니다.',
     type: FollowResponseDto,
   })
   async getFollow(
-    @CurrentAccount() payload: DecodedPayload,
+    @CurrentUser() user: CurrentUserType,
     @Query() query: FollowQueryRequestDto,
   ): Promise<FollowResponseDto> {
     const { page, limit, sort, order } = query;
 
-    const userInfoByNickname = new GetFollowQuery(payload.id, page, limit, sort, order);
+    const userInfoByNickname = new GetFollowQuery(user.id, page, limit, sort, order);
 
     const result = await this.queryBus.execute(userInfoByNickname);
 
@@ -155,26 +275,26 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Post('follow/:nickname')
-  @ApiOperation({ summary: '팔로우' })
+  @ApiOperation({ summary: '(MVP 제외) 팔로우' })
   @ApiResponse({
     status: 204,
     description: '성공적으로 팔로우 되었습니다.',
   })
-  async follow(@CurrentAccount() payload: DecodedPayload, @Param() param: UserParamRequestDto) {
-    const command = new FollowCommand(payload.id, param.nickname);
+  async follow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
+    const command = new FollowCommand(user.id, param.nickname);
 
     await this.commandBus.execute(command);
   }
 
   @UseGuards(AccessJwtAuthGuard)
   @Delete('unfollow/:nickname')
-  @ApiOperation({ summary: '언팔로우' })
+  @ApiOperation({ summary: '(MVP 제외) 언팔로우' })
   @ApiResponse({
     status: 204,
     description: '성공적으로 언팔로우 되었습니다.',
   })
-  async unfollow(@CurrentAccount() payload: DecodedPayload, @Param() param: UserParamRequestDto) {
-    const command = new UnfollowCommand(payload.id, param.nickname);
+  async unfollow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
+    const command = new UnfollowCommand(user.id, param.nickname);
 
     await this.commandBus.execute(command);
   }

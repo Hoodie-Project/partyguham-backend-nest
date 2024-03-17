@@ -1,48 +1,72 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { AuthService } from 'src/auth/auth.service';
-import { KakaoLoginCommand } from './kakao-login.command';
+
 import axios from 'axios';
+import { KakaoLoginCommand } from './kakao-login.command';
+import { PlatformEnum } from 'src/auth/entity/oauth.entity';
+import { OauthService } from 'src/auth/oauth.service';
 
 @Injectable()
 @CommandHandler(KakaoLoginCommand)
 export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
   constructor(
-    @Inject('UserRepository')
-    private userRepository: IUserRepository,
+    private oauthService: OauthService,
     private authService: AuthService,
   ) {}
 
-  async execute({ accessToken }: KakaoLoginCommand) {
-    let userId: number;
+  async execute({ code }: KakaoLoginCommand) {
+    const kakao_api_url = await axios.get(
+      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${process.env.KAKAO_RESTAPI_KEY}&redirect_url=${process.env.KAKAO_REDIRECT_URI}&code=${code}&client_secret=${process.env.KAKAO_CLIENT_SECRET}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        },
+      },
+    );
+    const kakaoData = await kakao_api_url.data;
+    console.log('kakao_api_url.data', kakao_api_url.data);
+
+    const kakaoAccessToken = kakaoData.access_token;
+    const kakaoRefreshToken = kakaoData.refresh_token;
 
     const kakaoUserInfo = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: `Bearer ${kakaoAccessToken}`,
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
     });
 
-    const user = await this.userRepository.findByAccount(kakaoUserInfo.data.id);
-    if (!user) {
-      const save = await this.userRepository.create(
-        kakaoUserInfo.data.id,
-        kakaoUserInfo.data.kakao_account.name,
-        kakaoUserInfo.data.kakao_account.email,
-      );
-      userId = save.id;
-    } else {
-      userId = user.getId();
+    const externalId: string = kakaoUserInfo.data.id;
+    const email = kakaoUserInfo.data.kakao_account.email;
+
+    const oauth = await this.oauthService.findByExternalId(externalId);
+
+    if (oauth && !oauth.userId) {
+      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+
+      return { type: 'signup', signupAccessToken, email };
     }
 
-    const encryptUserId = await this.authService.encrypt(String(userId));
+    if (!oauth) {
+      const createOauth = await this.oauthService.createWithoutUserId(externalId, PlatformEnum.KAKAO, kakaoAccessToken);
 
-    const createAccessToken = await this.authService.createAccessToken(encryptUserId);
-    const createRefreshToken = await this.authService.createRefreshToken(encryptUserId);
+      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-    this.authService.saveRefreshToken(userId, createRefreshToken);
+      return { type: 'signup', signupAccessToken, email };
+    }
 
-    return { accessToken: createAccessToken, refreshToken: createRefreshToken };
+    if (oauth.userId) {
+      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+
+      const accessToken = await this.authService.createAccessToken(encryptOauthId);
+      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+
+      this.authService.saveRefreshToken(oauth.userId, refreshToken);
+
+      return { type: 'login', accessToken, refreshToken };
+    }
   }
 }

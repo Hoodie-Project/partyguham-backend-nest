@@ -4,6 +4,7 @@ import { CreateUserCommand } from './create-user.command';
 import { UserFactory } from '../../domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { AuthService } from 'src/auth/auth.service';
+import { OauthService } from 'src/auth/oauth.service';
 
 @Injectable()
 @CommandHandler(CreateUserCommand)
@@ -12,23 +13,32 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     private userFactory: UserFactory,
     @Inject('UserRepository') private userRepository: IUserRepository,
     private authService: AuthService,
+    private oauthService: OauthService,
   ) {}
 
   async execute(command: CreateUserCommand) {
-    const { account, nickname, email } = command;
+    const { oauthId, nickname, email, gender, birth } = command;
 
-    const verify = await this.userRepository.findByNickname(account);
-    if (verify !== null) {
-      throw new ConflictException('유저가 이미 존재 합니다.');
+    const checkEmail = await this.userRepository.findByNickname(nickname);
+    if (!checkEmail) {
+      throw new ConflictException('이미 존재하는 이메일 입니다.');
     }
 
-    const user = await this.userRepository.create(account, nickname, email);
-    const userId = user.id;
-    const encryptUserId = await this.authService.encrypt(String(userId));
+    const checkNickname = await this.userRepository.findByNickname(nickname);
+    if (!checkNickname) {
+      throw new ConflictException('이미 존재하는 닉네임 입니다.');
+    }
 
-    const accessToken = await this.authService.createAccessToken(encryptUserId);
-    const refreshToken = await this.authService.createRefreshToken(encryptUserId);
+    const user = await this.userRepository.createUser(nickname, email, gender, birth);
+    const userId = user.getId();
+    await this.oauthService.updateUserIdById(oauthId, userId);
+
+    const encryptOauthId = await this.authService.encrypt(String(oauthId));
+
+    const accessToken = await this.authService.createAccessToken(encryptOauthId);
+    const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
     this.authService.saveRefreshToken(userId, refreshToken);
+
     return { accessToken, refreshToken };
   }
 }
