@@ -36,10 +36,6 @@ import { PersonalityModule } from './personality/personality.module';
     }),
     UserModule,
     // PartyModule,
-    SkillModule,
-    PositionModule,
-    LocationModule,
-    PersonalityModule,
   ],
   controllers: [AppController],
   providers: [
