@@ -11,5 +11,6 @@ import { PersonalityOptionRepository } from './repository/personality-option.rep
   controllers: [PersonalityController],
   providers: [PersonalityService, PersonalityQuestionRepository, PersonalityOptionRepository],
   imports: [TypeOrmModule.forFeature([PersonalityOptionEntity, PersonalityQuestionEntity])],
+  exports: [PersonalityService],
 })
 export class PersonalityModule {}

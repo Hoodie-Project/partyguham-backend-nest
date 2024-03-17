@@ -33,6 +33,7 @@ import { CreateUserLocationRequestDto } from './dto/request/create-userlocation.
 import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
+import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
 const crypto = require('crypto');
 
 @ApiTags('users')
@@ -145,8 +146,8 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @Body() body: CreateUserPersonalityRequestDto,
   ): Promise<void> {
-    const { personality } = body;
-    const command = new CreateUserPersonalityCommand(user.id, personality);
+    const { userPersonality } = body;
+    const command = new CreateUserPersonalityCommand(user.id, userPersonality);
 
     return this.commandBus.execute(command);
   }
@@ -155,7 +156,9 @@ export class UserController {
   @Post('user/info/career')
   @ApiOperation({ summary: '경력 저장' })
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(user.id);
+    const { primary, secondary, other } = body;
+
+    const command = new CreateUserCareerCommand(user.id, primary, secondary, other);
 
     return this.commandBus.execute(command);
   }

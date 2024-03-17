@@ -12,7 +12,7 @@ import {
   Max,
 } from 'class-validator';
 
-export class PersonalityDto {
+export class UserPersonalityDto {
   @ApiProperty({
     example: 1,
     description: 'questionId(pk)',
@@ -42,9 +42,9 @@ export class CreateUserPersonalityRequestDto {
     example: [{ questionId: 1, optionId: [1, 2] }],
     description: '성향 저장',
   })
-  @Type(() => PersonalityDto)
+  @Type(() => UserPersonalityDto)
   @ArrayUnique()
   @IsArray()
   @IsNotEmpty()
-  readonly personality: PersonalityDto[];
+  readonly userPersonality: UserPersonalityDto[];
 }

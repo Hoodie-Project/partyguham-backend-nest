@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PositionEntity } from '../entity/position.entity';
@@ -13,6 +13,12 @@ export class PositionRepository {
 
   async findAll() {
     const result = await this.positionRepository.find();
+
+    return result;
+  }
+
+  async findByIds(ids: number[]) {
+    const result = await this.positionRepository.find({ where: { id: In(ids) } });
 
     return result;
   }

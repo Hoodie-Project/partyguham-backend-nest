@@ -9,5 +9,6 @@ import { PositionRepository } from './repository/position.repository';
   controllers: [PositionController],
   providers: [PositionService, PositionRepository],
   imports: [TypeOrmModule.forFeature([PositionEntity])],
+  exports: [PositionService],
 })
 export class PositionModule {}

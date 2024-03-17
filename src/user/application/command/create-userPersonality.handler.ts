@@ -14,7 +14,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
   ) {}
 
   async execute(command: CreateUserPersonalityCommand) {
-    let { userId, personality } = command;
+    let { userId, userPersonality } = command;
     const surveyPersonality = await this.personalityService.findAllPersonality();
 
     // 저장할 optionId
@@ -27,7 +27,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     });
 
     // 유저 응답에 대한 validation 실행
-    personality.forEach(async (answer) => {
+    userPersonality.forEach(async (answer) => {
       const surveyQuestion = surveyPersonality.find((question) => question.id === answer.questionId);
       const surveyOption = surveyPersonality[answer.questionId].personalityOption.map((option) => option.id);
 
@@ -58,7 +58,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
       });
     });
 
-    // 저장 로직 필요
+    // 저장
     const result = await this.userPersonalityRepository.bulkInsert(userId, userPersonalityOptionIds);
 
     return result;

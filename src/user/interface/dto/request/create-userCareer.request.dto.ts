@@ -13,7 +13,7 @@ import {
   Min,
 } from 'class-validator';
 
-class CareerDto {
+export class UserCareerDto {
   @ApiProperty({
     example: 1,
     description: 'Position id(pk)',
@@ -38,29 +38,29 @@ class CareerDto {
 export class CreateUserCareerRequestDto {
   @ApiProperty({
     description: '주 경력',
-    type: CareerDto,
+    type: UserCareerDto,
   })
-  @Type(() => CareerDto)
+  @Type(() => UserCareerDto)
   @IsNotEmpty()
-  readonly primary: CareerDto;
+  readonly primary: UserCareerDto;
 
   @ApiProperty({
     description: '부 경력',
-    type: CareerDto,
+    type: UserCareerDto,
   })
-  @Type(() => CareerDto)
+  @Type(() => UserCareerDto)
   @IsOptional()
-  readonly secondary: CareerDto;
+  readonly secondary: UserCareerDto;
 
   @ApiProperty({
     description: '기타 경력',
-    type: CareerDto,
+    type: UserCareerDto,
   })
   @ArrayMaxSize(3)
   @ArrayMinSize(1)
   @ArrayUnique()
-  @Type(() => CareerDto)
+  @Type(() => UserCareerDto)
   @IsArray()
   @IsOptional()
-  readonly other: number[];
+  readonly other: UserCareerDto[];
 }
