@@ -36,21 +36,21 @@ import { CreateUserPersonalityCommand } from '../application/command/create-user
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
 const crypto = require('crypto');
 
-@ApiTags('users')
-@Controller('users')
+@ApiTags('user')
+@Controller('user')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
-  @Get('key')
-  async ket(@Res() res: Response) {
-    const iv = crypto.randomBytes(16);
+  // @Get('key')
+  // async ket(@Res() res: Response) {
+  //   const iv = crypto.randomBytes(16);
 
-    console.log('Initialization Vector (IV):', iv);
-    console.log('Random Key:', iv.toString('hex'));
-  }
+  //   console.log('Initialization Vector (IV):', iv);
+  //   console.log('Random Key:', iv.toString('hex'));
+  // }
 
   @Get('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
@@ -84,7 +84,7 @@ export class UserController {
   }
 
   @UseGuards(SignupJwtAuthGuard)
-  @Get('users/check-nickname')
+  @Get('check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
   @ApiResponse({
     status: 200,
@@ -106,7 +106,7 @@ export class UserController {
   }
 
   @UseGuards(SignupJwtAuthGuard)
-  @Post('users/signup/required')
+  @Post('signup/required')
   @ApiOperation({ summary: '회원가입 (필수)' })
   async signUpByKakao(
     @CurrentUser() user: CurrentUserType,
@@ -129,7 +129,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('user/info/location')
+  @Post('me/location')
   @ApiOperation({ summary: '지역 저장' })
   async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto): Promise<void> {
     const { locationIds } = body;
@@ -140,7 +140,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('user/info/personality')
+  @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
   async userPersonality(
     @CurrentUser() user: CurrentUserType,
@@ -153,7 +153,7 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post('user/info/career')
+  @Post('me/career')
   @ApiOperation({ summary: '경력 저장' })
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto): Promise<void> {
     const { primary, secondary, other } = body;
@@ -164,8 +164,8 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('user')
-  @ApiOperation({ summary: '회원탈퇴' })
+  @Delete('')
+  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
   async deleteUser(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
     const command = new UpdateUserCommand(user.id);
 
@@ -173,13 +173,13 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('user/signout')
-  @ApiOperation({ summary: '로그아웃' })
+  @Delete('signout')
+  @ApiOperation({ summary: '(개발중) 로그아웃' })
   async signOut(@CurrentUser() user: CurrentUserType): Promise<void> {}
 
   @UseGuards(AccessJwtAuthGuard)
-  @Get('user/info')
-  @ApiOperation({ summary: '내정보 조회' })
+  @Get('me/info')
+  @ApiOperation({ summary: '(개발중) 내정보 조회' })
   @ApiResponse({
     status: 200,
     description: '성공적으로 내정보 목록을 가져왔습니다.',
@@ -194,8 +194,8 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('user/info')
-  @ApiOperation({ summary: '내정보 변경' })
+  @Patch('info')
+  @ApiOperation({ summary: '(개발중) 내정보 변경' })
   @ApiResponse({
     status: 200,
     description: '성공적으로 내정보 목록을 가져왔습니다.',
@@ -210,8 +210,8 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('user/image')
-  @ApiOperation({ summary: '이미지 변경' })
+  @Patch('image')
+  @ApiOperation({ summary: '(개발중) 이미지 변경' })
   @ApiResponse({
     status: 200,
     description: '.',
@@ -234,8 +234,8 @@ export class UserController {
   //   return plainToInstance(UserResponseDto, result);
   // }
 
-  @Get('users')
-  @ApiOperation({ summary: '유저 다수 조회' })
+  @Get('list')
+  @ApiOperation({ summary: '(개발중) 유저 다수 조회' })
   @ApiResponse({
     status: 200,
     description: '성공적으로 유저 목록을 가져왔습니다.',
@@ -254,7 +254,7 @@ export class UserController {
   //! MVP 제외
   @UseGuards(AccessJwtAuthGuard)
   @Get('follow')
-  @ApiOperation({ summary: '팔로워, 팔로잉 목록 조회' })
+  @ApiOperation({ summary: '(MVP 제외) 팔로워, 팔로잉 목록 조회' })
   @ApiResponse({
     status: 200,
     description: '성공적으로 팔로우 or 팔로잉이 조회 되었습니다.',
@@ -275,7 +275,7 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Post('follow/:nickname')
-  @ApiOperation({ summary: '팔로우' })
+  @ApiOperation({ summary: '(MVP 제외) 팔로우' })
   @ApiResponse({
     status: 204,
     description: '성공적으로 팔로우 되었습니다.',
@@ -288,7 +288,7 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Delete('unfollow/:nickname')
-  @ApiOperation({ summary: '언팔로우' })
+  @ApiOperation({ summary: '(MVP 제외) 언팔로우' })
   @ApiResponse({
     status: 204,
     description: '성공적으로 언팔로우 되었습니다.',
