@@ -2,8 +2,9 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGu
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
-import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { CurrentAccount } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { DecodedPayload } from 'src/auth/jwt.payload';
 
 import { CreatePartyCommand } from '../application/command/create-party.comand';
 import { UpdatePartyCommand } from '../application/command/update-party.comand';
@@ -57,10 +58,10 @@ export class PartyController {
 
   @Post('')
   @ApiOperation({ summary: '파티(게시물) 생성' })
-  async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
+  async createParty(@CurrentAccount() payload: DecodedPayload, @Body() dto: CreatePartyRequestDto): Promise<void> {
     const { title, content, positionId } = dto;
 
-    const command = new CreatePartyCommand(user.id, title, content, positionId);
+    const command = new CreatePartyCommand(payload.id, title, content, positionId);
 
     return this.commandBus.execute(command);
   }
@@ -68,13 +69,13 @@ export class PartyController {
   @Put(':partyId')
   @ApiOperation({ summary: '파티(게시물) 수정' })
   async updateParty(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
   ): Promise<void> {
     const { title, content } = dto;
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, title, content);
+    const command = new UpdatePartyCommand(payload.id, param.partyId, title, content);
 
     return this.commandBus.execute(command);
   }
@@ -82,8 +83,8 @@ export class PartyController {
   @HttpCode(204)
   @Delete(':partyId')
   @ApiOperation({ summary: '파티(게시물) 종료 (소프트 삭제)' })
-  async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyCommand(user.id, param.partyId);
+  async deleteParty(@CurrentAccount() payload: DecodedPayload, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(payload.id, param.partyId);
 
     this.commandBus.execute(command);
   }
@@ -91,10 +92,10 @@ export class PartyController {
   // 좋아요
   @Get(':partyId')
   @ApiOperation({ summary: '파티(게시물) 좋아요 목록 조회' })
-  async getlikes(@CurrentUser() user: CurrentUserType, @Query() query: PartyQueryRequestDto): Promise<void> {
+  async getlikes(@CurrentAccount() payload: DecodedPayload, @Query() query: PartyQueryRequestDto): Promise<void> {
     const { page, limit, sort, order } = query;
 
-    const party = new GetPartyLikeQuery(user.id, page, limit, sort, order);
+    const party = new GetPartyLikeQuery(payload.id, page, limit, sort, order);
 
     this.queryBus.execute(party);
   }
@@ -102,8 +103,8 @@ export class PartyController {
   @HttpCode(204)
   @Post('like/:partyId')
   @ApiOperation({ summary: '파티(게시물) 좋아요' })
-  async createPartyToLike(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new CreatePartyLikeCommand(user.id, param.partyId);
+  async createPartyToLike(@CurrentAccount() payload: DecodedPayload, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new CreatePartyLikeCommand(payload.id, param.partyId);
 
     this.commandBus.execute(command);
   }
@@ -111,8 +112,8 @@ export class PartyController {
   @HttpCode(204)
   @Delete('like/:partyId')
   @ApiOperation({ summary: '파티(게시물) 좋아요 취소' })
-  async deletePartyToLike(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyLikeCommand(user.id, param.partyId);
+  async deletePartyToLike(@CurrentAccount() payload: DecodedPayload, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyLikeCommand(payload.id, param.partyId);
 
     this.commandBus.execute(command);
   }
@@ -121,13 +122,13 @@ export class PartyController {
   @Post(':partyId/comments')
   @ApiOperation({ summary: '파티(게시물) 댓글 생성' })
   async createPartyComment(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param() param: PartyRequestDto,
     @Body() dto: PartyCommentRequestDto,
   ): Promise<void> {
     const { comment } = dto;
 
-    const command = new CreateCommentCommand(user.id, param.partyId, comment);
+    const command = new CreateCommentCommand(payload.id, param.partyId, comment);
 
     return this.commandBus.execute(command);
   }
@@ -135,21 +136,24 @@ export class PartyController {
   @Put('comments/:commentId')
   @ApiOperation({ summary: '파티(게시물) 댓글 수정' })
   async updatePartyComment(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param() param: CommentRequestDto,
     @Body() dto: PartyCommentRequestDto,
   ): Promise<void> {
     const { comment } = dto;
 
-    const command = new UpdateCommentCommand(param.commentId, user.id, comment);
+    const command = new UpdateCommentCommand(param.commentId, payload.id, comment);
 
     return this.commandBus.execute(command);
   }
 
   @Delete('comments/:commentId')
   @ApiOperation({ summary: '파티(게시물) 댓글 삭제' })
-  async deletePartyComment(@CurrentUser() user: CurrentUserType, @Param() param: CommentRequestDto): Promise<void> {
-    const command = new DeleteCommentCommand(param.commentId, user.id);
+  async deletePartyComment(
+    @CurrentAccount() payload: DecodedPayload,
+    @Param() param: CommentRequestDto,
+  ): Promise<void> {
+    const command = new DeleteCommentCommand(param.commentId, payload.id);
 
     return this.commandBus.execute(command);
   }
@@ -158,7 +162,7 @@ export class PartyController {
   @Get(':partyId/request')
   @ApiOperation({ summary: '파티 신청 조회' })
   async getPartyRequestList(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param('partyId') partyId: number,
     @Body() dto: PartyCommentRequestDto,
   ): Promise<void> {
@@ -167,13 +171,19 @@ export class PartyController {
 
   @Post(':partyId/request')
   @ApiOperation({ summary: '파티 신청' })
-  async sendPartyRequest(@CurrentUser() user: CurrentUserType, @Param('commentId') commentId: number): Promise<void> {
+  async sendPartyRequest(
+    @CurrentAccount() payload: DecodedPayload,
+    @Param('commentId') commentId: number,
+  ): Promise<void> {
     commentId;
   }
 
   @Post(':partyId/request')
   @ApiOperation({ summary: '파티 신청 취소' })
-  async deletePartyRequest(@CurrentUser() user: CurrentUserType, @Param('commentId') commentId: number): Promise<void> {
+  async deletePartyRequest(
+    @CurrentAccount() payload: DecodedPayload,
+    @Param('commentId') commentId: number,
+  ): Promise<void> {
     commentId;
   }
 
@@ -181,7 +191,7 @@ export class PartyController {
   @Get(':partyId/invite')
   @ApiOperation({ summary: '파티 초대 조회' })
   async getPartyInviteList(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param('partyId') partyId: number,
     @Body() dto: PartyCommentRequestDto,
   ): Promise<void> {
@@ -191,7 +201,7 @@ export class PartyController {
   @Post(':partyId/invite/:nickname')
   @ApiOperation({ summary: '파티 초대' })
   async sendPartyInvite(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param('commentId') commentId: number,
     @Param('nickname') nickname: string,
     @Body() dto: PartyRequestDto,
@@ -202,7 +212,7 @@ export class PartyController {
   @Delete(':partyId/invite/:nickname')
   @ApiOperation({ summary: '파티 초대 취소' })
   async deletePartyInvite(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param('commentId') commentId: number,
     @Param('nickname') nickname: string,
     @Body() dto: PartyRequestDto,
@@ -214,7 +224,7 @@ export class PartyController {
   @Post(':partyId/transfer')
   @ApiOperation({ summary: '파티장 위임' })
   async transferPartyLeadership(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentAccount() payload: DecodedPayload,
     @Param('commentId') commentId: number,
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {

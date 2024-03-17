@@ -39,7 +39,7 @@ export class PartyUserEntity {
   @JoinColumn({ name: 'party_id', referencedColumnName: 'id' })
   party: PartyEntity;
 
-  @ManyToOne(() => PositionEntity, (user) => user.userPositions, {
+  @ManyToOne(() => PositionEntity, (user) => user.position, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

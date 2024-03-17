@@ -2,16 +2,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { OauthService } from './oauth.service';
 import { AuthService } from './auth.service';
-import { PayloadType } from './jwt.payload';
+import { DecodedPayload } from './jwt.payload';
 
 @Injectable()
 export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
-  constructor(
-    private oauthService: OauthService,
-    private authService: AuthService,
-  ) {
+  constructor(private authService: AuthService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_ACCESS_SECRET,
@@ -19,17 +15,10 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
     });
   }
 
-  async validate(payload: PayloadType) {
-    if (payload.id) {
-      const decryptUserId = Number(this.authService.decrypt(payload.id));
-      const oauth = await this.oauthService.findById(decryptUserId);
-      const userId = oauth.userId;
-
-      if (!userId) {
-        throw new UnauthorizedException('필수 회원가입이 필요합니다.');
-      } else {
-        return { userId };
-      }
+  async validate(payload: { id: string; iat: number; exp: number }): Promise<DecodedPayload> {
+    if (payload) {
+      const id: number = Number(this.authService.decrypt(payload.id));
+      return { id }; // request.user
     } else {
       throw new UnauthorizedException('Unauthorized');
     }

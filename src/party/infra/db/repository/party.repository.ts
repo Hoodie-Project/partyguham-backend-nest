@@ -6,7 +6,7 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { PartyEntity } from '../entity/party/party.entity';
 import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { Party } from 'src/party/domain/party/party';
-import { StatusEnum } from 'src/common/entity/baseEntity';
+import { StatusType } from 'src/common/entity/baseEntity';
 
 @Injectable()
 export class PartyRepository implements IPartyRepository {
@@ -43,7 +43,7 @@ export class PartyRepository implements IPartyRepository {
 
   async delete(partyId: number) {
     const party = await this.findOne(partyId);
-    const status = StatusEnum.DELETED;
+    const status = StatusType.DELETED;
 
     await this.partyRepository.save({ ...party, status });
   }

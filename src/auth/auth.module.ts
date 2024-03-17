@@ -8,13 +8,10 @@ import { AccessStrategy } from './access.strategy';
 import { AuthRepository } from './repository/auth.repository';
 import { RefreshStrategy } from './refresh.strategy';
 import { AuthController } from './auth.controller';
-import { OauthEntity } from './entity/oauth.entity';
-import { OauthRepository } from './repository/oauth.repository';
-import { OauthService } from './oauth.service';
 
 @Module({
   controllers: [AuthController],
-  providers: [AccessStrategy, RefreshStrategy, AuthRepository, OauthRepository, AuthService, OauthService],
+  providers: [AccessStrategy, RefreshStrategy, AuthRepository, AuthService],
   imports: [
     ConfigModule.forRoot(),
     JwtModule.register({
@@ -22,8 +19,8 @@ import { OauthService } from './oauth.service';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
-    TypeOrmModule.forFeature([AuthEntity, OauthEntity]),
+    TypeOrmModule.forFeature([AuthEntity]),
   ],
-  exports: [AuthService, OauthService],
+  exports: [AuthService],
 })
 export class AuthModule {}

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Payload } from './jwt.payload';
 import * as crypto from 'crypto';
 import { AuthRepository } from './repository/auth.repository';
 
@@ -13,19 +14,14 @@ export class AuthService {
     private authRepository: AuthRepository,
   ) {}
 
-  async signupAccessToken(id: string) {
-    const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_SIGNUP_SECRET, expiresIn: '15m' });
-  }
-
   async createAccessToken(id: string) {
-    const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' });
+    const payload: Payload = { id };
+    return this.jwtService.signAsync(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' });
   }
 
   async createRefreshToken(id: string) {
-    const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d' });
+    const payload: Payload = { id };
+    return this.jwtService.signAsync(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d' });
   }
 
   async findRefreshToken(userId: number, refreshToken: string) {
@@ -45,10 +41,10 @@ export class AuthService {
     return result;
   }
 
-  public decrypt(data: string) {
+  public decrypt(encryptedData: string) {
     const decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
-    let result = decipher.update(data, 'base64', 'utf-8');
-    result += decipher.final('utf-8');
-    return result;
+    let decryptedData = decipher.update(encryptedData, 'base64', 'utf-8');
+    decryptedData += decipher.final('utf-8');
+    return decryptedData;
   }
 }

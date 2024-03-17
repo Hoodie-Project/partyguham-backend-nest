@@ -1,4 +1,5 @@
-import { UserCareerEntity } from 'src/user/infra/db/entity/user-career.entity';
+import { PartyUserEntity } from 'src/party/infra/db/entity/party/party-user.entity';
+import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('postion')
@@ -7,11 +8,11 @@ export class PositionEntity {
   id: number;
 
   @Column()
-  main: string;
+  position: string;
 
-  @Column()
-  sub: string;
+  @OneToMany(() => PartyUserEntity, (position) => position.position)
+  partyUsers: PartyUserEntity[];
 
-  @OneToMany(() => UserCareerEntity, (userCareer) => userCareer.position)
-  userPositions: UserCareerEntity[];
+  @OneToMany(() => UserEntity, (user) => user.positions)
+  users: UserEntity;
 }

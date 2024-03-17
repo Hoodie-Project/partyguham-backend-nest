@@ -12,13 +12,11 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response';
 import { SkillModule } from './skill/skill.module';
 import { PositionModule } from './position/position.module';
-import { LocationModule } from './location/location.module';
-import { PersonalityModule } from './personality/personality.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'mysql',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
@@ -30,12 +28,14 @@ import { PersonalityModule } from './personality/personality.module';
       extra: {
         decimalNumbers: true, //decimal number type
       },
-      // bigNumberStrings: false, // bigint number type
+      bigNumberStrings: false, // bigint number type
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.MODE_ENV !== 'prod',
     }),
     UserModule,
-    // PartyModule,
+    PartyModule,
+    SkillModule,
+    PositionModule,
   ],
   controllers: [AppController],
   providers: [
