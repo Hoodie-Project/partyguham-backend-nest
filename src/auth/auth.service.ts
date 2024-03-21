@@ -15,17 +15,29 @@ export class AuthService {
 
   async signupAccessToken(id: string) {
     const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_SIGNUP_SECRET, expiresIn: '15m' });
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_SIGNUP_SECRET,
+      expiresIn: '15m',
+      algorithm: 'HS256',
+    });
   }
 
   async createAccessToken(id: string) {
     const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' });
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: '15m',
+      algorithm: 'HS512',
+    });
   }
 
   async createRefreshToken(id: string) {
     const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d' });
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '30d',
+      algorithm: 'HS512',
+    });
   }
 
   async findRefreshToken(userId: number, refreshToken: string) {

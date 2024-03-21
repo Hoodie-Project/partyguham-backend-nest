@@ -71,9 +71,9 @@ export class UserController {
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
+        secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
       });
       res.status(200).send({ accessToken: result.accessToken });
     }
@@ -120,8 +120,8 @@ export class UserController {
     const result = await this.commandBus.execute(command);
 
     res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
       secure: true,
+      httpOnly: true,
       sameSite: 'strict',
     });
 
@@ -163,19 +163,20 @@ export class UserController {
     return this.commandBus.execute(command);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Delete('')
-  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
-  async deleteUser(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(user.id);
-
-    return this.commandBus.execute(command);
+  @Delete('logout')
+  @ApiOperation({ summary: '로그아웃' })
+  async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
+    res.clearCookie('refreshToken');
   }
 
   @UseGuards(AccessJwtAuthGuard)
   @Delete('signout')
-  @ApiOperation({ summary: '(개발중) 로그아웃' })
-  async signOut(@CurrentUser() user: CurrentUserType): Promise<void> {}
+  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
+  async signout(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
+
+    return this.commandBus.execute(command);
+  }
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('me/info')
