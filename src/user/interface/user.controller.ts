@@ -63,7 +63,17 @@ export class UserController {
   }
 
   @Get('kakao/callback')
-  @ApiOperation({ summary: '카카오 로그인 리다이렉트 API' })
+  @ApiOperation({ summary: '로그인 시도에 대한 응답 (카카오 로그인 리다이렉트 API)' })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '회원가입 필요',
+    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+  })
   async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
@@ -79,7 +89,7 @@ export class UserController {
     }
 
     if (result.type === 'signup') {
-      res.status(404).send({ signupAccessToken: result.signupAccessToken, email: result.email });
+      res.status(401).send({ signupAccessToken: result.signupAccessToken, email: result.email });
     }
   }
 
@@ -89,12 +99,10 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: '사용가능한 닉네임 입니다.',
-    type: UserResponseDto,
   })
   @ApiResponse({
     status: 409,
     description: '중복된 닉네임 입니다.',
-    type: UserResponseDto,
   })
   async checkNickname(@Query() query: NicknameQueryRequestDto) {
     const { nickname } = query;
@@ -108,6 +116,11 @@ export class UserController {
   @UseGuards(SignupJwtAuthGuard)
   @Post('signup/required')
   @ApiOperation({ summary: '회원가입 (필수)' })
+  @ApiResponse({
+    status: 201,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
   async signUpByKakao(
     @CurrentUser() user: CurrentUserType,
     @Res() res: Response,
@@ -125,7 +138,7 @@ export class UserController {
       sameSite: 'strict',
     });
 
-    res.send({ accessToken: result.accessToken });
+    res.status(201).send({ accessToken: result.accessToken });
   }
 
   @UseGuards(AccessJwtAuthGuard)

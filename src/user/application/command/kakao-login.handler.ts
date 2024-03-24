@@ -36,7 +36,24 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
     });
-
+    //! kakaoUserInfo
+    // data: {
+    //   id: 3405515435,
+    //   connected_at: '2024-03-24T14:18:43Z',
+    //   properties: {
+    //     profile_image: 'http://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640',
+    //     thumbnail_image: 'http://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R110x110'
+    //   },
+    //   kakao_account: {
+    //     profile_image_needs_agreement: false,
+    //     profile: [Object],
+    //     has_email: true,
+    //     email_needs_agreement: false,
+    //     is_email_valid: true,
+    //     is_email_verified: true,
+    //     email: 'hoodiev.team@gmail.com'
+    //   }
+    // }
     const externalId: string = kakaoUserInfo.data.id;
     const email = kakaoUserInfo.data.kakao_account.email;
 
