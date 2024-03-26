@@ -11,10 +11,19 @@ import { AuthController } from './auth.controller';
 import { OauthEntity } from './entity/oauth.entity';
 import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
+import { SignupStrategy } from './signup.strategy';
 
 @Module({
   controllers: [AuthController],
-  providers: [AccessStrategy, RefreshStrategy, AuthRepository, OauthRepository, AuthService, OauthService],
+  providers: [
+    AccessStrategy,
+    RefreshStrategy,
+    SignupStrategy,
+    AuthRepository,
+    OauthRepository,
+    AuthService,
+    OauthService,
+  ],
   imports: [
     ConfigModule.forRoot(),
     JwtModule.register({

@@ -25,7 +25,6 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
       },
     );
     const kakaoData = await kakao_api_url.data;
-    console.log('kakao_api_url.data', kakao_api_url.data);
 
     const kakaoAccessToken = kakaoData.access_token;
     const kakaoRefreshToken = kakaoData.refresh_token;
@@ -68,7 +67,6 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
 
     if (!oauth) {
       const createOauth = await this.oauthService.createWithoutUserId(externalId, PlatformEnum.KAKAO, kakaoAccessToken);
-
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 

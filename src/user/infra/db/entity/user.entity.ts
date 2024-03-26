@@ -24,7 +24,7 @@ export class UserEntity extends BaseEntity {
   nickname: string;
 
   @Column('date', { nullable: true })
-  birth: Date;
+  birth: string;
 
   @Column('char', { length: 1 }) // 'M' 또는 'F'
   gender: string;

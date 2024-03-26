@@ -34,6 +34,7 @@ import { UserCareerEntity } from './infra/db/entity/user-career.entity';
 import { UserPersonalityEntity } from './infra/db/entity/user-personality.entity';
 import { UserPersonalityRepository } from './infra/db/repository/user-personality.repository';
 import { UserCareerRepository } from './infra/db/repository/user-career.repository';
+import { GetCheckNicknameHandler } from './application/query/get-check-nickname.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -46,7 +47,13 @@ const commandHandlers = [
   UnFollowHandler,
 ];
 
-const queryHandlers = [UserByNicknameHandler, GetUserHandler, GetUsersHandler, GetFollowHandler];
+const queryHandlers = [
+  GetCheckNicknameHandler,
+  UserByNicknameHandler,
+  GetUserHandler,
+  GetUsersHandler,
+  GetFollowHandler,
+];
 
 const eventHandlers = [];
 

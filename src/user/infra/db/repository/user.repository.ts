@@ -51,7 +51,7 @@ export class UserRepository implements IUserRepository {
     return userEntity.id;
   }
 
-  async createUser(nickname: string, email: string, gender: string, birth: Date): Promise<User> {
+  async createUser(nickname: string, email: string, gender: string, birth: string): Promise<User> {
     const userEntity = await this.userRepository.save({ nickname, email, gender, birth });
     const { id, nickname: createNickname, email: createEmail, gender: createGender, birth: createBirth } = userEntity;
 

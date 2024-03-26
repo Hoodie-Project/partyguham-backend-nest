@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuard
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 import { KakaoCodeCommand } from '../application/command/kakao-code.command';
@@ -44,13 +44,13 @@ export class UserController {
     private queryBus: QueryBus,
   ) {}
 
-  // @Get('key')
-  // async ket(@Res() res: Response) {
-  //   const iv = crypto.randomBytes(16);
+  @Get('key')
+  async ket(@Res() res: Response) {
+    const iv = crypto.randomBytes(16);
 
-  //   console.log('Initialization Vector (IV):', iv);
-  //   console.log('Random Key:', iv.toString('hex'));
-  // }
+    console.log('Initialization Vector (IV):', iv);
+    console.log('Random Key:', iv.toString('hex'));
+  }
 
   @Get('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
@@ -106,6 +106,7 @@ export class UserController {
   })
   async checkNickname(@Query() query: NicknameQueryRequestDto) {
     const { nickname } = query;
+
     const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
 
     await this.queryBus.execute(getUserInfoQuery);
@@ -114,7 +115,7 @@ export class UserController {
   }
 
   @UseGuards(SignupJwtAuthGuard)
-  @Post('signup/required')
+  @Post('signup')
   @ApiOperation({ summary: '회원가입 (필수)' })
   @ApiResponse({
     status: 201,
@@ -122,12 +123,13 @@ export class UserController {
     schema: { example: { accessToken: 'token' } },
   })
   async signUpByKakao(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() user: CurrentSignupType,
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
   ): Promise<void> {
     const { nickname, email, gender, birth } = dto;
-    const oauthId = user.id;
+
+    const oauthId = user.oauthId;
     const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
 
     const result = await this.commandBus.execute(command);
@@ -149,7 +151,9 @@ export class UserController {
 
     const command = new CreateUserLocationCommand(user.id, locationIds);
 
-    return this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
+
+    return result;
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -162,7 +166,9 @@ export class UserController {
     const { userPersonality } = body;
     const command = new CreateUserPersonalityCommand(user.id, userPersonality);
 
-    return this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
+
+    return result;
   }
 
   @UseGuards(AccessJwtAuthGuard)

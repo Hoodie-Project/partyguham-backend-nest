@@ -7,3 +7,4 @@ export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionCo
 });
 
 export type CurrentUserType = { id: number };
+export type CurrentSignupType = { oauthId: number };
