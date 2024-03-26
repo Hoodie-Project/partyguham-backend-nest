@@ -9,8 +9,8 @@ export class PersonalityQuestionEntity {
   @Column('text')
   content: string;
 
-  @Column('boolean')
-  multiple: boolean;
+  @Column('smallint')
+  responseCount: number;
 
   @OneToMany(() => PersonalityOptionEntity, (personalityOption) => personalityOption.personalityQuestion)
   personalityOption: PersonalityOptionEntity[];

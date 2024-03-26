@@ -54,11 +54,9 @@ export class OauthRepository {
     return oauthEntity;
   }
 
-  async updateUserIdById(id: number, userId: number): Promise<void> {
-    await this.dataSource.transaction(async (manager) => {
-      const user = await this.oauthRepository.save({ userId, where: { id } });
+  async updateUserIdById(id: number, userId: number) {
+    const user = await this.oauthRepository.update(id, { userId });
 
-      await manager.save(user);
-    });
+    return user;
   }
 }

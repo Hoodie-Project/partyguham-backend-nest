@@ -19,13 +19,13 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   async execute(command: CreateUserCommand) {
     const { oauthId, nickname, email, gender, birth } = command;
 
-    const checkEmail = await this.userRepository.findByNickname(nickname);
-    if (!checkEmail) {
+    const checkEmail = await this.userRepository.findByEmail(email);
+    if (checkEmail) {
       throw new ConflictException('이미 존재하는 이메일 입니다.');
     }
 
     const checkNickname = await this.userRepository.findByNickname(nickname);
-    if (!checkNickname) {
+    if (checkNickname) {
       throw new ConflictException('이미 존재하는 닉네임 입니다.');
     }
 

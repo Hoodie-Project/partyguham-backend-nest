@@ -4,7 +4,7 @@ import { IsEmail, IsISO8601, IsIn, IsNotEmpty, IsString, Length, MaxLength, MinL
 export class CreateUserRequestDto {
   @ApiProperty({
     example: 'nickname',
-    description: '닉네임 2자 이상 30자 이하',
+    description: '닉네임 2자 이상 15자 이하',
   })
   @MaxLength(15)
   @MinLength(2)
@@ -16,7 +16,7 @@ export class CreateUserRequestDto {
     example: 'email@party.com',
     description: '이메일 길이 최대 60',
   })
-  @MaxLength(100)
+  @MaxLength(60)
   @IsEmail()
   @IsString()
   @IsNotEmpty()
@@ -39,5 +39,5 @@ export class CreateUserRequestDto {
   @Length(10)
   @IsISO8601()
   @IsNotEmpty()
-  public birth: Date;
+  public birth: string;
 }

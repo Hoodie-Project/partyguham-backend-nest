@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 
 import { OauthService } from './oauth.service';
 import { AuthService } from './auth.service';
@@ -16,6 +16,7 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_SIGNUP_SECRET,
       ignoreExpiration: false,
+      algorithms: ['HS256'],
     });
   }
 
@@ -24,6 +25,10 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(decryptUserId);
       const oauthId = oauth.id;
+
+      if (oauth.userId) {
+        throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
+      }
 
       return { oauthId };
     } else {

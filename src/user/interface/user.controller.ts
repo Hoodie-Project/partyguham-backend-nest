@@ -3,7 +3,7 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuard
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 import { KakaoCodeCommand } from '../application/command/kakao-code.command';
@@ -44,13 +44,13 @@ export class UserController {
     private queryBus: QueryBus,
   ) {}
 
-  // @Get('key')
-  // async ket(@Res() res: Response) {
-  //   const iv = crypto.randomBytes(16);
+  @Get('key')
+  async ket(@Res() res: Response) {
+    const iv = crypto.randomBytes(16);
 
-  //   console.log('Initialization Vector (IV):', iv);
-  //   console.log('Random Key:', iv.toString('hex'));
-  // }
+    console.log('Initialization Vector (IV):', iv);
+    console.log('Random Key:', iv.toString('hex'));
+  }
 
   @Get('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
@@ -63,7 +63,17 @@ export class UserController {
   }
 
   @Get('kakao/callback')
-  @ApiOperation({ summary: '카카오 로그인 리다이렉트 API' })
+  @ApiOperation({ summary: '로그인 시도에 대한 응답 (카카오 로그인 리다이렉트 API)' })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '회원가입 필요',
+    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+  })
   async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
@@ -71,15 +81,15 @@ export class UserController {
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
+        secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
       });
       res.status(200).send({ accessToken: result.accessToken });
     }
 
     if (result.type === 'signup') {
-      res.status(404).send({ signupAccessToken: result.signupAccessToken, email: result.email });
+      res.status(401).send({ signupAccessToken: result.signupAccessToken, email: result.email });
     }
   }
 
@@ -89,15 +99,14 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: '사용가능한 닉네임 입니다.',
-    type: UserResponseDto,
   })
   @ApiResponse({
     status: 409,
     description: '중복된 닉네임 입니다.',
-    type: UserResponseDto,
   })
   async checkNickname(@Query() query: NicknameQueryRequestDto) {
     const { nickname } = query;
+
     const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
 
     await this.queryBus.execute(getUserInfoQuery);
@@ -106,26 +115,32 @@ export class UserController {
   }
 
   @UseGuards(SignupJwtAuthGuard)
-  @Post('signup/required')
+  @Post('signup')
   @ApiOperation({ summary: '회원가입 (필수)' })
+  @ApiResponse({
+    status: 201,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
   async signUpByKakao(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() user: CurrentSignupType,
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
   ): Promise<void> {
     const { nickname, email, gender, birth } = dto;
-    const oauthId = user.id;
+
+    const oauthId = user.oauthId;
     const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
 
     const result = await this.commandBus.execute(command);
 
     res.cookie('refreshToken', result.refreshToken, {
-      httpOnly: true,
       secure: true,
+      httpOnly: true,
       sameSite: 'strict',
     });
 
-    res.send({ accessToken: result.accessToken });
+    res.status(201).send({ accessToken: result.accessToken });
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -136,7 +151,9 @@ export class UserController {
 
     const command = new CreateUserLocationCommand(user.id, locationIds);
 
-    return this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
+
+    return result;
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -149,7 +166,9 @@ export class UserController {
     const { userPersonality } = body;
     const command = new CreateUserPersonalityCommand(user.id, userPersonality);
 
-    return this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
+
+    return result;
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -163,19 +182,20 @@ export class UserController {
     return this.commandBus.execute(command);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Delete('')
-  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
-  async deleteUser(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(user.id);
-
-    return this.commandBus.execute(command);
+  @Delete('logout')
+  @ApiOperation({ summary: '로그아웃' })
+  async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
+    res.clearCookie('refreshToken');
   }
 
   @UseGuards(AccessJwtAuthGuard)
   @Delete('signout')
-  @ApiOperation({ summary: '(개발중) 로그아웃' })
-  async signOut(@CurrentUser() user: CurrentUserType): Promise<void> {}
+  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
+  async signout(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
+    const command = new UpdateUserCommand(user.id);
+
+    return this.commandBus.execute(command);
+  }
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('me/info')

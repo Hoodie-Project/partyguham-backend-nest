@@ -4,7 +4,7 @@ export class User {
     public nickname: string,
     public email: string,
     public gender: string,
-    public birth: Date,
+    public birth: string,
   ) {}
 
   getId(): Readonly<number> {

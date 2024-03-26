@@ -6,8 +6,8 @@ import { AuthRepository } from './repository/auth.repository';
 @Injectable()
 export class AuthService {
   private readonly algorithm: string = 'aes-192-cbc';
-  private key = process.env.CIPHERIV_KEY_SECRET;
-  private iv = process.env.CIPHERIV_IV_SECRET;
+  private readonly key = process.env.CIPHERIV_KEY_SECRET;
+  private readonly iv = process.env.CIPHERIV_IV_SECRET;
   constructor(
     private jwtService: JwtService,
     private authRepository: AuthRepository,
@@ -15,17 +15,29 @@ export class AuthService {
 
   async signupAccessToken(id: string) {
     const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_SIGNUP_SECRET, expiresIn: '15m' });
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_SIGNUP_SECRET,
+      expiresIn: '15m',
+      algorithm: 'HS256',
+    });
   }
 
   async createAccessToken(id: string) {
     const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' });
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: '15m',
+      algorithm: 'HS512',
+    });
   }
 
   async createRefreshToken(id: string) {
     const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d' });
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '30d',
+      algorithm: 'HS512',
+    });
   }
 
   async findRefreshToken(userId: number, refreshToken: string) {

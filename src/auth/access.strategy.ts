@@ -28,7 +28,7 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
       if (!userId) {
         throw new UnauthorizedException('필수 회원가입이 필요합니다.');
       } else {
-        return { userId };
+        return { id: userId };
       }
     } else {
       throw new UnauthorizedException('Unauthorized');

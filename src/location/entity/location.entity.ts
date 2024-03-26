@@ -7,10 +7,10 @@ export class LocationEntity {
   id: number;
 
   @Column()
-  city: string;
+  province: string;
 
   @Column()
-  borough: string;
+  city: string;
 
   @OneToMany(() => UserLocationEntity, (user) => user.location)
   userLocation: UserLocationEntity[];

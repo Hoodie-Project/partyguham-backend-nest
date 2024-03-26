@@ -38,12 +38,8 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
       }
 
       // 다중 선택 체크
-      if (surveyQuestion.multiple === false && answer.optionId.length > 1) {
-        throw new BadRequestException(`중복 선택이 되지 않습니다. { questionId : ${answer.questionId} }`);
-      }
-
-      if (surveyQuestion.multiple === true && answer.optionId.length > 2) {
-        throw new BadRequestException(`중복 선택이 2개이상 되지 않습니다. { questionId : ${answer.questionId} }`);
+      if (surveyQuestion.responseCount <= answer.optionId.length) {
+        throw new BadRequestException(`응답 갯수를 확인 해 주세요. { questionId : ${answer.questionId} }`);
       }
 
       // optionId 유효 확인
