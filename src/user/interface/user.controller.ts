@@ -44,15 +44,7 @@ export class UserController {
     private queryBus: QueryBus,
   ) {}
 
-  @Get('key')
-  async ket(@Res() res: Response) {
-    const iv = crypto.randomBytes(16);
-
-    console.log('Initialization Vector (IV):', iv);
-    console.log('Random Key:', iv.toString('hex'));
-  }
-
-  @Get('kakao')
+  @Post('kakao')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
