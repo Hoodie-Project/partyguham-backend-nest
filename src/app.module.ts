@@ -1,15 +1,17 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { PartyModule } from './party/party.module';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { UserModule } from './user/user.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response';
+
+import { AppController } from './app.controller';
+import { UserModule } from './user/user.module';
+import { AppService } from './app.service';
+import { PartyModule } from './party/party.module';
 import { SkillModule } from './skill/skill.module';
 import { PositionModule } from './position/position.module';
 import { LocationModule } from './location/location.module';
