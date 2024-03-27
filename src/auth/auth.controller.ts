@@ -1,4 +1,4 @@
-import { Controller, Headers, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Controller, Get, Headers, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { RefreshJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AuthService } from './auth.service';
@@ -11,14 +11,7 @@ export class AuthController {
 
   @UseGuards(RefreshJwtAuthGuard)
   @Post('access-token')
-  async refreshTokens(@Headers('authorization') authorization: string, @CurrentUser() user: CurrentUserType) {
-    const [, token] = authorization.split(' ');
-
-    const findRefreshToken = await this.authService.findRefreshToken(user.id, token);
-    if (token !== findRefreshToken.refreshToken) {
-      throw new UnauthorizedException('Unauthorized');
-    }
-
+  async refreshTokens(@CurrentUser() user: CurrentUserType) {
     const id = await this.authService.encrypt(String(user.id));
     const accessToken = await this.authService.createAccessToken(id);
 

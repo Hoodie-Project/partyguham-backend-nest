@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-
+import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { CustomErrorExceptionFilter } from './common/exception/error.filter';
 import * as fs from 'fs';
@@ -50,8 +50,9 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new CustomErrorExceptionFilter());
-  // 전체 endpoint
-  app.setGlobalPrefix('api');
+
+  app.setGlobalPrefix('api'); // 전체 endpoint
+  app.use(cookieParser()); // cookie 사용
 
   await app.listen(process.env.PORT);
   console.log(`listening on port ${process.env.PORT}`);
