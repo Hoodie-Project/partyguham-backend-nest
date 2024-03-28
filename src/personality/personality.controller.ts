@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PersonalityService } from './personality.service';
 import { personalityQuestionsResponseDto } from './dto/response/personality.response.dto';
+import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 @ApiTags('personality')
 @Controller('personality')
 export class PersonalityController {
   constructor(private personalityService: PersonalityService) {}
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
   @Get('')
   @ApiOperation({ summary: '성향 질문/선택지 전체 조회' })
   @ApiResponse({

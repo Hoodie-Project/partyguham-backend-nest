@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PositionService } from './position.service';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PositionResponseDto, PositionsResponseDto } from './dto/response/position.response.dto';
@@ -10,6 +10,7 @@ import { plainToInstance } from 'class-transformer';
 export class PositionController {
   constructor(private positionService: PositionService) {}
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Get('')
   @ApiOperation({ summary: '포지션 항목 전체 조회' })
