@@ -6,7 +6,6 @@ export class CreateUserLocationRequestDto {
     example: [1, 2, 3],
     description: 'location id(pk) Array',
   })
-  @IsInt()
   @ArrayMaxSize(3)
   @ArrayMinSize(1)
   @ArrayUnique()

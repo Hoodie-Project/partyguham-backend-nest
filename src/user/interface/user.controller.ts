@@ -2,7 +2,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -34,9 +34,8 @@ import { CreateUserPersonalityRequestDto } from './dto/request/create-userPerson
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
-const crypto = require('crypto');
 
-@ApiTags('user')
+@ApiTags('user API')
 @Controller('user')
 export class UserController {
   constructor(
@@ -85,6 +84,7 @@ export class UserController {
     }
   }
 
+  @ApiBearerAuth('SignupJwt')
   @UseGuards(SignupJwtAuthGuard)
   @Get('check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
@@ -106,6 +106,7 @@ export class UserController {
     return '사용가능한 닉네임 입니다.';
   }
 
+  @ApiBearerAuth('SignupJwt')
   @UseGuards(SignupJwtAuthGuard)
   @Post('signup')
   @ApiOperation({ summary: '회원가입 (필수)' })
@@ -135,6 +136,7 @@ export class UserController {
     res.status(201).send({ accessToken: result.accessToken });
   }
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/location')
   @ApiOperation({ summary: '지역 저장' })
@@ -148,6 +150,7 @@ export class UserController {
     return result;
   }
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
@@ -163,6 +166,7 @@ export class UserController {
     return result;
   }
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/career')
   @ApiOperation({ summary: '경력 저장' })

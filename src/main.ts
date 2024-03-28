@@ -34,13 +34,15 @@ async function bootstrap() {
   //docs
   const config = new DocumentBuilder()
     .setTitle('party-guam API')
-    .setDescription('The party-guam API description')
+    .setDescription('base URL - /api')
     .setVersion('1.0')
     .addTag('party-guam')
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
+  app.setGlobalPrefix('api'); // 전체 endpoint
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -51,7 +53,6 @@ async function bootstrap() {
   );
   app.useGlobalFilters(new CustomErrorExceptionFilter());
 
-  app.setGlobalPrefix('api'); // 전체 endpoint
   app.use(cookieParser()); // cookie 사용
 
   await app.listen(process.env.PORT);
