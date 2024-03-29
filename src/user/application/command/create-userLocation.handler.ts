@@ -16,6 +16,7 @@ export class CreateUserLocationHandler implements ICommandHandler<CreateUserLoca
   async execute(command: CreateUserLocationCommand) {
     const { userId, locationIds } = command;
 
+    // 중복 저장 방지 로직
     await this.locationService.findByIds(locationIds);
 
     const result = await this.userLocationRepository.bulkInsert(userId, locationIds);

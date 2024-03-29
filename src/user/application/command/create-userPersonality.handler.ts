@@ -17,6 +17,8 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     let { userId, userPersonality } = command;
     const surveyPersonality = await this.personalityService.findAllPersonality();
 
+    // 질문 하나당 저장하는 방식에 대해 고려
+
     // 저장할 optionId
     let userPersonalityOptionIds = [];
 
