@@ -17,6 +17,8 @@ export class CreateUserCareerHandler implements ICommandHandler<CreateUserCareer
   async execute(command: CreateUserCareerCommand) {
     const { userId, primary, secondary, other } = command;
 
+    // 각 primary, secondary, other 별 하나 씩 받는 것 고려
+
     const userCareer = await this.userCareerRepository.findByUserId(userId);
 
     if (userCareer) {
