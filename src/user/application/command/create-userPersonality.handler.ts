@@ -22,26 +22,30 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     // 저장할 optionId
     let userPersonalityOptionIds = [];
 
-    // 저장 되어있는 값 찾기
+    // 유저가 응답(저장) 되어있는 값 찾기
     const savedUserPersonality = await this.userPersonalityRepository.findByUserId(userId);
-    const saveUserPersonalityOptionIds = savedUserPersonality.map((userPersonality) => {
+    const savedUserPersonalityOptionIds = savedUserPersonality.map((userPersonality) => {
       return userPersonality.personalityOptionId;
     });
 
-    // 유저 응답에 대한 validation 실행
-    userPersonality.forEach(async (answer) => {
+    // 유저 응답별에 대해 validation 실행
+    userPersonality.forEach((answer) => {
+      // 설문조사 질문, 선택지
       const surveyQuestion = surveyPersonality.find((question) => question.id === answer.questionId);
       const surveyOption = surveyPersonality[answer.questionId].personalityOption.map((option) => option.id);
 
       // 이미 설문을 한 항목에 대해 취소
-      const duplicated = saveUserPersonalityOptionIds.some((saveOptionId) => surveyOption.includes(saveOptionId));
+      const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOption.includes(saveOptionId));
+      console.log(duplicated);
       if (duplicated) {
-        throw new BadRequestException(`이미 설문조사를 한 항목입니다. { id : ${answer.questionId}`);
+        throw new BadRequestException(`이미 설문조사를 한 항목입니다. {questionId : ${answer.questionId}}`);
       }
 
       // 다중 선택 체크
-      if (surveyQuestion.responseCount <= answer.optionId.length) {
-        throw new BadRequestException(`응답 갯수를 확인 해 주세요. { questionId : ${answer.questionId} }`);
+      if (surveyQuestion.responseCount < answer.optionId.length) {
+        throw new BadRequestException(
+          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. {questionId : ${answer.questionId}} `,
+        );
       }
 
       // optionId 유효 확인
@@ -51,7 +55,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
         if (result) {
           userPersonalityOptionIds.push(optionId);
         } else {
-          throw new BadRequestException(`유효하지 않는 선택지 입니다.: { optionId : ${optionId} }`);
+          throw new BadRequestException(`질문에 맞지 않는 선택지 입니다. { optionId : ${optionId} }`);
         }
       });
     });

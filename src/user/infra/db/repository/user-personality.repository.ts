@@ -21,8 +21,8 @@ export class UserPersonalityRepository implements IUserPersonalityRepository {
     return this.userPersonalityRepository.find({ where: { userId } });
   }
 
-  bulkInsert(userId: number, optionIds: number[]) {
-    const userLocations = optionIds.map((locationId) => ({ userId, locationId }));
+  bulkInsert(userId: number, personalityOptionIds: number[]) {
+    const userLocations = personalityOptionIds.map((personalityOptionId) => ({ userId, personalityOptionId }));
 
     const result = this.userPersonalityRepository.save(userLocations);
 
