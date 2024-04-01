@@ -23,6 +23,7 @@ export class UserLocationRepository implements IUserLocationRepository {
     const userLocations = locationIds.map((locationId) => ({ userId, locationId }));
 
     const result = await this.userLocationRepository.save(userLocations);
-    //save 말고 insert 쓰는 이유..?
+
+    return result;
   }
 }

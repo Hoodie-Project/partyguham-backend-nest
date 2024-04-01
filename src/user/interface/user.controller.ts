@@ -34,6 +34,7 @@ import { CreateUserPersonalityRequestDto } from './dto/request/create-userPerson
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
+import { UserLocationResponseDto, UserLocationsResponseDto } from './dto/response/UserLocationResponseDto';
 
 @ApiTags('user API')
 @Controller('user')
@@ -140,14 +141,23 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/location')
   @ApiOperation({ summary: '지역 저장' })
-  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto): Promise<void> {
+  @ApiResponse({
+    status: 201,
+    description: '유저 지역 저장',
+    type: UserLocationsResponseDto,
+  })
+  @ApiResponse({
+    status: 403,
+    description: '관심지역을 3개 초과하여 저장 할 수 없습니다.',
+  })
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto) {
     const { locationIds } = body;
 
     const command = new CreateUserLocationCommand(user.id, locationIds);
 
     const result = await this.commandBus.execute(command);
 
-    return result;
+    return plainToInstance(UserLocationResponseDto, result);
   }
 
   @ApiBearerAuth('AccessJwt')
