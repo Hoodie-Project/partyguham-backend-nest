@@ -1,11 +1,11 @@
 import { ICommand } from '@nestjs/cqrs';
-import { UserCareerDto } from 'src/user/interface/dto/request/create-userCareer.request.dto';
+import { CareerTypeEnum } from 'src/user/infra/db/entity/user-career.entity';
 
 export class CreateUserCareerCommand implements ICommand {
   constructor(
     readonly userId: number,
-    readonly primary: UserCareerDto,
-    readonly secondary: UserCareerDto,
-    readonly other: UserCareerDto[],
+    readonly positionId: number,
+    readonly years: number,
+    readonly careerType: CareerTypeEnum,
   ) {}
 }

@@ -171,9 +171,9 @@ export class UserController {
   @Post('me/career')
   @ApiOperation({ summary: '경력 저장' })
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto): Promise<void> {
-    const { primary, secondary, other } = body;
+    const { positionId, years, careerType } = body;
 
-    const command = new CreateUserCareerCommand(user.id, primary, secondary, other);
+    const command = new CreateUserCareerCommand(user.id, positionId, years, careerType);
 
     return this.commandBus.execute(command);
   }

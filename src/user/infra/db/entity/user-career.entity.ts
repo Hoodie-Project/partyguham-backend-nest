@@ -20,7 +20,7 @@ export class UserCareerEntity {
   positionId: number;
 
   @Column()
-  year: number;
+  years: number;
 
   @Column('enum', {
     enum: CareerTypeEnum,

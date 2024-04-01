@@ -17,6 +17,12 @@ export class PositionRepository {
     return result;
   }
 
+  async findById(id: number) {
+    const result = await this.positionRepository.find({ where: { id } });
+
+    return result;
+  }
+
   async findByIds(ids: number[]) {
     const result = await this.positionRepository.find({ where: { id: In(ids) } });
 

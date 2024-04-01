@@ -19,17 +19,24 @@ export class UserCareerRepository implements IUserCareerRepository {
     return result;
   }
 
-  async createCareer(userId: number, positionId: number, careerType: CareerTypeEnum) {
-    const result = await this.userLocationRepository.save({ userId, positionId, careerType });
+  async findByUserIdAndCareerType(userId: number, careerType: CareerTypeEnum) {
+    const result = await this.userLocationRepository.find({ where: { userId, careerType } });
 
     return result;
   }
 
-  async bulkInsert(userId: number, positionIds: number[], careerTypes: CareerTypeEnum[]) {
+  async createCareer(userId: number, positionId: number, years: number, careerType: CareerTypeEnum) {
+    const result = await this.userLocationRepository.save({ userId, positionId, years, careerType });
+
+    return result;
+  }
+
+  async bulkInsert(userId: number, positionIds: number[], years: number[], careerTypes: CareerTypeEnum[]) {
     const userLocations = positionIds.map((positionId, index) => ({
       userId,
       positionId,
-      careerType: careerTypes[index], // 해당 인덱스의 careerTypes 요소 참조
+      years: years[index],
+      careerType: careerTypes[index],
     }));
 
     const result = await this.userLocationRepository.insert(userLocations);

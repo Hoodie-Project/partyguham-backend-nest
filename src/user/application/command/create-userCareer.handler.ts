@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { CreateUserCareerCommand } from './create-userCareer.command';
@@ -15,35 +15,40 @@ export class CreateUserCareerHandler implements ICommandHandler<CreateUserCareer
   ) {}
 
   async execute(command: CreateUserCareerCommand) {
-    const { userId, primary, secondary, other } = command;
+    const { userId, positionId, years, careerType } = command;
 
-    // 각 primary, secondary, other 별 하나 씩 받는 것 고려
+    const findPositionId = await this.positionService.findById(positionId);
+    if (!findPositionId) throw new BadRequestException('positionId가 유효하지 않습니다.');
 
+    // 저장되어있는 유저 커리어 조회
     const userCareer = await this.userCareerRepository.findByUserId(userId);
+    let primary = null;
+    let secondary = null;
+    let other = [];
 
-    if (userCareer) {
-      throw new BadRequestException(`이미 저장 완료 되었습니다.`);
+    userCareer.forEach((value) => {
+      if (value.careerType === CareerTypeEnum.PRIMARY) primary = value.positionId;
+      if (value.careerType === CareerTypeEnum.SECONDARY) secondary = value.positionId;
+      if (value.careerType === CareerTypeEnum.OTHER) other.push(value.positionId);
+    });
+
+    if ((careerType === CareerTypeEnum.PRIMARY && primary) || (careerType === CareerTypeEnum.SECONDARY && secondary)) {
+      throw new ForbiddenException(`해당 포지션에 이미 데이터가 존재합니다.`);
     }
 
-    // positionId 통합
-    const checkPostionIds = [primary.positionId];
-    const careerTypes = [CareerTypeEnum.PRIMARY];
-    if (secondary) {
-      careerTypes.push(CareerTypeEnum.SECONDARY);
-      checkPostionIds.push(secondary.positionId);
-    }
-    if (other) {
-      other.map((position) => checkPostionIds.push(position.positionId), careerTypes.push(CareerTypeEnum.OTHER));
+    if (careerType === CareerTypeEnum.OTHER && other.length === 3) {
+      throw new ForbiddenException(`기타 포지션은 3개 초과하여 저장할 수 없습니다.`);
     }
 
     // 중복 검사
-    const uniqueSet = new Set(checkPostionIds);
-    const isDuplicate = checkPostionIds.length !== uniqueSet.size;
-    if (isDuplicate) throw new BadRequestException('primary, secondary, other 중에 positionId가 중복 되어 있습니다.');
+    let userPositionIds = [primary, secondary, ...other];
 
-    await this.positionService.findByIds(checkPostionIds);
+    userPositionIds.forEach((value) => {
+      if (value === positionId) throw new ConflictException('포지션 중에 이미 저장되어있습니다.');
+    });
 
-    const result = await this.userCareerRepository.bulkInsert(userId, checkPostionIds, careerTypes);
+    const result = await this.userCareerRepository.createCareer(userId, positionId, years, careerType);
+
     return result;
   }
 }
