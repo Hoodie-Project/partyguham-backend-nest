@@ -5,6 +5,7 @@ import {
   ArrayMinSize,
   ArrayUnique,
   IsArray,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -12,8 +13,9 @@ import {
   Max,
   Min,
 } from 'class-validator';
+import { CareerTypeEnum } from 'src/user/infra/db/entity/user-career.entity';
 
-export class UserCareerDto {
+export class CreateUserCareerRequestDto {
   @ApiProperty({
     example: 1,
     description: 'Position id(pk)',
@@ -33,34 +35,9 @@ export class UserCareerDto {
   @IsPositive()
   @IsNotEmpty()
   readonly years: number;
-}
 
-export class CreateUserCareerRequestDto {
-  @ApiProperty({
-    description: '주 경력',
-    type: UserCareerDto,
-  })
-  @Type(() => UserCareerDto)
+  @ApiProperty({ enum: ['primary', 'secondary', 'other'], description: '주 / 부 / 기타' })
+  @IsIn([CareerTypeEnum.PRIMARY, CareerTypeEnum.SECONDARY, CareerTypeEnum.OTHER])
   @IsNotEmpty()
-  readonly primary: UserCareerDto;
-
-  @ApiProperty({
-    description: '부 경력',
-    type: UserCareerDto,
-  })
-  @Type(() => UserCareerDto)
-  @IsOptional()
-  readonly secondary: UserCareerDto;
-
-  @ApiProperty({
-    description: '기타 경력',
-    type: UserCareerDto,
-  })
-  @ArrayMaxSize(3)
-  @ArrayMinSize(1)
-  @ArrayUnique()
-  @Type(() => UserCareerDto)
-  @IsArray()
-  @IsOptional()
-  readonly other: UserCareerDto[];
+  readonly careerType: CareerTypeEnum;
 }

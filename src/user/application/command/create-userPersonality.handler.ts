@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { CreateUserPersonalityCommand } from './create-userPersonality.command';
@@ -17,8 +17,6 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     let { userId, userPersonality } = command;
     const surveyPersonality = await this.personalityService.findAllPersonality();
 
-    // 질문 하나당 저장하는 방식에 대해 고려
-
     // 저장할 optionId
     let userPersonalityOptionIds = [];
 
@@ -29,33 +27,37 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     });
 
     // 유저 응답별에 대해 validation 실행
-    userPersonality.forEach((answer) => {
+    userPersonality.forEach((userAnswer) => {
       // 설문조사 질문, 선택지
-      const surveyQuestion = surveyPersonality.find((question) => question.id === answer.questionId);
-      const surveyOption = surveyPersonality[answer.questionId].personalityOption.map((option) => option.id);
+      const surveyQuestion = surveyPersonality.find((question) => question.id === userAnswer.personalityQuestionId);
+      const surveyOptionIds = surveyQuestion.personalityOption.map((option) => option.id);
 
       // 이미 설문을 한 항목에 대해 취소
-      const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOption.includes(saveOptionId));
-      console.log(duplicated);
+      const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOptionIds.includes(saveOptionId));
+
       if (duplicated) {
-        throw new BadRequestException(`이미 설문조사를 한 항목입니다. {questionId : ${answer.questionId}}`);
+        throw new ConflictException(
+          `이미 설문조사를 한 항목입니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
+        );
       }
 
       // 다중 선택 체크
-      if (surveyQuestion.responseCount < answer.optionId.length) {
-        throw new BadRequestException(
-          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. {questionId : ${answer.questionId}} `,
+      if (surveyQuestion.responseCount < userAnswer.personalityOptionId.length) {
+        throw new ConflictException(
+          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
         );
       }
 
       // optionId 유효 확인
-      answer.optionId.map((optionId) => {
-        const result = surveyOption.includes(optionId);
+      userAnswer.personalityOptionId.map((userAnswerPersonalityOptionId) => {
+        const validation = surveyOptionIds.includes(userAnswerPersonalityOptionId);
 
-        if (result) {
-          userPersonalityOptionIds.push(optionId);
+        if (validation) {
+          userPersonalityOptionIds.push(userAnswerPersonalityOptionId);
         } else {
-          throw new BadRequestException(`질문에 맞지 않는 선택지 입니다. { optionId : ${optionId} }`);
+          throw new ConflictException(
+            `질문에 맞지 않는 선택지 입니다. { personalityOptionId : ${userAnswerPersonalityOptionId} }`,
+          );
         }
       });
     });

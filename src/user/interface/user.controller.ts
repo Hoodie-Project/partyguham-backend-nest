@@ -2,7 +2,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConflictResponse, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -21,7 +21,7 @@ import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.q
 import { GetUserQuery } from '../application/query/get-user.query';
 import { GetUsersQuery } from '../application/query/get-users.query';
 
-import { UserResponseDto, UsersResponseDto } from './dto/response/UserResponseDto';
+import { UserResponseDto } from './dto/response/UserResponseDto';
 import { FollowQueryRequestDto } from './dto/request/follow.user.request.dto';
 import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
@@ -34,6 +34,9 @@ import { CreateUserPersonalityRequestDto } from './dto/request/create-userPerson
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
+import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
+import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
+import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 
 @ApiTags('user API')
 @Controller('user')
@@ -140,42 +143,71 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/location')
   @ApiOperation({ summary: '지역 저장' })
-  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto): Promise<void> {
+  @ApiResponse({
+    status: 201,
+    description: '유저 지역 저장',
+    type: [UserLocationResponseDto],
+  })
+  @ApiResponse({
+    status: 409,
+    description:
+      '관심지역을 3개 초과하여 저장 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+  })
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto) {
     const { locationIds } = body;
 
     const command = new CreateUserLocationCommand(user.id, locationIds);
 
     const result = await this.commandBus.execute(command);
 
-    return result;
+    return plainToInstance(UserLocationResponseDto, result);
   }
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
-  async userPersonality(
-    @CurrentUser() user: CurrentUserType,
-    @Body() body: CreateUserPersonalityRequestDto,
-  ): Promise<void> {
+  @ApiResponse({
+    status: 201,
+    description: '유저 성향 저장',
+    type: [UserPersonalityResponseDto],
+  })
+  @ApiResponse({
+    status: 409,
+    description:
+      '이미 설문조사를 한 항목입니다. { personalityQuestionId : 1 } \t\n 2개 까지 저장 가능합니다. { personalityQuestionId : 1 } \t\n 질문에 맞지 않는 선택지 입니다. { personalityOptionId : 6 }',
+  })
+  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserPersonalityRequestDto) {
     const { userPersonality } = body;
     const command = new CreateUserPersonalityCommand(user.id, userPersonality);
 
     const result = await this.commandBus.execute(command);
 
-    return result;
+    return plainToInstance(UserPersonalityResponseDto, result);
   }
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/career')
   @ApiOperation({ summary: '경력 저장' })
-  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto): Promise<void> {
-    const { primary, secondary, other } = body;
+  @ApiResponse({
+    status: 201,
+    description: '유저 성향 저장',
+    type: UserCareerResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description:
+      '해당 포지션에 이미 데이터가 존재합니다. \t\n 기타 포지션은 3개 초과하여 저장할 수 없습니다. \t\n 포지션 중에 이미 저장되어있습니다.',
+  })
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto) {
+    const { positionId, years, careerType } = body;
 
-    const command = new CreateUserCareerCommand(user.id, primary, secondary, other);
+    const command = new CreateUserCareerCommand(user.id, positionId, years, careerType);
 
-    return this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
+
+    return plainToInstance(UserCareerResponseDto, result);
   }
 
   @Delete('logout')
@@ -255,7 +287,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UsersResponseDto,
+    type: UserResponseDto,
   })
   async getUsers(@Query() query: UserQueryRequestDto) {
     const { page, limit, sort, order } = query;
