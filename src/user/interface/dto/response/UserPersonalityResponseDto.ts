@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
-export class UserLocationResponseDto {
+export class UserPersonalityResponseDto {
   @Expose()
   @ApiProperty({ example: 1 })
   id: number;
@@ -13,5 +13,5 @@ export class UserLocationResponseDto {
 
   @Expose()
   @ApiProperty({ example: 1 })
-  locationId: number;
+  personalityOptionId: number;
 }

@@ -21,7 +21,7 @@ import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.q
 import { GetUserQuery } from '../application/query/get-user.query';
 import { GetUsersQuery } from '../application/query/get-users.query';
 
-import { UserResponseDto, UsersResponseDto } from './dto/response/UserResponseDto';
+import { UserResponseDto } from './dto/response/UserResponseDto';
 import { FollowQueryRequestDto } from './dto/request/follow.user.request.dto';
 import { GetFollowQuery } from '../application/query/get-follow.query';
 import { FollowResponseDto } from './dto/response/FollowResponseDto';
@@ -34,7 +34,8 @@ import { CreateUserPersonalityRequestDto } from './dto/request/create-userPerson
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
-import { UserLocationResponseDto, UserLocationsResponseDto } from './dto/response/UserLocationResponseDto';
+import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
+import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
 
 @ApiTags('user API')
 @Controller('user')
@@ -144,7 +145,7 @@ export class UserController {
   @ApiResponse({
     status: 201,
     description: '유저 지역 저장',
-    type: UserLocationsResponseDto,
+    type: [UserLocationResponseDto],
   })
   @ApiResponse({
     status: 403,
@@ -164,16 +165,18 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
-  async userPersonality(
-    @CurrentUser() user: CurrentUserType,
-    @Body() body: CreateUserPersonalityRequestDto,
-  ): Promise<void> {
+  @ApiResponse({
+    status: 201,
+    description: '유저 성향 저장',
+    type: [UserPersonalityResponseDto],
+  })
+  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserPersonalityRequestDto) {
     const { userPersonality } = body;
     const command = new CreateUserPersonalityCommand(user.id, userPersonality);
 
     const result = await this.commandBus.execute(command);
 
-    return result;
+    return plainToInstance(UserPersonalityResponseDto, result);
   }
 
   @ApiBearerAuth('AccessJwt')
@@ -265,7 +268,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UsersResponseDto,
+    type: UserResponseDto,
   })
   async getUsers(@Query() query: UserQueryRequestDto) {
     const { page, limit, sort, order } = query;

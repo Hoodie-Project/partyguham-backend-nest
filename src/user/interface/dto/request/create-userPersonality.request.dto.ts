@@ -21,7 +21,7 @@ export class UserPersonalityDto {
   @IsInt()
   @IsPositive()
   @IsNotEmpty()
-  readonly questionId: number;
+  readonly personalityQuestionId: number;
 
   @ApiProperty({
     example: 1,
@@ -34,12 +34,12 @@ export class UserPersonalityDto {
   @ArrayMinSize(1)
   @IsArray()
   @IsNotEmpty()
-  readonly optionId: number[];
+  readonly personalityOptionId: number[];
 }
 
 export class CreateUserPersonalityRequestDto {
   @ApiProperty({
-    example: [{ questionId: 1, optionId: [1, 2] }],
+    example: [{ personalityQuestionId: 1, personalityOptionId: [1, 2] }],
     description: '성향 저장',
   })
   @Type(() => UserPersonalityDto)

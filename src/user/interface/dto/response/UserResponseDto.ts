@@ -31,14 +31,3 @@ export class UserResponseDto {
   @ApiProperty()
   createdAt: Date;
 }
-
-@Exclude()
-export class UsersResponseDto {
-  @Expose()
-  @ApiProperty()
-  data: UserResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
-
-  @Expose()
-  @ApiProperty()
-  count: number;
-}
