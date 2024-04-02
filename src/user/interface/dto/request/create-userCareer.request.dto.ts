@@ -36,6 +36,7 @@ export class CreateUserCareerRequestDto {
   @IsNotEmpty()
   readonly years: number;
 
+  @ApiProperty({ enum: ['primary', 'secondary', 'other'], description: '주 / 부 / 기타' })
   @IsIn([CareerTypeEnum.PRIMARY, CareerTypeEnum.SECONDARY, CareerTypeEnum.OTHER])
   @IsNotEmpty()
   readonly careerType: CareerTypeEnum;

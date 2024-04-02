@@ -1,11 +1,4 @@
-import {
-  BadRequestException,
-  ConflictException,
-  ForbiddenException,
-  HttpException,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { CreateUserLocationCommand } from './create-userLocation.command';
@@ -32,14 +25,14 @@ export class CreateUserLocationHandler implements ICommandHandler<CreateUserLoca
     // 중복 저장 방지 로직
     if (userLocation) {
       if (userLocation.length === 3) {
-        throw new ForbiddenException('관심지역을 3개 초과하여 저장 할 수 없습니다.');
+        throw new ConflictException('관심지역을 3개 초과하여 저장 할 수 없습니다.');
       }
     }
 
     // DB에 저장된 데이터 제외
     const duplicated = locationIds.filter((item) => userLocaiontId.includes(item));
     if (duplicated.length > 0) {
-      throw new ConflictException(`[${duplicated}] 이미 저장되어있는 데이터 입니다.`);
+      throw new ConflictException(`이미 저장되어있는 데이터 입니다. { locationId : [${duplicated}]}`);
     }
 
     // 저장

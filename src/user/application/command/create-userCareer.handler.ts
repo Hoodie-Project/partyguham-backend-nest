@@ -33,11 +33,11 @@ export class CreateUserCareerHandler implements ICommandHandler<CreateUserCareer
     });
 
     if ((careerType === CareerTypeEnum.PRIMARY && primary) || (careerType === CareerTypeEnum.SECONDARY && secondary)) {
-      throw new ForbiddenException(`해당 포지션에 이미 데이터가 존재합니다.`);
+      throw new ConflictException(`해당 포지션에 이미 데이터가 존재합니다.`);
     }
 
     if (careerType === CareerTypeEnum.OTHER && other.length === 3) {
-      throw new ForbiddenException(`기타 포지션은 3개 초과하여 저장할 수 없습니다.`);
+      throw new ConflictException(`기타 포지션은 3개 초과하여 저장할 수 없습니다.`);
     }
 
     // 중복 검사

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { CreateUserPersonalityCommand } from './create-userPersonality.command';
@@ -36,26 +36,28 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
       const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOptionIds.includes(saveOptionId));
 
       if (duplicated) {
-        throw new BadRequestException(
-          `이미 설문조사를 한 항목입니다. {questionId : ${userAnswer.personalityQuestionId}}`,
+        throw new ConflictException(
+          `이미 설문조사를 한 항목입니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
         );
       }
 
       // 다중 선택 체크
       if (surveyQuestion.responseCount < userAnswer.personalityOptionId.length) {
-        throw new BadRequestException(
-          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. {questionId : ${userAnswer.personalityQuestionId}} `,
+        throw new ConflictException(
+          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
         );
       }
 
       // optionId 유효 확인
-      userAnswer.personalityOptionId.map((optionId) => {
-        const result = surveyOptionIds.includes(optionId);
+      userAnswer.personalityOptionId.map((userAnswerPersonalityOptionId) => {
+        const validation = surveyOptionIds.includes(userAnswerPersonalityOptionId);
 
-        if (result) {
-          userPersonalityOptionIds.push(optionId);
+        if (validation) {
+          userPersonalityOptionIds.push(userAnswerPersonalityOptionId);
         } else {
-          throw new BadRequestException(`질문에 맞지 않는 선택지 입니다. { optionId : ${optionId} }`);
+          throw new ConflictException(
+            `질문에 맞지 않는 선택지 입니다. { personalityOptionId : ${userAnswerPersonalityOptionId} }`,
+          );
         }
       });
     });
