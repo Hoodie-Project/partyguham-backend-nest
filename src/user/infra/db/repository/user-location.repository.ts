@@ -26,4 +26,10 @@ export class UserLocationRepository implements IUserLocationRepository {
 
     return result;
   }
+
+  async bulkUpdate(update: { id: number; userId: number; locationId: number }[]) {
+    const result = await this.userLocationRepository.save(update);
+
+    return result;
+  }
 }
