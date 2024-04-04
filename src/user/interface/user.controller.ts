@@ -191,7 +191,7 @@ export class UserController {
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('me/location')
+  @Delete('me/location')
   @ApiOperation({ summary: '관심지역 삭제' })
   @ApiResponse({
     status: 201,

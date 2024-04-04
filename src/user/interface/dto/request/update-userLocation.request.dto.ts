@@ -12,30 +12,6 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-export class CreateUserLocationRequestDto {
-  @ApiProperty({
-    example: [1, 2, 3],
-    description: 'location id(pk) Array',
-  })
-  @ArrayMaxSize(3)
-  @ArrayMinSize(1)
-  @ArrayUnique()
-  @IsInt({ each: true })
-  @IsPositive({ each: true })
-  @IsNotEmpty()
-  readonly locationIds: number[];
-}
-
-export class UpdateUserLocationRequestDto {
-  @ArrayMaxSize(3)
-  @ArrayMinSize(1)
-  @ArrayUnique()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateUserLocationItemRequestDto)
-  update: UpdateUserLocationItemRequestDto[];
-}
-
 export class UpdateUserLocationItemRequestDto {
   @ApiProperty({
     example: 1,
@@ -54,6 +30,21 @@ export class UpdateUserLocationItemRequestDto {
   @IsPositive({ each: true })
   @IsNotEmpty()
   readonly locationId: number;
+}
+
+export class UpdateUserLocationRequestDto {
+  @ApiProperty({
+    example: UpdateUserLocationItemRequestDto,
+    description: 'update',
+    type: [UpdateUserLocationItemRequestDto],
+  })
+  @ArrayMaxSize(3)
+  @ArrayMinSize(1)
+  @ArrayUnique()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => UpdateUserLocationItemRequestDto)
+  update: UpdateUserLocationItemRequestDto[];
 }
 
 export class DeleteUserLocationRequestDto {
