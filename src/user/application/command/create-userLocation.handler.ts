@@ -16,18 +16,18 @@ export class CreateUserLocationHandler implements ICommandHandler<CreateUserLoca
   async execute(command: CreateUserLocationCommand) {
     const { userId, locationIds } = command;
 
+    // 초과 저장 방지 로직
+    if (locationIds) {
+      if (locationIds.length === 3) {
+        throw new ConflictException('관심지역을 3개 초과하여 저장 할 수 없습니다.');
+      }
+    }
+
     // locationId 확인
     await this.locationService.findByIds(locationIds);
 
     const userLocation = await this.userLocationRepository.findByUserId(userId);
     const userLocaiontId = userLocation.map((value) => value.locationId);
-
-    // 중복 저장 방지 로직
-    if (userLocation) {
-      if (userLocation.length === 3) {
-        throw new ConflictException('관심지역을 3개 초과하여 저장 할 수 없습니다.');
-      }
-    }
 
     // DB에 저장된 데이터 제외
     const duplicated = locationIds.filter((item) => userLocaiontId.includes(item));

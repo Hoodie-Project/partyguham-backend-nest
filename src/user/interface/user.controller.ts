@@ -29,7 +29,7 @@ import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dt
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
-import { CreateUserLocationRequestDto } from './dto/request/create-userlocation.request.dto';
+import { CreateUserLocationRequestDto } from './dto/request/create-userLocation.request.dto';
 import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
@@ -37,6 +37,8 @@ import { CreateUserCareerCommand } from '../application/command/create-userCaree
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
 import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
+import { UpdateUserLocationCommand } from '../application/command/update-userLocation.command';
+import { UpdateUserLocationRequestDto } from './dto/request/update-userLocation.request.dto';
 
 @ApiTags('user API')
 @Controller('user')
@@ -165,6 +167,54 @@ export class UserController {
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
+  @Patch('me/location')
+  @ApiOperation({ summary: '관심지역 수정' })
+  @ApiResponse({
+    status: 201,
+    description: '관심지역 수정',
+    type: [UserLocationResponseDto],
+  })
+  @ApiResponse({
+    status: 409,
+    description:
+      '관심지역을 3개 초과하여 수정 할 수 없습니다. \t\n 수정 하려는 데이터는 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] } \t\n 수정 하려는 id가 올바르지 않습니다. { id : [1,2] }',
+  })
+  async patchUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserLocationRequestDto) {
+    const { update } = body;
+
+    const command = new UpdateUserLocationCommand(user.id, update);
+
+    const result = await this.commandBus.execute(command);
+
+    return plainToInstance(UserLocationResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('me/location')
+  @ApiOperation({ summary: '관심지역 삭제' })
+  @ApiResponse({
+    status: 201,
+    description: '관심지역 삭제',
+    type: [UserLocationResponseDto],
+  })
+  @ApiResponse({
+    status: 409,
+    description:
+      '관심지역을 3개 초과하여 삭제 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+  })
+  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserLocationRequestDto) {
+    const {} = body;
+
+    // const command = new UpdateUserLocationCommand(user.id, updateLocation, deleteUserLocationIds);
+
+    // const result = await this.commandBus.execute(command);
+
+    // return plainToInstance(UserLocationResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
   @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
   @ApiResponse({
@@ -216,56 +266,56 @@ export class UserController {
     res.clearCookie('refreshToken');
   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Delete('signout')
-  @ApiOperation({ summary: '(개발중) 회원탈퇴' })
-  async signout(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
-    const command = new UpdateUserCommand(user.id);
+  // @UseGuards(AccessJwtAuthGuard)
+  // @Delete('signout')
+  // @ApiOperation({ summary: '(개발중) 회원탈퇴' })
+  // async signout(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
+  //   const command = new UpdateUserCommand(user.id);
 
-    return this.commandBus.execute(command);
-  }
+  //   return this.commandBus.execute(command);
+  // }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Get('me/info')
-  @ApiOperation({ summary: '(개발중) 내정보 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 내정보 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(account.id);
+  // @UseGuards(AccessJwtAuthGuard)
+  // @Get('me/info')
+  // @ApiOperation({ summary: '(개발중) 내정보 조회' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '성공적으로 내정보 목록을 가져왔습니다.',
+  //   type: UserResponseDto,
+  // })
+  // async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
+  //   const getUserInfoQuery = new GetUserQuery(account.id);
 
-    const result = this.queryBus.execute(getUserInfoQuery);
+  //   const result = this.queryBus.execute(getUserInfoQuery);
 
-    return plainToInstance(UserResponseDto, result);
-  }
+  //   return plainToInstance(UserResponseDto, result);
+  // }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Patch('info')
-  @ApiOperation({ summary: '(개발중) 내정보 변경' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 내정보 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async updateUser(@CurrentUser() account): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(account.id);
+  // @UseGuards(AccessJwtAuthGuard)
+  // @Patch('info')
+  // @ApiOperation({ summary: '(개발중) 내정보 변경' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '성공적으로 내정보 목록을 가져왔습니다.',
+  //   type: UserResponseDto,
+  // })
+  // async updateUser(@CurrentUser() account): Promise<UserResponseDto> {
+  //   const getUserInfoQuery = new GetUserQuery(account.id);
 
-    const result = this.queryBus.execute(getUserInfoQuery);
+  //   const result = this.queryBus.execute(getUserInfoQuery);
 
-    return plainToInstance(UserResponseDto, result);
-  }
+  //   return plainToInstance(UserResponseDto, result);
+  // }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Patch('image')
-  @ApiOperation({ summary: '(개발중) 이미지 변경' })
-  @ApiResponse({
-    status: 200,
-    description: '.',
-    type: UserResponseDto,
-  })
-  async updateImage(@CurrentUser() account) {}
+  // @UseGuards(AccessJwtAuthGuard)
+  // @Patch('image')
+  // @ApiOperation({ summary: '(개발중) 이미지 변경' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '.',
+  //   type: UserResponseDto,
+  // })
+  // async updateImage(@CurrentUser() account) {}
 
   // @Get('users/:nickname')
   // @ApiOperation({ summary: '닉네임으로 유저 조회' })
@@ -282,68 +332,67 @@ export class UserController {
   //   return plainToInstance(UserResponseDto, result);
   // }
 
-  @Get('list')
-  @ApiOperation({ summary: '(개발중) 유저 다수 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 유저 목록을 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  async getUsers(@Query() query: UserQueryRequestDto) {
-    const { page, limit, sort, order } = query;
+  // @Get('list')
+  // @ApiOperation({ summary: '(개발중) 유저 다수 조회' })
+  // @ApiResponse({
+  //   status: 200,
+  //   description: '성공적으로 유저 목록을 가져왔습니다.',
+  //   type: UserResponseDto,
+  // })
+  // async getUsers(@Query() query: UserQueryRequestDto) {
+  //   const { page, limit, sort, order } = query;
 
-    const userInfoByNickname = new GetUsersQuery(page, limit, sort, order);
+  //   const userInfoByNickname = new GetUsersQuery(page, limit, sort, order);
 
-    const result = this.queryBus.execute(userInfoByNickname);
+  //   const result = this.queryBus.execute(userInfoByNickname);
 
-    return plainToInstance(UserResponseDto, result);
-  }
+  //   return plainToInstance(UserResponseDto, result);
+  // }
 
-  //! MVP 제외
-  @UseGuards(AccessJwtAuthGuard)
-  @Get('follow')
-  @ApiOperation({ summary: '(MVP 제외) 팔로워, 팔로잉 목록 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 팔로우 or 팔로잉이 조회 되었습니다.',
-    type: FollowResponseDto,
-  })
-  async getFollow(
-    @CurrentUser() user: CurrentUserType,
-    @Query() query: FollowQueryRequestDto,
-  ): Promise<FollowResponseDto> {
-    const { page, limit, sort, order } = query;
+  //   @UseGuards(AccessJwtAuthGuard)
+  //   @Get('follow')
+  //   @ApiOperation({ summary: '(MVP 제외) 팔로워, 팔로잉 목록 조회' })
+  //   @ApiResponse({
+  //     status: 200,
+  //     description: '성공적으로 팔로우 or 팔로잉이 조회 되었습니다.',
+  //     type: FollowResponseDto,
+  //   })
+  //   async getFollow(
+  //     @CurrentUser() user: CurrentUserType,
+  //     @Query() query: FollowQueryRequestDto,
+  //   ): Promise<FollowResponseDto> {
+  //     const { page, limit, sort, order } = query;
 
-    const userInfoByNickname = new GetFollowQuery(user.id, page, limit, sort, order);
+  //     const userInfoByNickname = new GetFollowQuery(user.id, page, limit, sort, order);
 
-    const result = await this.queryBus.execute(userInfoByNickname);
+  //     const result = await this.queryBus.execute(userInfoByNickname);
 
-    return plainToInstance(FollowResponseDto, result);
-  }
+  //     return plainToInstance(FollowResponseDto, result);
+  //   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Post('follow/:nickname')
-  @ApiOperation({ summary: '(MVP 제외) 팔로우' })
-  @ApiResponse({
-    status: 204,
-    description: '성공적으로 팔로우 되었습니다.',
-  })
-  async follow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
-    const command = new FollowCommand(user.id, param.nickname);
+  //   @UseGuards(AccessJwtAuthGuard)
+  //   @Post('follow/:nickname')
+  //   @ApiOperation({ summary: '(MVP 제외) 팔로우' })
+  //   @ApiResponse({
+  //     status: 204,
+  //     description: '성공적으로 팔로우 되었습니다.',
+  //   })
+  //   async follow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
+  //     const command = new FollowCommand(user.id, param.nickname);
 
-    await this.commandBus.execute(command);
-  }
+  //     await this.commandBus.execute(command);
+  //   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @Delete('unfollow/:nickname')
-  @ApiOperation({ summary: '(MVP 제외) 언팔로우' })
-  @ApiResponse({
-    status: 204,
-    description: '성공적으로 언팔로우 되었습니다.',
-  })
-  async unfollow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
-    const command = new UnfollowCommand(user.id, param.nickname);
+  //   @UseGuards(AccessJwtAuthGuard)
+  //   @Delete('unfollow/:nickname')
+  //   @ApiOperation({ summary: '(MVP 제외) 언팔로우' })
+  //   @ApiResponse({
+  //     status: 204,
+  //     description: '성공적으로 언팔로우 되었습니다.',
+  //   })
+  //   async unfollow(@CurrentUser() user: CurrentUserType, @Param() param: UserParamRequestDto) {
+  //     const command = new UnfollowCommand(user.id, param.nickname);
 
-    await this.commandBus.execute(command);
-  }
+  //     await this.commandBus.execute(command);
+  //   }
 }
