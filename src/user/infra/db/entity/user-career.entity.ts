@@ -5,7 +5,6 @@ import { PositionEntity } from 'src/position/entity/position.entity';
 export enum CareerTypeEnum {
   PRIMARY = 'primary',
   SECONDARY = 'secondary',
-  OTHER = 'other',
 }
 
 @Entity('user_career')

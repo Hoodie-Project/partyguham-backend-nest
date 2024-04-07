@@ -17,7 +17,7 @@ export class AuthService {
     const createPayload = { id };
     return this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_SIGNUP_SECRET,
-      expiresIn: '15m',
+      expiresIn: '1h',
       algorithm: 'HS256',
     });
   }
