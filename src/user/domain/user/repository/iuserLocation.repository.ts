@@ -1,6 +1,6 @@
 import { UserLocationEntity } from 'src/user/infra/db/entity/user-location.entity';
 
-interface updateUserLocation {
+interface IUpdateUserLocation {
   id: number;
   userId: number;
   locationId: number;
@@ -17,5 +17,6 @@ export interface IUserLocationRepository {
       locationId: number;
     } & UserLocationEntity)[]
   >;
-  bulkUpdate: (updateUserLocation: updateUserLocation[]) => Promise<UserLocationEntity[]>;
+  bulkUpdate: (updateUserLocation: IUpdateUserLocation[]) => Promise<UserLocationEntity[]>;
+  bulkDelete: (deleteUserLocationIds: number[]) => Promise<boolean>;
 }

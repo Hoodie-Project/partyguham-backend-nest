@@ -32,4 +32,10 @@ export class UserLocationRepository implements IUserLocationRepository {
 
     return result;
   }
+
+  async bulkDelete(deleteIds: number[]) {
+    const result = await this.userLocationRepository.delete(deleteIds);
+
+    return result.affected ? true : false;
+  }
 }

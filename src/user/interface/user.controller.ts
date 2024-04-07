@@ -39,6 +39,8 @@ import { UserPersonalityResponseDto } from './dto/response/UserPersonalityRespon
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UpdateUserLocationCommand } from '../application/command/update-userLocation.command';
 import { UpdateUserLocationRequestDto } from './dto/request/update-userLocation.request.dto';
+import { DeleteUserLocationRequestDto } from './dto/request/delete-userLocation.request.dto';
+import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
 
 @ApiTags('user API')
 @Controller('user')
@@ -203,14 +205,14 @@ export class UserController {
     description:
       '관심지역을 3개 초과하여 삭제 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
   })
-  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserLocationRequestDto) {
-    const {} = body;
+  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: DeleteUserLocationRequestDto) {
+    const { deleteUserLocationIds } = body;
 
-    // const command = new UpdateUserLocationCommand(user.id, updateLocation, deleteUserLocationIds);
+    const command = new DeleteUserLocationCommand(user.id, deleteUserLocationIds);
 
-    // const result = await this.commandBus.execute(command);
+    const result = await this.commandBus.execute(command);
 
-    // return plainToInstance(UserLocationResponseDto, result);
+    return plainToInstance(UserLocationResponseDto, result);
   }
 
   @ApiBearerAuth('AccessJwt')

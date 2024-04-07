@@ -7,7 +7,6 @@ import {
   IsArray,
   IsInt,
   IsNotEmpty,
-  IsOptional,
   IsPositive,
   ValidateNested,
 } from 'class-validator';
@@ -45,18 +44,4 @@ export class UpdateUserLocationRequestDto {
   @ValidateNested({ each: true })
   @Type(() => UpdateUserLocationItemRequestDto)
   update: UpdateUserLocationItemRequestDto[];
-}
-
-export class DeleteUserLocationRequestDto {
-  @ApiProperty({
-    example: [1, 2, 3],
-    description: 'location id(pk) Array',
-  })
-  @ArrayMaxSize(3)
-  @ArrayMinSize(1)
-  @ArrayUnique()
-  @IsInt({ each: true })
-  @IsPositive({ each: true })
-  @IsNotEmpty()
-  readonly userLocationIds: number[];
 }
