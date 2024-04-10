@@ -60,7 +60,7 @@ export class UserController {
     private queryBus: QueryBus,
   ) {}
 
-  @Post('kakao/login')
+  @Get('kakao/login')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
