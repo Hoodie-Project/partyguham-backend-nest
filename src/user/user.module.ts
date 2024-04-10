@@ -25,7 +25,7 @@ import { LocationModule } from 'src/location/location.module';
 import { PositionModule } from 'src/position/position.module';
 import { SkillModule } from 'src/skill/skill.module';
 import { PersonalityModule } from 'src/personality/personality.module';
-import { CreateUserLocationHandler } from './application/command/create-userLocation.handler';
+import { UserLocationCreateHandler } from './application/command/userLocation.create.handler';
 import { CreateUserPersonalityHandler } from './application/command/create-userPersonality.handler';
 import { CreateUserCareerHandler } from './application/command/create-userCareer.handler';
 import { UserLocationRepository } from './infra/db/repository/user-location.repository';
@@ -42,7 +42,7 @@ const commandHandlers = [
   CreateUserHandler,
   KakaoCodeHandler,
   KakaoLoginHandler,
-  CreateUserLocationHandler,
+  UserLocationCreateHandler,
   CreateUserPersonalityHandler,
   CreateUserCareerHandler,
   UpdateUserLocationHandler,

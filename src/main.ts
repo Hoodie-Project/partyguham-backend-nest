@@ -45,6 +45,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api'); // 전체 endpoint
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
       transform: true,
       stopAtFirstError: true,
       transformOptions: { enableImplicitConversion: true },

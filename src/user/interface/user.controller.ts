@@ -2,7 +2,15 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiConflictResponse, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiConflictResponse,
+  ApiCookieAuth,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -29,28 +37,30 @@ import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dt
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
-import { CreateUserLocationRequestDto } from './dto/request/create-userLocation.request.dto';
+
 import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
-import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
+import { UserLocationCreateCommand } from '../application/command/userLocation.create.command';
 import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
+import { UpdateUserLocationCommand } from '../application/command/update-userLocation.command';
+import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
+
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
 import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
-import { UpdateUserLocationCommand } from '../application/command/update-userLocation.command';
-import { UpdateUserLocationRequestDto } from './dto/request/update-userLocation.request.dto';
-import { DeleteUserLocationRequestDto } from './dto/request/delete-userLocation.request.dto';
-import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
+import { UserLocationDeleteRequestDto } from './dto/request/userLocation.delete.request.dto';
+import { UserLocationUpdateRequestDto } from './dto/request/userLocation.update.request.dto';
+import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
 
 @ApiTags('user API')
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
-  @Post('kakao')
+  @Post('kakao/login')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
@@ -61,7 +71,9 @@ export class UserController {
   }
 
   @Get('kakao/callback')
-  @ApiOperation({ summary: '로그인 시도에 대한 응답 (카카오 로그인 리다이렉트 API)' })
+  @ApiOperation({
+    summary: '웹/앱 사용 X // 로그인 시도에 대한 카카오 서버에 대한 응답 (카카오 로그인 리다이렉트 API)',
+  })
   @ApiResponse({
     status: 200,
     description: '로그인 가능 (access - res.body / refresh - res.cookie)',
@@ -115,14 +127,14 @@ export class UserController {
 
   @ApiBearerAuth('SignupJwt')
   @UseGuards(SignupJwtAuthGuard)
-  @Post('signup')
+  @Post('')
   @ApiOperation({ summary: '회원가입 (필수)' })
   @ApiResponse({
     status: 201,
     description: '로그인 가능 (access - res.body / refresh - res.cookie)',
     schema: { example: { accessToken: 'token' } },
   })
-  async signUpByKakao(
+  async signUp(
     @CurrentUser() user: CurrentSignupType,
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
@@ -145,7 +157,7 @@ export class UserController {
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
-  @Post('me/location')
+  @Post('me/locations')
   @ApiOperation({ summary: '지역 저장' })
   @ApiResponse({
     status: 201,
@@ -154,65 +166,62 @@ export class UserController {
   })
   @ApiResponse({
     status: 409,
-    description:
-      '관심지역을 3개 초과하여 저장 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+    description: '이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
   })
-  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto) {
-    const { locationIds } = body;
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
+    const { locations } = body;
 
-    const command = new CreateUserLocationCommand(user.id, locationIds);
+    const command = new UserLocationCreateCommand(user.id, locations);
 
     const result = await this.commandBus.execute(command);
 
     return plainToInstance(UserLocationResponseDto, result);
   }
 
+  // 업데이트는 하나씩
+  // @ApiBearerAuth('AccessJwt')
+  // @UseGuards(AccessJwtAuthGuard)
+  // @Patch('me/location')
+  // @ApiOperation({ summary: '관심지역 수정' })
+  // @ApiResponse({
+  //   status: 201,
+  //   description: '관심지역 수정',
+  //   type: [UserLocationResponseDto],
+  // })
+  // @ApiResponse({
+  //   status: 409,
+  //   description:
+  //     '관심지역을 3개 초과하여 수정 할 수 없습니다. \t\n 수정 하려는 데이터는 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] } \t\n 수정 하려는 id가 올바르지 않습니다. { id : [1,2] }',
+  // })
+  // async patchUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationUpdateRequestDto) {
+  //   const { userLocations } = body;
+  //   const command = new UpdateUserLocationCommand(user.id, userLocations);
+  //   const result = await this.commandBus.execute(command);
+
+  //   return plainToInstance(UserLocationResponseDto, result);
+  // }
+
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('me/location')
-  @ApiOperation({ summary: '관심지역 수정' })
-  @ApiResponse({
-    status: 201,
-    description: '관심지역 수정',
-    type: [UserLocationResponseDto],
-  })
-  @ApiResponse({
-    status: 409,
-    description:
-      '관심지역을 3개 초과하여 수정 할 수 없습니다. \t\n 수정 하려는 데이터는 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] } \t\n 수정 하려는 id가 올바르지 않습니다. { id : [1,2] }',
-  })
-  async patchUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserLocationRequestDto) {
-    const { update } = body;
-
-    const command = new UpdateUserLocationCommand(user.id, update);
-
-    const result = await this.commandBus.execute(command);
-
-    return plainToInstance(UserLocationResponseDto, result);
-  }
-
-  @ApiBearerAuth('AccessJwt')
-  @UseGuards(AccessJwtAuthGuard)
-  @Delete('me/location')
+  @Delete('me/locations/:userLocationId')
   @ApiOperation({ summary: '관심지역 삭제' })
+  @ApiParam({ name: 'userLocationId', description: '유저관심지역 ID' })
   @ApiResponse({
-    status: 201,
-    description: '관심지역 삭제',
-    type: [UserLocationResponseDto],
+    status: 204,
+    description: '관심지역 삭제 성공',
   })
   @ApiResponse({
-    status: 409,
-    description:
-      '관심지역을 3개 초과하여 삭제 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+    status: 403,
+    description: '삭제 권한이 없습니다.',
   })
-  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: DeleteUserLocationRequestDto) {
-    const { deleteUserLocationIds } = body;
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
+    const command = new DeleteUserLocationCommand(user.id, userLocationId);
 
-    const command = new DeleteUserLocationCommand(user.id, deleteUserLocationIds);
-
-    const result = await this.commandBus.execute(command);
-
-    return plainToInstance(UserLocationResponseDto, result);
+    await this.commandBus.execute(command);
   }
 
   @ApiBearerAuth('AccessJwt')

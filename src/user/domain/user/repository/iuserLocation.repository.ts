@@ -7,6 +7,7 @@ interface IUpdateUserLocation {
 }
 
 export interface IUserLocationRepository {
+  findById: (id: number) => Promise<UserLocationEntity>;
   findByUserId: (userId: number) => Promise<UserLocationEntity[]>;
   bulkInsert: (
     userId: number,
@@ -18,5 +19,5 @@ export interface IUserLocationRepository {
     } & UserLocationEntity)[]
   >;
   bulkUpdate: (updateUserLocation: IUpdateUserLocation[]) => Promise<UserLocationEntity[]>;
-  bulkDelete: (deleteUserLocationIds: number[]) => Promise<boolean>;
+  deleteById: (id: number) => Promise<boolean>;
 }

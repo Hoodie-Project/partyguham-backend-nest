@@ -1,17 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsInt, IsNotEmpty, IsPositive } from 'class-validator';
+import { LocationDto } from '../location.dto';
 
-export class CreateUserLocationRequestDto {
+export class UserLocationCreateRequestDto {
   @ApiProperty({
     example: [1, 2, 3],
-    description: 'location id(pk) Array',
+    description: '지역 ID 목록 (Array)',
   })
   @ArrayMaxSize(3)
   @ArrayMinSize(1)
   @ArrayUnique()
-  @IsInt({ each: true })
-  @IsPositive({ each: true })
   @IsNotEmpty()
-  readonly locationIds: number[];
+  readonly locations: LocationDto[];
 }

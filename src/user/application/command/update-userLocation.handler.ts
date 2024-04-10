@@ -14,17 +14,17 @@ export class UpdateUserLocationHandler implements ICommandHandler<UpdateUserLoca
   ) {}
 
   async execute(command: UpdateUserLocationCommand) {
-    const { userId, updateUserLocation } = command;
+    const { userId, userLocations } = command;
 
     // 중복 저장 방지 로직
-    if (updateUserLocation) {
-      if (updateUserLocation.length === 3) {
+    if (userLocations) {
+      if (userLocations.length === 3) {
         throw new ConflictException('관심지역을 3개 초과하여 수정 할 수 없습니다.');
       }
     }
 
     // locationId 확인
-    const updateLocationIds = updateUserLocation.map((value) => value.locationId);
+    const updateLocationIds = userLocations.map((value) => value.locationId);
     await this.locationService.findByIds(updateLocationIds);
 
     // 저장된 Location을 UserId로 불러오기
@@ -43,13 +43,13 @@ export class UpdateUserLocationHandler implements ICommandHandler<UpdateUserLoca
     // DB에 저장된 id(PK) 존재 확인
     const savedId = savedUserLocation.map((value) => value.id);
 
-    const userLocationId = updateUserLocation.map((value) => value.id);
+    const userLocationId = userLocations.map((value) => value.id);
     const uniqueIds = userLocationId.filter((id) => !savedId.includes(id));
     if (uniqueIds.length > 0) {
       throw new ConflictException(`수정 하려는 id가 올바르지 않습니다. { id : [${uniqueIds}] }`);
     }
 
-    const update = updateUserLocation.map((value) => {
+    const update = userLocations.map((value) => {
       return { ...value, userId: userId };
     });
 
