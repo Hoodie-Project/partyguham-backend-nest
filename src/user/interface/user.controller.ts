@@ -95,11 +95,14 @@ export class UserController {
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
       });
-      res.status(200).send({ accessToken: result.accessToken });
+      res.status(200).send({ accessToken: result.accessToken }).redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
-      res.status(401).send({ signupAccessToken: result.signupAccessToken, email: result.email });
+      res
+        .status(401)
+        .send({ signupAccessToken: result.signupAccessToken, email: result.email })
+        .redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
