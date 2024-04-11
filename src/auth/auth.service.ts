@@ -5,7 +5,7 @@ import { AuthRepository } from './repository/auth.repository';
 
 @Injectable()
 export class AuthService {
-  private readonly algorithm: string = 'aes-192-cbc';
+  private readonly algorithm: string = 'aes-256-cbc';
   private readonly key = process.env.CIPHERIV_KEY_SECRET;
   private readonly iv = process.env.CIPHERIV_IV_SECRET;
   constructor(
