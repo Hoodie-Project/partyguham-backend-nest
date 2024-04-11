@@ -1,7 +1,7 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-
+import { Request } from 'express';
 import { OauthService } from './oauth.service';
 import { AuthService } from './auth.service';
 import { PayloadType } from './jwt.payload';
@@ -13,7 +13,13 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
     private authService: AuthService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: (request: Request) => {
+        if (request && request.cookies) {
+          const signupToken = request.cookies['signupToken'];
+          if (!signupToken) throw new UnauthorizedException('signupToken이 cookies에 없습니다.');
+          return signupToken;
+        }
+      },
       secretOrKey: process.env.JWT_SIGNUP_SECRET,
       ignoreExpiration: false,
       algorithms: ['HS256'],

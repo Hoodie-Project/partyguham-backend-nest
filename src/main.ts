@@ -1,10 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { CustomErrorExceptionFilter } from './common/exception/error.filter';
 import * as fs from 'fs';
+import * as session from 'express-session';
+
+import * as cookieParser from 'cookie-parser';
+import * as passport from 'passport';
+
+declare module 'express-session' {
+  interface SessionData {
+    email: string;
+  }
+}
 
 async function bootstrap() {
   const httpsOptions =
@@ -31,6 +40,23 @@ async function bootstrap() {
     next();
   });
 
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET, //세션아이디
+      resave: false, //세션이 수정되지 않아도 지속적으로 저장하게 하는 옵션
+      saveUninitialized: false, //초기화되지 않는 세션을 저장하게 함
+      cookie: {
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+      },
+    }),
+  );
+
+  // app.use(passport.initialize());
+  // app.use(passport.session());
+  // app.use(cookieParser()); // cookie 사용
+
   //docs
   const config = new DocumentBuilder()
     .setTitle('party-guam API')
@@ -53,8 +79,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new CustomErrorExceptionFilter());
-
-  app.use(cookieParser()); // cookie 사용
 
   await app.listen(process.env.PORT);
   console.log(`listening on port ${process.env.PORT}`);

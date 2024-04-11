@@ -24,6 +24,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
         },
       },
     );
+
     const kakaoData = await kakao_api_url.data;
 
     const kakaoAccessToken = kakaoData.access_token;
