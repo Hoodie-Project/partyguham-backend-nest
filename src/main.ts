@@ -25,21 +25,25 @@ async function bootstrap() {
           key: fs.readFileSync(process.env.KEY_REPO),
           cert: fs.readFileSync(process.env.CERT_REPO),
         };
+
   const app = await NestFactory.create(AppModule, {
     httpsOptions,
   });
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',
-    origin: '*', //우선 모두 허용
+    origin: ['http://localhost:8000', 'http://partyguam.net'],
     credentials: true,
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   });
-  app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-  });
+
+  // app.use((req, res, next) => {
+  //   res.header('Access-Control-Allow-Origin', req.headers.origin);
+  //   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  //   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  //   res.setHeader('Access-Control-Allow-Credentials', true);
+  //   next();
+  // });
 
   app.use(
     session({
