@@ -140,7 +140,7 @@ export class UserController {
     status: 409,
     description: '중복된 닉네임 입니다.',
   })
-  async checkNickname(@Req() req: Request, @Query() query: NicknameQueryRequestDto) {
+  async checkNickname(@Query() query: NicknameQueryRequestDto) {
     const { nickname } = query;
 
     const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
@@ -161,6 +161,7 @@ export class UserController {
   })
   async signUp(
     @CurrentUser() user: CurrentSignupType,
+    @Req() req: Request,
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
   ): Promise<void> {
@@ -175,6 +176,13 @@ export class UserController {
       // secure: true,
       httpOnly: true,
       sameSite: 'strict',
+    });
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        res.redirect(302, `${process.env.BASE_URL}`);
+      }
     });
     res.clearCookie('signupToken');
 
