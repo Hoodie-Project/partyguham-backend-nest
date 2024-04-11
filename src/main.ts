@@ -12,6 +12,7 @@ import * as passport from 'passport';
 declare module 'express-session' {
   interface SessionData {
     email: string;
+    image: string;
   }
 }
 
@@ -46,16 +47,12 @@ async function bootstrap() {
       resave: false, //세션이 수정되지 않아도 지속적으로 저장하게 하는 옵션
       saveUninitialized: false, //초기화되지 않는 세션을 저장하게 함
       cookie: {
-        // secure: true, // HTTPS 연결에서만 쿠키 전송
-        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: 'strict', // CSRF 공격 방지
+        maxAge: 3600000, // 1시간(밀리초 단위)
       },
     }),
   );
 
-  // app.use(passport.initialize());
-  // app.use(passport.session());
-  // app.use(cookieParser()); // cookie 사용
+  app.use(cookieParser()); // cookie 사용
 
   //docs
   const config = new DocumentBuilder()

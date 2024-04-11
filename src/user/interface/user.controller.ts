@@ -101,6 +101,7 @@ export class UserController {
 
     if (result.type === 'signup') {
       req.session.email = result.email;
+      req.session.image = result.image;
 
       res.cookie('signupToken', result.signupAccessToken, {
         // secure: true, // HTTPS 연결에서만 쿠키 전송
@@ -110,6 +111,21 @@ export class UserController {
 
       res.redirect(`${process.env.BASE_URL}join`);
     }
+  }
+
+  @ApiBearerAuth('SignupJwt')
+  @UseGuards(SignupJwtAuthGuard)
+  @Get('me/oauth')
+  @ApiOperation({ summary: 'oauth 본인 데이터 호출 (email, image)' })
+  @ApiResponse({
+    status: 200,
+    description: 'email, image',
+  })
+  async getData(@Req() req: Request) {
+    const email = req.session.email;
+    const image = req.session.image;
+
+    return { email, image };
   }
 
   @ApiBearerAuth('SignupJwt')
@@ -124,7 +140,7 @@ export class UserController {
     status: 409,
     description: '중복된 닉네임 입니다.',
   })
-  async checkNickname(@Query() query: NicknameQueryRequestDto) {
+  async checkNickname(@Req() req: Request, @Query() query: NicknameQueryRequestDto) {
     const { nickname } = query;
 
     const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
@@ -156,10 +172,11 @@ export class UserController {
     const result = await this.commandBus.execute(command);
 
     res.cookie('refreshToken', result.refreshToken, {
-      secure: true,
+      // secure: true,
       httpOnly: true,
       sameSite: 'strict',
     });
+    res.clearCookie('signupToken');
 
     res.status(201).send({ accessToken: result.accessToken });
   }
