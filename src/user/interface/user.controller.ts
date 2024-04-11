@@ -91,18 +91,16 @@ export class UserController {
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
-        secure: true, // HTTPS 연결에서만 쿠키 전송
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
       });
-      res.status(200).send({ accessToken: result.accessToken }).redirect(`${process.env.BASE_URL}`);
+
+      res.redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
-      res
-        .status(401)
-        .send({ signupAccessToken: result.signupAccessToken, email: result.email })
-        .redirect(`${process.env.BASE_URL}/join`);
+      res.redirect(`${process.env.BASE_URL}/join?signup=${result.signupAccessToken}&email=${result.email}`);
     }
   }
 
