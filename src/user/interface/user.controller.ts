@@ -107,6 +107,7 @@ export class UserController {
         // secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
       res.redirect(`${process.env.BASE_URL}join`);
@@ -185,6 +186,8 @@ export class UserController {
       }
     });
     res.clearCookie('signupToken');
+    // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
     res.status(201).send({ accessToken: result.accessToken });
   }
