@@ -10,23 +10,29 @@ export class UserCareerRepository implements IUserCareerRepository {
   constructor(
     readonly dataSource: DataSource,
     @InjectRepository(UserCareerEntity)
-    private userLocationRepository: Repository<UserCareerEntity>,
+    private userCareerRepository: Repository<UserCareerEntity>,
   ) {}
 
+  async findById(id: number) {
+    const result = await this.userCareerRepository.findOne({ where: { id } });
+
+    return result;
+  }
+
   async findByUserId(userId: number) {
-    const result = await this.userLocationRepository.find({ where: { userId } });
+    const result = await this.userCareerRepository.find({ where: { userId } });
 
     return result;
   }
 
   async findByUserIdAndCareerType(userId: number, careerType: CareerTypeEnum) {
-    const result = await this.userLocationRepository.find({ where: { userId, careerType } });
+    const result = await this.userCareerRepository.find({ where: { userId, careerType } });
 
     return result;
   }
 
   async createCareer(userId: number, positionId: number, years: number, careerType: CareerTypeEnum) {
-    const result = await this.userLocationRepository.save({ userId, positionId, years, careerType });
+    const result = await this.userCareerRepository.save({ userId, positionId, years, careerType });
 
     return result;
   }
@@ -39,7 +45,13 @@ export class UserCareerRepository implements IUserCareerRepository {
       careerType: careerTypes[index],
     }));
 
-    const result = await this.userLocationRepository.insert(userLocations);
+    const result = await this.userCareerRepository.insert(userLocations);
     return result;
+  }
+
+  async deleteById(id: number) {
+    const result = await this.userCareerRepository.delete({ id });
+
+    return result.affected ? true : false;
   }
 }

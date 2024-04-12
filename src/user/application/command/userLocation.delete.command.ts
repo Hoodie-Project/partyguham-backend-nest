@@ -1,6 +1,6 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class DeleteUserLocationCommand implements ICommand {
+export class UserLocationDeleteCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly userLocationId: number,

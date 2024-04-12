@@ -2,6 +2,7 @@ import { CareerTypeEnum, UserCareerEntity } from 'src/user/infra/db/entity/user-
 import { InsertResult } from 'typeorm';
 
 export interface IUserCareerRepository {
+  findById: (id: number) => Promise<UserCareerEntity>;
   findByUserId: (userId: number) => Promise<UserCareerEntity[]>;
   findByUserIdAndCareerType: (userId: number, careerType: CareerTypeEnum) => Promise<UserCareerEntity[]>;
   createCareer: (
@@ -16,4 +17,5 @@ export interface IUserCareerRepository {
     year: number[],
     careerTypes: CareerTypeEnum[],
   ) => Promise<InsertResult>;
+  deleteById: (id: number) => Promise<boolean>;
 }

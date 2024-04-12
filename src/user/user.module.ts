@@ -26,8 +26,8 @@ import { PositionModule } from 'src/position/position.module';
 import { SkillModule } from 'src/skill/skill.module';
 import { PersonalityModule } from 'src/personality/personality.module';
 import { UserLocationCreateHandler } from './application/command/userLocation.create.handler';
-import { CreateUserPersonalityHandler } from './application/command/create-userPersonality.handler';
-import { CreateUserCareerHandler } from './application/command/create-userCareer.handler';
+import { UserPersonalityCreateHandler } from './application/command/userPersonality.create.handler';
+import { UserCareerCreateHandler } from './application/command/userCareer.create.handler';
 import { UserLocationRepository } from './infra/db/repository/user-location.repository';
 import { UserLocationEntity } from './infra/db/entity/user-location.entity';
 import { UserCareerEntity } from './infra/db/entity/user-career.entity';
@@ -35,18 +35,25 @@ import { UserPersonalityEntity } from './infra/db/entity/user-personality.entity
 import { UserPersonalityRepository } from './infra/db/repository/user-personality.repository';
 import { UserCareerRepository } from './infra/db/repository/user-career.repository';
 import { GetCheckNicknameHandler } from './application/query/get-check-nickname.handler';
-import { UpdateUserLocationHandler } from './application/command/update-userLocation.handler';
-import { DeleteUserLocationHandler } from './application/command/delete-userLocation.handler';
+
+import { UserLocationDeleteHandler } from './application/command/userLocation.delete.handler';
+import { UserPersonalityDeleteHandler } from './application/command/userPersonality.delete.handler';
+import { UserCareerDeleteHandler } from './application/command/userCareer.delete.handler';
 
 const commandHandlers = [
   CreateUserHandler,
   KakaoCodeHandler,
   KakaoLoginHandler,
+
   UserLocationCreateHandler,
-  CreateUserPersonalityHandler,
-  CreateUserCareerHandler,
-  UpdateUserLocationHandler,
-  DeleteUserLocationHandler,
+  UserLocationDeleteHandler,
+
+  UserPersonalityCreateHandler,
+  UserPersonalityDeleteHandler,
+
+  UserCareerCreateHandler,
+  UserCareerDeleteHandler,
+
   FollowHandler,
   UnFollowHandler,
 ];

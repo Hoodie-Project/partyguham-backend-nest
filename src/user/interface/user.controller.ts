@@ -2,15 +2,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import {
-  ApiBearerAuth,
-  ApiConflictResponse,
-  ApiCookieAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -21,7 +13,7 @@ import { FollowCommand } from '../application/command/follow.command';
 import { UnfollowCommand } from '../application/command/unfollow.command';
 
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
-import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
+
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
 import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
 
@@ -40,17 +32,18 @@ import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.requ
 
 import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
 import { UserLocationCreateCommand } from '../application/command/userLocation.create.command';
-import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
-import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
-import { UpdateUserLocationCommand } from '../application/command/update-userLocation.command';
-import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
+import { UserPersonalityCreateCommand } from '../application/command/userPersonality.create.command';
+import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
+
+import { UserLocationDeleteCommand } from '../application/command/userLocation.delete.command';
 
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
 import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UserLocationDeleteRequestDto } from './dto/request/userLocation.delete.request.dto';
-import { UserLocationUpdateRequestDto } from './dto/request/userLocation.update.request.dto';
 import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
+import { UserPersonalityDeleteCommand } from '../application/command/userPersonality.delete.command';
+import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
 
 @ApiTags('user API')
 @Controller('users')
@@ -173,32 +166,32 @@ export class UserController {
 
     const result = await this.commandBus.execute(command);
 
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        // res.redirect(302, `${process.env.BASE_URL}`);
+      }
+    });
+    console.log('session', req.session);
+    res.clearCookie('signupToken');
+    // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+
     res.cookie('refreshToken', result.refreshToken, {
       // secure: true,
       httpOnly: true,
       sameSite: 'strict',
     });
-
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Error destroying session:', err);
-        res.redirect(302, `${process.env.BASE_URL}`);
-      }
-    });
-    res.clearCookie('signupToken');
-    // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-
     res.status(201).send({ accessToken: result.accessToken });
   }
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/locations')
-  @ApiOperation({ summary: '지역 저장' })
+  @ApiOperation({ summary: '관심지역 저장' })
   @ApiResponse({
     status: 201,
-    description: '유저 지역 저장',
+    description: '유저 관심지역 저장',
     type: [UserLocationResponseDto],
   })
   @ApiResponse({
@@ -215,34 +208,11 @@ export class UserController {
     return plainToInstance(UserLocationResponseDto, result);
   }
 
-  // 업데이트는 하나씩
-  // @ApiBearerAuth('AccessJwt')
-  // @UseGuards(AccessJwtAuthGuard)
-  // @Patch('me/location')
-  // @ApiOperation({ summary: '관심지역 수정' })
-  // @ApiResponse({
-  //   status: 201,
-  //   description: '관심지역 수정',
-  //   type: [UserLocationResponseDto],
-  // })
-  // @ApiResponse({
-  //   status: 409,
-  //   description:
-  //     '관심지역을 3개 초과하여 수정 할 수 없습니다. \t\n 수정 하려는 데이터는 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] } \t\n 수정 하려는 id가 올바르지 않습니다. { id : [1,2] }',
-  // })
-  // async patchUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationUpdateRequestDto) {
-  //   const { userLocations } = body;
-  //   const command = new UpdateUserLocationCommand(user.id, userLocations);
-  //   const result = await this.commandBus.execute(command);
-
-  //   return plainToInstance(UserLocationResponseDto, result);
-  // }
-
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Delete('me/locations/:userLocationId')
   @ApiOperation({ summary: '관심지역 삭제' })
-  @ApiParam({ name: 'userLocationId', description: '유저관심지역 ID' })
+  @ApiParam({ name: 'userLocationId', description: '저장된 유저관심지역 ID' })
   @ApiResponse({
     status: 204,
     description: '관심지역 삭제 성공',
@@ -255,8 +225,12 @@ export class UserController {
     status: 404,
     description: '데이터를 찾을 수 없습니다.',
   })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
   async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
-    const command = new DeleteUserLocationCommand(user.id, userLocationId);
+    const command = new UserLocationDeleteCommand(user.id, userLocationId);
 
     await this.commandBus.execute(command);
   }
@@ -277,11 +251,41 @@ export class UserController {
   })
   async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserPersonalityRequestDto) {
     const { userPersonality } = body;
-    const command = new CreateUserPersonalityCommand(user.id, userPersonality);
+    const command = new UserPersonalityCreateCommand(user.id, userPersonality);
 
     const result = await this.commandBus.execute(command);
 
     return plainToInstance(UserPersonalityResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/personality/:userPersonalityId')
+  @ApiOperation({ summary: '성향 삭제' })
+  @ApiParam({ name: 'userPersonalityId', description: '저장된 유저성향 ID' })
+  @ApiResponse({
+    status: 204,
+    description: '성향 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserPersonality(
+    @CurrentUser() user: CurrentUserType,
+    @Param('userPersonalityId') userPersonalityId: number,
+  ) {
+    const command = new UserPersonalityDeleteCommand(user.id, userPersonalityId);
+
+    await this.commandBus.execute(command);
   }
 
   @ApiBearerAuth('AccessJwt')
@@ -301,11 +305,38 @@ export class UserController {
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto) {
     const { positionId, years, careerType } = body;
 
-    const command = new CreateUserCareerCommand(user.id, positionId, years, careerType);
+    const command = new UserCareerCreateCommand(user.id, positionId, years, careerType);
 
     const result = await this.commandBus.execute(command);
 
     return plainToInstance(UserCareerResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/career/:userCareerId')
+  @ApiOperation({ summary: '유저 경력(커리어) 삭제' })
+  @ApiParam({ name: 'userCareerId', description: '저장된 유저 경력(커리어) ID' })
+  @ApiResponse({
+    status: 204,
+    description: '유저 경력(커리어) 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserCareer(@CurrentUser() user: CurrentUserType, @Param('userCareerId') userCareerId: number) {
+    const command = new UserCareerDeleteCommand(user.id, userCareerId);
+
+    await this.commandBus.execute(command);
   }
 
   @Delete('logout')
