@@ -1,24 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  ArrayUnique,
-  IsArray,
-  IsIn,
-  IsInt,
-  IsNotEmpty,
-  IsOptional,
-  IsPositive,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
 import { CareerTypeEnum } from 'src/user/infra/db/entity/user-career.entity';
 
 export class CareerDto {
   @ApiProperty({
     example: 1,
-    description: 'Position id(pk)',
+    description: '포지션 ID (position pk)',
   })
   @IsInt()
   @IsPositive()
@@ -27,7 +14,7 @@ export class CareerDto {
 
   @ApiProperty({
     example: 1,
-    description: 'year',
+    description: '경력 연차',
   })
   @Max(100)
   @Min(0)
@@ -40,18 +27,4 @@ export class CareerDto {
   @IsIn([CareerTypeEnum.PRIMARY, CareerTypeEnum.SECONDARY])
   @IsNotEmpty()
   readonly careerType: CareerTypeEnum;
-}
-
-export class CreateUserCareerRequestDto {
-  @ApiProperty({
-    example: [{ positionId: 1, years: 1, careerType: 'primary' }],
-    description: '경력 저장',
-  })
-  @Type(() => CareerDto)
-  @ArrayUnique()
-  @ArrayMaxSize(2)
-  @ArrayMinSize(1)
-  @IsArray()
-  @IsNotEmpty()
-  readonly career: CareerDto[];
 }

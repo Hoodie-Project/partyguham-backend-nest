@@ -28,9 +28,9 @@ import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
-import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
+import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
 
-import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
+import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
 import { UserLocationCreateCommand } from '../application/command/userLocation.create.command';
 import { UserPersonalityCreateCommand } from '../application/command/userPersonality.create.command';
 import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
@@ -196,7 +196,7 @@ export class UserController {
   })
   @ApiResponse({
     status: 409,
-    description: '이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+    description: '이미 저장된 데이터가 있습니다.',
   })
   async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
     const { locations } = body;
@@ -247,9 +247,9 @@ export class UserController {
   @ApiResponse({
     status: 409,
     description:
-      '이미 설문조사를 한 항목입니다. { personalityQuestionId : 1 } \t\n 2개 까지 저장 가능합니다. { personalityQuestionId : 1 } \t\n 질문에 맞지 않는 선택지 입니다. { personalityOptionId : 6 }',
+      '이미 설문조사를 한 항목이 있습니다. \t\n 질문에 대한 응답 개수 조건이 맞지 않는 항목이 있습니다. \t\n 질문에 맞지 않는 선택지가 있습니다.',
   })
-  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserPersonalityRequestDto) {
+  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: UserPersonalityCreateRequestDto) {
     const { personality } = body;
     const command = new UserPersonalityCreateCommand(user.id, personality);
 
@@ -302,7 +302,7 @@ export class UserController {
     description:
       '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
-  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto) {
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
     const { career } = body;
 
     const command = new UserCareerCreateCommand(user.id, career);

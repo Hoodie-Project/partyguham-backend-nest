@@ -36,16 +36,12 @@ export class UserPersonalityCreateHandler implements ICommandHandler<UserPersona
       const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOptionIds.includes(saveOptionId));
 
       if (duplicated) {
-        throw new ConflictException(
-          `이미 설문조사를 한 항목입니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
-        );
+        throw new ConflictException(`이미 설문조사를 한 항목이 있습니다.`);
       }
 
       // 다중 선택 체크
       if (surveyQuestion.responseCount < userAnswer.personalityOptionId.length) {
-        throw new ConflictException(
-          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
-        );
+        throw new ConflictException(`질문에 대한 응답 개수 조건이 맞지 않는 항목이 있습니다.`);
       }
 
       // optionId 유효 확인
@@ -55,9 +51,7 @@ export class UserPersonalityCreateHandler implements ICommandHandler<UserPersona
         if (validation) {
           userPersonalityOptionIds.push(userAnswerPersonalityOptionId);
         } else {
-          throw new ConflictException(
-            `질문에 맞지 않는 선택지 입니다. { personalityOptionId : ${userAnswerPersonalityOptionId} }`,
-          );
+          throw new ConflictException(`질문에 맞지 않는 선택지가 있습니다.`);
         }
       });
     });

@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -35,16 +34,4 @@ export class PersonalityDto {
   @IsArray()
   @IsNotEmpty()
   readonly personalityOptionId: number[];
-}
-
-export class CreateUserPersonalityRequestDto {
-  @ApiProperty({
-    example: [{ personalityQuestionId: 1, personalityOptionId: [1, 2] }],
-    description: '성향 저장',
-  })
-  @Type(() => PersonalityDto)
-  @ArrayUnique()
-  @IsArray()
-  @IsNotEmpty()
-  readonly personality: PersonalityDto[];
 }

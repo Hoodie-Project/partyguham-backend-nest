@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IUserCareerRepository } from 'src/user/domain/user/repository/iuserCareer.repository';
 import { CareerTypeEnum, UserCareerEntity } from '../entity/user-career.entity';
-import { CareerDto } from 'src/user/interface/dto/request/create-userCareer.request.dto';
+import { CareerDto } from 'src/user/interface/dto/career.dto';
 
 @Injectable()
 export class UserCareerRepository implements IUserCareerRepository {

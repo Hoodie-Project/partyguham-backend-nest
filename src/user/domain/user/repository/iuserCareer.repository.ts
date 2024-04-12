@@ -1,5 +1,6 @@
 import { CareerTypeEnum, UserCareerEntity } from 'src/user/infra/db/entity/user-career.entity';
-import { CareerDto } from 'src/user/interface/dto/request/create-userCareer.request.dto';
+import { CareerDto } from 'src/user/interface/dto/career.dto';
+
 import { InsertResult } from 'typeorm';
 
 export interface IUserCareerRepository {
