@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { IUserCareerRepository } from 'src/user/domain/user/repository/iuserCareer.repository';
 import { CareerTypeEnum, UserCareerEntity } from '../entity/user-career.entity';
+import { CareerDto } from 'src/user/interface/dto/request/create-userCareer.request.dto';
 
 @Injectable()
 export class UserCareerRepository implements IUserCareerRepository {
@@ -31,18 +32,16 @@ export class UserCareerRepository implements IUserCareerRepository {
     return result;
   }
 
-  async createCareer(userId: number, positionId: number, years: number, careerType: CareerTypeEnum) {
+  async create(userId: number, positionId: number, years: number, careerType: CareerTypeEnum) {
     const result = await this.userCareerRepository.save({ userId, positionId, years, careerType });
 
     return result;
   }
 
-  async bulkInsert(userId: number, positionIds: number[], years: number[], careerTypes: CareerTypeEnum[]) {
-    const userLocations = positionIds.map((positionId, index) => ({
+  async bulkInsert(userId: number, career: CareerDto[]) {
+    const userLocations = career.map((value) => ({
       userId,
-      positionId,
-      years: years[index],
-      careerType: careerTypes[index],
+      ...value,
     }));
 
     const result = await this.userCareerRepository.insert(userLocations);

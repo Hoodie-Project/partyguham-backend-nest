@@ -15,33 +15,40 @@ export class UserCareerCreateHandler implements ICommandHandler<UserCareerCreate
   ) {}
 
   async execute(command: UserCareerCreateCommand) {
-    const { userId, positionId, years, careerType } = command;
+    const { userId, career } = command;
 
-    const findPositionId = await this.positionService.findById(positionId);
-    if (!findPositionId) throw new BadRequestException('positionId가 유효하지 않습니다.');
+    const positionIds = career.map((value) => value.positionId);
+
+    await this.positionService.findByIds(positionIds);
 
     // 저장되어있는 유저 커리어 조회
-    const userCareer = await this.userCareerRepository.findByUserId(userId);
-    let primary = null;
-    let secondary = null;
+    const savedUserCareer = await this.userCareerRepository.findByUserId(userId);
+    let savedPrimaryPositionId: number = null;
+    let savedSecondaryPositionId: number = null;
 
-    userCareer.forEach((value) => {
-      if (value.careerType === CareerTypeEnum.PRIMARY) primary = value.positionId;
-      if (value.careerType === CareerTypeEnum.SECONDARY) secondary = value.positionId;
+    savedUserCareer.forEach((value) => {
+      if (value.careerType === CareerTypeEnum.PRIMARY) savedPrimaryPositionId = value.positionId;
+      if (value.careerType === CareerTypeEnum.SECONDARY) savedSecondaryPositionId = value.positionId;
     });
 
-    if ((careerType === CareerTypeEnum.PRIMARY && primary) || (careerType === CareerTypeEnum.SECONDARY && secondary)) {
-      throw new ConflictException(`해당 포지션에 이미 데이터가 존재합니다.`);
-    }
+    // 주, 부 포지션 데이터 검사
+    career.forEach((value) => {
+      if (value.careerType === CareerTypeEnum.PRIMARY && savedPrimaryPositionId) {
+        throw new ConflictException(`주 포지션에 이미 데이터가 존재합니다.`);
+      }
 
-    // 중복 검사
-    let userPositionIds = [primary, secondary];
-
-    userPositionIds.forEach((value) => {
-      if (value === positionId) throw new ConflictException('포지션 중에 이미 저장되어있습니다.');
+      if (value.careerType === CareerTypeEnum.SECONDARY && savedSecondaryPositionId) {
+        throw new ConflictException(`부 포지션에 이미 데이터가 존재합니다.`);
+      }
     });
 
-    const result = await this.userCareerRepository.createCareer(userId, positionId, years, careerType);
+    // 포지션 중복 검사
+    career.forEach((value) => {
+      if (value.positionId === savedPrimaryPositionId || value.positionId === savedSecondaryPositionId)
+        throw new ConflictException('이미 저장된 포지션이 있습니다.');
+    });
+
+    const result = await this.userCareerRepository.bulkInsert(userId, career);
 
     return result;
   }

@@ -250,8 +250,8 @@ export class UserController {
       '이미 설문조사를 한 항목입니다. { personalityQuestionId : 1 } \t\n 2개 까지 저장 가능합니다. { personalityQuestionId : 1 } \t\n 질문에 맞지 않는 선택지 입니다. { personalityOptionId : 6 }',
   })
   async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserPersonalityRequestDto) {
-    const { userPersonality } = body;
-    const command = new UserPersonalityCreateCommand(user.id, userPersonality);
+    const { personality } = body;
+    const command = new UserPersonalityCreateCommand(user.id, personality);
 
     const result = await this.commandBus.execute(command);
 
@@ -294,18 +294,18 @@ export class UserController {
   @ApiOperation({ summary: '경력 저장' })
   @ApiResponse({
     status: 201,
-    description: '유저 성향 저장',
-    type: UserCareerResponseDto,
+    description: '유저 경력 저장',
+    type: [UserCareerResponseDto],
   })
   @ApiResponse({
     status: 409,
     description:
-      '해당 포지션에 이미 데이터가 존재합니다. \t\n 기타 포지션은 3개 초과하여 저장할 수 없습니다. \t\n 포지션 중에 이미 저장되어있습니다.',
+      '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto) {
-    const { positionId, years, careerType } = body;
+    const { career } = body;
 
-    const command = new UserCareerCreateCommand(user.id, positionId, years, careerType);
+    const command = new UserCareerCreateCommand(user.id, career);
 
     const result = await this.commandBus.execute(command);
 

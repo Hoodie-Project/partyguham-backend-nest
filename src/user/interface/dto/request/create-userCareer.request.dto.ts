@@ -15,7 +15,7 @@ import {
 } from 'class-validator';
 import { CareerTypeEnum } from 'src/user/infra/db/entity/user-career.entity';
 
-export class CreateUserCareerRequestDto {
+export class CareerDto {
   @ApiProperty({
     example: 1,
     description: 'Position id(pk)',
@@ -29,7 +29,7 @@ export class CreateUserCareerRequestDto {
     example: 1,
     description: 'year',
   })
-  @Max(50)
+  @Max(100)
   @Min(0)
   @IsInt()
   @IsPositive()
@@ -40,4 +40,18 @@ export class CreateUserCareerRequestDto {
   @IsIn([CareerTypeEnum.PRIMARY, CareerTypeEnum.SECONDARY])
   @IsNotEmpty()
   readonly careerType: CareerTypeEnum;
+}
+
+export class CreateUserCareerRequestDto {
+  @ApiProperty({
+    example: [{ positionId: 1, years: 1, careerType: 'primary' }],
+    description: '경력 저장',
+  })
+  @Type(() => CareerDto)
+  @ArrayUnique()
+  @ArrayMaxSize(2)
+  @ArrayMinSize(1)
+  @IsArray()
+  @IsNotEmpty()
+  readonly career: CareerDto[];
 }
