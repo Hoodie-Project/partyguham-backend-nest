@@ -5,8 +5,8 @@ import { PersonalityDto } from '../personality.dto';
 
 export class UserPersonalityCreateRequestDto {
   @ApiProperty({
-    example: [{ personalityQuestionId: 1, personalityOptionId: [1, 2] }],
     description: '성향 저장',
+    type: [PersonalityDto],
   })
   @Type(() => PersonalityDto)
   @ArrayUnique()

@@ -1,5 +1,18 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -30,19 +43,18 @@ import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.q
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
 
-import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
 import { UserLocationCreateCommand } from '../application/command/userLocation.create.command';
-import { UserPersonalityCreateCommand } from '../application/command/userPersonality.create.command';
-import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
-
 import { UserLocationDeleteCommand } from '../application/command/userLocation.delete.command';
-
-import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
-import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
-import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
-import { UserLocationDeleteRequestDto } from './dto/request/userLocation.delete.request.dto';
 import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
+import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
+
+import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
+import { UserPersonalityCreateCommand } from '../application/command/userPersonality.create.command';
+import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
 import { UserPersonalityDeleteCommand } from '../application/command/userPersonality.delete.command';
+
+import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
+import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
 
 @ApiTags('user API')
@@ -113,7 +125,8 @@ export class UserController {
   @ApiOperation({ summary: 'oauth 본인 데이터 호출 (email, image)' })
   @ApiResponse({
     status: 200,
-    description: 'email, image',
+    description: '이메일, oauth 이미지 URL 데이터',
+    schema: { example: { email: 'email@partyguam.net', image: 'image URL' } },
   })
   async getData(@Req() req: Request) {
     const email = req.session.email;
@@ -291,7 +304,7 @@ export class UserController {
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/career')
-  @ApiOperation({ summary: '경력 저장' })
+  @ApiOperation({ summary: '유저 경력(커리어) 저장' })
   @ApiResponse({
     status: 201,
     description: '유저 경력 저장',
@@ -339,8 +352,13 @@ export class UserController {
     await this.commandBus.execute(command);
   }
 
+  @HttpCode(204)
   @Delete('logout')
   @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({
+    status: 204,
+    description: `cookie 'refreshToken' 삭제`,
+  })
   async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
     res.clearCookie('refreshToken');
   }

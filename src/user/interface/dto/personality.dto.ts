@@ -23,7 +23,7 @@ export class PersonalityDto {
   readonly personalityQuestionId: number;
 
   @ApiProperty({
-    example: 1,
+    example: [1, 2],
     description: '선택 문항 personality optionId (pk)',
   })
   @IsNumber({}, { each: true })

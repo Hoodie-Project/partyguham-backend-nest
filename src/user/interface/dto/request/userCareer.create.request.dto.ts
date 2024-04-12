@@ -6,8 +6,8 @@ import { CareerDto } from '../career.dto';
 
 export class UserCareerCreateRequestDto {
   @ApiProperty({
-    example: [{ positionId: 1, years: 1, careerType: 'primary' }],
     description: '경력 저장',
+    type: [CareerDto],
   })
   @Type(() => CareerDto)
   @ArrayUnique()
