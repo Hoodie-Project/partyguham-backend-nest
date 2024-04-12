@@ -1,21 +1,8 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -119,7 +106,7 @@ export class UserController {
     }
   }
 
-  @ApiBearerAuth('SignupJwt')
+  @ApiHeader({ name: 'cookies', description: 'signupToken' })
   @UseGuards(SignupJwtAuthGuard)
   @Get('me/oauth')
   @ApiOperation({ summary: 'oauth 본인 데이터 호출 (email, image)' })
@@ -135,7 +122,6 @@ export class UserController {
     return { email, image };
   }
 
-  @ApiBearerAuth('SignupJwt')
   @UseGuards(SignupJwtAuthGuard)
   @Get('check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
@@ -157,7 +143,6 @@ export class UserController {
     return '사용가능한 닉네임 입니다.';
   }
 
-  @ApiBearerAuth('SignupJwt')
   @UseGuards(SignupJwtAuthGuard)
   @Post('')
   @ApiOperation({ summary: '회원가입 (필수)' })
@@ -198,7 +183,7 @@ export class UserController {
     res.status(201).send({ accessToken: result.accessToken });
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/locations')
   @ApiOperation({ summary: '관심지역 저장' })
@@ -221,7 +206,7 @@ export class UserController {
     return plainToInstance(UserLocationResponseDto, result);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Delete('me/locations/:userLocationId')
   @ApiOperation({ summary: '관심지역 삭제' })
@@ -248,7 +233,7 @@ export class UserController {
     await this.commandBus.execute(command);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
@@ -271,7 +256,7 @@ export class UserController {
     return plainToInstance(UserPersonalityResponseDto, result);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Delete('me/personality/:userPersonalityId')
   @ApiOperation({ summary: '성향 삭제' })
@@ -301,7 +286,7 @@ export class UserController {
     await this.commandBus.execute(command);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/career')
   @ApiOperation({ summary: '유저 경력(커리어) 저장' })
@@ -325,7 +310,7 @@ export class UserController {
     return plainToInstance(UserCareerResponseDto, result);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Delete('me/career/:userCareerId')
   @ApiOperation({ summary: '유저 경력(커리어) 삭제' })

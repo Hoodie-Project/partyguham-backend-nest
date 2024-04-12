@@ -50,18 +50,6 @@ async function bootstrap() {
 
   app.use(cookieParser()); // cookie 사용
 
-  //docs
-  const config = new DocumentBuilder()
-    .setTitle('party-guam API')
-    .setDescription('base URL - /api')
-    .setVersion('1.0')
-    .addTag('party-guam')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
-  app.setGlobalPrefix('api'); // 전체 endpoint
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -72,6 +60,21 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new CustomErrorExceptionFilter());
+  app.setGlobalPrefix('api'); // 전체 endpoint
+
+  //docs
+  const config = new DocumentBuilder()
+    .setBasePath('api') // 전역 접두사를 Swagger 문서에 반영
+    .setTitle('party-guam API')
+    .setDescription('파티괌 API 문서 입니다.')
+    .setVersion('1.0')
+    .addTag('party-guam')
+    .addBearerAuth({ type: 'http' }, 'accessToken')
+    .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(process.env.PORT);
   console.log(`listening on port ${process.env.PORT}`);
