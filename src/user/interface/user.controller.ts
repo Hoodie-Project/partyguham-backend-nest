@@ -43,6 +43,8 @@ import { UserPersonalityDeleteCommand } from '../application/command/userPersona
 import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
+import { GoogleCodeCommand } from '../application/command/google-code.command';
+import { GoogleLoginCommand } from '../application/command/google-login.command';
 
 @ApiTags('user API')
 @Controller('users')
@@ -78,6 +80,62 @@ export class UserController {
   })
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
+
+    const result = await this.commandBus.execute(command);
+
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+      });
+
+      res.redirect(`${process.env.BASE_URL}`);
+    }
+
+    if (result.type === 'signup') {
+      req.session.email = result.email;
+      req.session.image = result.image;
+
+      res.cookie('signupToken', result.signupAccessToken, {
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.redirect(`${process.env.BASE_URL}join`);
+    }
+  }
+
+  @Get('google/login')
+  @ApiOperation({ summary: '구글 로그인' })
+  async signinByGoogle(@Res() res: Response) {
+    const command = new GoogleCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @Get('google/callback')
+  @ApiOperation({
+    summary: '웹/앱 사용 X // 로그인 시도에 대한 구글 서버에 대한 응답 (구글 로그인 리다이렉트 API)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '회원가입 필요',
+    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+  })
+  async googleCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
+    console.log('code', code);
+
+    const command = new GoogleLoginCommand(code);
 
     const result = await this.commandBus.execute(command);
 

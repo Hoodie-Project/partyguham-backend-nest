@@ -39,11 +39,15 @@ import { GetCheckNicknameHandler } from './application/query/get-check-nickname.
 import { UserLocationDeleteHandler } from './application/command/userLocation.delete.handler';
 import { UserPersonalityDeleteHandler } from './application/command/userPersonality.delete.handler';
 import { UserCareerDeleteHandler } from './application/command/userCareer.delete.handler';
+import { GoogleCodeHandler } from './application/command/google-code.handler';
+import { GoogleLoginHandler } from './application/command/google-login.handler';
 
 const commandHandlers = [
   CreateUserHandler,
   KakaoCodeHandler,
   KakaoLoginHandler,
+  GoogleCodeHandler,
+  GoogleLoginHandler,
 
   UserLocationCreateHandler,
   UserLocationDeleteHandler,
