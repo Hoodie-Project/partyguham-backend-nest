@@ -1,20 +1,20 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { CreateUserPersonalityCommand } from './create-userPersonality.command';
+import { UserPersonalityCreateCommand } from './userPersonality.create.command';
 import { IUserPersonalityRepository } from 'src/user/domain/user/repository/iuserPersonality.repository';
 import { PersonalityService } from 'src/personality/personality.service';
 
 @Injectable()
-@CommandHandler(CreateUserPersonalityCommand)
-export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserPersonalityCommand> {
+@CommandHandler(UserPersonalityCreateCommand)
+export class UserPersonalityCreateHandler implements ICommandHandler<UserPersonalityCreateCommand> {
   constructor(
     @Inject('UserPersonalityRepository') private userPersonalityRepository: IUserPersonalityRepository,
     private readonly personalityService: PersonalityService,
   ) {}
 
-  async execute(command: CreateUserPersonalityCommand) {
-    let { userId, userPersonality } = command;
+  async execute(command: UserPersonalityCreateCommand) {
+    let { userId, personality } = command;
     const surveyPersonality = await this.personalityService.findAllPersonality();
 
     // 저장할 optionId
@@ -27,7 +27,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     });
 
     // 유저 응답별에 대해 validation 실행
-    userPersonality.forEach((userAnswer) => {
+    personality.forEach((userAnswer) => {
       // 설문조사 질문, 선택지
       const surveyQuestion = surveyPersonality.find((question) => question.id === userAnswer.personalityQuestionId);
       const surveyOptionIds = surveyQuestion.personalityOption.map((option) => option.id);
@@ -36,16 +36,12 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
       const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOptionIds.includes(saveOptionId));
 
       if (duplicated) {
-        throw new ConflictException(
-          `이미 설문조사를 한 항목입니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
-        );
+        throw new ConflictException(`이미 설문조사를 한 항목이 있습니다.`);
       }
 
       // 다중 선택 체크
       if (surveyQuestion.responseCount < userAnswer.personalityOptionId.length) {
-        throw new ConflictException(
-          `${surveyQuestion.responseCount}개 까지 저장 가능합니다. { personalityQuestionId : ${userAnswer.personalityQuestionId}}`,
-        );
+        throw new ConflictException(`질문에 대한 응답 개수 조건이 맞지 않는 항목이 있습니다.`);
       }
 
       // optionId 유효 확인
@@ -55,9 +51,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
         if (validation) {
           userPersonalityOptionIds.push(userAnswerPersonalityOptionId);
         } else {
-          throw new ConflictException(
-            `질문에 맞지 않는 선택지 입니다. { personalityOptionId : ${userAnswerPersonalityOptionId} }`,
-          );
+          throw new ConflictException(`질문에 맞지 않는 선택지가 있습니다.`);
         }
       });
     });

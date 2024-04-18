@@ -3,21 +3,40 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthService } from 'src/auth/auth.service';
 
 import axios from 'axios';
-import { KakaoLoginCommand } from './kakao-login.command';
+
 import { PlatformEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
+import { GoogleLoginCommand } from './google-login.command';
 
 @Injectable()
-@CommandHandler(KakaoLoginCommand)
-export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
+@CommandHandler(GoogleLoginCommand)
+export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
 
-  async execute({ code }: KakaoLoginCommand) {
-    const kakao_api_url = await axios.get(
-      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${process.env.KAKAO_RESTAPI_KEY}&redirect_url=${process.env.KAKAO_REDIRECT_URI}&code=${code}&client_secret=${process.env.KAKAO_CLIENT_SECRET}`,
+  async execute({ code }: GoogleLoginCommand) {
+    const google_api_url = await axios.post(
+      `https://oauth2.googleapis.com/token?code=${code}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&redirect_uri=${process.env.CLIENT_REDIRECT_URL}&grant_type=authorization_code`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+      },
+    );
+
+    console.log('google_api_url', google_api_url);
+
+    const googleData = await google_api_url.data;
+
+    console.log('googleData', googleData);
+
+    const googleAccessToken = googleData.access_token;
+    const googleRefreshToken = googleData.refresh_token;
+
+    const googleUserInfo = await axios.get(
+      `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${googleAccessToken}`,
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
@@ -25,17 +44,8 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
       },
     );
 
-    const kakaoData = await kakao_api_url.data;
+    console.log('googleUserInfo', googleUserInfo);
 
-    const kakaoAccessToken = kakaoData.access_token;
-    const kakaoRefreshToken = kakaoData.refresh_token;
-
-    const kakaoUserInfo = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
-      headers: {
-        Authorization: `Bearer ${kakaoAccessToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-      },
-    });
     //! kakaoUserInfo
     // data: {
     //   id: 3405515435,
@@ -54,9 +64,9 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     //     email: 'hoodiev.team@gmail.com'
     //   }
     // }
-    const externalId: string = kakaoUserInfo.data.id;
-    const email = kakaoUserInfo.data.kakao_account.email;
-    const image = kakaoUserInfo.data.properties.profile_image;
+    const externalId: string = googleUserInfo.data.id;
+    const email = googleUserInfo.data.kakao_account.email;
+    const image = googleUserInfo.data.properties.profile_image;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
@@ -68,7 +78,11 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     }
 
     if (!oauth) {
-      const createOauth = await this.oauthService.createWithoutUserId(externalId, PlatformEnum.KAKAO, kakaoAccessToken);
+      const createOauth = await this.oauthService.createWithoutUserId(
+        externalId,
+        PlatformEnum.GOOGLE,
+        googleAccessToken,
+      );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 

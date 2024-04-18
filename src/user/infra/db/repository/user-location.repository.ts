@@ -13,6 +13,12 @@ export class UserLocationRepository implements IUserLocationRepository {
     private userLocationRepository: Repository<UserLocationEntity>,
   ) {}
 
+  async findById(id: number) {
+    const result = await this.userLocationRepository.findOne({ where: { id } });
+
+    return result;
+  }
+
   async findByUserId(userId: number) {
     const result = await this.userLocationRepository.find({ where: { userId } });
 
@@ -33,8 +39,8 @@ export class UserLocationRepository implements IUserLocationRepository {
     return result;
   }
 
-  async bulkDelete(deleteIds: number[]) {
-    const result = await this.userLocationRepository.delete(deleteIds);
+  async deleteById(id: number) {
+    const result = await this.userLocationRepository.delete({ id });
 
     return result.affected ? true : false;
   }

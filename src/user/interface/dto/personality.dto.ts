@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -12,10 +11,10 @@ import {
   Max,
 } from 'class-validator';
 
-export class UserPersonalityDto {
+export class PersonalityDto {
   @ApiProperty({
     example: 1,
-    description: 'questionId(pk)',
+    description: '질문 문항 personality questionId (pk)',
   })
   @Max(4)
   @IsInt()
@@ -24,8 +23,8 @@ export class UserPersonalityDto {
   readonly personalityQuestionId: number;
 
   @ApiProperty({
-    example: 1,
-    description: 'optionId(pk)',
+    example: [1, 2],
+    description: '선택 문항 personality optionId (pk)',
   })
   @IsNumber({}, { each: true })
   @IsInt({ each: true })
@@ -35,16 +34,4 @@ export class UserPersonalityDto {
   @IsArray()
   @IsNotEmpty()
   readonly personalityOptionId: number[];
-}
-
-export class CreateUserPersonalityRequestDto {
-  @ApiProperty({
-    example: [{ personalityQuestionId: 1, personalityOptionId: [1, 2] }],
-    description: '성향 저장',
-  })
-  @Type(() => UserPersonalityDto)
-  @ArrayUnique()
-  @IsArray()
-  @IsNotEmpty()
-  readonly userPersonality: UserPersonalityDto[];
 }

@@ -1,10 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import { CustomErrorExceptionFilter } from './common/exception/error.filter';
 import * as fs from 'fs';
+import * as session from 'express-session';
+
+import * as cookieParser from 'cookie-parser';
+import * as passport from 'passport';
+
+declare module 'express-session' {
+  interface SessionData {
+    email: string;
+    image: string;
+  }
+}
 
 async function bootstrap() {
   const httpsOptions =
@@ -15,36 +25,34 @@ async function bootstrap() {
           key: fs.readFileSync(process.env.KEY_REPO),
           cert: fs.readFileSync(process.env.CERT_REPO),
         };
+
   const app = await NestFactory.create(AppModule, {
     httpsOptions,
   });
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',
-    origin: '*', //우선 모두 허용
+    origin: ['http://localhost:8000', 'http://partyguam.net'],
     credentials: true,
-  });
-  app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   });
 
-  //docs
-  const config = new DocumentBuilder()
-    .setTitle('party-guam API')
-    .setDescription('base URL - /api')
-    .setVersion('1.0')
-    .addTag('party-guam')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET, //세션아이디
+      resave: false, //세션이 수정되지 않아도 지속적으로 저장하게 하는 옵션
+      saveUninitialized: false, //초기화되지 않는 세션을 저장하게 함
+      cookie: {
+        maxAge: 3600000, // 1시간(밀리초 단위)
+      },
+    }),
+  );
 
-  app.setGlobalPrefix('api'); // 전체 endpoint
+  app.use(cookieParser()); // cookie 사용
+
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
       transform: true,
       stopAtFirstError: true,
       transformOptions: { enableImplicitConversion: true },
@@ -52,8 +60,21 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new CustomErrorExceptionFilter());
+  app.setGlobalPrefix('api'); // 전체 endpoint
 
-  app.use(cookieParser()); // cookie 사용
+  //docs
+  const config = new DocumentBuilder()
+    .setBasePath('api') // 전역 접두사를 Swagger 문서에 반영
+    .setTitle('party-guam API')
+    .setDescription('파티괌 API 문서 입니다.')
+    .setVersion('1.0')
+    .addTag('party-guam')
+    .addBearerAuth({ type: 'http' }, 'accessToken')
+    .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
 
   await app.listen(process.env.PORT);
   console.log(`listening on port ${process.env.PORT}`);

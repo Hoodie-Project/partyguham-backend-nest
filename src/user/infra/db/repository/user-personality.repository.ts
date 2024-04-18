@@ -13,6 +13,12 @@ export class UserPersonalityRepository implements IUserPersonalityRepository {
     private userPersonalityRepository: Repository<UserPersonalityEntity>,
   ) {}
 
+  async findById(id: number) {
+    const result = await this.userPersonalityRepository.findOne({ where: { id } });
+
+    return result;
+  }
+
   findByPersonalityOptionIds(userId: number, personalityOptionIds: number[]) {
     return this.userPersonalityRepository.find({ where: { userId, personalityOptionId: In(personalityOptionIds) } });
   }
@@ -27,5 +33,11 @@ export class UserPersonalityRepository implements IUserPersonalityRepository {
     const result = this.userPersonalityRepository.save(userLocations);
 
     return result;
+  }
+
+  async deleteById(id: number) {
+    const result = await this.userPersonalityRepository.delete({ id });
+
+    return result.affected ? true : false;
   }
 }

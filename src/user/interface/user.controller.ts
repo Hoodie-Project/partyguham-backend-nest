@@ -1,8 +1,8 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Res, UseGuards } from '@nestjs/common';
-import { Response } from 'express';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiConflictResponse, ApiCookieAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -13,7 +13,7 @@ import { FollowCommand } from '../application/command/follow.command';
 import { UnfollowCommand } from '../application/command/unfollow.command';
 
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
-import { UpdateUserRequestDto } from './dto/request/update-user.request.dto';
+
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
 import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
 
@@ -28,29 +28,33 @@ import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
-import { CreateUserCareerRequestDto } from './dto/request/create-userCareer.request.dto';
-import { CreateUserLocationRequestDto } from './dto/request/create-userLocation.request.dto';
-import { CreateUserPersonalityRequestDto } from './dto/request/create-userPersonality.request.dto';
-import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
-import { CreateUserPersonalityCommand } from '../application/command/create-userPersonality.command';
-import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
+import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
+
+import { UserLocationCreateCommand } from '../application/command/userLocation.create.command';
+import { UserLocationDeleteCommand } from '../application/command/userLocation.delete.command';
+import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
+
+import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
+import { UserPersonalityCreateCommand } from '../application/command/userPersonality.create.command';
 import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
+import { UserPersonalityDeleteCommand } from '../application/command/userPersonality.delete.command';
+
+import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
-import { UpdateUserLocationCommand } from '../application/command/update-userLocation.command';
-import { UpdateUserLocationRequestDto } from './dto/request/update-userLocation.request.dto';
-import { DeleteUserLocationRequestDto } from './dto/request/delete-userLocation.request.dto';
-import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
+import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
+import { GoogleCodeCommand } from '../application/command/google-code.command';
+import { GoogleLoginCommand } from '../application/command/google-login.command';
 
 @ApiTags('user API')
-@Controller('user')
+@Controller('users')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
-  @Post('kakao')
+  @Get('kakao/login')
   @ApiOperation({ summary: '카카오 로그인' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
@@ -61,7 +65,9 @@ export class UserController {
   }
 
   @Get('kakao/callback')
-  @ApiOperation({ summary: '로그인 시도에 대한 응답 (카카오 로그인 리다이렉트 API)' })
+  @ApiOperation({
+    summary: '웹/앱 사용 X // 로그인 시도에 대한 카카오 서버에 대한 응답 (카카오 로그인 리다이렉트 API)',
+  })
   @ApiResponse({
     status: 200,
     description: '로그인 가능 (access - res.body / refresh - res.cookie)',
@@ -72,26 +78,108 @@ export class UserController {
     description: '회원가입 필요',
     schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
   })
-  async kakaoCallback(@Res() res: Response, @Query('code') code: string) {
+  async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
     const result = await this.commandBus.execute(command);
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
-        secure: true, // HTTPS 연결에서만 쿠키 전송
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
       });
-      res.status(200).send({ accessToken: result.accessToken });
+
+      res.redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
-      res.status(401).send({ signupAccessToken: result.signupAccessToken, email: result.email });
+      req.session.email = result.email;
+      req.session.image = result.image;
+
+      res.cookie('signupToken', result.signupAccessToken, {
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.redirect(`${process.env.BASE_URL}join`);
     }
   }
 
-  @ApiBearerAuth('SignupJwt')
+  @Get('google/login')
+  @ApiOperation({ summary: '구글 로그인' })
+  async signinByGoogle(@Res() res: Response) {
+    const command = new GoogleCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @Get('google/callback')
+  @ApiOperation({
+    summary: '웹/앱 사용 X // 로그인 시도에 대한 구글 서버에 대한 응답 (구글 로그인 리다이렉트 API)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '회원가입 필요',
+    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+  })
+  async googleCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
+    console.log('code', code);
+
+    const command = new GoogleLoginCommand(code);
+
+    const result = await this.commandBus.execute(command);
+
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+      });
+
+      res.redirect(`${process.env.BASE_URL}`);
+    }
+
+    if (result.type === 'signup') {
+      req.session.email = result.email;
+      req.session.image = result.image;
+
+      res.cookie('signupToken', result.signupAccessToken, {
+        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.redirect(`${process.env.BASE_URL}join`);
+    }
+  }
+
+  @ApiHeader({ name: 'cookies', description: 'signupToken' })
+  @UseGuards(SignupJwtAuthGuard)
+  @Get('me/oauth')
+  @ApiOperation({ summary: 'oauth 본인 데이터 호출 (email, image)' })
+  @ApiResponse({
+    status: 200,
+    description: '이메일, oauth 이미지 URL 데이터',
+    schema: { example: { email: 'email@partyguam.net', image: 'image URL' } },
+  })
+  async getData(@Req() req: Request) {
+    const email = req.session.email;
+    const image = req.session.image;
+
+    return { email, image };
+  }
+
   @UseGuards(SignupJwtAuthGuard)
   @Get('check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
@@ -113,17 +201,17 @@ export class UserController {
     return '사용가능한 닉네임 입니다.';
   }
 
-  @ApiBearerAuth('SignupJwt')
   @UseGuards(SignupJwtAuthGuard)
-  @Post('signup')
+  @Post('')
   @ApiOperation({ summary: '회원가입 (필수)' })
   @ApiResponse({
     status: 201,
     description: '로그인 가능 (access - res.body / refresh - res.cookie)',
     schema: { example: { accessToken: 'token' } },
   })
-  async signUpByKakao(
+  async signUp(
     @CurrentUser() user: CurrentSignupType,
+    @Req() req: Request,
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
   ): Promise<void> {
@@ -134,88 +222,76 @@ export class UserController {
 
     const result = await this.commandBus.execute(command);
 
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        // res.redirect(302, `${process.env.BASE_URL}`);
+      }
+    });
+    console.log('session', req.session);
+    res.clearCookie('signupToken');
+    // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+
     res.cookie('refreshToken', result.refreshToken, {
-      secure: true,
+      // secure: true,
       httpOnly: true,
       sameSite: 'strict',
     });
-
     res.status(201).send({ accessToken: result.accessToken });
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Post('me/location')
-  @ApiOperation({ summary: '지역 저장' })
+  @Post('me/locations')
+  @ApiOperation({ summary: '관심지역 저장' })
   @ApiResponse({
     status: 201,
-    description: '유저 지역 저장',
+    description: '유저 관심지역 저장',
     type: [UserLocationResponseDto],
   })
   @ApiResponse({
     status: 409,
-    description:
-      '관심지역을 3개 초과하여 저장 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+    description: '이미 저장된 데이터가 있습니다.',
   })
-  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserLocationRequestDto) {
-    const { locationIds } = body;
+  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
+    const { locations } = body;
 
-    const command = new CreateUserLocationCommand(user.id, locationIds);
+    const command = new UserLocationCreateCommand(user.id, locations);
 
     const result = await this.commandBus.execute(command);
 
     return plainToInstance(UserLocationResponseDto, result);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Patch('me/location')
-  @ApiOperation({ summary: '관심지역 수정' })
-  @ApiResponse({
-    status: 201,
-    description: '관심지역 수정',
-    type: [UserLocationResponseDto],
-  })
-  @ApiResponse({
-    status: 409,
-    description:
-      '관심지역을 3개 초과하여 수정 할 수 없습니다. \t\n 수정 하려는 데이터는 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] } \t\n 수정 하려는 id가 올바르지 않습니다. { id : [1,2] }',
-  })
-  async patchUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserLocationRequestDto) {
-    const { update } = body;
-
-    const command = new UpdateUserLocationCommand(user.id, update);
-
-    const result = await this.commandBus.execute(command);
-
-    return plainToInstance(UserLocationResponseDto, result);
-  }
-
-  @ApiBearerAuth('AccessJwt')
-  @UseGuards(AccessJwtAuthGuard)
-  @Delete('me/location')
+  @Delete('me/locations/:userLocationId')
   @ApiOperation({ summary: '관심지역 삭제' })
+  @ApiParam({ name: 'userLocationId', description: '저장된 유저관심지역 ID' })
   @ApiResponse({
-    status: 201,
-    description: '관심지역 삭제',
-    type: [UserLocationResponseDto],
+    status: 204,
+    description: '관심지역 삭제 성공',
   })
   @ApiResponse({
-    status: 409,
-    description:
-      '관심지역을 3개 초과하여 삭제 할 수 없습니다. \t\n 이미 저장되어있는 데이터 입니다. { locationIds : [1,2] }',
+    status: 403,
+    description: '삭제 권한이 없습니다.',
   })
-  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: DeleteUserLocationRequestDto) {
-    const { deleteUserLocationIds } = body;
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
+    const command = new UserLocationDeleteCommand(user.id, userLocationId);
 
-    const command = new DeleteUserLocationCommand(user.id, deleteUserLocationIds);
-
-    const result = await this.commandBus.execute(command);
-
-    return plainToInstance(UserLocationResponseDto, result);
+    await this.commandBus.execute(command);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/personality')
   @ApiOperation({ summary: '성향 저장' })
@@ -227,43 +303,105 @@ export class UserController {
   @ApiResponse({
     status: 409,
     description:
-      '이미 설문조사를 한 항목입니다. { personalityQuestionId : 1 } \t\n 2개 까지 저장 가능합니다. { personalityQuestionId : 1 } \t\n 질문에 맞지 않는 선택지 입니다. { personalityOptionId : 6 }',
+      '이미 설문조사를 한 항목이 있습니다. \t\n 질문에 대한 응답 개수 조건이 맞지 않는 항목이 있습니다. \t\n 질문에 맞지 않는 선택지가 있습니다.',
   })
-  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserPersonalityRequestDto) {
-    const { userPersonality } = body;
-    const command = new CreateUserPersonalityCommand(user.id, userPersonality);
+  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: UserPersonalityCreateRequestDto) {
+    const { personality } = body;
+    const command = new UserPersonalityCreateCommand(user.id, personality);
 
     const result = await this.commandBus.execute(command);
 
     return plainToInstance(UserPersonalityResponseDto, result);
   }
 
-  @ApiBearerAuth('AccessJwt')
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/personality/:userPersonalityId')
+  @ApiOperation({ summary: '성향 삭제' })
+  @ApiParam({ name: 'userPersonalityId', description: '저장된 유저성향 ID' })
+  @ApiResponse({
+    status: 204,
+    description: '성향 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserPersonality(
+    @CurrentUser() user: CurrentUserType,
+    @Param('userPersonalityId') userPersonalityId: number,
+  ) {
+    const command = new UserPersonalityDeleteCommand(user.id, userPersonalityId);
+
+    await this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/career')
-  @ApiOperation({ summary: '경력 저장' })
+  @ApiOperation({ summary: '유저 경력(커리어) 저장' })
   @ApiResponse({
     status: 201,
-    description: '유저 성향 저장',
-    type: UserCareerResponseDto,
+    description: '유저 경력 저장',
+    type: [UserCareerResponseDto],
   })
   @ApiResponse({
     status: 409,
     description:
-      '해당 포지션에 이미 데이터가 존재합니다. \t\n 기타 포지션은 3개 초과하여 저장할 수 없습니다. \t\n 포지션 중에 이미 저장되어있습니다.',
+      '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
-  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: CreateUserCareerRequestDto) {
-    const { positionId, years, careerType } = body;
+  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
+    const { career } = body;
 
-    const command = new CreateUserCareerCommand(user.id, positionId, years, careerType);
+    const command = new UserCareerCreateCommand(user.id, career);
 
     const result = await this.commandBus.execute(command);
 
     return plainToInstance(UserCareerResponseDto, result);
   }
 
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/career/:userCareerId')
+  @ApiOperation({ summary: '유저 경력(커리어) 삭제' })
+  @ApiParam({ name: 'userCareerId', description: '저장된 유저 경력(커리어) ID' })
+  @ApiResponse({
+    status: 204,
+    description: '유저 경력(커리어) 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserCareer(@CurrentUser() user: CurrentUserType, @Param('userCareerId') userCareerId: number) {
+    const command = new UserCareerDeleteCommand(user.id, userCareerId);
+
+    await this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
   @Delete('logout')
   @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({
+    status: 204,
+    description: `cookie 'refreshToken' 삭제`,
+  })
   async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
     res.clearCookie('refreshToken');
   }
