@@ -18,7 +18,7 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
 
   async execute({ code }: GoogleLoginCommand) {
     const google_api_url = await axios.post(
-      `https://oauth2.googleapis.com/token?code=${code}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&redirect_uri=${process.env.CLIENT_REDIRECT_URL}&grant_type=authorization_code`,
+      `https://oauth2.googleapis.com/token?code=${code}&client_id=${process.env.GOOGLE_CLIENT_ID}&client_secret=${process.env.GOOGLE_CLIENT_SECRET}&redirect_uri=${process.env.GOOGLE_REDIRECT_URI}&grant_type=authorization_code`,
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -26,47 +26,37 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
       },
     );
 
-    console.log('google_api_url', google_api_url);
-
-    const googleData = await google_api_url.data;
-
-    console.log('googleData', googleData);
+    const googleData: {
+      access_token: string;
+      exires_in: number;
+      refresh_token: string;
+      scope: string;
+      token_type: string;
+    } = await google_api_url.data;
 
     const googleAccessToken = googleData.access_token;
     const googleRefreshToken = googleData.refresh_token;
 
-    const googleUserInfo = await axios.get(
-      `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${googleAccessToken}`,
-      {
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
-        },
+    const googleUserInfo = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${googleAccessToken}`,
       },
-    );
+    });
 
-    console.log('googleUserInfo', googleUserInfo);
-
-    //! kakaoUserInfo
+    // google
     // data: {
-    //   id: 3405515435,
-    //   connected_at: '2024-03-24T14:18:43Z',
-    //   properties: {
-    //     profile_image: 'http://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640',
-    //     thumbnail_image: 'http://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R110x110'
-    //   },
-    //   kakao_account: {
-    //     profile_image_needs_agreement: false,
-    //     profile: [Object],
-    //     has_email: true,
-    //     email_needs_agreement: false,
-    //     is_email_valid: true,
-    //     is_email_verified: true,
-    //     email: 'hoodiev.team@gmail.com'
-    //   }
+    //   id: '108484888597910532761',
+    //   email: 'hoodiev.team@gmail.com',
+    //   verified_email: true,
+    //   name: 'hoodiev',
+    //   given_name: 'hoodiev',
+    //   picture: 'https://lh3.googleusercontent.com/a/ACg8ocK8VSpiTLRV-NfpHBPGkR4acApVopYk9JRfygfhutNKb6i9h2I=s96-c',
+    //   locale: 'ko'
     // }
+
     const externalId: string = googleUserInfo.data.id;
-    const email = googleUserInfo.data.kakao_account.email;
-    const image = googleUserInfo.data.properties.profile_image;
+    const email = googleUserInfo.data.email;
+    const image = googleUserInfo.data.picture;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
