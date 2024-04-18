@@ -85,7 +85,7 @@ export class UserController {
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
-        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
       });
@@ -98,7 +98,7 @@ export class UserController {
       req.session.image = result.image;
 
       res.cookie('signupToken', result.signupAccessToken, {
-        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
@@ -132,16 +132,19 @@ export class UserController {
     description: '회원가입 필요',
     schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
   })
-  async googleCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
-    console.log('code', code);
-
+  async googleCallback(
+    @Req() req: Request,
+    @Res() res: Response,
+    @Query('code') code: string,
+    @Query('scope') scope: string,
+  ) {
     const command = new GoogleLoginCommand(code);
 
     const result = await this.commandBus.execute(command);
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
-        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
       });
@@ -154,7 +157,7 @@ export class UserController {
       req.session.image = result.image;
 
       res.cookie('signupToken', result.signupAccessToken, {
-        // secure: true, // HTTPS 연결에서만 쿠키 전송
+        secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
