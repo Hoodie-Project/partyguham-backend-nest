@@ -104,7 +104,7 @@ export class UserController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.redirect(`${process.env.BASE_URL}join`);
+      res.redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
@@ -163,7 +163,7 @@ export class UserController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.redirect(`${process.env.BASE_URL}join`);
+      res.redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
@@ -228,10 +228,10 @@ export class UserController {
     req.session.destroy((err) => {
       if (err) {
         console.error('Error destroying session:', err);
-        // res.redirect(302, `${process.env.BASE_URL}`);
+        res.redirect(302, `${process.env.BASE_URL}`);
       }
     });
-    console.log('session', req.session);
+
     res.clearCookie('signupToken');
     // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
