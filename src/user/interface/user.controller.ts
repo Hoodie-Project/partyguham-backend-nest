@@ -45,6 +45,8 @@ import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
 import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
+import { UidRequestDto } from './dto/request/uid.request.dto';
+import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
 
 @ApiTags('user API')
 @Controller('users')
@@ -108,6 +110,46 @@ export class UserController {
     }
   }
 
+  @Post('kakao/app/login')
+  @ApiOperation({
+    summary: 'App Kakao 로그인',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '회원가입 필요',
+    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+  })
+  async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: UidRequestDto) {
+    const command = new KakaoLoginCommand(dto.uid);
+
+    const result = await this.commandBus.execute(command);
+
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
+        secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: 'strict', // CSRF 공격 방지
+      });
+    }
+
+    if (result.type === 'signup') {
+      req.session.email = result.email;
+      req.session.image = result.image;
+
+      res.cookie('signupToken', result.signupAccessToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+    }
+  }
+
   @Get('google/login')
   @ApiOperation({ summary: '구글 로그인' })
   async signinByGoogle(@Res() res: Response) {
@@ -144,12 +186,54 @@ export class UserController {
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+      });
+
+      res.redirect(`${process.env.BASE_URL}`);
+    }
+
+    if (result.type === 'signup') {
+      req.session.email = result.email;
+      req.session.image = result.image;
+
+      res.cookie('signupToken', result.signupAccessToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: 'strict',
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.redirect(`${process.env.BASE_URL}/join`);
+    }
+  }
+
+  @Post('google/app/login')
+  @ApiOperation({
+    summary: 'App Google 로그인',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    schema: { example: { accessToken: 'token' } },
+  })
+  @ApiResponse({
+    status: 401,
+    description: '회원가입 필요',
+    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+  })
+  async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: UidRequestDto) {
+    const command = new GoogleAppLoginCommand(dto.uid);
+
+    const result = await this.commandBus.execute(command);
+
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
         sameSite: 'strict', // CSRF 공격 방지
       });
-
-      res.redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
@@ -162,8 +246,6 @@ export class UserController {
         sameSite: 'strict', // CSRF 공격 방지
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
-
-      res.redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
