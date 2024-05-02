@@ -45,7 +45,7 @@ import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
 import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
-import { UidRequestDto } from './dto/request/uid.request.dto';
+import { AppOauthRequestDto } from './dto/request/app-oauth.request.dto';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
 
 @ApiTags('user API')
@@ -124,7 +124,7 @@ export class UserController {
     description: '회원가입 필요',
     schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
   })
-  async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: UidRequestDto) {
+  async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
     const command = new KakaoLoginCommand(dto.uid);
 
     const result = await this.commandBus.execute(command);
@@ -223,7 +223,7 @@ export class UserController {
     description: '회원가입 필요',
     schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
   })
-  async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: UidRequestDto) {
+  async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
     const command = new GoogleAppLoginCommand(dto.uid);
 
     const result = await this.commandBus.execute(command);
@@ -252,7 +252,7 @@ export class UserController {
   @ApiHeader({ name: 'cookies', description: 'signupToken' })
   @UseGuards(SignupJwtAuthGuard)
   @Get('me/oauth')
-  @ApiOperation({ summary: 'oauth 본인 데이터 호출 (email, image)' })
+  @ApiOperation({ summary: 'web에서 oauth 본인 데이터 호출 (email, image)' })
   @ApiResponse({
     status: 200,
     description: '이메일, oauth 이미지 URL 데이터',
