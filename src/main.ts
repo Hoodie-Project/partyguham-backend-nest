@@ -32,7 +32,7 @@ async function bootstrap() {
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',
-    origin: ['http://localhost:8000', 'http://partyguam.net'],
+    origin: ['http://localhost:3000', 'https://partyguam.net', 'http://partyguam.net'],
     credentials: true,
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   });
@@ -60,11 +60,15 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new CustomErrorExceptionFilter());
-  app.setGlobalPrefix('api'); // 전체 endpoint
+
+  const path = process.env.MODE_ENV === 'prod' ? 'api' : 'dev/api';
+  app.setGlobalPrefix(`${path}`); // 전체 endpoint
 
   //docs
   const config = new DocumentBuilder()
-    .setBasePath('api') // 전역 접두사를 Swagger 문서에 반영
+    // .setBasePath(`${path}`) // 전역 접두사를 Swagger 문서에 반영
+    .addServer(`https://partyguam.net`, '운영 서버')
+    .addServer(`https://partyguam.net/dev`, '개발 서버')
     .setTitle('party-guam API')
     .setDescription('파티괌 API 문서 입니다.')
     .setVersion('1.0')
@@ -74,7 +78,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup(`${path}/docs`, app, document);
 
   await app.listen(process.env.PORT);
   console.log(`listening on port ${process.env.PORT}`);
