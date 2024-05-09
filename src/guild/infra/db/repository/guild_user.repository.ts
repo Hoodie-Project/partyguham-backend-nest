@@ -13,25 +13,25 @@ export class GuildUserRepository implements IGuildUserRepository {
     private guildUserRepository: Repository<GuildUserEntity>,
   ) {}
 
-  async createUser(userId: number, guildId: number, positionId: number) {
-    await this.guildUserRepository.save({ userId, guildId, positionId });
+  async createUser(userId: number, positionId: number) {
+    await this.guildUserRepository.save({ userId, positionId });
   }
 
-  async createMaster(userId: number, guildId: number) {
+  async createMaster(userId: number) {
     const authority = Authority.MASTER;
 
-    await this.guildUserRepository.save({ userId, guildId, Authority });
+    await this.guildUserRepository.save({ userId, authority });
   }
 
-  async createEditor(userId: number, guildId: number, positionId: number) {
+  async createEditor(userId: number, positionId: number) {
     const authority = Authority.EDITOR;
 
-    await this.guildUserRepository.save({ userId, guildId, positionId, Authority });
+    await this.guildUserRepository.save({ userId, positionId, authority });
 
     // return this.guildUserFactory
   }
 
-  async findOne(userId: number, guildId: number) {
-    return await this.guildUserRepository.findOne({ where: { userId, guildId } });
+  async findOne(userId: number) {
+    return await this.guildUserRepository.findOne({ where: { userId } });
   }
 }

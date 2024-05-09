@@ -27,6 +27,16 @@ export class GuildController {
     private queryBus: QueryBus,
   ) {}
 
+  @Post('')
+  @ApiOperation({ summary: '길드 생성' })
+  async createGuild(@CurrentUser() user: CurrentUserType, @Body() dto: GuildCreateRequestDto): Promise<void> {
+    const { title, content } = dto;
+
+    const command = new CreateGuildCommand(user.id, title, content);
+
+    return this.commandBus.execute(command);
+  }
+
   @Get(':guildId')
   @ApiOperation({ summary: '길드 조회' })
   async getGuild(@Param() param: GuildRequestDto) {
@@ -45,16 +55,6 @@ export class GuildController {
     const result = this.queryBus.execute(parties);
 
     return plainToInstance(GuildResponseDto, result);
-  }
-
-  @Post('')
-  @ApiOperation({ summary: '길드 생성' })
-  async createGuild(@CurrentUser() user: CurrentUserType, @Body() dto: GuildCreateRequestDto): Promise<void> {
-    const { title, content } = dto;
-
-    const command = new CreateGuildCommand(user.id, title, content);
-
-    return this.commandBus.execute(command);
   }
 
   @Patch(':guildId')

@@ -19,10 +19,11 @@ export class CreateGuildHandler implements ICommandHandler<CreateGuildCommand> {
   async execute(command: CreateGuildCommand) {
     const { userId, title, content } = command;
 
-    const party = await this.guildRepository.create(title, content);
+    const guild = await this.guildRepository.create(title, content);
 
-    await this.guildUserRepository.createMaster(userId, party.getId());
+    // 마스터로 생성
+    await this.guildUserRepository.createMaster(userId, guild.getId());
 
-    return party;
+    return guild;
   }
 }
