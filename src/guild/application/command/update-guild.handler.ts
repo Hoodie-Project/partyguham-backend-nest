@@ -16,14 +16,14 @@ export class GuildUpdateHandler implements ICommandHandler<GuildUpdateCommand> {
   ) {}
 
   async execute(command: GuildUpdateCommand) {
-    const { userId, partyId, title, content } = command;
-    const partyUser = await this.guildUserRepository.findOne(userId, partyId);
+    const { userId, guildId, title, content } = command;
+    const partyUser = await this.guildUserRepository.findOne(userId, guildId);
 
-    if (!partyUser.authority) {
-      throw new ForbiddenException('권한이 없습니다.');
+    if (partyUser.authority !== 'master') {
+      throw new ForbiddenException('수정 권한이 없습니다.');
     }
 
-    const party = await this.guildRepository.update(partyId, title, content);
+    const party = await this.guildRepository.update(guildId, title, content);
 
     return party;
   }

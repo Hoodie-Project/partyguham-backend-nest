@@ -16,13 +16,13 @@ export class DeleteGuildHandler implements ICommandHandler<DeleteGuildCommand> {
   ) {}
 
   async execute(command: DeleteGuildCommand) {
-    const { userId, partyId } = command;
-    const partyUser = await this.partyUserRepository.findOne(userId, partyId);
+    const { userId, guildId } = command;
+    const partyUser = await this.partyUserRepository.findOne(userId, guildId);
 
     if (partyUser.authority !== 'master') {
-      throw new ForbiddenException('권한이 없습니다.');
+      throw new ForbiddenException('삭제 권한이 없습니다.');
     }
 
-    await this.partyRepository.delete(partyId);
+    await this.partyRepository.delete(guildId);
   }
 }

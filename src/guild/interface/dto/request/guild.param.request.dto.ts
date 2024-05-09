@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty } from 'class-validator';
 
-export class GuildRequestDto {
+export class GuildParamRequestDto {
   @ApiProperty({
     example: '1',
     description: '길드 고유 ID',
