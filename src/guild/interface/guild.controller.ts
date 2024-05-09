@@ -51,8 +51,8 @@ export class GuildController {
   async getGuilds(@Query() query: GuildQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
-    const parties = new GetGuildsQuery(page, limit, sort, order);
-    const result = this.queryBus.execute(parties);
+    const guilds = new GetGuildsQuery(page, limit, sort, order);
+    const result = this.queryBus.execute(guilds);
 
     return plainToInstance(GuildResponseDto, result);
   }
