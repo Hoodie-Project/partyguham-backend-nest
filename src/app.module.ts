@@ -16,6 +16,7 @@ import { SkillModule } from './skill/skill.module';
 import { PositionModule } from './position/position.module';
 import { LocationModule } from './location/location.module';
 import { PersonalityModule } from './personality/personality.module';
+import { GuildModule } from './guild/guild.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { PersonalityModule } from './personality/personality.module';
       logging: process.env.MODE_ENV !== 'prod',
     }),
     UserModule,
+    GuildModule,
     // PartyModule,
   ],
   controllers: [AppController],
