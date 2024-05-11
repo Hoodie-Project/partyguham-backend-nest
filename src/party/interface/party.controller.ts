@@ -13,24 +13,33 @@ import { GetPartiesQuery } from '../application/query/get-parties.query';
 import { GetPartyQuery } from '../application/query/get-party.query';
 
 import { PartyRequestDto } from './dto/request/party.param.request.dto';
-import { PartyCommentRequestDto } from './dto/request/party-comment.request.dto';
+
 import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { CommentRequestDto } from './dto/request/comment.param.request.dto';
 
+@ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
 @Controller('parties')
-@ApiTags('parties')
 export class PartyController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
 
+  @Post('')
+  @ApiOperation({ summary: '파티 생성' })
+  async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
+    const { title, content, positionId } = dto;
+
+    const command = new CreatePartyCommand(user.id, title, content, positionId);
+
+    return this.commandBus.execute(command);
+  }
+
   @Get(':partyId')
-  @ApiOperation({ summary: '파티(게시물) 조회' })
+  @ApiOperation({ summary: '파티 조회' })
   async getParty(@Param() param: PartyRequestDto) {
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
@@ -39,7 +48,7 @@ export class PartyController {
   }
 
   @Get('')
-  @ApiOperation({ summary: '파티(게시물) 목록 조회' })
+  @ApiOperation({ summary: '파티 목록 조회' })
   async getParties(@Query() query: PartyQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
@@ -49,18 +58,8 @@ export class PartyController {
     return plainToInstance(PartyResponseDto, result);
   }
 
-  @Post('')
-  @ApiOperation({ summary: '파티(게시물) 생성' })
-  async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
-    const { title, content, positionId } = dto;
-
-    const command = new CreatePartyCommand(user.id, title, content, positionId);
-
-    return this.commandBus.execute(command);
-  }
-
   @Put(':partyId')
-  @ApiOperation({ summary: '파티(게시물) 수정' })
+  @ApiOperation({ summary: '파티 수정' })
   async updateParty(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
@@ -75,63 +74,63 @@ export class PartyController {
 
   @HttpCode(204)
   @Delete(':partyId')
-  @ApiOperation({ summary: '파티(게시물) 종료 (소프트 삭제)' })
+  @ApiOperation({ summary: '파티 삭제 (softdelete)' })
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
   }
 
-  // 신청
-  @Get(':partyId/request')
-  @ApiOperation({ summary: '파티 신청 조회' })
+  // 지원
+  @Get(':partyId/application')
+  @ApiOperation({ summary: '파티 지원 조회' })
   async getPartyRequestList(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
-    @Body() dto: PartyCommentRequestDto,
+    @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     dto;
   }
 
-  @Post(':partyId/request')
-  @ApiOperation({ summary: '파티 신청' })
-  async sendPartyRequest(@CurrentUser() user: CurrentUserType, @Param('commentId') commentId: number): Promise<void> {
-    commentId;
+  @Post(':partyId/application')
+  @ApiOperation({ summary: '파티 지원' })
+  async sendPartyRequest(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+    partyId;
   }
 
-  @Post(':partyId/request')
-  @ApiOperation({ summary: '파티 신청 취소' })
-  async deletePartyRequest(@CurrentUser() user: CurrentUserType, @Param('commentId') commentId: number): Promise<void> {
-    commentId;
+  @Post(':partyId/application')
+  @ApiOperation({ summary: '파티 지원 취소' })
+  async deletePartyRequest(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+    partyId;
   }
 
   // 초대
-  @Get(':partyId/invite')
+  @Get(':partyId/invitation')
   @ApiOperation({ summary: '파티 초대 조회' })
-  async getPartyInviteList(
+  async getPartyInvitationList(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
-    @Body() dto: PartyCommentRequestDto,
+    @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     dto;
   }
 
-  @Post(':partyId/invite/:nickname')
+  @Post(':partyId/invitation/:nickname')
   @ApiOperation({ summary: '파티 초대' })
-  async sendPartyInvite(
+  async sendPartyInvitation(
     @CurrentUser() user: CurrentUserType,
-    @Param('commentId') commentId: number,
+    @Param('partyId') partyId: number,
     @Param('nickname') nickname: string,
     @Body() dto: PartyRequestDto,
   ): Promise<void> {
     dto;
   }
 
-  @Delete(':partyId/invite/:nickname')
+  @Delete(':partyId/invitation/:nickname')
   @ApiOperation({ summary: '파티 초대 취소' })
-  async deletePartyInvite(
+  async deletePartyInvitation(
     @CurrentUser() user: CurrentUserType,
-    @Param('commentId') commentId: number,
+    @Param('partyId') partyId: number,
     @Param('nickname') nickname: string,
     @Body() dto: PartyRequestDto,
   ): Promise<void> {
@@ -139,11 +138,11 @@ export class PartyController {
   }
 
   // 권한
-  @Post(':partyId/transfer')
+  @Post(':partyId/delegation')
   @ApiOperation({ summary: '파티장 위임' })
   async transferPartyLeadership(
     @CurrentUser() user: CurrentUserType,
-    @Param('commentId') commentId: number,
+    @Param('partyId') partyId: number,
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     dto;
