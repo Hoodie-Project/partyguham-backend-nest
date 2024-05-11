@@ -18,8 +18,8 @@ import { GuildQueryRequestDto } from './dto/request/guild.query.request.dto';
 import { GuildResponseDto } from './dto/response/guild.response.dto';
 import { DeleteGuildCommand } from '../application/command/delete-guild.comand';
 
-@UseGuards(AccessJwtAuthGuard)
 @ApiTags('길드')
+@UseGuards(AccessJwtAuthGuard)
 @Controller('guilds')
 export class GuildController {
   constructor(
@@ -100,7 +100,7 @@ export class GuildController {
   }
 
   // 신청
-  @Get(':guildId/request')
+  @Get(':guildId/application')
   @ApiOperation({ summary: '길드 신청 조회' })
   async getGuildRequestList(
     @CurrentUser() user: CurrentUserType,
@@ -110,20 +110,20 @@ export class GuildController {
     dto;
   }
 
-  @Post(':guildId/request')
+  @Post(':guildId/application')
   @ApiOperation({ summary: '길드 신청' })
-  async sendGuildRequest(@CurrentUser() user: CurrentUserType, @Param('commentId') commentId: number): Promise<void> {
-    commentId;
+  async sendGuildRequest(@CurrentUser() user: CurrentUserType, @Param('guildId') guildId: number): Promise<void> {
+    guildId;
   }
 
-  @Post(':guildId/request')
+  @Post(':guildId/application')
   @ApiOperation({ summary: '길드 신청 취소' })
-  async deleteGuildRequest(@CurrentUser() user: CurrentUserType, @Param('commentId') commentId: number): Promise<void> {
-    commentId;
+  async deleteGuildRequest(@CurrentUser() user: CurrentUserType, @Param('guildId') guildId: number): Promise<void> {
+    guildId;
   }
 
   // 초대
-  @Get(':guildId/invite')
+  @Get(':guildId/invitation')
   @ApiOperation({ summary: '길드 초대 조회' })
   async getGuildInviteList(
     @CurrentUser() user: CurrentUserType,
@@ -133,22 +133,22 @@ export class GuildController {
     dto;
   }
 
-  @Post(':guildId/invite/:nickname')
+  @Post(':guildId/invitation/:nickname')
   @ApiOperation({ summary: '길드 초대' })
   async sendGuildInvite(
     @CurrentUser() user: CurrentUserType,
-    @Param('commentId') commentId: number,
+    @Param('guildId') guildId: number,
     @Param('nickname') nickname: string,
     @Body() dto: GuildParamRequestDto,
   ): Promise<void> {
     dto;
   }
 
-  @Delete(':guildId/invite/:nickname')
+  @Delete(':guildId/invitation/:nickname')
   @ApiOperation({ summary: '길드 초대 취소' })
   async deleteGuildInvite(
     @CurrentUser() user: CurrentUserType,
-    @Param('commentId') commentId: number,
+    @Param('guildId') guildId: number,
     @Param('nickname') nickname: string,
     @Body() dto: GuildParamRequestDto,
   ): Promise<void> {
@@ -156,11 +156,11 @@ export class GuildController {
   }
 
   // 권한
-  @Post(':guildId/transfer')
-  @ApiOperation({ summary: '파티장 위임' })
+  @Post(':guildId/delegation')
+  @ApiOperation({ summary: '길드 위임' })
   async transferGuildLeadership(
     @CurrentUser() user: CurrentUserType,
-    @Param('commentId') commentId: number,
+    @Param('guildId') guildId: number,
     @Body() dto: GuildCreateRequestDto,
   ): Promise<void> {
     dto;
