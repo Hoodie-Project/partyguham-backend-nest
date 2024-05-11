@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -11,7 +11,7 @@ import { GuildUpdateCommand } from '../application/command/update-guild.comand';
 import { GetGuildsQuery } from '../application/query/get-guilds.query';
 import { GetGuildQuery } from '../application/query/get-guild.query';
 
-import { GuildRequestDto } from './dto/request/guild.param.request.dto';
+import { GuildParamRequestDto } from './dto/request/guild.param.request.dto';
 import { GuildCreateRequestDto } from './dto/request/guild.create.request.dto';
 import { GuildUpdateRequestDto } from './dto/request/guild.update.request.dto';
 import { GuildQueryRequestDto } from './dto/request/guild.query.request.dto';
@@ -29,6 +29,11 @@ export class GuildController {
 
   @Post('')
   @ApiOperation({ summary: '길드 생성' })
+  @ApiResponse({
+    status: 201,
+    description: '길드 생성 성공',
+    type: GuildResponseDto,
+  })
   async createGuild(@CurrentUser() user: CurrentUserType, @Body() dto: GuildCreateRequestDto): Promise<void> {
     const { title, content } = dto;
 
@@ -39,7 +44,12 @@ export class GuildController {
 
   @Get(':guildId')
   @ApiOperation({ summary: '길드 조회' })
-  async getGuild(@Param() param: GuildRequestDto) {
+  @ApiResponse({
+    status: 200,
+    description: '길드 조회 성공',
+    type: GuildResponseDto,
+  })
+  async getGuild(@Param() param: GuildParamRequestDto) {
     const guild = new GetGuildQuery(param.guildId);
     const result = this.queryBus.execute(guild);
 
@@ -51,17 +61,22 @@ export class GuildController {
   async getGuilds(@Query() query: GuildQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
-    const parties = new GetGuildsQuery(page, limit, sort, order);
-    const result = this.queryBus.execute(parties);
+    const guilds = new GetGuildsQuery(page, limit, sort, order);
+    const result = this.queryBus.execute(guilds);
 
     return plainToInstance(GuildResponseDto, result);
   }
 
   @Patch(':guildId')
   @ApiOperation({ summary: '길드 수정' })
+  @ApiResponse({
+    status: 201,
+    description: '길드 수정 성공',
+    type: GuildResponseDto,
+  })
   async updateGuild(
     @CurrentUser() user: CurrentUserType,
-    @Param() param: GuildRequestDto,
+    @Param() param: GuildParamRequestDto,
     @Body() dto: GuildUpdateRequestDto,
   ): Promise<void> {
     const { title, content } = dto;
@@ -73,8 +88,12 @@ export class GuildController {
 
   @HttpCode(204)
   @Delete(':guildId')
-  @ApiOperation({ summary: '길드 종료 (소프트 삭제)' })
-  async softDeleteGuild(@CurrentUser() user: CurrentUserType, @Param() param: GuildRequestDto): Promise<void> {
+  @ApiOperation({ summary: '길드 삭제 (softdelete)' })
+  @ApiResponse({
+    status: 204,
+    description: '길드 삭제 성공',
+  })
+  async softDeleteGuild(@CurrentUser() user: CurrentUserType, @Param() param: GuildParamRequestDto): Promise<void> {
     const command = new DeleteGuildCommand(user.id, param.guildId);
 
     this.commandBus.execute(command);
@@ -120,7 +139,7 @@ export class GuildController {
     @CurrentUser() user: CurrentUserType,
     @Param('commentId') commentId: number,
     @Param('nickname') nickname: string,
-    @Body() dto: GuildRequestDto,
+    @Body() dto: GuildParamRequestDto,
   ): Promise<void> {
     dto;
   }
@@ -131,7 +150,7 @@ export class GuildController {
     @CurrentUser() user: CurrentUserType,
     @Param('commentId') commentId: number,
     @Param('nickname') nickname: string,
-    @Body() dto: GuildRequestDto,
+    @Body() dto: GuildParamRequestDto,
   ): Promise<void> {
     dto;
   }

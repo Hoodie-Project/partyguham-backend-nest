@@ -8,16 +8,16 @@ import { GuildEntity } from 'src/guild/infra/db/entity/guild/guild.entity';
 
 @QueryHandler(GetGuildQuery)
 export class GetGuildHandler implements IQueryHandler<GetGuildQuery> {
-  constructor(@InjectRepository(GuildEntity) private partyRepository: Repository<GuildEntity>) {}
+  constructor(@InjectRepository(GuildEntity) private guildRepository: Repository<GuildEntity>) {}
 
   async execute(query: GetGuildQuery) {
-    const { partyId } = query;
+    const { guildId } = query;
 
-    const result = await this.partyRepository.findOne({
-      where: { id: partyId },
+    const result = await this.guildRepository.findOne({
+      where: { id: guildId },
     });
     if (!result) {
-      throw new NotFoundException('파티가 존재하지 않습니다');
+      throw new NotFoundException('길드가 존재하지 않습니다');
     }
 
     return result;
