@@ -1,4 +1,4 @@
-import { PartyUserEntity } from 'src/party/infra/db/entity/party/party-user.entity';
+import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 
 export interface IPartyUserRepository {
   createUser: (userId: number, partyId: number, postionId: number) => Promise<void>;

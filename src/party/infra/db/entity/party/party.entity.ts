@@ -1,9 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { PartyUserEntity } from './party-user.entity';
-import { PartyCommentEntity } from './party-comment.entity';
-import { PartyLikeEntity } from './party-like.entity';
-import { PartyInviteEntity } from '../apply/party-invite.entity';
-import { PartyRequestEntity } from '../apply/party-request.entity';
+import { PartyUserEntity } from './party_user.entity';
+import { PartyInvitationEntity } from '../apply/party_invitation.entity';
+import { PartyApplicationEntity } from '../apply/party_application.entity';
 import { BaseEntity } from 'src/common/entity/baseEntity';
 
 @Entity('party')
@@ -26,15 +24,9 @@ export class PartyEntity extends BaseEntity {
   @OneToMany(() => PartyUserEntity, (partyUser) => partyUser.party)
   partyUser: PartyUserEntity[];
 
-  @OneToMany(() => PartyLikeEntity, (partyLike) => partyLike.party)
-  partyLikes: PartyLikeEntity[];
+  @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.party)
+  partyApplications: PartyApplicationEntity[];
 
-  @OneToMany(() => PartyCommentEntity, (comment) => comment.party)
-  comments: PartyCommentEntity[];
-
-  @OneToMany(() => PartyRequestEntity, (partyRequests) => partyRequests.party)
-  partyRequests: PartyRequestEntity[];
-
-  @OneToMany(() => PartyInviteEntity, (partyInvites) => partyInvites.party)
-  partyInvites: PartyInviteEntity[];
+  @OneToMany(() => PartyInvitationEntity, (partyInvitationEntity) => partyInvitationEntity.party)
+  partyInvitations: PartyInvitationEntity[];
 }

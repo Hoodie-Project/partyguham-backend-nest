@@ -3,9 +3,10 @@ import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { PartyEntity } from './party.entity';
 
-export enum Permission {
+export enum PartyAuthority {
   MASTER = 'master',
   EDITOR = 'editor',
+  MEMBER = 'member',
 }
 
 @Entity('party_user')
@@ -22,8 +23,8 @@ export class PartyUserEntity {
   @Column()
   positionId: number;
 
-  @Column({ type: 'enum', enum: Permission, default: null })
-  permission: string;
+  @Column({ type: 'enum', enum: PartyAuthority, default: PartyAuthority.MEMBER })
+  authority: string;
 
   @ManyToOne(() => UserEntity, (user) => user.parties, {
     onUpdate: 'CASCADE',

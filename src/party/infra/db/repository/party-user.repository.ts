@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PartyUserEntity, Permission } from '../entity/party/party-user.entity';
+import { PartyUserEntity, PartyAuthority } from '../entity/party/party_user.entity';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 
 @Injectable()
@@ -18,13 +18,13 @@ export class PartyUserRepository implements IPartyUserRepository {
   }
 
   async createMaster(userId: number, partyId: number, positionId: number) {
-    const permission = Permission.MASTER;
+    const permission = PartyAuthority.MASTER;
 
     await this.partyUserRepository.save({ userId, partyId, positionId, permission });
   }
 
   async createEditor(userId: number, partyId: number, positionId: number) {
-    const permission = Permission.EDITOR;
+    const permission = PartyAuthority.EDITOR;
 
     await this.partyUserRepository.save({ userId, partyId, positionId, permission });
 
