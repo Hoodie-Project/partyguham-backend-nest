@@ -19,7 +19,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     const { userId, partyId, title, content } = command;
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
-    if (!partyUser.permission) {
+    if (!partyUser.authority) {
       throw new ForbiddenException('권한이 없습니다.');
     }
 

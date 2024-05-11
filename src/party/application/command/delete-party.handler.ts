@@ -19,7 +19,7 @@ export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
     const { userId, partyId } = command;
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
-    if (partyUser.permission !== 'master') {
+    if (partyUser.authority !== 'master') {
       throw new ForbiddenException('권한이 없습니다.');
     }
 

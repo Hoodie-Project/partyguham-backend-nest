@@ -39,7 +39,7 @@ import { GuildModule } from './guild/guild.module';
     }),
     UserModule,
     GuildModule,
-    // PartyModule,
+    PartyModule,
   ],
   controllers: [AppController],
   providers: [
