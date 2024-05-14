@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -18,6 +18,7 @@ import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
+import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -28,18 +29,27 @@ export class PartyController {
     private queryBus: QueryBus,
   ) {}
 
-  @Post('')
-  @ApiOperation({ summary: '파티 생성' })
-  async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
-    const { title, content, positionId } = dto;
+  @Get('types')
+  @ApiOperation({ summary: '파티 타입 리스트 조회' })
+  async getPartyType() {
+    const party = new GetPartyTypesQuery();
+    const result = this.queryBus.execute(party);
 
-    const command = new CreatePartyCommand(user.id, title, content, positionId);
+    return plainToInstance(PartyResponseDto, result);
+  }
+
+  @Post('')
+  @ApiOperation({ summary: '파티 필수 생성' })
+  async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
+    const { title, content, partyTypeId } = dto;
+
+    const command = new CreatePartyCommand(user.id, title, content, partyTypeId);
 
     return this.commandBus.execute(command);
   }
 
   @Get(':partyId')
-  @ApiOperation({ summary: '파티 조회' })
+  @ApiOperation({ summary: '파티 상세 조회' })
   async getParty(@Param() param: PartyRequestDto) {
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
@@ -58,7 +68,7 @@ export class PartyController {
     return plainToInstance(PartyResponseDto, result);
   }
 
-  @Put(':partyId')
+  @Patch(':partyId')
   @ApiOperation({ summary: '파티 수정' })
   async updateParty(
     @CurrentUser() user: CurrentUserType,
@@ -98,7 +108,7 @@ export class PartyController {
     partyId;
   }
 
-  @Post(':partyId/application')
+  @Delete(':partyId/application')
   @ApiOperation({ summary: '파티 지원 취소' })
   async deletePartyRequest(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
     partyId;

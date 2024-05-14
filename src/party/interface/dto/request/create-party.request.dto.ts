@@ -20,9 +20,9 @@ export class CreatePartyRequestDto {
 
   @ApiProperty({
     example: 1,
-    description: '글쓴이 참여할 포지션 position id(pk)',
+    description: '파티 타입 id(pk)',
   })
   @IsInt()
   @IsNotEmpty()
-  readonly positionId: number;
+  readonly partyTypeId: number;
 }

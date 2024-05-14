@@ -6,7 +6,7 @@ import { GetPartiesQuery } from './get-parties.query';
 import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 
 @QueryHandler(GetPartiesQuery)
-export class GetPartiessHandler implements IQueryHandler<GetPartiesQuery> {
+export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
   constructor(@InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>) {}
 
   async execute(query: GetPartiesQuery) {
