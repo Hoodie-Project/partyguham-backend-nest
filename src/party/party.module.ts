@@ -16,6 +16,7 @@ import { PartyApplicationEntity } from './infra/db/entity/apply/party_applicatio
 import { PartyInvitationEntity } from './infra/db/entity/apply/party_invitation.entity';
 import { GetPartyTypesHandler } from './application/query/get-partyTypes.handler';
 import { PartyTypeEntity } from './infra/db/entity/party/party_type.entity';
+import { PartyTypeRepository } from './infra/db/repository/party_type.repository';
 
 const commandHandlers = [CreatePartyHandler, UpdatePartyHandler, DeletePartyHandler];
 
@@ -28,6 +29,7 @@ const factories = [PartyFactory];
 const repositories = [
   { provide: 'PartyRepository', useClass: PartyRepository },
   { provide: 'PartyUserRepository', useClass: PartyUserRepository },
+  { provide: 'PartyTypeRepository', useClass: PartyTypeRepository },
 ];
 
 @Module({
