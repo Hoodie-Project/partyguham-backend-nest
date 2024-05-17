@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserCareerDeleteCommand } from './userCareer.delete.command';
+import { DeleteUserCareerCommand } from './delete-userCareer.command';
 import { IUserCareerRepository } from 'src/user/domain/user/repository/iuserCareer.repository';
 
 @Injectable()
-@CommandHandler(UserCareerDeleteCommand)
-export class UserCareerDeleteHandler implements ICommandHandler<UserCareerDeleteCommand> {
+@CommandHandler(DeleteUserCareerCommand)
+export class DeleteUserCareerHandler implements ICommandHandler<DeleteUserCareerCommand> {
   constructor(@Inject('UserCareerRepository') private userCareerRepository: IUserCareerRepository) {}
 
-  async execute(command: UserCareerDeleteCommand) {
+  async execute(command: DeleteUserCareerCommand) {
     const { userId, userCareerId } = command;
 
     const savedUserLocation = await this.userCareerRepository.findById(userCareerId);

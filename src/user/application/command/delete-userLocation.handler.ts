@@ -9,14 +9,14 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { IUserLocationRepository } from 'src/user/domain/user/repository/iuserLocation.repository';
 
-import { UserLocationDeleteCommand } from './userLocation.delete.command';
+import { DeleteUserLocationCommand } from './delete-userLocation.command';
 
 @Injectable()
-@CommandHandler(UserLocationDeleteCommand)
-export class UserLocationDeleteHandler implements ICommandHandler<UserLocationDeleteCommand> {
+@CommandHandler(DeleteUserLocationCommand)
+export class DeleteUserLocationHandler implements ICommandHandler<DeleteUserLocationCommand> {
   constructor(@Inject('UserLocationRepository') private userLocationRepository: IUserLocationRepository) {}
 
-  async execute(command: UserLocationDeleteCommand) {
+  async execute(command: DeleteUserLocationCommand) {
     const { userId, userLocationId } = command;
 
     const savedUserLocation = await this.userLocationRepository.findById(userLocationId);

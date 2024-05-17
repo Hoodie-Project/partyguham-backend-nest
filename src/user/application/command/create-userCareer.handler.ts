@@ -1,20 +1,20 @@
 import { BadRequestException, ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserCareerCreateCommand } from './userCareer.create.command';
+import { CreateUserCareerCommand } from './create-userCareer.command';
 import { PositionService } from 'src/position/position.service';
 import { IUserCareerRepository } from 'src/user/domain/user/repository/iuserCareer.repository';
-import { CareerTypeEnum } from 'src/user/infra/db/entity/user-career.entity';
+import { CareerTypeEnum } from 'src/user/infra/db/entity/user_career.entity';
 
 @Injectable()
-@CommandHandler(UserCareerCreateCommand)
-export class UserCareerCreateHandler implements ICommandHandler<UserCareerCreateCommand> {
+@CommandHandler(CreateUserCareerCommand)
+export class CreateUserCareerHandler implements ICommandHandler<CreateUserCareerCommand> {
   constructor(
     @Inject('UserCareerRepository') private userCareerRepository: IUserCareerRepository,
     private readonly positionService: PositionService,
   ) {}
 
-  async execute(command: UserCareerCreateCommand) {
+  async execute(command: CreateUserCareerCommand) {
     const { userId, career } = command;
 
     const positionIds = career.map((value) => value.positionId);

@@ -1,19 +1,19 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserLocationCreateCommand } from './userLocation.create.command';
+import { CreateUserLocationCommand } from './create-userLocation.command';
 import { IUserLocationRepository } from 'src/user/domain/user/repository/iuserLocation.repository';
 import { LocationService } from 'src/location/location.service';
 
 @Injectable()
-@CommandHandler(UserLocationCreateCommand)
-export class UserLocationCreateHandler implements ICommandHandler<UserLocationCreateCommand> {
+@CommandHandler(CreateUserLocationCommand)
+export class CreateUserLocationHandler implements ICommandHandler<CreateUserLocationCommand> {
   constructor(
     @Inject('UserLocationRepository') private userLocationRepository: IUserLocationRepository,
     private readonly locationService: LocationService,
   ) {}
 
-  async execute(command: UserLocationCreateCommand) {
+  async execute(command: CreateUserLocationCommand) {
     const { userId, locations } = command;
 
     const locationIds = locations.map((value) => value.id);

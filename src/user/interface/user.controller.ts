@@ -1,5 +1,18 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -9,8 +22,6 @@ import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.gua
 import { KakaoCodeCommand } from '../application/command/kakao-code.command';
 import { CreateUserCommand } from '../application/command/create-user.command';
 import { UpdateUserCommand } from '../application/command/update-user.command';
-import { FollowCommand } from '../application/command/follow.command';
-import { UnfollowCommand } from '../application/command/unfollow.command';
 
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 
@@ -30,23 +41,25 @@ import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.q
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
 
-import { UserLocationCreateCommand } from '../application/command/userLocation.create.command';
-import { UserLocationDeleteCommand } from '../application/command/userLocation.delete.command';
+import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
+import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
 import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
 
 import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
-import { UserPersonalityCreateCommand } from '../application/command/userPersonality.create.command';
+import { CreateUserPersonalityCommand } from '../application/command/create.userPersonality.command';
 import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
-import { UserPersonalityDeleteCommand } from '../application/command/userPersonality.delete.command';
+import { DeleteUserPersonalityCommand } from '../application/command/delete-userPersonality.command';
 
-import { UserCareerCreateCommand } from '../application/command/userCareer.create.command';
+import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
-import { UserCareerDeleteCommand } from '../application/command/userCareer.delete.command';
+import { DeleteUserCareerCommand } from '../application/command/delete-userCareer.command';
 import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
 import { AppOauthRequestDto } from './dto/request/app-oauth.request.dto';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
+import { DeleteUserCommand } from '../application/command/delete-user.command';
+import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
 
 @ApiTags('user API')
 @Controller('users')
@@ -342,7 +355,7 @@ export class UserController {
   async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
     const { locations } = body;
 
-    const command = new UserLocationCreateCommand(user.id, locations);
+    const command = new CreateUserLocationCommand(user.id, locations);
 
     const result = await this.commandBus.execute(command);
 
@@ -371,7 +384,7 @@ export class UserController {
     description: '삭제 실패',
   })
   async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
-    const command = new UserLocationDeleteCommand(user.id, userLocationId);
+    const command = new DeleteUserLocationCommand(user.id, userLocationId);
 
     await this.commandBus.execute(command);
   }
@@ -392,7 +405,7 @@ export class UserController {
   })
   async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: UserPersonalityCreateRequestDto) {
     const { personality } = body;
-    const command = new UserPersonalityCreateCommand(user.id, personality);
+    const command = new CreateUserPersonalityCommand(user.id, personality);
 
     const result = await this.commandBus.execute(command);
 
@@ -424,7 +437,7 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @Param('userPersonalityId') userPersonalityId: number,
   ) {
-    const command = new UserPersonalityDeleteCommand(user.id, userPersonalityId);
+    const command = new DeleteUserPersonalityCommand(user.id, userPersonalityId);
 
     await this.commandBus.execute(command);
   }
@@ -446,7 +459,7 @@ export class UserController {
   async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
     const { career } = body;
 
-    const command = new UserCareerCreateCommand(user.id, career);
+    const command = new CreateUserCareerCommand(user.id, career);
 
     const result = await this.commandBus.execute(command);
 
@@ -475,7 +488,7 @@ export class UserController {
     description: '삭제 실패',
   })
   async deleteUserCareer(@CurrentUser() user: CurrentUserType, @Param('userCareerId') userCareerId: number) {
-    const command = new UserCareerDeleteCommand(user.id, userCareerId);
+    const command = new DeleteUserCareerCommand(user.id, userCareerId);
 
     await this.commandBus.execute(command);
   }
@@ -491,46 +504,47 @@ export class UserController {
     res.clearCookie('refreshToken');
   }
 
-  // @UseGuards(AccessJwtAuthGuard)
-  // @Delete('signout')
-  // @ApiOperation({ summary: '(개발중) 회원탈퇴' })
-  // async signout(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserRequestDto): Promise<void> {
-  //   const command = new UpdateUserCommand(user.id);
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('signout')
+  @ApiOperation({ summary: '회원탈퇴' })
+  async signout(@CurrentUser() user: CurrentUserType): Promise<void> {
+    const command = new DeleteUserCommand(user.id);
 
-  //   return this.commandBus.execute(command);
-  // }
+    return this.commandBus.execute(command);
+  }
 
-  // @UseGuards(AccessJwtAuthGuard)
-  // @Get('me/info')
-  // @ApiOperation({ summary: '(개발중) 내정보 조회' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '성공적으로 내정보 목록을 가져왔습니다.',
-  //   type: UserResponseDto,
-  // })
-  // async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
-  //   const getUserInfoQuery = new GetUserQuery(account.id);
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me')
+  @ApiOperation({ summary: '내정보 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 내정보 목록을 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(account.id);
 
-  //   const result = this.queryBus.execute(getUserInfoQuery);
+    const result = this.queryBus.execute(getUserInfoQuery);
 
-  //   return plainToInstance(UserResponseDto, result);
-  // }
+    return plainToInstance(UserResponseDto, result);
+  }
 
-  // @UseGuards(AccessJwtAuthGuard)
-  // @Patch('info')
-  // @ApiOperation({ summary: '(개발중) 내정보 변경' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '성공적으로 내정보 목록을 가져왔습니다.',
-  //   type: UserResponseDto,
-  // })
-  // async updateUser(@CurrentUser() account): Promise<UserResponseDto> {
-  //   const getUserInfoQuery = new GetUserQuery(account.id);
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('me')
+  @ApiOperation({ summary: '내정보 변경' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 내정보를 변경 하였습니다.',
+    type: UserResponseDto,
+  })
+  async updateUser(@CurrentUser() account, @Body() body: UapdateUserRequestDto): Promise<UserResponseDto> {
+    const { gender, birth } = body;
+    const getUserInfoQuery = new UpdateUserCommand(account.id, gender, birth);
 
-  //   const result = this.queryBus.execute(getUserInfoQuery);
+    const result = this.queryBus.execute(getUserInfoQuery);
 
-  //   return plainToInstance(UserResponseDto, result);
-  // }
+    return plainToInstance(UserResponseDto, result);
+  }
 
   // @UseGuards(AccessJwtAuthGuard)
   // @Patch('image')
@@ -542,20 +556,25 @@ export class UserController {
   // })
   // async updateImage(@CurrentUser() account) {}
 
-  // @Get('users/:nickname')
-  // @ApiOperation({ summary: '닉네임으로 유저 조회' })
-  // @ApiResponse({
-  //   status: 200,
-  //   description: '성공적으로 유저 목록을 가져왔습니다.',
-  //   type: UserResponseDto,
-  // })
-  // async getUser(@Param() param: UserParamRequestDto) {
-  //   const userInfoByNickname = new UserByNicknameQuery(param.nickname);
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('nickname/:nickname')
+  @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 유저 정보를 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  async getUser(@Param() param: UserParamRequestDto) {
+    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
 
-  //   const result = this.queryBus.execute(userInfoByNickname);
+    const result = this.queryBus.execute(userInfoByNickname);
 
-  //   return plainToInstance(UserResponseDto, result);
-  // }
+    return plainToInstance(UserResponseDto, result);
+  }
 
   // @Get('list')
   // @ApiOperation({ summary: '(개발중) 유저 다수 조회' })

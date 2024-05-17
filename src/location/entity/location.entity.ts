@@ -1,4 +1,4 @@
-import { UserLocationEntity } from 'src/user/infra/db/entity/user-location.entity';
+import { UserLocationEntity } from 'src/user/infra/db/entity/user_location.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('location')

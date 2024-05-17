@@ -1,4 +1,4 @@
-import { UserCareerEntity } from 'src/user/infra/db/entity/user-career.entity';
+import { UserCareerEntity } from 'src/user/infra/db/entity/user_career.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 @Entity('postion')

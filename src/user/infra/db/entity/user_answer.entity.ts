@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, Unique } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { SkillEntity } from 'src/skill/entity/skill.entity';
+import { PersonalityOptionEntity } from 'src/personality/entity/personality_option.entity';
 
 @Entity('user_answer')
 @Unique(['userId', 'answerId'])
@@ -18,7 +18,7 @@ export class UserAnswerEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => SkillEntity, (skill) => skill.userSkills)
+  @ManyToOne(() => PersonalityOptionEntity, (personalityOptionEntity) => personalityOptionEntity.userPersonality)
   @JoinColumn({ name: 'answer_id' })
-  skill: SkillEntity;
+  personalityOptionEntity: PersonalityOptionEntity;
 }

@@ -1,19 +1,19 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserPersonalityCreateCommand } from './userPersonality.create.command';
+import { CreateUserPersonalityCommand } from './create.userPersonality.command';
 import { IUserPersonalityRepository } from 'src/user/domain/user/repository/iuserPersonality.repository';
 import { PersonalityService } from 'src/personality/personality.service';
 
 @Injectable()
-@CommandHandler(UserPersonalityCreateCommand)
-export class UserPersonalityCreateHandler implements ICommandHandler<UserPersonalityCreateCommand> {
+@CommandHandler(CreateUserPersonalityCommand)
+export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserPersonalityCommand> {
   constructor(
     @Inject('UserPersonalityRepository') private userPersonalityRepository: IUserPersonalityRepository,
     private readonly personalityService: PersonalityService,
   ) {}
 
-  async execute(command: UserPersonalityCreateCommand) {
+  async execute(command: CreateUserPersonalityCommand) {
     let { userId, personality } = command;
     const surveyPersonality = await this.personalityService.findAllPersonality();
 

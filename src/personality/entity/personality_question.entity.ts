@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { PersonalityOptionEntity } from './personality-option.entity';
+import { PersonalityOptionEntity } from './personality_option.entity';
 
 @Entity('personality_question')
 export class PersonalityQuestionEntity {

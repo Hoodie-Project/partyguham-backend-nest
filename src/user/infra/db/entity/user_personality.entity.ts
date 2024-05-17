@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, Unique } from 'typeorm';
 import { UserEntity } from './user.entity';
-import { PersonalityOptionEntity } from 'src/personality/entity/personality-option.entity';
+import { PersonalityOptionEntity } from 'src/personality/entity/personality_option.entity';
 
 @Entity('user_personality')
 export class UserPersonalityEntity {
