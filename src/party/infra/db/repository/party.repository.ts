@@ -20,7 +20,7 @@ export class PartyRepository implements IPartyRepository {
   async create(title: string, content: string): Promise<Party> {
     const party = await this.partyRepository.save({ title, content });
 
-    return this.partyFactory.reconstitute(party.id, title, content);
+    return this.partyFactory.reconstitute(party.id, title, content, party.image, party.image);
   }
 
   async findOne(partyId: number) {
@@ -32,7 +32,7 @@ export class PartyRepository implements IPartyRepository {
       throw new NotFoundException('파티가 존재하지 않습니다');
     }
 
-    return this.partyFactory.reconstitute(party.id, party.title, party.content);
+    return this.partyFactory.reconstitute(party.id, party.title, party.content, party.image, party.image);
   }
 
   async update(partyId: number, title: string, content: string) {

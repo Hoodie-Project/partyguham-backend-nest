@@ -4,20 +4,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 
 import { Repository } from 'typeorm';
-import { GetPartyQuery } from './get-party.query';
+import { GetPartyTypesQuery } from './get-partyTypes.query';
 
-@QueryHandler(GetPartyQuery)
-export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
+@QueryHandler(GetPartyTypesQuery)
+export class GetPartyTypesHandler implements IQueryHandler<GetPartyTypesQuery> {
   constructor(@InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>) {}
 
-  async execute(query: GetPartyQuery) {
-    const { partyId } = query;
-
-    const result = await this.partyRepository.findOne({
-      where: { id: partyId },
-    });
+  async execute(query: GetPartyTypesQuery) {
+    const result = await this.partyRepository.find({});
     if (!result) {
-      throw new NotFoundException('파티가 존재하지 않습니다');
+      throw new NotFoundException('파티 타입 데이터가 존재하지 않습니다');
     }
 
     return result;
