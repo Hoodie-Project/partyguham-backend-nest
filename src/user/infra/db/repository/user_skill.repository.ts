@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IUserSkillRepository } from 'src/user/domain/user/repository/iuser.skill.repository';
-import { UserSkillEntity } from '../entity/user-skill.entity';
+import { UserSkillEntity } from '../entity/user_skill.entity';
 
 @Injectable()
 export class UserSkillRepository implements IUserSkillRepository {

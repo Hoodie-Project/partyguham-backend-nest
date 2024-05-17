@@ -1,6 +1,6 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class UserPersonalityDeleteCommand implements ICommand {
+export class DeleteUserPersonalityCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly userPersonalityId: number,

@@ -1,4 +1,4 @@
-import { UserPersonalityEntity } from 'src/user/infra/db/entity/user-personality.entity';
+import { UserPersonalityEntity } from 'src/user/infra/db/entity/user_personality.entity';
 
 export interface IUserPersonalityRepository {
   findById: (id: number) => Promise<UserPersonalityEntity>;

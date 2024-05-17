@@ -12,54 +12,52 @@ import { UserRepository } from './infra/db/repository/user.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { GetUsersHandler } from './application/query/get-users.handler';
 import { UserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
-import { FollowHandler } from './application/command/follow.handler';
-import { UnFollowHandler } from './application/command/unfollow.handler';
 import { FollowRepository } from './infra/db/repository/follow.repository';
 import { FollowEntity } from './infra/db/entity/follow.entity';
 import { FollowFactory } from './domain/follow/follow.factory';
 import { GetFollowHandler } from './application/query/get-follow.handler';
-import { UserSkillRepository } from './infra/db/repository/user-skill.repository';
-import { UserSkillEntity } from './infra/db/entity/user-skill.entity';
+import { UserSkillRepository } from './infra/db/repository/user_skill.repository';
+import { UserSkillEntity } from './infra/db/entity/user_skill.entity';
 import { KakaoLoginHandler } from './application/command/kakao-login.handler';
 import { LocationModule } from 'src/location/location.module';
 import { PositionModule } from 'src/position/position.module';
 import { SkillModule } from 'src/skill/skill.module';
 import { PersonalityModule } from 'src/personality/personality.module';
-import { UserLocationCreateHandler } from './application/command/userLocation.create.handler';
-import { UserPersonalityCreateHandler } from './application/command/userPersonality.create.handler';
-import { UserCareerCreateHandler } from './application/command/userCareer.create.handler';
-import { UserLocationRepository } from './infra/db/repository/user-location.repository';
-import { UserLocationEntity } from './infra/db/entity/user-location.entity';
-import { UserCareerEntity } from './infra/db/entity/user-career.entity';
-import { UserPersonalityEntity } from './infra/db/entity/user-personality.entity';
-import { UserPersonalityRepository } from './infra/db/repository/user-personality.repository';
-import { UserCareerRepository } from './infra/db/repository/user-career.repository';
+import { CreateUserLocationHandler } from './application/command/create.userLocation.handler';
+import { CreateUserPersonalityHandler } from './application/command/create.userPersonality.handler';
+import { CreateUserCareerHandler } from './application/command/create-userCareer.handler';
+import { UserLocationRepository } from './infra/db/repository/user_location.repository';
+import { UserLocationEntity } from './infra/db/entity/user_location.entity';
+import { UserCareerEntity } from './infra/db/entity/user_career.entity';
+import { UserPersonalityEntity } from './infra/db/entity/user_personality.entity';
+import { UserPersonalityRepository } from './infra/db/repository/user_personality.repository';
+import { UserCareerRepository } from './infra/db/repository/user_career.repository';
 import { GetCheckNicknameHandler } from './application/query/get-check-nickname.handler';
 
-import { UserLocationDeleteHandler } from './application/command/userLocation.delete.handler';
-import { UserPersonalityDeleteHandler } from './application/command/userPersonality.delete.handler';
-import { UserCareerDeleteHandler } from './application/command/userCareer.delete.handler';
+import { DeleteUserLocationHandler } from './application/command/delete-userLocation.handler';
+import { DeleteUserPersonalityHandler } from './application/command/delete-userPersonality.delete.handler';
+import { DeleteUserCareerHandler } from './application/command/delete-userCareer.handler';
 import { GoogleCodeHandler } from './application/command/google-code.handler';
 import { GoogleLoginHandler } from './application/command/google-login.handler';
+import { DeleteUserHandler } from './application/command/delete-user.handler';
 
 const commandHandlers = [
   CreateUserHandler,
+  DeleteUserHandler,
+
   KakaoCodeHandler,
   KakaoLoginHandler,
   GoogleCodeHandler,
   GoogleLoginHandler,
 
-  UserLocationCreateHandler,
-  UserLocationDeleteHandler,
+  CreateUserLocationHandler,
+  DeleteUserLocationHandler,
 
-  UserPersonalityCreateHandler,
-  UserPersonalityDeleteHandler,
+  CreateUserPersonalityHandler,
+  DeleteUserPersonalityHandler,
 
-  UserCareerCreateHandler,
-  UserCareerDeleteHandler,
-
-  FollowHandler,
-  UnFollowHandler,
+  CreateUserCareerHandler,
+  DeleteUserCareerHandler,
 ];
 
 const queryHandlers = [
@@ -90,9 +88,9 @@ const repositories = [
     TypeOrmModule.forFeature([
       UserEntity,
       FollowEntity,
-      UserSkillEntity,
       UserLocationEntity,
       UserCareerEntity,
+      UserSkillEntity,
       UserPersonalityEntity,
     ]),
     CqrsModule,

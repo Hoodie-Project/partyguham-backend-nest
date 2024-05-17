@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IUserCareerRepository } from 'src/user/domain/user/repository/iuserCareer.repository';
-import { CareerTypeEnum, UserCareerEntity } from '../entity/user-career.entity';
+import { CareerTypeEnum, UserCareerEntity } from '../entity/user_career.entity';
 import { CareerDto } from 'src/user/interface/dto/career.dto';
 
 @Injectable()

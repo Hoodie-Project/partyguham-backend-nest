@@ -1,4 +1,4 @@
-import { UserLocationEntity } from 'src/user/infra/db/entity/user-location.entity';
+import { UserLocationEntity } from 'src/user/infra/db/entity/user_location.entity';
 
 interface IUpdateUserLocation {
   id: number;

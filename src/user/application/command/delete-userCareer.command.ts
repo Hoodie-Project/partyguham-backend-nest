@@ -1,8 +1,8 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class UnfollowCommand implements ICommand {
+export class DeleteUserCareerCommand implements ICommand {
   constructor(
     readonly userId: number,
-    readonly nickname: string,
+    readonly userCareerId: number,
   ) {}
 }

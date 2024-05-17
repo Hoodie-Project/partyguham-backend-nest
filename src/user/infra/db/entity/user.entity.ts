@@ -1,15 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/baseEntity';
 
-import { UserSkillEntity } from './user-skill.entity';
+import { UserSkillEntity } from './user_skill.entity';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 import { FollowEntity } from 'src/user/infra/db/entity/follow.entity';
 import { PartyApplicationEntity } from 'src/party/infra/db/entity/apply/party_application.entity';
 import { PartyInvitationEntity } from 'src/party/infra/db/entity/apply/party_invitation.entity';
 import { AuthEntity } from 'src/auth/entity/auth.entity';
-import { UserCareerEntity } from './user-career.entity';
+import { UserCareerEntity } from './user_career.entity';
 import { OauthEntity } from '../../../../auth/entity/oauth.entity';
-import { UserLocationEntity } from './user-location.entity';
+import { UserLocationEntity } from './user_location.entity';
 import { GuildApplicationEntity } from 'src/guild/infra/db/entity/apply/guild_application.entity';
 import { GuildInvitationEntity } from 'src/guild/infra/db/entity/apply/guild_invitation.entity';
 
@@ -18,23 +18,23 @@ export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar', { nullable: true, unique: true })
+  @Column('varchar', { nullable: false, unique: true })
   email: string;
 
-  @Column('varchar', { length: 15, nullable: true, unique: true })
+  @Column('varchar', { length: 15, nullable: false, unique: true })
   nickname: string;
 
-  @Column('date', { nullable: true })
+  @Column('date', { nullable: false })
   birth: string;
 
-  @Column('char', { length: 1 }) // 'M' 또는 'F'
+  @Column('char', { length: 1, nullable: false }) // 'M' 또는 'F'
   gender: string;
 
   @Column('boolean', { nullable: false, default: true })
-  birthVisible: Boolean;
+  birthVisible: boolean;
 
   @Column('boolean', { nullable: false, default: true })
-  genderVisible: Boolean;
+  genderVisible: boolean;
 
   @Column('varchar', { nullable: true })
   image: string;

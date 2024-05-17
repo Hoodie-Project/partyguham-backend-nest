@@ -26,9 +26,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    const { id, email, gender, birth } = userEntity;
-
-    return this.userFactory.reconstitute(id, nickname, email, gender, birth);
+    return this.userFactory.reconstitute(userEntity);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -40,9 +38,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    const { id, nickname, gender, birth } = userEntity;
-
-    return this.userFactory.reconstitute(id, nickname, email, gender, birth);
+    return this.userFactory.reconstitute(userEntity);
   }
 
   async prepare() {
@@ -53,16 +49,23 @@ export class UserRepository implements IUserRepository {
 
   async createUser(nickname: string, email: string, gender: string, birth: string): Promise<User> {
     const userEntity = await this.userRepository.save({ nickname, email, gender, birth });
-    const { id, nickname: createNickname, email: createEmail, gender: createGender, birth: createBirth } = userEntity;
 
-    return this.userFactory.create(id, createNickname, createEmail, createGender, createBirth);
+    return this.userFactory.create(userEntity);
   }
 
-  async updateUser(): Promise<void> {
+  async updateUser(id: number, gender: string, birth: string): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const user = await this.userRepository.save({});
+      const user = await this.userRepository.save({ id, gender, birth });
 
       await manager.save(user);
     });
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await this.userRepository.delete({ id });
+  }
+
+  async softDeleteUser(id: number) {
+    await this.userRepository.save({ status: StatusEnum.DELETED, where: { id } });
   }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsInt, IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
-import { CareerTypeEnum } from 'src/user/infra/db/entity/user-career.entity';
+import { CareerTypeEnum } from 'src/user/infra/db/entity/user_career.entity';
 
 export class CareerDto {
   @ApiProperty({

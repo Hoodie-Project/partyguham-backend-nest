@@ -7,15 +7,15 @@ import {
 } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserPersonalityDeleteCommand } from './userPersonality.delete.command';
+import { DeleteUserPersonalityCommand } from './delete-userPersonality.command';
 import { IUserPersonalityRepository } from 'src/user/domain/user/repository/iuserPersonality.repository';
 
 @Injectable()
-@CommandHandler(UserPersonalityDeleteCommand)
-export class UserPersonalityDeleteHandler implements ICommandHandler<UserPersonalityDeleteCommand> {
+@CommandHandler(DeleteUserPersonalityCommand)
+export class DeleteUserPersonalityHandler implements ICommandHandler<DeleteUserPersonalityCommand> {
   constructor(@Inject('UserPersonalityRepository') private userPersonalityRepository: IUserPersonalityRepository) {}
 
-  async execute(command: UserPersonalityDeleteCommand) {
+  async execute(command: DeleteUserPersonalityCommand) {
     const { userId, userPersonalityId } = command;
 
     const savedUserPersonality = await this.userPersonalityRepository.findById(userPersonalityId);

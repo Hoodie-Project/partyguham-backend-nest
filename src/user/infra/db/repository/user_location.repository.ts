@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IUserLocationRepository } from 'src/user/domain/user/repository/iuserLocation.repository';
-import { UserLocationEntity } from '../entity/user-location.entity';
+import { UserLocationEntity } from '../entity/user_location.entity';
 
 @Injectable()
 export class UserLocationRepository implements IUserLocationRepository {

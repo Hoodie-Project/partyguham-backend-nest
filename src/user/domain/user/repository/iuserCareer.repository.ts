@@ -1,4 +1,4 @@
-import { CareerTypeEnum, UserCareerEntity } from 'src/user/infra/db/entity/user-career.entity';
+import { CareerTypeEnum, UserCareerEntity } from 'src/user/infra/db/entity/user_career.entity';
 import { CareerDto } from 'src/user/interface/dto/career.dto';
 
 import { InsertResult } from 'typeorm';

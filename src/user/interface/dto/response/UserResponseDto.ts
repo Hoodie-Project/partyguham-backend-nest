@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 
 @Exclude()
@@ -9,10 +9,6 @@ export class UserResponseDto {
 
   @Expose()
   @ApiProperty()
-  account: string;
-
-  @Expose()
-  @ApiProperty()
   email: string;
 
   @Expose()
@@ -20,12 +16,16 @@ export class UserResponseDto {
   nickname: string;
 
   @Expose()
-  @ApiProperty()
-  image: string;
+  @ApiPropertyOptional()
+  birth: string;
+
+  @Expose()
+  @ApiPropertyOptional()
+  gender: string;
 
   @Expose()
   @ApiProperty()
-  isParty: boolean;
+  image: string;
 
   @Expose()
   @ApiProperty()

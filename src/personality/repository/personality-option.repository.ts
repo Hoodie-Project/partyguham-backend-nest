@@ -1,8 +1,8 @@
 import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PersonalityQuestionEntity } from '../entity/personality-question.entity';
-import { PersonalityOptionEntity } from '../entity/personality-option.entity';
+import { PersonalityQuestionEntity } from '../entity/personality_question.entity';
+import { PersonalityOptionEntity } from '../entity/personality_option.entity';
 
 @Injectable()
 export class PersonalityOptionRepository {
