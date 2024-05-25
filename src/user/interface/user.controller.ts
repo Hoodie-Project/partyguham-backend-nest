@@ -102,7 +102,7 @@ export class UserController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: 'strict', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
 
       res.redirect(`${process.env.BASE_URL}`);
@@ -115,7 +115,7 @@ export class UserController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: 'strict', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -146,7 +146,7 @@ export class UserController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: 'strict', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
     }
 
@@ -157,7 +157,7 @@ export class UserController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
     }
@@ -201,7 +201,7 @@ export class UserController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
 
       res.redirect(`${process.env.BASE_URL}`);
@@ -214,7 +214,7 @@ export class UserController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -245,7 +245,7 @@ export class UserController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: 'strict', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
     }
 
@@ -256,8 +256,16 @@ export class UserController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: 'strict', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.json({
+        message: 'Cookie has been set',
+        user: {
+          name: 'John Doe',
+          role: 'Admin',
+        },
       });
     }
   }
@@ -334,7 +342,7 @@ export class UserController {
     res.cookie('refreshToken', result.refreshToken, {
       // secure: true,
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
     });
     res.status(201).send({ accessToken: result.accessToken });
   }

@@ -32,7 +32,7 @@ async function bootstrap() {
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',
-    origin: ['https://localhost:3000', 'https://partyguam.net', 'http://partyguam.net'],
+    origin: ['http://localhost:3000', 'https://localhost:3000', 'https://partyguam.net', 'http://partyguam.net'],
     credentials: true,
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
   });
@@ -43,6 +43,9 @@ async function bootstrap() {
       resave: false, //세션이 수정되지 않아도 지속적으로 저장하게 하는 옵션
       saveUninitialized: false, //초기화되지 않는 세션을 저장하게 함
       cookie: {
+        httpOnly: true,
+        secure: true,
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         maxAge: 3600000, // 1시간(밀리초 단위)
       },
     }),
