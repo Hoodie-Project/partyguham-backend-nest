@@ -34,7 +34,7 @@ async function bootstrap() {
     methods: 'GET,PUT,PATCH,POST,DELETE',
     origin: ['http://localhost:3000', 'https://localhost:3000', 'https://partyguam.net', 'http://partyguam.net'],
     credentials: true,
-    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept',
+    allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   });
 
   app.use(
