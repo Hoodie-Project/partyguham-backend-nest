@@ -94,17 +94,15 @@ export class PartyController {
   // 지원
   @Get(':partyId/application')
   @ApiOperation({ summary: '파티 지원 조회' })
-  async getPartyRequestList(
+  async getPartyRequestList(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {}
+
+  @Post(':partyId/application')
+  @ApiOperation({ summary: '파티 지원 하기' })
+  async sendPartyRequest(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
-    dto;
-  }
-
-  @Post(':partyId/application')
-  @ApiOperation({ summary: '파티 지원' })
-  async sendPartyRequest(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
     partyId;
   }
 

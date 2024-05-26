@@ -1,12 +1,18 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 
-import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { PartyEntity } from '../party/party.entity';
+import { PositionEntity } from 'src/position/entity/position.entity';
 
-@Entity('party_application')
-export class PartyApplicationEntity {
+@Entity('party_recruitment')
+export class PartyRecruitmentEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column()
+  partyId: number;
+
+  @Column()
+  positionId: number;
 
   @Column({ nullable: true })
   message: string;
@@ -14,12 +20,15 @@ export class PartyApplicationEntity {
   @Column({ nullable: true, type: 'date' })
   created_at: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.partyApplication, {
+  @Column({ nullable: true })
+  status: string;
+
+  @ManyToOne(() => PositionEntity, (position) => position.partyRecruitments, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
+  @JoinColumn({ name: 'position_id', referencedColumnName: 'id' })
+  position: PositionEntity;
 
   @ManyToOne(() => PartyEntity, (post) => post.partyApplications, {
     onUpdate: 'CASCADE',
