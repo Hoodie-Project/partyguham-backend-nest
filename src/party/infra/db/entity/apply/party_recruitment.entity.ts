@@ -14,14 +14,14 @@ export class PartyRecruitmentEntity {
   @Column()
   positionId: number;
 
+  @Column('smallint', { default: 1 })
+  capacity: number;
+
+  @Column('smallint', { default: 0 })
+  current_count: number;
+
   @Column({ nullable: true })
   message: string;
-
-  @Column({ nullable: true, type: 'date' })
-  created_at: Date;
-
-  @Column({ nullable: true })
-  status: string;
 
   @ManyToOne(() => PositionEntity, (position) => position.partyRecruitments, {
     onUpdate: 'CASCADE',
