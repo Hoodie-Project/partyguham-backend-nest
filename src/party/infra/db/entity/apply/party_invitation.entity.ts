@@ -13,14 +13,11 @@ export class PartyInvitationEntity {
   @Column({ nullable: true, type: 'date' })
   created_at: Date;
 
-  @Column({ nullable: true })
-  status: string;
-
   @ManyToOne(() => UserEntity, (user) => user.partyInvitations)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
   @ManyToOne(() => PartyEntity, (party) => party.partyInvitations)
-  @JoinColumn({ name: 'party_post_id' })
+  @JoinColumn({ name: 'party_id' })
   party: PartyEntity;
 }

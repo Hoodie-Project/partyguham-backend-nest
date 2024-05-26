@@ -19,6 +19,7 @@ import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
+import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -39,7 +40,7 @@ export class PartyController {
   }
 
   @Post('')
-  @ApiOperation({ summary: '파티 필수 생성' })
+  @ApiOperation({ summary: '파티 생성' })
   async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
     const { title, content, partyTypeId } = dto;
 
@@ -49,7 +50,7 @@ export class PartyController {
   }
 
   @Get(':partyId')
-  @ApiOperation({ summary: '파티 상세 조회' })
+  @ApiOperation({ summary: '파티 페이지 조회' })
   async getParty(@Param() param: PartyRequestDto) {
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
@@ -91,33 +92,58 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  // 모집
+  @Get(':partyId/recruitments')
+  @ApiOperation({ summary: '파티 모집 조회' })
+  async getPartyRecruitment(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {}
+
+  @Post(':partyId/recruitment')
+  @ApiOperation({ summary: '파티 모집 생성하기' })
+  async createRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param('partyId') partyId: number,
+    @Body() dto: CreatePartyRecruitmentRequestDto,
+  ): Promise<void> {
+    partyId;
+  }
+
+  @Delete(':partyId/recruitment/:partyRecruitmentId')
+  @ApiOperation({ summary: '파티 모집 삭제' })
+  async deleteRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param('partyId') partyId: number,
+    @Param('partyRecruitmentId') partyRecruitmentId: number,
+  ): Promise<void> {
+    partyId;
+  }
+
   // 지원
-  @Get(':partyId/application')
-  @ApiOperation({ summary: '파티 지원 조회' })
-  async getPartyRequestList(
+  @Get(':partyId/applications')
+  @ApiOperation({ summary: '파티 지원 리스트 조회' })
+  async getPartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+    // 파티장만 조회 가능
+  }
+
+  @Post(':partyId/application')
+  @ApiOperation({ summary: '파티 지원 하기' })
+  async createPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
-    dto;
-  }
-
-  @Post(':partyId/application')
-  @ApiOperation({ summary: '파티 지원' })
-  async sendPartyRequest(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
     partyId;
   }
 
   @Delete(':partyId/application')
   @ApiOperation({ summary: '파티 지원 취소' })
-  async deletePartyRequest(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+  async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
     partyId;
   }
 
   // 초대
-  @Get(':partyId/invitation')
-  @ApiOperation({ summary: '파티 초대 조회' })
-  async getPartyInvitationList(
+  @Get(':partyId/invitations')
+  @ApiOperation({ summary: '파티 초대 리스트 조회' })
+  async getPartyInvitation(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
     @Body() dto: CreatePartyRequestDto,

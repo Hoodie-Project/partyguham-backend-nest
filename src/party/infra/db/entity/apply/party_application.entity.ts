@@ -14,9 +14,6 @@ export class PartyApplicationEntity {
   @Column({ nullable: true, type: 'date' })
   created_at: Date;
 
-  @Column({ nullable: true })
-  status: string;
-
   @ManyToOne(() => UserEntity, (user) => user.partyApplication, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
@@ -28,6 +25,6 @@ export class PartyApplicationEntity {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'party_post_id' })
+  @JoinColumn({ name: 'party_id' })
   party: PartyEntity;
 }
