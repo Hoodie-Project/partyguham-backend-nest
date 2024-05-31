@@ -44,4 +44,10 @@ export class UserLocationRepository implements IUserLocationRepository {
 
     return result.affected ? true : false;
   }
+
+  async deleteByUserId(userId: number) {
+    const result = await this.userLocationRepository.delete({ userId });
+
+    return result.affected ? true : false;
+  }
 }

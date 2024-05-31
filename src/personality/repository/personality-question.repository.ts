@@ -14,4 +14,8 @@ export class PersonalityQuestionRepository {
   findAllWithOption() {
     return this.positionQuestionRepository.find({ relations: ['personalityOption'] });
   }
+
+  findByQuestionIdWithOption(questionId: number) {
+    return this.positionQuestionRepository.findOne({ where: { id: questionId }, relations: ['personalityOption'] });
+  }
 }

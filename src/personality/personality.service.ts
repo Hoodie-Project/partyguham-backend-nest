@@ -16,6 +16,12 @@ export class PersonalityService {
     return result;
   }
 
+  async findByQuestionIdWithOption(questionId: number) {
+    const result = await this.personalityQuestionRepository.findByQuestionIdWithOption(questionId);
+
+    return result;
+  }
+
   async findOptionByIds(ids: number[]) {
     const result = await this.personalityOptionRepository.findByIds(ids);
 

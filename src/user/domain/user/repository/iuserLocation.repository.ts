@@ -20,4 +20,5 @@ export interface IUserLocationRepository {
   >;
   bulkUpdate: (updateUserLocation: IUpdateUserLocation[]) => Promise<UserLocationEntity[]>;
   deleteById: (id: number) => Promise<boolean>;
+  deleteByUserId: (userId: number) => Promise<boolean>;
 }
