@@ -60,6 +60,7 @@ import { AppOauthRequestDto } from './dto/request/app-oauth.request.dto';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
 import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
+import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
 
 @ApiTags('user API')
 @Controller('users')
@@ -138,7 +139,7 @@ export class UserController {
     schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
   })
   async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
-    const command = new KakaoLoginCommand(dto.uid);
+    const command = new KakaoAppLoginCommand(dto.uid);
 
     const result = await this.commandBus.execute(command);
 

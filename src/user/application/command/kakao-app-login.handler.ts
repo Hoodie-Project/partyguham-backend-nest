@@ -10,7 +10,7 @@ import { KakaoAppLoginCommand } from './kakao-app-login.command';
 
 @Injectable()
 @CommandHandler(KakaoAppLoginCommand)
-export class KakaoLoginHandler implements ICommandHandler<KakaoAppLoginCommand> {
+export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginCommand> {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,
