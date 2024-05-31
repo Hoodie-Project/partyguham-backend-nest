@@ -63,4 +63,18 @@ export class AuthService {
     result += decipher.final('utf-8');
     return result;
   }
+
+  async appEncrypt(data: string) {
+    const cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
+    let result = cipher.update(data, 'utf-8', 'base64');
+    result += cipher.final('base64');
+    return result;
+  }
+
+  public appDecrypt(data: string) {
+    const decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
+    let result = decipher.update(data, 'base64', 'utf-8');
+    result += decipher.final('utf-8');
+    return result;
+  }
 }

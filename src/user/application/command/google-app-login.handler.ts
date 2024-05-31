@@ -28,11 +28,11 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     //   locale: 'ko'
     // }
 
-    const decryptUid = this.authService.decrypt(String(uid));
+    const decryptUid = this.authService.appDecrypt(String(uid));
     const oauth = await this.oauthService.findByExternalId(decryptUid);
 
     if (oauth && !oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      const encryptOauthId = await this.authService.appEncrypt(String(oauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
       return { type: 'signup', signupAccessToken };
@@ -40,14 +40,14 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
 
     if (!oauth) {
       const createOauth = await this.oauthService.createWithoutUserId(decryptUid, PlatformEnum.GOOGLE, null);
-      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
+      const encryptOauthId = await this.authService.appEncrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
       return { type: 'signup', signupAccessToken };
     }
 
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      const encryptOauthId = await this.authService.appEncrypt(String(oauth.id));
 
       const accessToken = await this.authService.createAccessToken(encryptOauthId);
       const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
