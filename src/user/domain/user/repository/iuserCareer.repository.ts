@@ -10,4 +10,5 @@ export interface IUserCareerRepository {
   create: (userId: number, positionId: number, year: number, careerType: CareerTypeEnum) => Promise<UserCareerEntity>;
   bulkInsert: (userId: number, career: CareerDto[]) => Promise<InsertResult>;
   deleteById: (id: number) => Promise<boolean>;
+  deleteByUserId: (id: number) => Promise<boolean>;
 }

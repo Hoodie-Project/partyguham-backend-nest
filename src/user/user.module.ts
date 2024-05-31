@@ -35,13 +35,16 @@ import { UserCareerRepository } from './infra/db/repository/user_career.reposito
 import { GetCheckNicknameHandler } from './application/query/get-check-nickname.handler';
 
 import { DeleteUserLocationHandler } from './application/command/delete-userLocation.handler';
-import { DeleteUserPersonalityHandler } from './application/command/delete-userPersonality.delete.handler';
+import { DeleteUserPersonalityHandler } from './application/command/delete-userPersonality.handler';
 import { DeleteUserCareerHandler } from './application/command/delete-userCareer.handler';
 import { GoogleCodeHandler } from './application/command/google-code.handler';
 import { GoogleLoginHandler } from './application/command/google-login.handler';
 import { DeleteUserHandler } from './application/command/delete-user.handler';
 import { KakaoAppLoginHandler } from './application/command/kakao-app-login.handler';
 import { GoogleAppLoginHandler } from './application/command/google-app-login.handler';
+import { DeleteUserLocationsHandler } from './application/command/delete-userLocations.handler';
+import { DeleteUserPersonalityByQuestionHandler } from './application/command/delete-userPersonalityByQuestion.handler';
+import { DeleteUserCareersHandler } from './application/command/delete-userCareers.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -56,12 +59,15 @@ const commandHandlers = [
 
   CreateUserLocationHandler,
   DeleteUserLocationHandler,
+  DeleteUserLocationsHandler,
 
   CreateUserPersonalityHandler,
   DeleteUserPersonalityHandler,
+  DeleteUserPersonalityByQuestionHandler,
 
   CreateUserCareerHandler,
   DeleteUserCareerHandler,
+  DeleteUserCareersHandler,
 ];
 
 const queryHandlers = [

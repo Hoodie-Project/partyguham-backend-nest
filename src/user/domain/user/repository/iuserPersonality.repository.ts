@@ -6,4 +6,5 @@ export interface IUserPersonalityRepository {
   findByUserId: (userId: number) => Promise<UserPersonalityEntity[]>;
   bulkInsert: (userId: number, locationIds: number[]) => Promise<UserPersonalityEntity[]>;
   deleteById: (id: number) => Promise<boolean>;
+  deleteByPersonalityOptionIds: (userId: number, personalityOptionIds: number[]) => Promise<boolean>;
 }

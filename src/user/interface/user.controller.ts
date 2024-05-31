@@ -61,6 +61,9 @@ import { GoogleAppLoginCommand } from '../application/command/google-app-login.c
 import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
+import { DeleteUserLocationsCommand } from '../application/command/delete-userLocations.command';
+import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
+import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 
 @ApiTags('user API')
 @Controller('users')
@@ -373,6 +376,32 @@ export class UserController {
 
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/locations')
+  @ApiOperation({ summary: '관심지역 전체 삭제' })
+  @ApiResponse({
+    status: 204,
+    description: '관심지역 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteAllLocation(@CurrentUser() user: CurrentUserType) {
+    const command = new DeleteUserLocationsCommand(user.id);
+
+    await this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
   @Delete('me/locations/:userLocationId')
   @ApiOperation({ summary: '관심지역 삭제' })
   @ApiParam({ name: 'userLocationId', description: '저장된 유저관심지역 ID' })
@@ -392,7 +421,7 @@ export class UserController {
     status: 500,
     description: '삭제 실패',
   })
-  async deleteUserLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
+  async deleteLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
     const command = new DeleteUserLocationCommand(user.id, userLocationId);
 
     await this.commandBus.execute(command);
@@ -400,7 +429,7 @@ export class UserController {
 
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Post('me/personality')
+  @Post('me/personalities')
   @ApiOperation({ summary: '성향 저장' })
   @ApiResponse({
     status: 201,
@@ -423,9 +452,9 @@ export class UserController {
 
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('me/personality/:userPersonalityId')
-  @ApiOperation({ summary: '성향 삭제' })
-  @ApiParam({ name: 'userPersonalityId', description: '저장된 유저성향 ID' })
+  @Delete('me/personalities/questions/:personalityQuestionId')
+  @ApiOperation({ summary: '질문에 대한 저장된 응답 전체 삭제' })
+  @ApiParam({ name: 'personalityQuestionId', description: '질문지 ID' })
   @ApiResponse({
     status: 204,
     description: '성향 삭제 성공',
@@ -444,6 +473,36 @@ export class UserController {
   })
   async deleteUserPersonality(
     @CurrentUser() user: CurrentUserType,
+    @Param('personalityQuestionId') personalityQuestionId: number,
+  ) {
+    const command = new DeleteUserPersonalityByQuestionCommand(user.id, personalityQuestionId);
+
+    await this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/personalities/options/:userPersonalityId')
+  @ApiOperation({ summary: '저장된 응답 항목 1개 삭제' })
+  @ApiParam({ name: 'userPersonalityId', description: '저장된 유저성향 ID' })
+  @ApiResponse({
+    status: 204,
+    description: '성향 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserPersonalityOptions(
+    @CurrentUser() user: CurrentUserType,
     @Param('userPersonalityId') userPersonalityId: number,
   ) {
     const command = new DeleteUserPersonalityCommand(user.id, userPersonalityId);
@@ -453,7 +512,7 @@ export class UserController {
 
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Post('me/career')
+  @Post('me/careers')
   @ApiOperation({ summary: '유저 경력(커리어) 저장' })
   @ApiResponse({
     status: 201,
@@ -465,7 +524,7 @@ export class UserController {
     description:
       '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
-  async userPosition(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
+  async createUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
     const { career } = body;
 
     const command = new CreateUserCareerCommand(user.id, career);
@@ -477,8 +536,34 @@ export class UserController {
 
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('me/career/:userCareerId')
-  @ApiOperation({ summary: '유저 경력(커리어) 삭제' })
+  @Delete('me/careers')
+  @ApiOperation({ summary: '유저 경력 전체 삭제' })
+  @ApiResponse({
+    status: 204,
+    description: '유저 경력(커리어) 삭제 성공',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '삭제 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  @ApiResponse({
+    status: 500,
+    description: '삭제 실패',
+  })
+  async deleteUserCareers(@CurrentUser() user: CurrentUserType) {
+    const command = new DeleteUserCareersCommand(user.id);
+
+    await this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('me/careers/:userCareerId')
+  @ApiOperation({ summary: '유저 경력 삭제' })
   @ApiParam({ name: 'userCareerId', description: '저장된 유저 경력(커리어) ID' })
   @ApiResponse({
     status: 204,

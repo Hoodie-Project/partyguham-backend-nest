@@ -53,4 +53,10 @@ export class UserCareerRepository implements IUserCareerRepository {
 
     return result.affected ? true : false;
   }
+
+  async deleteByUserId(userId: number) {
+    const result = await this.userCareerRepository.delete({ userId });
+
+    return result.affected ? true : false;
+  }
 }

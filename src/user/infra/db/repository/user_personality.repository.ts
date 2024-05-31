@@ -40,4 +40,12 @@ export class UserPersonalityRepository implements IUserPersonalityRepository {
 
     return result.affected ? true : false;
   }
+
+  async deleteByPersonalityOptionIds(userId: number, personalityOptionIds: number[]) {
+    const result = await this.userPersonalityRepository.delete({
+      userId,
+      personalityOptionId: In(personalityOptionIds),
+    });
+    return result.affected !== 0 ? true : false;
+  }
 }
