@@ -8,6 +8,9 @@ export class AuthService {
   private readonly algorithm: string = 'aes-256-cbc';
   private readonly key = process.env.CIPHERIV_KEY_SECRET;
   private readonly iv = process.env.CIPHERIV_IV_SECRET;
+
+  private readonly appKey = process.env.APP_CIPHERIV_KEY_SECRET;
+  private readonly appIv = process.env.APP_CIPHERIV_IV_SECRET;
   constructor(
     private jwtService: JwtService,
     private authRepository: AuthRepository,
@@ -65,14 +68,14 @@ export class AuthService {
   }
 
   async appEncrypt(data: string) {
-    const cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
+    const cipher = crypto.createCipheriv(this.algorithm, this.appKey, this.appIv);
     let result = cipher.update(data, 'utf-8', 'base64');
     result += cipher.final('base64');
     return result;
   }
 
   public appDecrypt(data: string) {
-    const decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
+    const decipher = crypto.createDecipheriv(this.algorithm, this.appKey, this.appIv);
     let result = decipher.update(data, 'base64', 'utf-8');
     result += decipher.final('utf-8');
     return result;
