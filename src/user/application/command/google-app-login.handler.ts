@@ -10,7 +10,7 @@ import { GoogleAppLoginCommand } from './google-app-login.command';
 
 @Injectable()
 @CommandHandler(GoogleAppLoginCommand)
-export class GoogleLoginHandler implements ICommandHandler<GoogleAppLoginCommand> {
+export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginCommand> {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,

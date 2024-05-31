@@ -40,6 +40,8 @@ import { DeleteUserCareerHandler } from './application/command/delete-userCareer
 import { GoogleCodeHandler } from './application/command/google-code.handler';
 import { GoogleLoginHandler } from './application/command/google-login.handler';
 import { DeleteUserHandler } from './application/command/delete-user.handler';
+import { KakaoAppLoginHandler } from './application/command/kakao-app-login.handler';
+import { GoogleAppLoginHandler } from './application/command/google-app-login.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -47,8 +49,10 @@ const commandHandlers = [
 
   KakaoCodeHandler,
   KakaoLoginHandler,
+  KakaoAppLoginHandler,
   GoogleCodeHandler,
   GoogleLoginHandler,
+  GoogleAppLoginHandler,
 
   CreateUserLocationHandler,
   DeleteUserLocationHandler,
