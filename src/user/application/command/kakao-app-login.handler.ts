@@ -35,7 +35,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     //     email: 'hoodiev.team@gmail.com'
     //   }
     // }
-    const decryptUid = this.authService.decrypt(String(uid));
+    const decryptUid = this.authService.appDecrypt(String(uid));
 
     const oauth = await this.oauthService.findByExternalId(decryptUid);
 
