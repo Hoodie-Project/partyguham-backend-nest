@@ -70,8 +70,8 @@ async function bootstrap() {
   //docs
   const config = new DocumentBuilder()
     // .setBasePath(`${path}`) // 전역 접두사를 Swagger 문서에 반영
-    .addServer(`https://partyguam.net`, '운영 서버')
-    .addServer(`https://partyguam.net/dev`, '개발 서버')
+    .addServer(`https://partyguam.net`, '파티괌 도메인 주소')
+    // .addServer(`https://partyguam.net/dev`, '개발 서버')
     .setTitle('party-guam API')
     .setDescription('파티괌 API 문서 입니다.')
     .setVersion('1.0')
