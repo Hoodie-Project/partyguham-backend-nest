@@ -145,25 +145,26 @@ export class UserController {
     const command = new KakaoAppLoginCommand(dto.uid);
 
     const result = await this.commandBus.execute(command);
-
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
+
+      res.json({ message: '로그인에 성공하였습니다.' });
     }
 
     if (result.type === 'signup') {
-      req.session.email = result.email;
-      req.session.image = result.image;
-
+      console.log('result', result);
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000),
       });
+
+      res.json({ message: '회원가입을 해야합니다.' });
     }
   }
 
@@ -251,12 +252,11 @@ export class UserController {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
+
+      res.json({ message: '로그인에 성공하였습니다.' });
     }
 
     if (result.type === 'signup') {
-      req.session.email = result.email;
-      req.session.image = result.image;
-
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
@@ -264,20 +264,14 @@ export class UserController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.json({
-        message: 'Cookie has been set',
-        user: {
-          name: 'John Doe',
-          role: 'Admin',
-        },
-      });
+      res.json({ message: '회원가입을 해야합니다.' });
     }
   }
 
   @ApiHeader({ name: 'cookies', description: 'signupToken' })
   @UseGuards(SignupJwtAuthGuard)
   @Get('me/oauth')
-  @ApiOperation({ summary: 'session에서 oauth 본인 데이터 호출 (email, image)' })
+  @ApiOperation({ summary: '웹 - session에서 oauth 본인 데이터 호출 (email, image)' })
   @ApiResponse({
     status: 200,
     description: '이메일, oauth 이미지 URL 데이터',
