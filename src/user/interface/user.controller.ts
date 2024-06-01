@@ -89,13 +89,11 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
-    schema: { example: { accessToken: 'token' } },
+    description: '로그인 가능 (refresh - res.cookie), redirect는 res.body 사용불가',
   })
   @ApiResponse({
     status: 401,
-    description: '회원가입 필요',
-    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+    description: '로그인 권한이 없어, 회원가입 필요 / cookie - signupToken',
   })
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
@@ -109,7 +107,7 @@ export class UserController {
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
 
-      res.redirect(`${process.env.BASE_URL}`);
+      res.status(200).redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
@@ -123,7 +121,7 @@ export class UserController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.redirect(`${process.env.BASE_URL}/join`);
+      res.status(401).redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
@@ -133,37 +131,37 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    description: '로그인 가능 (refresh - res.cookie)',
     schema: { example: { accessToken: 'token' } },
   })
   @ApiResponse({
     status: 401,
-    description: '회원가입 필요',
-    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+    description: '로그인 권한이 없어, 회원가입 필요',
+    schema: { example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' } },
   })
   async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
     const command = new KakaoAppLoginCommand(dto.uid);
 
     const result = await this.commandBus.execute(command);
-
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
+
+      res.status(200).json({ accessToken: result.accessToken });
     }
 
     if (result.type === 'signup') {
-      req.session.email = result.email;
-      req.session.image = result.image;
-
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000),
       });
+
+      res.status(401).json({ message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' });
     }
   }
 
@@ -179,17 +177,15 @@ export class UserController {
 
   @Get('google/callback')
   @ApiOperation({
-    summary: '웹/앱 사용 X // 로그인 시도에 대한 구글 서버에 대한 응답 (구글 로그인 리다이렉트 API)',
+    summary: '사용 X // 로그인 시도에 대한 구글 서버에 대한 응답 (구글 로그인 리다이렉트 API)',
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
-    schema: { example: { accessToken: 'token' } },
+    description: '로그인 가능 (refresh - res.cookie) redirect는 res.body 사용불가',
   })
   @ApiResponse({
     status: 401,
-    description: '회원가입 필요',
-    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+    description: '로그인 권한이 없어, 회원가입 필요 / cookie - signupToken',
   })
   async googleCallback(
     @Req() req: Request,
@@ -207,7 +203,7 @@ export class UserController {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
-
+      res.json({ accessToken: result.accessToken });
       res.redirect(`${process.env.BASE_URL}`);
     }
 
@@ -222,7 +218,7 @@ export class UserController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.redirect(`${process.env.BASE_URL}/join`);
+      res.status(401).redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
@@ -237,8 +233,8 @@ export class UserController {
   })
   @ApiResponse({
     status: 401,
-    description: '회원가입 필요',
-    schema: { example: { signupAccessToken: 'token', email: 'example@email.com' } },
+    description: '로그인 권한이 없어, 회원가입 필요 (cookie - signupToken)',
+    schema: { example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요.' } },
   })
   async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
     const command = new GoogleAppLoginCommand(dto.uid);
@@ -251,12 +247,10 @@ export class UserController {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
+      res.status(200).json({ accessToken: result.accessToken });
     }
 
     if (result.type === 'signup') {
-      req.session.email = result.email;
-      req.session.image = result.image;
-
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
@@ -264,20 +258,14 @@ export class UserController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.json({
-        message: 'Cookie has been set',
-        user: {
-          name: 'John Doe',
-          role: 'Admin',
-        },
-      });
+      res.status(401).json({ message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' });
     }
   }
 
   @ApiHeader({ name: 'cookies', description: 'signupToken' })
   @UseGuards(SignupJwtAuthGuard)
   @Get('me/oauth')
-  @ApiOperation({ summary: 'session에서 oauth 본인 데이터 호출 (email, image)' })
+  @ApiOperation({ summary: '웹에서만 사용가능 - session에서 oauth 본인 데이터 호출 (email, image)' })
   @ApiResponse({
     status: 200,
     description: '이메일, oauth 이미지 URL 데이터',
