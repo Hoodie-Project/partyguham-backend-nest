@@ -38,8 +38,8 @@ import { GuildModule } from './guild/guild.module';
       logging: process.env.MODE_ENV !== 'prod',
     }),
     UserModule,
-    GuildModule,
     PartyModule,
+    GuildModule,
   ],
   controllers: [AppController],
   providers: [

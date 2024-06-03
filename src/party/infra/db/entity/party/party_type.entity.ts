@@ -11,5 +11,5 @@ export class PartyTypeEntity {
   title: string;
 
   @OneToMany(() => PartyEntity, (party) => party.partyType)
-  partyType: PartyEntity[];
+  parties: PartyEntity[];
 }

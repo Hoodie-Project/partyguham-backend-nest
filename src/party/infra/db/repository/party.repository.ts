@@ -17,10 +17,10 @@ export class PartyRepository implements IPartyRepository {
     private partyFactory: PartyFactory,
   ) {}
 
-  async create(title: string, content: string): Promise<Party> {
-    const party = await this.partyRepository.save({ title, content });
+  async create(partyTypeId: number, title: string, content: string, image: string): Promise<Party> {
+    const party = await this.partyRepository.save({ partyTypeId, title, content, image });
 
-    return this.partyFactory.reconstitute(party.id, title, content, party.image, party.image);
+    return this.partyFactory.reconstitute(party.id, title, content, party.image, party.link);
   }
 
   async findOne(partyId: number) {
