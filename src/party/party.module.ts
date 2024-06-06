@@ -25,6 +25,7 @@ import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 const uploadDir = path.resolve(process.cwd(), '../uploads/images/party'); // 절대 경로로 설정
 
+const serveRoot = '/uploads/images/party';
 const commandHandlers = [CreatePartyHandler, UpdatePartyHandler, DeletePartyHandler];
 const queryHandlers = [GetPartiesHandler, GetPartyHandler, GetPartyTypesHandler];
 const eventHandlers = [];
@@ -42,7 +43,7 @@ const repositories = [
   imports: [
     ServeStaticModule.forRoot({
       rootPath: uploadDir, // 정적 파일이 저장된 디렉토리
-      serveRoot: uploadDir, // 정적 파일에 접근할 경로 설정
+      serveRoot: serveRoot, // 정적 파일에 접근할 경로 설정
     }),
     MulterModule.register({
       // dest: '../upload',
@@ -52,6 +53,7 @@ const repositories = [
         }
         callback(null, true);
       },
+
       storage: diskStorage({
         destination: (req, file, callback) => {
           // 디렉토리가 존재하지 않으면 생성
@@ -62,7 +64,8 @@ const repositories = [
         },
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          callback(null, `${uniqueSuffix}-${file.originalname}`); // 현재 날짜와 원래 파일 이름을 조합하여 저장
+          const filename = `${uniqueSuffix}-${file.originalname}`;
+          callback(null, filename); // 현재 날짜와 원래 파일 이름을 조합하여 저장
         },
       }),
     }),

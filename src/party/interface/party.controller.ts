@@ -63,18 +63,8 @@ export class PartyController {
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
-    // file
-    // {
-    //   fieldname: 'image',
-    //   originalname: '스크린샷 2024-03-03 오후 5.08.26.png',
-    //   encoding: '7bit',
-    //   mimetype: 'image/png',
-    //   destination: '../upload/party',
-    //   filename: '1717395766341-54304062-스크린샷 2024-03-03 오후 5.08.26.png',
-    //   path: '../upload/party/1717395766341-54304062-스크린샷 2024-03-03 오후 5.08.26.png',
-    //   size: 10776
-    // }
-    const command = new CreatePartyCommand(user.id, title, content, file.path, partyTypeId, positionId);
+    const resultPath = file.path.substring(file.path.indexOf('/uploads'));
+    const command = new CreatePartyCommand(user.id, title, content, resultPath, partyTypeId, positionId);
 
     return this.commandBus.execute(command);
   }
