@@ -35,6 +35,8 @@ import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CreatePartyApplicationRequestDto } from './dto/request/create-application.request.dto';
+import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -56,7 +58,7 @@ export class PartyController {
 
   @Post('')
   @UseInterceptors(FileInterceptor('image'))
-  @ApiOperation({ summary: '파티 생성' })
+  @ApiOperation({ summary: '파티 생성 - form-data(image)' })
   async createParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
@@ -90,15 +92,18 @@ export class PartyController {
   }
 
   @Patch(':partyId')
-  @ApiOperation({ summary: '파티 수정' })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({ summary: '파티 수정 - form-data(이미지)' })
   async updateParty(
     @CurrentUser() user: CurrentUserType,
+    @UploadedFile() file: Express.Multer.File,
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
   ): Promise<void> {
     const { title, content } = dto;
+    const resultPath = file.path.substring(file.path.indexOf('/uploads'));
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, title, content);
+    const command = new UpdatePartyCommand(user.id, param.partyId, title, content, resultPath);
 
     return this.commandBus.execute(command);
   }
@@ -115,7 +120,11 @@ export class PartyController {
   // 모집
   @Get(':partyId/recruitments')
   @ApiOperation({ summary: '파티 모집 조회' })
-  async getPartyRecruitment(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {}
+  async getPartyRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param('partyId') partyId: number,
+    @Body() dto: CreatePartyRequestDto,
+  ): Promise<void> {}
 
   @Post(':partyId/recruitment')
   @ApiOperation({ summary: '파티 모집 생성하기' })
@@ -138,20 +147,22 @@ export class PartyController {
   }
 
   // 지원
-  @Get(':partyId/applications')
-  @ApiOperation({ summary: '파티 지원 리스트 조회' })
-  async getPartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    // 파티장만 조회 가능
-  }
-
   @Post(':partyId/application')
   @ApiOperation({ summary: '파티 지원 하기' })
   async createPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
-    @Body() dto: CreatePartyRequestDto,
+    @Body() dto: CreatePartyApplicationRequestDto,
   ): Promise<void> {
-    partyId;
+    const command = new CreatePartyApplicationCommand(user.id, partyId, dto.message);
+
+    return this.commandBus.execute(command);
+  }
+
+  @Get(':partyId/applications')
+  @ApiOperation({ summary: '파티 지원 현황 리스트 조회' })
+  async getPartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+    // 파티장만 조회 가능
   }
 
   @Delete(':partyId/application')

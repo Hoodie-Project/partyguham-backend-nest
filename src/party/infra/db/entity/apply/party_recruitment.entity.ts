@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { PartyEntity } from '../party/party.entity';
 import { PositionEntity } from 'src/position/entity/position.entity';
+import { PartyApplicationEntity } from './party_application.entity';
+import { PartyInvitationEntity } from './party_invitation.entity';
 
 @Entity('party_recruitment')
 export class PartyRecruitmentEntity {
@@ -23,6 +25,12 @@ export class PartyRecruitmentEntity {
   @Column({ nullable: true })
   message: string;
 
+  @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.partyRecruitment)
+  partyApplications: PartyApplicationEntity[];
+
+  @OneToMany(() => PartyInvitationEntity, (partyApplication) => partyApplication.partyRecruitment)
+  partyInvitaions: PartyInvitationEntity[];
+
   @ManyToOne(() => PositionEntity, (position) => position.partyRecruitments, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
@@ -30,7 +38,7 @@ export class PartyRecruitmentEntity {
   @JoinColumn({ name: 'position_id', referencedColumnName: 'id' })
   position: PositionEntity;
 
-  @ManyToOne(() => PartyEntity, (post) => post.partyApplications, {
+  @ManyToOne(() => PartyEntity, (party) => party.partyRecruitments, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

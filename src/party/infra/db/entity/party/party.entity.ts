@@ -4,6 +4,7 @@ import { PartyInvitationEntity } from '../apply/party_invitation.entity';
 import { PartyApplicationEntity } from '../apply/party_application.entity';
 import { BaseEntity } from 'src/common/entity/baseEntity';
 import { PartyTypeEntity } from './party_type.entity';
+import { PartyRecruitmentEntity } from '../apply/party_recruitment.entity';
 
 @Entity('party')
 export class PartyEntity extends BaseEntity {
@@ -35,9 +36,6 @@ export class PartyEntity extends BaseEntity {
   @OneToMany(() => PartyUserEntity, (partyUser) => partyUser.party)
   partyUser: PartyUserEntity[];
 
-  @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.party)
-  partyApplications: PartyApplicationEntity[];
-
-  @OneToMany(() => PartyInvitationEntity, (partyInvitationEntity) => partyInvitationEntity.party)
-  partyInvitations: PartyInvitationEntity[];
+  @OneToMany(() => PartyRecruitmentEntity, (partyRecruitment) => partyRecruitment.party)
+  partyRecruitments: PartyRecruitmentEntity[];
 }

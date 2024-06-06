@@ -1,6 +1,6 @@
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { PartyEntity } from '../party/party.entity';
+import { PartyRecruitmentEntity } from './party_recruitment.entity';
 
 @Entity('party_invitation')
 export class PartyInvitationEntity {
@@ -17,7 +17,10 @@ export class PartyInvitationEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => PartyEntity, (party) => party.partyInvitations)
+  @ManyToOne(() => PartyRecruitmentEntity, (partyRecruitment) => partyRecruitment.partyInvitaions, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'party_id' })
-  party: PartyEntity;
+  partyRecruitment: PartyRecruitmentEntity;
 }

@@ -23,10 +23,11 @@ import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { CreatePartyApplicationHandler } from './application/command/create-partyApplication.handler';
 const uploadDir = path.resolve(process.cwd(), '../uploads/images/party'); // 절대 경로로 설정
 
 const serveRoot = '/uploads/images/party';
-const commandHandlers = [CreatePartyHandler, UpdatePartyHandler, DeletePartyHandler];
+const commandHandlers = [CreatePartyHandler, UpdatePartyHandler, DeletePartyHandler, CreatePartyApplicationHandler];
 const queryHandlers = [GetPartiesHandler, GetPartyHandler, GetPartyTypesHandler];
 const eventHandlers = [];
 const factories = [PartyFactory];
