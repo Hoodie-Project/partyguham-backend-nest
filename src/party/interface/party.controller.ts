@@ -118,14 +118,6 @@ export class PartyController {
   }
 
   // 모집
-  @Get(':partyId/recruitments')
-  @ApiOperation({ summary: '파티 모집 조회' })
-  async getPartyRecruitment(
-    @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
-    @Body() dto: CreatePartyRequestDto,
-  ): Promise<void> {}
-
   @Post(':partyId/recruitment')
   @ApiOperation({ summary: '파티 모집 생성하기' })
   async createRecruitment(
@@ -133,8 +125,18 @@ export class PartyController {
     @Param('partyId') partyId: number,
     @Body() dto: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
+    user.id;
     partyId;
+    dto.recruitment;
   }
+
+  @Get(':partyId/recruitments')
+  @ApiOperation({ summary: '파티 모집 조회' })
+  async getPartyRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param('partyId') partyId: number,
+    @Body() dto: CreatePartyRequestDto,
+  ): Promise<void> {}
 
   @Delete(':partyId/recruitment/:partyRecruitmentId')
   @ApiOperation({ summary: '파티 모집 삭제' })

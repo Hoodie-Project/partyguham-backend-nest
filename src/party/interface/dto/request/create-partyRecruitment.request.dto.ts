@@ -1,20 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsNotEmpty } from 'class-validator';
+import { RecruitmentDto } from '../recruitmentDto';
 
 export class CreatePartyRecruitmentRequestDto {
   @ApiProperty({
-    example: '1',
-    description: '포지션 PK id',
+    description: '모집',
+    type: [RecruitmentDto],
   })
-  @IsString()
+  @Type(() => RecruitmentDto)
+  @ArrayUnique()
+  @ArrayMaxSize(5)
+  @ArrayMinSize(1)
+  @IsArray()
   @IsNotEmpty()
-  readonly positionId: string;
-
-  @ApiProperty({
-    example: '3',
-    description: '해당 포지션의 모집 인원',
-  })
-  @IsString()
-  @IsNotEmpty()
-  readonly capacity: string;
+  readonly recruitment: RecruitmentDto[];
 }
