@@ -1,4 +1,18 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Put,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -20,6 +34,7 @@ import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -40,11 +55,16 @@ export class PartyController {
   }
 
   @Post('')
+  @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: '파티 생성' })
-  async createParty(@CurrentUser() user: CurrentUserType, @Body() dto: CreatePartyRequestDto): Promise<void> {
-    const { title, content, partyTypeId } = dto;
-
-    const command = new CreatePartyCommand(user.id, title, content, partyTypeId);
+  async createParty(
+    @CurrentUser() user: CurrentUserType,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: CreatePartyRequestDto,
+  ): Promise<void> {
+    const { title, content, partyTypeId, positionId } = dto;
+    const resultPath = file.path.substring(file.path.indexOf('/uploads'));
+    const command = new CreatePartyCommand(user.id, title, content, resultPath, partyTypeId, positionId);
 
     return this.commandBus.execute(command);
   }
