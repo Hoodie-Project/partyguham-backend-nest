@@ -25,6 +25,8 @@ import * as path from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { CreatePartyApplicationHandler } from './application/command/create-partyApplication.handler';
 import { CreatePartyRecruitmentHandler } from './application/command/create-partyRecruitment.handler';
+import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
+import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
 const uploadDir = path.resolve(process.cwd(), '../uploads/images/party'); // 절대 경로로 설정
 
 const serveRoot = '/uploads/images/party';
@@ -44,6 +46,7 @@ const repositories = [
   { provide: 'PartyRepository', useClass: PartyRepository },
   { provide: 'PartyUserRepository', useClass: PartyUserRepository },
   { provide: 'PartyTypeRepository', useClass: PartyTypeRepository },
+  { provide: 'PartyRecruitmentRepository', useClass: PartyRecruitmentRepository },
 ];
 
 @Module({
@@ -83,6 +86,7 @@ const repositories = [
       PartyEntity,
       PartyTypeEntity,
       PartyUserEntity,
+      PartyRecruitmentEntity,
       PartyApplicationEntity,
       PartyInvitationEntity,
     ]),

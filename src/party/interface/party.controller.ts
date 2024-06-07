@@ -37,6 +37,7 @@ import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecr
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePartyApplicationRequestDto } from './dto/request/create-application.request.dto';
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
+import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -125,9 +126,9 @@ export class PartyController {
     @Param('partyId') partyId: number,
     @Body() dto: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    user.id;
-    partyId;
-    dto.recruitment;
+    const command = new CreatePartyRecruitmentCommand(user.id, partyId, dto.recruitment);
+
+    return this.commandBus.execute(command);
   }
 
   @Get(':partyId/recruitments')

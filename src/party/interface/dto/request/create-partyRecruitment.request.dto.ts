@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsNotEmpty } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
 import { RecruitmentDto } from '../recruitmentDto';
 
 export class CreatePartyRecruitmentRequestDto {
@@ -8,6 +8,7 @@ export class CreatePartyRecruitmentRequestDto {
     description: '모집',
     type: [RecruitmentDto],
   })
+  @ValidateNested({ each: true })
   @Type(() => RecruitmentDto)
   @ArrayUnique()
   @ArrayMaxSize(5)

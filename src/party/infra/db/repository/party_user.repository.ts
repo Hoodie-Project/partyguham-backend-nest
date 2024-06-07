@@ -14,21 +14,21 @@ export class PartyUserRepository implements IPartyUserRepository {
   ) {}
 
   async createMember(userId: number, partyId: number, positionId: number) {
-    const partyAuthority = PartyAuthority.MEMBER;
+    const authority = PartyAuthority.MEMBER;
 
-    await this.partyUserRepository.save({ userId, partyId, positionId, partyAuthority });
+    await this.partyUserRepository.save({ userId, partyId, positionId, authority });
   }
 
   async createMaster(userId: number, partyId: number, positionId: number) {
-    const partyAuthority = PartyAuthority.MASTER;
+    const authority = PartyAuthority.MASTER;
 
-    await this.partyUserRepository.save({ userId, partyId, positionId, partyAuthority });
+    await this.partyUserRepository.save({ userId, partyId, positionId, authority });
   }
 
   async createEditor(userId: number, partyId: number, positionId: number) {
-    const partyAuthority = PartyAuthority.EDITOR;
+    const authority = PartyAuthority.EDITOR;
 
-    await this.partyUserRepository.save({ userId, partyId, positionId, partyAuthority });
+    await this.partyUserRepository.save({ userId, partyId, positionId, authority });
 
     // return this.partyUserFactory
   }

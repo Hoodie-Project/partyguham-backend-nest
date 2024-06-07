@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, Unique } from 'typeorm';
 
 import { PartyEntity } from '../party/party.entity';
 import { PositionEntity } from 'src/position/entity/position.entity';
@@ -6,6 +6,7 @@ import { PartyApplicationEntity } from './party_application.entity';
 import { PartyInvitationEntity } from './party_invitation.entity';
 
 @Entity('party_recruitment')
+@Unique(['partyId', 'positionId'])
 export class PartyRecruitmentEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,9 +22,6 @@ export class PartyRecruitmentEntity {
 
   @Column('smallint', { default: 0 })
   current_count: number;
-
-  @Column({ nullable: true })
-  message: string;
 
   @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.partyRecruitment)
   partyApplications: PartyApplicationEntity[];
