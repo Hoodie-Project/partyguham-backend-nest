@@ -1,29 +1,29 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { PartyFactory } from 'src/party/domain/party/party.factory';
-import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
-import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
-import { IPartyTypeRepository } from 'src/party/domain/party/repository/iPartyType.repository';
 import { CreatePartyApplicationCommand } from './create-partyApplication.comand';
+import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
+import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 
 @Injectable()
 @CommandHandler(CreatePartyApplicationCommand)
 export class CreatePartyApplicationHandler implements ICommandHandler<CreatePartyApplicationCommand> {
   constructor(
-    private partyFactory: PartyFactory,
-    @Inject('PartyRepository') private partyRepository: IPartyRepository,
-    @Inject('PartyTypeRepository') private partyTypeRepository: IPartyTypeRepository,
-    @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
+    @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
+    @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
   ) {}
 
   async execute(command: CreatePartyApplicationCommand) {
-    const { userId, partyId, message } = command;
+    const { userId, partyId, partyRecruitmentId, message } = command;
 
-    // const party = await this.partyRepository.create(partyTypeId, title, content, image);
+    const partyRecruitment = await this.partyRecruitmentRepository.findOne(partyId);
 
-    // await this.partyUserRepository.createMaster(userId, party.getId(), positionId);
+    if (partyRecruitment.id !== partyRecruitmentId) {
+      throw new BadRequestException('모집공고가 존재하지 않거나 올바르지 않습니다.');
+    }
 
-    // return party;
+    const partyApplication = await this.partyApplicationRepository.create(userId, partyRecruitmentId, message);
+
+    return partyApplication;
   }
 }

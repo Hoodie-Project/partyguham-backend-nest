@@ -27,6 +27,7 @@ import { CreatePartyApplicationHandler } from './application/command/create-part
 import { CreatePartyRecruitmentHandler } from './application/command/create-partyRecruitment.handler';
 import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
 import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
+import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
 const uploadDir = path.resolve(process.cwd(), '../uploads/images/party'); // 절대 경로로 설정
 
 const serveRoot = '/uploads/images/party';
@@ -47,6 +48,7 @@ const repositories = [
   { provide: 'PartyUserRepository', useClass: PartyUserRepository },
   { provide: 'PartyTypeRepository', useClass: PartyTypeRepository },
   { provide: 'PartyRecruitmentRepository', useClass: PartyRecruitmentRepository },
+  { provide: 'PartyApplicationRepository', useClass: PartyApplicationRepository },
 ];
 
 @Module({

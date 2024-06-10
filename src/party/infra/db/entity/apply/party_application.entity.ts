@@ -8,6 +8,12 @@ export class PartyApplicationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  userId: number;
+
+  @Column()
+  partyRecruitmentId: number;
+
   @Column({ nullable: true })
   message: string;
 
@@ -25,6 +31,6 @@ export class PartyApplicationEntity {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'party_id' })
+  @JoinColumn({ name: 'party_recruitment_id' })
   partyRecruitment: PartyRecruitmentEntity;
 }

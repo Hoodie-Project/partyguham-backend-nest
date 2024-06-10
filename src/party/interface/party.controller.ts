@@ -38,6 +38,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePartyApplicationRequestDto } from './dto/request/create-application.request.dto';
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
+import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -119,7 +120,7 @@ export class PartyController {
   }
 
   // 모집
-  @Post(':partyId/recruitment')
+  @Post(':partyId/recruitments')
   @ApiOperation({ summary: '파티 모집 생성하기' })
   async createRecruitment(
     @CurrentUser() user: CurrentUserType,
@@ -139,7 +140,17 @@ export class PartyController {
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {}
 
-  @Delete(':partyId/recruitment/:partyRecruitmentId')
+  @Patch(':partyId/recruitments/:partyRecruitmentId')
+  @ApiOperation({ summary: '파티 모집 수정' })
+  async updateRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param('partyId') partyId: number,
+    @Param('partyRecruitmentId') partyRecruitmentId: number,
+  ): Promise<void> {
+    partyId;
+  }
+
+  @Delete(':partyId/recruitments/:partyRecruitmentId')
   @ApiOperation({ summary: '파티 모집 삭제' })
   async deleteRecruitment(
     @CurrentUser() user: CurrentUserType,
@@ -150,41 +161,31 @@ export class PartyController {
   }
 
   // 지원
-  @Post(':partyId/application')
+  @Post(':partyId/recruitments/:partyRecruitmentId/application')
   @ApiOperation({ summary: '파티 지원 하기' })
   async createPartyApplication(
     @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
+    @Param() param: PartyRecruitmentParamRequestDto,
     @Body() dto: CreatePartyApplicationRequestDto,
   ): Promise<void> {
-    const command = new CreatePartyApplicationCommand(user.id, partyId, dto.message);
+    const command = new CreatePartyApplicationCommand(user.id, param.partyId, param.partyRecruitmentId, dto.message);
 
     return this.commandBus.execute(command);
   }
 
-  @Get(':partyId/applications')
-  @ApiOperation({ summary: '파티 지원 현황 리스트 조회' })
-  async getPartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    // 파티장만 조회 가능
-  }
+  // @Get(':partyId/applications')
+  // @ApiOperation({ summary: '파티 지원 현황 리스트 조회' })
+  // async getPartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+  //   // 파티장만 조회 가능
+  // }
 
-  @Delete(':partyId/application')
-  @ApiOperation({ summary: '파티 지원 취소' })
-  async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    partyId;
-  }
+  // @Delete(':partyId/application')
+  // @ApiOperation({ summary: '파티 지원 취소' })
+  // async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
+  //   partyId;
+  // }
 
   // 초대
-  @Get(':partyId/invitations')
-  @ApiOperation({ summary: '파티 초대 리스트 조회' })
-  async getPartyInvitation(
-    @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
-    @Body() dto: CreatePartyRequestDto,
-  ): Promise<void> {
-    dto;
-  }
-
   @Post(':partyId/invitation/:nickname')
   @ApiOperation({ summary: '파티 초대' })
   async sendPartyInvitation(
@@ -196,16 +197,16 @@ export class PartyController {
     dto;
   }
 
-  @Delete(':partyId/invitation/:nickname')
-  @ApiOperation({ summary: '파티 초대 취소' })
-  async deletePartyInvitation(
-    @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
-    @Param('nickname') nickname: string,
-    @Body() dto: PartyRequestDto,
-  ): Promise<void> {
-    dto;
-  }
+  // @Delete(':partyId/invitation/:nickname')
+  // @ApiOperation({ summary: '파티 초대 취소' })
+  // async deletePartyInvitation(
+  //   @CurrentUser() user: CurrentUserType,
+  //   @Param('partyId') partyId: number,
+  //   @Param('nickname') nickname: string,
+  //   @Body() dto: PartyRequestDto,
+  // ): Promise<void> {
+  //   dto;
+  // }
 
   // 권한
   @Post(':partyId/delegation')
