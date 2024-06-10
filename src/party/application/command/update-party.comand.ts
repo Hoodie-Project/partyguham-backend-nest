@@ -6,5 +6,6 @@ export class UpdatePartyCommand implements ICommand {
     readonly partyId: number,
     readonly title: string,
     readonly content: string,
+    readonly image: string,
   ) {}
 }

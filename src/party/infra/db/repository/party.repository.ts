@@ -35,10 +35,10 @@ export class PartyRepository implements IPartyRepository {
     return this.partyFactory.reconstitute(party.id, party.title, party.content, party.image, party.image);
   }
 
-  async update(partyId: number, title: string, content: string) {
+  async update(partyId: number, title: string, content: string, image: string) {
     const party = await this.findOne(partyId);
 
-    await this.partyRepository.save({ ...party, title, content });
+    await this.partyRepository.save({ ...party, title, content, image });
   }
 
   async delete(partyId: number) {

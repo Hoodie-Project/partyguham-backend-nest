@@ -23,7 +23,7 @@ export class PartyUserEntity {
   @Column()
   positionId: number;
 
-  @Column({ type: 'enum', enum: PartyAuthority, default: PartyAuthority.MEMBER })
+  @Column({ type: 'enum', enum: PartyAuthority })
   authority: string;
 
   @ManyToOne(() => UserEntity, (user) => user.parties, {
