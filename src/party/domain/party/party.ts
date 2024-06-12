@@ -4,7 +4,6 @@ export class Party {
     public title: string,
     public content: string,
     public image: string,
-    public link: string,
   ) {}
 
   getId(): Readonly<number> {

@@ -14,7 +14,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -31,7 +31,7 @@ import { PartyRequestDto } from './dto/request/party.param.request.dto';
 import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
-import { PartyResponseDto } from './dto/response/party.response.dto';
+import { PartiesResponseDto, PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -73,22 +73,32 @@ export class PartyController {
     return this.commandBus.execute(command);
   }
 
-  @Get(':partyId')
-  @ApiOperation({ summary: '파티 페이지 조회' })
-  async getParty(@Param() param: PartyRequestDto) {
-    const party = new GetPartyQuery(param.partyId);
-    const result = this.queryBus.execute(party);
-
-    return plainToInstance(PartyResponseDto, result);
-  }
-
   @Get('')
-  @ApiOperation({ summary: '파티 목록 조회' })
+  @ApiOperation({ summary: '파티 목록(리스트) 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 목록(리스트) 조회',
+    type: PartiesResponseDto,
+  })
   async getParties(@Query() query: PartyQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
     const parties = new GetPartiesQuery(page, limit, sort, order);
     const result = this.queryBus.execute(parties);
+
+    return plainToInstance(PartiesResponseDto, result);
+  }
+
+  @Get(':partyId')
+  @ApiOperation({ summary: '파티 페이지 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 목록(리스트) 조회',
+    type: PartyResponseDto,
+  })
+  async getParty(@Param() param: PartyRequestDto) {
+    const party = new GetPartyQuery(param.partyId);
+    const result = this.queryBus.execute(party);
 
     return plainToInstance(PartyResponseDto, result);
   }

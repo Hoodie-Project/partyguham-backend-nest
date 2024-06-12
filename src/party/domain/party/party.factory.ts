@@ -6,13 +6,13 @@ import { Party } from './party';
 export class PartyFactory {
   constructor(private eventBus: EventBus) {}
 
-  create(id: number, title: string, content: string, image: string, link: string): Party {
-    const party = new Party(id, title, content, image, link);
+  create(id: number, title: string, content: string, image: string): Party {
+    const party = new Party(id, title, content, image);
 
     return party;
   }
 
-  reconstitute(id: number, title: string, content: string, image: string, link: string): Party {
-    return new Party(id, title, content, image, link);
+  reconstitute(id: number, title: string, content: string, image: string): Party {
+    return new Party(id, title, content, image);
   }
 }
