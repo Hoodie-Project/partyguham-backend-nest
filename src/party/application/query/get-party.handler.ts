@@ -28,7 +28,6 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
       .where('party.id = :id', { id: partyId })
       .getOne();
 
-    console.log(party);
     if (!party) {
       throw new NotFoundException('파티가 존재하지 않습니다');
     }

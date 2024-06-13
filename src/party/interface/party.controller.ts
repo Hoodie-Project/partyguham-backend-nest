@@ -39,6 +39,7 @@ import { CreatePartyApplicationRequestDto } from './dto/request/create-applicati
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
+import { PartyTypesResponseDto } from './dto/response/partyType.response.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -51,11 +52,16 @@ export class PartyController {
 
   @Get('types')
   @ApiOperation({ summary: '파티 타입 리스트 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 목록(리스트) 조회',
+    type: PartyTypesResponseDto,
+  })
   async getPartyType() {
     const party = new GetPartyTypesQuery();
     const result = this.queryBus.execute(party);
 
-    return plainToInstance(PartyResponseDto, result);
+    return plainToInstance(PartyTypesResponseDto, result);
   }
 
   @Post('')

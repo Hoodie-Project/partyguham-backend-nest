@@ -17,7 +17,7 @@ export class PartyResponseDto {
   @ApiProperty({
     example: {
       id: 1,
-      title: '미정',
+      type: '미정',
     },
     description: 'partyType FK',
   })
