@@ -7,8 +7,8 @@ export class PartyTypeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  title: string;
+  @Column({ nullable: false })
+  type: string;
 
   @OneToMany(() => PartyEntity, (party) => party.partyType)
   parties: PartyEntity[];

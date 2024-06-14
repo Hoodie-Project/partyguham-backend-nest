@@ -13,13 +13,33 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
   async execute(query: GetPartyQuery) {
     const { partyId } = query;
 
-    const result = await this.partyRepository.findOne({
-      where: { id: partyId },
-    });
-    if (!result) {
+    const party = await this.partyRepository
+      .createQueryBuilder('party')
+      .leftJoinAndSelect('party.partyType', 'partyType') // partyType을 전체 선택
+      .leftJoinAndSelect('party.partyRecruitments', 'partyRecruitments') // partyRecruitments를 전체 선택
+      .leftJoin('party.partyUser', 'partyUser') // partyUser 조인
+      .leftJoin('partyUser.user', 'user') // user 정보를 조인하고 선택
+      .select([
+        'party', // party 테이블의 모든 컬럼 선택
+        'partyType', // partyType 테이블의 모든 컬럼 선택
+        'partyRecruitments', // partyRecruitments 테이블의 모든 컬럼 선택
+      ])
+      .addSelect(['partyUser.authority', 'user.id', 'user.nickname', 'user.image'])
+      .where('party.id = :id', { id: partyId })
+      .getOne();
+
+    if (!party) {
       throw new NotFoundException('파티가 존재하지 않습니다');
     }
 
-    return result;
+    if (party.status === 'deleted') {
+      party['tag'] = '파티 종료';
+    } else if (party.partyRecruitments.length === 0) {
+      party['tag'] = '진행중';
+    } else {
+      party['tag'] = '모집중';
+    }
+
+    return party;
   }
 }

@@ -23,9 +23,6 @@ export class PartyEntity extends BaseEntity {
   @Column({ default: null })
   image: string;
 
-  @Column({ default: null })
-  link: string;
-
   @ManyToOne(() => PartyTypeEntity, (partyType) => partyType.parties, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',

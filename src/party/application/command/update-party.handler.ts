@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -6,6 +6,8 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { UpdatePartyCommand } from './update-party.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 @CommandHandler(UpdatePartyCommand)
@@ -20,12 +22,26 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     const { userId, partyId, title, content, image } = command;
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
+    if (!partyUser) {
+      throw new NotFoundException('파티에 소속되지 않았거나, 파티를 찾을 수 없습니다.');
+    }
+
     if (partyUser.authority === PartyAuthority.MEMBER) {
       throw new UnauthorizedException('파티 수정 권한이 없습니다.');
     }
 
-    const party = await this.partyRepository.update(partyId, title, content, image);
+    const findParty = await this.partyRepository.findOne(partyId);
 
-    return party;
+    const party = this.partyFactory.create(findParty);
+
+    if (party.image && image) {
+      await fs.unlink(party.image);
+    }
+
+    party.updateFields(title, content, image);
+
+    const result = await this.partyRepository.update(party);
+
+    return result;
   }
 }

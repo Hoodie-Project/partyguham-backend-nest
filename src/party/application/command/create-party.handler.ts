@@ -26,7 +26,7 @@ export class CreatePartyHandler implements ICommandHandler<CreatePartyCommand> {
 
     const party = await this.partyRepository.create(partyTypeId, title, content, image);
 
-    await this.partyUserRepository.createMaster(userId, party.getId(), positionId);
+    await this.partyUserRepository.createMaster(userId, party.id, positionId);
 
     return party;
   }

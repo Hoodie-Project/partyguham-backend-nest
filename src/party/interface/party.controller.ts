@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,14 +8,13 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -31,7 +31,7 @@ import { PartyRequestDto } from './dto/request/party.param.request.dto';
 import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
-import { PartyResponseDto } from './dto/response/party.response.dto';
+import { GetPartiesResponseDto, GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -39,6 +39,8 @@ import { CreatePartyApplicationRequestDto } from './dto/request/create-applicati
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
+import { PartyTypesResponseDto } from './dto/response/partyType.response.dto';
+import { PartyResponseDto } from './dto/response/party.response.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -51,63 +53,95 @@ export class PartyController {
 
   @Get('types')
   @ApiOperation({ summary: '파티 타입 리스트 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 목록(리스트) 조회',
+    type: PartyTypesResponseDto,
+  })
   async getPartyType() {
     const party = new GetPartyTypesQuery();
     const result = this.queryBus.execute(party);
 
-    return plainToInstance(PartyResponseDto, result);
+    return plainToInstance(PartyTypesResponseDto, result);
   }
 
   @Post('')
   @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: '파티 생성 - form-data(image)' })
+  @ApiResponse({
+    status: 201,
+    description: '파티 생성',
+    type: PartyResponseDto,
+  })
   async createParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
-    const resultPath = file.path.substring(file.path.indexOf('/uploads'));
-    const command = new CreatePartyCommand(user.id, title, content, resultPath, partyTypeId, positionId);
+
+    const imageFilePath = file ? file.path : null;
+
+    const command = new CreatePartyCommand(user.id, title, content, imageFilePath, partyTypeId, positionId);
 
     return this.commandBus.execute(command);
   }
 
-  @Get(':partyId')
-  @ApiOperation({ summary: '파티 페이지 조회' })
-  async getParty(@Param() param: PartyRequestDto) {
-    const party = new GetPartyQuery(param.partyId);
-    const result = this.queryBus.execute(party);
-
-    return plainToInstance(PartyResponseDto, result);
-  }
-
   @Get('')
-  @ApiOperation({ summary: '파티 목록 조회' })
+  @ApiOperation({ summary: '파티 목록(리스트) 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 목록(리스트) 조회',
+    type: GetPartiesResponseDto,
+  })
   async getParties(@Query() query: PartyQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
     const parties = new GetPartiesQuery(page, limit, sort, order);
     const result = this.queryBus.execute(parties);
 
-    return plainToInstance(PartyResponseDto, result);
+    return plainToInstance(GetPartiesResponseDto, result);
+  }
+
+  @Get(':partyId')
+  @ApiOperation({ summary: '파티 페이지 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 목록(리스트) 조회',
+    type: GetPartyResponseDto,
+  })
+  async getParty(@Param() param: PartyRequestDto) {
+    const party = new GetPartyQuery(param.partyId);
+    const result = this.queryBus.execute(party);
+
+    return plainToInstance(GetPartyResponseDto, result);
   }
 
   @Patch(':partyId')
   @UseInterceptors(FileInterceptor('image'))
   @ApiOperation({ summary: '파티 수정 - form-data(이미지)' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 수정 완료',
+    type: PartyResponseDto,
+  })
   async updateParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
-  ): Promise<void> {
+  ) {
+    if (Object.keys(dto).length === 0 && !file) {
+      throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.');
+    }
     const { title, content } = dto;
-    const resultPath = file.path.substring(file.path.indexOf('/uploads'));
+    const imageFilePath = file ? file.path : undefined;
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, title, content, resultPath);
+    const command = new UpdatePartyCommand(user.id, param.partyId, title, content, imageFilePath);
 
-    return this.commandBus.execute(command);
+    const result = this.commandBus.execute(command);
+
+    return plainToInstance(PartyResponseDto, result);
   }
 
   @HttpCode(204)
