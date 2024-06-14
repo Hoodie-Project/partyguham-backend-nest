@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Expose, Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { Exclude, Expose } from 'class-transformer';
+import { IsNotEmpty, IsString } from 'class-validator';
 
 @Exclude()
 export class PartyResponseDto {
@@ -15,30 +15,12 @@ export class PartyResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: {
-      id: 1,
-      type: '미정',
-    },
-    description: 'partyType FK',
+    example: '2',
+    description: 'partyType PK',
   })
+  @IsString()
   @IsNotEmpty()
-  readonly partyType: object;
-
-  @Expose()
-  @ApiPropertyOptional({
-    example: { user: { id: 1, nickname: 'mir', image: '/uploads' } },
-    description: 'partyUser list',
-  })
-  @IsOptional()
-  readonly partyUser: [{ user: { id: number; nickname: string; image: string } }];
-
-  @Expose()
-  @ApiProperty({
-    example: '모집중',
-    description: '진행중 / 모집중 / 파티종료',
-  })
-  @IsNotEmpty()
-  readonly tag: string;
+  readonly partyTypeId: number;
 
   @Expose()
   @ApiProperty({
@@ -54,8 +36,8 @@ export class PartyResponseDto {
     example: '풀스텍 구함',
     description: '본문',
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   readonly content: string;
 
   @Expose()
@@ -63,8 +45,8 @@ export class PartyResponseDto {
     example: '/uploads/...',
     description: '이미지 서버 경로',
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   readonly image: string;
 
   @Expose()
@@ -72,36 +54,25 @@ export class PartyResponseDto {
     example: 'active',
     description: '파티상태',
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   readonly status: string;
 
   @Expose()
   @ApiProperty({
-    example: 'active',
-    description: '파티상태',
+    example: '2024-06-07T12:17:57.248Z',
+    description: '생성일자',
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   readonly createdAt: string;
 
   @Expose()
   @ApiProperty({
-    example: 'active',
-    description: '파티상태',
+    example: '2024-06-07T12:17:57.248Z',
+    description: '수정일자',
   })
-  @IsNotEmpty()
   @IsString()
+  @IsNotEmpty()
   readonly updatedAt: string;
-}
-
-export class PartiesResponseDto {
-  @Expose()
-  @ApiProperty({ type: [PartyResponseDto] })
-  @Type(() => PartyResponseDto)
-  parties: PartyResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
-
-  @Expose()
-  @ApiProperty()
-  count: number;
 }
