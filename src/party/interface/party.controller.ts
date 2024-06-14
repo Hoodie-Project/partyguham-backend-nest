@@ -8,7 +8,6 @@ import {
   Param,
   Patch,
   Post,
-  Put,
   Query,
   UploadedFile,
   UseGuards,
@@ -81,7 +80,7 @@ export class PartyController {
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
 
-    const imageFilePath = file ? file.path.substring(file.path.indexOf('/uploads')) : null;
+    const imageFilePath = file ? file.path : null;
 
     const command = new CreatePartyCommand(user.id, title, content, imageFilePath, partyTypeId, positionId);
 
@@ -132,12 +131,11 @@ export class PartyController {
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
   ) {
-    const { title, content } = dto;
-    const imageFilePath = file ? file.path.substring(file.path.indexOf('/uploads')) : undefined;
-
-    if (Object.keys(dto).length === 0 && !imageFilePath) {
+    if (Object.keys(dto).length === 0 && !file) {
       throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.');
     }
+    const { title, content } = dto;
+    const imageFilePath = file ? file.path : undefined;
 
     const command = new UpdatePartyCommand(user.id, param.partyId, title, content, imageFilePath);
 

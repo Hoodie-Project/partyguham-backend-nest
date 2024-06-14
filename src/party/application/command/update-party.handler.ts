@@ -6,6 +6,8 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { UpdatePartyCommand } from './update-party.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 
 @Injectable()
 @CommandHandler(UpdatePartyCommand)
@@ -31,6 +33,10 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     const findParty = await this.partyRepository.findOne(partyId);
 
     const party = this.partyFactory.create(findParty);
+
+    if (party.image && image) {
+      await fs.unlink(party.image);
+    }
 
     party.updateFields(title, content, image);
 

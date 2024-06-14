@@ -28,9 +28,8 @@ import { CreatePartyRecruitmentHandler } from './application/command/create-part
 import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
 import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
 import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
-const uploadDir = path.resolve(process.cwd(), '../uploads/images/party'); // 절대 경로로 설정
 
-const serveRoot = '/uploads/images/party';
+const uploadDir = 'images/party';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -57,7 +56,7 @@ const repositories = [
   imports: [
     ServeStaticModule.forRoot({
       rootPath: uploadDir, // 정적 파일이 저장된 디렉토리
-      serveRoot: serveRoot, // 정적 파일에 접근할 경로 설정
+      serveRoot: '/' + uploadDir, // 정적 파일에 접근할 경로 설정
     }),
     MulterModule.register({
       // dest: '../upload',
@@ -79,7 +78,7 @@ const repositories = [
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
           const filename = `${uniqueSuffix}-${file.originalname}`;
-          callback(null, filename); // 현재 날짜와 원래 파일 이름을 조합하여 저장
+          callback(null, filename);
         },
       }),
     }),
