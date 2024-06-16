@@ -41,6 +41,7 @@ import { CreatePartyRecruitmentCommand } from '../application/command/create-par
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
 import { PartyTypesResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
+import { DeletePartyImageCommand } from '../application/command/delete-partyImage.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -149,6 +150,15 @@ export class PartyController {
   @ApiOperation({ summary: '파티 삭제 (softdelete)' })
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyCommand(user.id, param.partyId);
+
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
+  @Delete(':partyId/image')
+  @ApiOperation({ summary: '파티 이미지 삭제' })
+  async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyImageCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
   }

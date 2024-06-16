@@ -21,4 +21,10 @@ export class Party {
       this.image = image;
     }
   }
+
+  updateImage(image: string | undefined): void {
+    if (image !== undefined) {
+      this.image = image;
+    }
+  }
 }
