@@ -45,6 +45,7 @@ import { DeletePartyImageCommand } from '../application/command/delete-partyImag
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
 import { RecruitmentDto } from './dto/recruitmentDto';
 import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
+import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -228,8 +229,6 @@ export class PartyController {
     @Body() body: RecruitmentDto,
   ): Promise<void> {
     const { positionId, recruiting_count } = body;
-    param.partyId;
-    param.partyRecruitmentId;
 
     const command = new UpdatePartyRecruitmentCommand(
       user.id,
@@ -244,12 +243,17 @@ export class PartyController {
 
   @Delete(':partyId/recruitments/:partyRecruitmentId')
   @ApiOperation({ summary: '파티 모집 삭제' })
+  @ApiResponse({
+    status: 204,
+    description: '모집 삭제',
+  })
   async deleteRecruitment(
     @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
-    @Param('partyRecruitmentId') partyRecruitmentId: number,
+    @Param() param: PartyRecruitmentParamRequestDto,
   ): Promise<void> {
-    partyId;
+    const command = new DeletePartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
+
+    return this.commandBus.execute(command);
   }
 
   // 지원
