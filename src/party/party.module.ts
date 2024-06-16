@@ -30,6 +30,7 @@ import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitmen
 import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
 import { DeletePartyImageHandler } from './application/command/delete-partyImage.handler';
 import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
+import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
 
 const uploadDir = 'images/party';
 
@@ -39,6 +40,7 @@ const commandHandlers = [
   DeletePartyHandler,
   DeletePartyImageHandler,
   CreatePartyRecruitmentHandler,
+  UpdatePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
 ];
 const queryHandlers = [GetPartiesHandler, GetPartyHandler, GetPartyTypesHandler, GetPartyRecruitmentHandler];

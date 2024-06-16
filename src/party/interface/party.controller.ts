@@ -43,6 +43,8 @@ import { PartyTypesResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { DeletePartyImageCommand } from '../application/command/delete-partyImage.comand';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
+import { RecruitmentDto } from './dto/recruitmentDto';
+import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -169,10 +171,10 @@ export class PartyController {
   @ApiOperation({ summary: '파티 모집 생성하기' })
   async createRecruitment(
     @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
+    @Param() param: PartyRequestDto,
     @Body() dto: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    const command = new CreatePartyRecruitmentCommand(user.id, partyId, dto.recruitment);
+    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitment);
 
     return this.commandBus.execute(command);
   }
@@ -222,12 +224,22 @@ export class PartyController {
   @ApiOperation({ summary: '파티 모집 수정' })
   async updateRecruitment(
     @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
-    @Param('partyRecruitmentId') partyRecruitmentId: number,
+    @Param() param: PartyRecruitmentParamRequestDto,
+    @Body() body: RecruitmentDto,
   ): Promise<void> {
-    partyId;
+    const { positionId, recruiting_count } = body;
+    param.partyId;
+    param.partyRecruitmentId;
 
-    GetPartyRecruitmentQuery;
+    const command = new UpdatePartyRecruitmentCommand(
+      user.id,
+      param.partyId,
+      param.partyRecruitmentId,
+      positionId,
+      recruiting_count,
+    );
+
+    return this.commandBus.execute(command);
   }
 
   @Delete(':partyId/recruitments/:partyRecruitmentId')

@@ -35,9 +35,9 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     }
   }
 
-  async findAll(partyId: number) {
+  async findAllByPartyId(partyId: number) {
     const partyRecruitment = await this.partyRecruitmentRepository.find({
-      where: { id: partyId },
+      where: { partyId },
     });
 
     if (!partyRecruitment) {
@@ -47,9 +47,9 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     return partyRecruitment;
   }
 
-  async findOne(partyId: number) {
+  async findOne(id: number) {
     const partyRecruitment = await this.partyRecruitmentRepository.findOne({
-      where: { id: partyId },
+      where: { id },
     });
 
     if (!partyRecruitment) {
@@ -59,10 +59,10 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     return partyRecruitment;
   }
 
-  async update(partyId: number, title: string, content: string) {
-    const partyRecruitment = await this.findOne(partyId);
+  async update(id: number, positionId: number, recruitingCount: number) {
+    const partyRecruitment = await this.findOne(id);
 
-    await this.partyRecruitmentRepository.save({ ...partyRecruitment, title, content });
+    await this.partyRecruitmentRepository.save({ ...partyRecruitment, positionId, recruitingCount });
   }
 
   async delete(partyId: number) {
