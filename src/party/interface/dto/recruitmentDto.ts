@@ -20,5 +20,5 @@ export class RecruitmentDto {
   @IsInt()
   @IsPositive()
   @IsNotEmpty()
-  readonly capacity: number;
+  readonly recruiting_count: number;
 }

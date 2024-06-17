@@ -18,10 +18,10 @@ export class PartyRecruitmentEntity {
   positionId: number;
 
   @Column('smallint', { default: 1 })
-  recruiting_count: number;
+  recruitingCount: number; // 모집중
 
   @Column('smallint', { default: 0 })
-  recruited_count: number;
+  recruitedCount: number; // 모집된
 
   @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.partyRecruitment)
   partyApplications: PartyApplicationEntity[];

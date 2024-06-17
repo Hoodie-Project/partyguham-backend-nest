@@ -16,10 +16,19 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
   async execute(command: CreatePartyApplicationCommand) {
     const { userId, partyId, partyRecruitmentId, message } = command;
 
-    const partyRecruitment = await this.partyRecruitmentRepository.findOne(partyId);
+    const partyRecruitment = await this.partyRecruitmentRepository.findOne(partyRecruitmentId);
 
-    if (partyRecruitment.id !== partyRecruitmentId) {
+    if (!partyRecruitment || partyRecruitment.partyId !== partyId) {
       throw new BadRequestException('모집공고가 존재하지 않거나 올바르지 않습니다.');
+    }
+
+    const findPartyRecruitment = await this.partyApplicationRepository.findOneByUserIdAndPartyRecruitmentId(
+      userId,
+      partyRecruitmentId,
+    );
+
+    if (findPartyRecruitment) {
+      throw new BadRequestException('이미 지원신청을 완료 했습니다.');
     }
 
     const partyApplication = await this.partyApplicationRepository.create(userId, partyRecruitmentId, message);

@@ -4,8 +4,8 @@ import { RecruitmentDto } from 'src/party/interface/dto/recruitmentDto';
 export interface IPartyRecruitmentRepository {
   create: (partyId: number, positionId: number, capacity: number) => Promise<PartyRecruitmentEntity>;
   bulkInsert: (partyId: number, recruitment: RecruitmentDto[]) => Promise<PartyRecruitmentEntity[]>;
-  findOne: (partyId: number) => Promise<PartyRecruitmentEntity>;
-  findAll: (partyId: number) => Promise<PartyRecruitmentEntity[]>;
-  update: (partyId: number, title: string, content: string) => Promise<void>;
-  delete: (partyId: number) => Promise<void>;
+  findOne: (id: number) => Promise<PartyRecruitmentEntity>;
+  findAllByPartyId: (partyId: number) => Promise<PartyRecruitmentEntity[]>;
+  update: (id: number, positionId: number, recruitingCount: number) => Promise<void>;
+  delete: (id: number) => Promise<void>;
 }

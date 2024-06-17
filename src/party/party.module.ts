@@ -28,6 +28,11 @@ import { CreatePartyRecruitmentHandler } from './application/command/create-part
 import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
 import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
 import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
+import { DeletePartyImageHandler } from './application/command/delete-partyImage.handler';
+import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
+import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
+import { DeletePartyRecruitmentHandler } from './application/command/delete-partyRecruitment.handler';
+import { GetPartyApplicationsHandler } from './application/query/get-partyApplications.handler';
 
 const uploadDir = 'images/party';
 
@@ -35,10 +40,19 @@ const commandHandlers = [
   CreatePartyHandler,
   UpdatePartyHandler,
   DeletePartyHandler,
+  DeletePartyImageHandler,
   CreatePartyRecruitmentHandler,
+  UpdatePartyRecruitmentHandler,
+  DeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
 ];
-const queryHandlers = [GetPartiesHandler, GetPartyHandler, GetPartyTypesHandler];
+const queryHandlers = [
+  GetPartiesHandler,
+  GetPartyHandler,
+  GetPartyTypesHandler,
+  GetPartyRecruitmentHandler,
+  GetPartyApplicationsHandler,
+];
 const eventHandlers = [];
 const factories = [PartyFactory];
 
