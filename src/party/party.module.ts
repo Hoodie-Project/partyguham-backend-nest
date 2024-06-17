@@ -32,6 +32,7 @@ import { DeletePartyImageHandler } from './application/command/delete-partyImage
 import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
 import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
 import { DeletePartyRecruitmentHandler } from './application/command/delete-partyRecruitment.handler';
+import { GetPartyApplicationsHandler } from './application/query/get-partyApplications.handler';
 
 const uploadDir = 'images/party';
 
@@ -45,7 +46,13 @@ const commandHandlers = [
   DeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
 ];
-const queryHandlers = [GetPartiesHandler, GetPartyHandler, GetPartyTypesHandler, GetPartyRecruitmentHandler];
+const queryHandlers = [
+  GetPartiesHandler,
+  GetPartyHandler,
+  GetPartyTypesHandler,
+  GetPartyRecruitmentHandler,
+  GetPartyApplicationsHandler,
+];
 const eventHandlers = [];
 const factories = [PartyFactory];
 
