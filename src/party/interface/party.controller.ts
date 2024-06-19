@@ -48,6 +48,7 @@ import { UpdatePartyRecruitmentCommand } from '../application/command/update-par
 import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
+import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -290,10 +291,9 @@ export class PartyController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    // 파티장만 승인 가능
-    // 모집 카운트 + 1
-    // 파티 소속 시키기
-    // 파티 모집 완료시 자동삭제
+    const command = new ApprovePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+
+    return this.commandBus.execute(command);
   }
 
   @Post(':partyId/applications/:partyApplicationId/rejection')
@@ -305,7 +305,7 @@ export class PartyController {
   @Delete(':partyId/applications/:partyApplicationId')
   @ApiOperation({ summary: '파티 지원 삭제(취소)' })
   async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    // 지원자만 취소 가능
+    // 지원자만 내정보에서 취소 가능
     partyId;
   }
 

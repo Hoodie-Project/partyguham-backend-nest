@@ -33,9 +33,22 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     return partyApplication;
   }
 
-  async findOne(id: number) {
+  async findOne(partyApplicationId: number) {
     const partyApplication = await this.partyApplicationRepository.findOne({
-      where: { id },
+      where: { id: partyApplicationId },
+    });
+
+    if (!partyApplication) {
+      throw new NotFoundException('파티 모집이 존재하지 않습니다');
+    }
+
+    return partyApplication;
+  }
+
+  async findOneWithRecruitment(partyApplicationId: number) {
+    const partyApplication = await this.partyApplicationRepository.findOne({
+      where: { id: partyApplicationId },
+      relations: ['partyRecruitment'],
     });
 
     if (!partyApplication) {
