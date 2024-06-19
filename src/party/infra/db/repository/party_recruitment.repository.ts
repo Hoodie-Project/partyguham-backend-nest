@@ -15,8 +15,8 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     private partyRecruitmentRepository: Repository<PartyRecruitmentEntity>,
   ) {}
 
-  async create(partyId: number, positionId: number, capacity: number) {
-    const partyRecruitment = await this.partyRecruitmentRepository.save({ partyId, positionId, capacity });
+  async create(partyId: number, positionId: number, recruitingCount: number) {
+    const partyRecruitment = await this.partyRecruitmentRepository.save({ partyId, positionId, recruitingCount });
 
     return partyRecruitment;
   }
@@ -63,6 +63,10 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     const partyRecruitment = await this.findOne(id);
 
     await this.partyRecruitmentRepository.save({ ...partyRecruitment, positionId, recruitingCount });
+  }
+
+  async updateRecruitedCount(id: number, recruitedCount: number) {
+    await this.partyRecruitmentRepository.save({ id, recruitedCount });
   }
 
   async delete(partyId: number) {
