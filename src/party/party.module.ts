@@ -34,6 +34,7 @@ import { UpdatePartyRecruitmentHandler } from './application/command/update-part
 import { DeletePartyRecruitmentHandler } from './application/command/delete-partyRecruitment.handler';
 import { GetPartyApplicationsHandler } from './application/query/get-partyApplications.handler';
 import { ApprovePartyApplicationHandler } from './application/command/approve-partyApplication.handler';
+import { RejectionPartyApplicationHandler } from './application/command/rejection-partyApplication.handler';
 
 const uploadDir = 'images/party';
 
@@ -47,6 +48,7 @@ const commandHandlers = [
   DeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
   ApprovePartyApplicationHandler,
+  RejectionPartyApplicationHandler,
 ];
 const queryHandlers = [
   GetPartiesHandler,

@@ -305,7 +305,7 @@ export class PartyController {
   @Delete(':partyId/applications/:partyApplicationId')
   @ApiOperation({ summary: '파티 지원 삭제(취소)' })
   async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    // 지원자만 취소 가능
+    // 지원자만 내정보에서 취소 가능
     partyId;
   }
 
