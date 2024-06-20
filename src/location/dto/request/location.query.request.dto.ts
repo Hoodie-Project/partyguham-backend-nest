@@ -21,7 +21,7 @@ export class LocationQueryRequestDto {
       '부산',
       '제주',
     ],
-    description: '닉네임 2자 이상 15자 이하',
+    description: 'location query',
   })
   @IsIn([
     '서울',

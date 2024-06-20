@@ -17,6 +17,12 @@ export class PositionService {
     return result;
   }
 
+  async findByMain(main: string) {
+    const result = await this.positionRepository.findByMain(main);
+
+    return result;
+  }
+
   async findByIds(ids: number[]) {
     const result = await this.positionRepository.findByIds(ids);
 

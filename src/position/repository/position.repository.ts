@@ -23,6 +23,12 @@ export class PositionRepository {
     return result;
   }
 
+  async findByMain(main: string) {
+    const result = await this.positionRepository.find({ where: { main }, order: { id: 'ASC' } });
+
+    return result;
+  }
+
   async findByIds(ids: number[]) {
     const result = await this.positionRepository.find({ where: { id: In(ids) } });
 
