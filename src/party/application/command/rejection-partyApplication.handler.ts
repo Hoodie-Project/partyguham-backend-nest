@@ -25,20 +25,20 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('모집하려고 하는 파티가 존재하지 않습니다.');
+      throw new BadRequestException('요청한 파티가 유효하지 않습니다.');
     }
 
     // 파티장만 승인 가능
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MASTER) {
-      throw new UnauthorizedException('파티 모집 권한이 없습니다.');
+      throw new UnauthorizedException('파티 자원자에 대한 거절 권한이 없습니다.');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
 
     if (!partyApplication) {
-      throw new NotFoundException('승인하려는 지원데이터가 없습니다.');
+      throw new NotFoundException('거절 하려는 파티 지원자 데이터가 없습니다.');
     }
 
     // 승인 취소

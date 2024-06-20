@@ -1,4 +1,11 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -27,14 +34,14 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('모집하려고 하는 파티가 존재하지 않습니다.');
+      throw new BadRequestException('요청한 파티가 유효하지 않습니다.');
     }
 
     // 파티장만 승인 가능
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MASTER) {
-      throw new UnauthorizedException('파티 모집 권한이 없습니다.');
+      throw new ForbiddenException('파티 모집 권한이 없습니다.');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
@@ -61,6 +68,6 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     // 파티 모집 완료시 자동삭제
     if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount)
       this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
-    return '모집이 완료되어 모집이 삭제 되었습니다.';
+    return '모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.';
   }
 }

@@ -49,6 +49,7 @@ import { DeletePartyRecruitmentCommand } from '../application/command/delete-par
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
 import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
+import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -310,7 +311,19 @@ export class PartyController {
   }
 
   @Post(':partyId/applications/:partyApplicationId/approval')
-  @ApiOperation({ summary: '파티 지원 승인' })
+  @ApiOperation({ summary: '파티 지원자 승인' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 지원자 승인 완료 \t\n 모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '파티 모집 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+  })
   async approvePartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
@@ -321,17 +334,34 @@ export class PartyController {
   }
 
   @Post(':partyId/applications/:partyApplicationId/rejection')
-  @ApiOperation({ summary: '파티 지원 거절' })
-  async rejectPartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    // 파티장만 거절 가능
+  @ApiOperation({ summary: '파티 지원자 거절' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 지원자 거절 완료',
+  })
+  @ApiResponse({
+    status: 403,
+    description: '파티 자원자에 대한 거절 권한이 없습니다.',
+  })
+  @ApiResponse({
+    status: 404,
+    description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+  })
+  async rejectPartyApplication(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyApplicationParamRequestDto,
+  ): Promise<void> {
+    const command = new RejectionPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+
+    return this.commandBus.execute(command);
   }
 
-  @Delete(':partyId/applications/:partyApplicationId')
-  @ApiOperation({ summary: '파티 지원 삭제(취소)' })
-  async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param('partyId') partyId: number): Promise<void> {
-    // 지원자만 내정보에서 취소 가능
-    partyId;
-  }
+  // @Delete(':partyId/applications/:partyApplicationId')
+  // @ApiOperation({ summary: '파티 지원 삭제(취소)' })
+  // async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param() param: PartyApplicationParamRequestDto,): Promise<void> {
+  //   // 지원자만 내정보에서 취소 가능
+  //   partyId;
+  // }
 
   // 초대
   // @Post(':partyId/invitation/:nickname')
