@@ -23,4 +23,10 @@ export class LocationRepository {
 
     return result;
   }
+
+  async findByProvince(province: string) {
+    const result = await this.locationRepository.find({ where: { province }, order: { id: 'ASC' } });
+
+    return result;
+  }
 }

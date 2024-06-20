@@ -8,7 +8,7 @@ export class locationResponseDto {
   id: number;
 
   @Expose()
-  @ApiProperty({ example: '서울특별시' })
+  @ApiProperty({ example: '서울' })
   province: string;
 
   @Expose()

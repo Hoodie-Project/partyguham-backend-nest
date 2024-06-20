@@ -11,6 +11,12 @@ export class LocationService {
     return result;
   }
 
+  async findByProvince(province: string) {
+    const result = await this.locationRepository.findByProvince(province);
+
+    return result;
+  }
+
   async findByIds(ids: number[]) {
     const result = await this.locationRepository.findByIds(ids);
 
