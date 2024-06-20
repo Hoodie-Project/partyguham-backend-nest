@@ -26,7 +26,7 @@ export class GetPartyApplicationsHandler implements IQueryHandler<GetPartyApplic
       .getOne();
 
     if (partyUser.authority !== PartyAuthority.MASTER) {
-      throw new UnauthorizedException('파티원 조회 권한이 없습니다.');
+      throw new UnauthorizedException('파티 지원자 조회 권한이 없습니다.');
     }
 
     const partyApplicationUser = await this.partyApplicationRepository

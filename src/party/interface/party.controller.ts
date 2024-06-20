@@ -155,6 +155,10 @@ export class PartyController {
   @HttpCode(204)
   @Delete(':partyId')
   @ApiOperation({ summary: '파티 삭제 (softdelete)' })
+  @ApiResponse({
+    status: 204,
+    description: '삭제 완료',
+  })
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyCommand(user.id, param.partyId);
 
@@ -164,6 +168,10 @@ export class PartyController {
   @HttpCode(204)
   @Delete(':partyId/image')
   @ApiOperation({ summary: '파티 이미지 삭제' })
+  @ApiResponse({
+    status: 204,
+    description: '삭제 완료',
+  })
   async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyImageCommand(user.id, param.partyId);
 
@@ -226,6 +234,10 @@ export class PartyController {
 
   @Patch(':partyId/recruitments/:partyRecruitmentId')
   @ApiOperation({ summary: '파티 모집 수정' })
+  @ApiResponse({
+    status: 200,
+    description: '모집 수정',
+  })
   async updateRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
@@ -262,6 +274,10 @@ export class PartyController {
   // 지원
   @Post(':partyId/recruitments/:partyRecruitmentId/applications')
   @ApiOperation({ summary: '파티 지원 하기' })
+  @ApiResponse({
+    status: 201,
+    description: '파티 지원 완료',
+  })
   async createPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
@@ -275,6 +291,14 @@ export class PartyController {
 
   @Get(':partyId/recruitments/:partyRecruitmentId/applications')
   @ApiOperation({ summary: '파티 포지션 모집별, 지원자 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '파티 지원자 조회',
+  })
+  @ApiResponse({
+    status: 401,
+    description: '파티 지원자 조회 권한이 없습니다.',
+  })
   async getPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,

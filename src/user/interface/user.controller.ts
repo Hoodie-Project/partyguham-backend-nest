@@ -74,7 +74,7 @@ export class UserController {
   ) {}
 
   @Get('kakao/login')
-  @ApiOperation({ summary: '카카오 로그인' })
+  @ApiOperation({ summary: '카카오 로그인 (응답은 /kakao/callback API 확인)' })
   async signinByKakao(@Res() res: Response) {
     const command = new KakaoCodeCommand();
 
@@ -89,11 +89,29 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (refresh - res.cookie), redirect는 res.body 사용불가',
+    description: '로그인 완료',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 401,
-    description: '로그인 권한이 없어, 회원가입 필요 / cookie - signupToken',
+    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
   })
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
@@ -131,12 +149,30 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (refresh - res.cookie)',
+    description: '로그인 완료',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
     schema: { example: { accessToken: 'token' } },
   })
   @ApiResponse({
     status: 401,
-    description: '로그인 권한이 없어, 회원가입 필요',
+    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
     schema: { example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' } },
   })
   async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
@@ -166,7 +202,7 @@ export class UserController {
   }
 
   @Get('google/login')
-  @ApiOperation({ summary: '구글 로그인' })
+  @ApiOperation({ summary: '구글 로그인 (응답은 /google/callback API 확인)' })
   async signinByGoogle(@Res() res: Response) {
     const command = new GoogleCodeCommand();
 
@@ -181,11 +217,29 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (refresh - res.cookie) redirect는 res.body 사용불가',
+    description: '로그인 완료',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
   })
   @ApiResponse({
     status: 401,
-    description: '로그인 권한이 없어, 회원가입 필요 / cookie - signupToken',
+    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행 ',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
   })
   async googleCallback(
     @Req() req: Request,
@@ -228,12 +282,30 @@ export class UserController {
   })
   @ApiResponse({
     status: 200,
-    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    description: '로그인 가능',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
     schema: { example: { accessToken: 'token' } },
   })
   @ApiResponse({
     status: 401,
-    description: '로그인 권한이 없어, 회원가입 필요 (cookie - signupToken)',
+    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행 ',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
     schema: { example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요.' } },
   })
   async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
@@ -272,8 +344,8 @@ export class UserController {
     schema: { example: { email: 'email@partyguam.net', image: 'image URL' } },
   })
   async getData(@Req() req: Request) {
-    const email = req.session.email;
-    const image = req.session.image;
+    const email = req.session.email || null;
+    const image = req.session.image || null;
 
     return { email, image };
   }
@@ -304,7 +376,16 @@ export class UserController {
   @ApiOperation({ summary: '회원가입 (필수)' })
   @ApiResponse({
     status: 201,
-    description: '로그인 가능 (access - res.body / refresh - res.cookie)',
+    description: '회원가입하여 유저 생성 완료, 로그인 완료 (token 리턴)',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
     schema: { example: { accessToken: 'token' } },
   })
   async signUp(
@@ -580,7 +661,7 @@ export class UserController {
   @ApiOperation({ summary: '로그아웃' })
   @ApiResponse({
     status: 204,
-    description: `cookie 'refreshToken' 삭제`,
+    description: `'refreshToken' clearCookie`,
   })
   async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
     res.clearCookie('refreshToken');

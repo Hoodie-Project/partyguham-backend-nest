@@ -17,16 +17,3 @@ export class locationResponseDto {
   })
   city: string;
 }
-
-@Exclude()
-export class locationsResponseDto {
-  @Expose()
-  @ApiProperty({
-    example: 1,
-  })
-  count: number;
-
-  @Expose()
-  @ApiProperty({ type: [locationResponseDto] })
-  data: locationResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
-}

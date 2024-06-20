@@ -17,16 +17,3 @@ export class PositionResponseDto {
   })
   sub: string;
 }
-
-@Exclude()
-export class PositionsResponseDto {
-  @Expose()
-  @ApiProperty({
-    example: 1,
-  })
-  count: number;
-
-  @Expose()
-  @ApiProperty({ type: [PositionResponseDto] })
-  data: PositionResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
-}

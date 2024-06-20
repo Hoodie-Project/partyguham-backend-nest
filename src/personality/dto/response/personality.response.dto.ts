@@ -38,16 +38,3 @@ export class personalityQuestionResponseDto {
   @ApiProperty({ type: () => [personalityOptionResponseDto] })
   personalityOption: personalityOptionResponseDto[];
 }
-
-@Exclude()
-export class personalityQuestionsResponseDto {
-  @Expose()
-  @ApiProperty({
-    example: 1,
-  })
-  count: number;
-
-  @Expose()
-  @ApiProperty({ type: [personalityQuestionResponseDto] })
-  data: personalityQuestionResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
-}

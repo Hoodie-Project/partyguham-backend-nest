@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PersonalityService } from './personality.service';
-import { personalityQuestionsResponseDto } from './dto/response/personality.response.dto';
+import { personalityQuestionResponseDto } from './dto/response/personality.response.dto';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 @ApiTags('personality')
@@ -16,7 +16,7 @@ export class PersonalityController {
   @ApiResponse({
     status: 200,
     description: '성향 질문/선택지 리스트 조회 하였습니다.',
-    type: personalityQuestionsResponseDto,
+    type: [personalityQuestionResponseDto],
   })
   async getPersonality() {
     const result = await this.personalityService.findAllPersonality();

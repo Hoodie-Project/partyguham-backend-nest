@@ -20,8 +20,8 @@ export class AuthController {
     return { accessToken };
   }
 
-  @ApiOperation({ summary: 'accessToken 재발급' })
   @Post('encrypt')
+  @ApiOperation({ summary: '암호화 체크' })
   async encrypt(@Body('data') body) {
     const appEncrypt = await this.authService.appEncrypt(String(body));
     const appDecrypt = await this.authService.appDecrypt(appEncrypt);
