@@ -31,7 +31,7 @@ import { PartyRequestDto } from './dto/request/party.param.request.dto';
 import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
-import { GetPartiesResponseDto, GetPartyResponseDto } from './dto/response/get-party.response.dto';
+
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -39,7 +39,7 @@ import { CreatePartyApplicationRequestDto } from './dto/request/create-applicati
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
-import { PartyTypesResponseDto } from './dto/response/partyType.response.dto';
+import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { DeletePartyImageCommand } from '../application/command/delete-partyImage.comand';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
@@ -50,6 +50,9 @@ import { GetPartyApplicationsQuery } from '../application/query/get-partyApplica
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
 import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
 import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
+import { PartyApis } from '../party.swagger';
+import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
+import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -61,27 +64,17 @@ export class PartyController {
   ) {}
 
   @Get('types')
-  @ApiOperation({ summary: '파티 타입 리스트 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 목록(리스트) 조회',
-    type: PartyTypesResponseDto,
-  })
+  @PartyApis.getTypes()
   async getPartyType() {
     const party = new GetPartyTypesQuery();
     const result = this.queryBus.execute(party);
 
-    return plainToInstance(PartyTypesResponseDto, result);
+    return plainToInstance(PartyTypeResponseDto, result);
   }
 
   @Post('')
   @UseInterceptors(FileInterceptor('image'))
-  @ApiOperation({ summary: '파티 생성 - form-data(image)' })
-  @ApiResponse({
-    status: 201,
-    description: '파티 생성',
-    type: PartyResponseDto,
-  })
+  @PartyApis.createParty()
   async createParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
@@ -97,12 +90,7 @@ export class PartyController {
   }
 
   @Get('')
-  @ApiOperation({ summary: '파티 목록(리스트) 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 목록(리스트) 조회',
-    type: GetPartiesResponseDto,
-  })
+  @PartyApis.getParties()
   async getParties(@Query() query: PartyQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
@@ -113,12 +101,7 @@ export class PartyController {
   }
 
   @Get(':partyId')
-  @ApiOperation({ summary: '파티 페이지 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 목록(리스트) 조회',
-    type: GetPartyResponseDto,
-  })
+  @PartyApis.getParty()
   async getParty(@Param() param: PartyRequestDto) {
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
@@ -128,12 +111,7 @@ export class PartyController {
 
   @Patch(':partyId')
   @UseInterceptors(FileInterceptor('image'))
-  @ApiOperation({ summary: '파티 수정 - form-data(이미지)' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 수정 완료',
-    type: PartyResponseDto,
-  })
+  @PartyApis.updateParty()
   async updateParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
@@ -154,12 +132,8 @@ export class PartyController {
   }
 
   @HttpCode(204)
+  @PartyApis.deleteParty()
   @Delete(':partyId')
-  @ApiOperation({ summary: '파티 삭제 (softdelete)' })
-  @ApiResponse({
-    status: 204,
-    description: '삭제 완료',
-  })
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyCommand(user.id, param.partyId);
 
@@ -168,11 +142,7 @@ export class PartyController {
 
   @HttpCode(204)
   @Delete(':partyId/image')
-  @ApiOperation({ summary: '파티 이미지 삭제' })
-  @ApiResponse({
-    status: 204,
-    description: '삭제 완료',
-  })
+  @PartyApis.deletePartyImage()
   async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyImageCommand(user.id, param.partyId);
 

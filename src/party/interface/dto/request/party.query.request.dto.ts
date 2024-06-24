@@ -4,7 +4,7 @@ import { IsIn, IsInt, IsNotEmpty, IsString } from 'class-validator';
 export class PartyQueryRequestDto {
   @ApiProperty({
     example: 1,
-    description: 'page',
+    description: '페이지',
   })
   @IsInt()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class PartyQueryRequestDto {
 
   @ApiProperty({
     example: 5,
-    description: '최대 조회 수',
+    description: '요청 받을 데이터 갯수',
   })
   @IsInt()
   @IsNotEmpty()
@@ -20,7 +20,10 @@ export class PartyQueryRequestDto {
 
   @ApiProperty({
     enum: ['createdAt'],
-    description: 'order 조회 기준',
+    description: `order 조회 기준  
+    
+    - createdAt : 생성일  
+    `,
   })
   @IsIn(['createdAt'])
   @IsString()
@@ -29,7 +32,10 @@ export class PartyQueryRequestDto {
 
   @ApiProperty({
     enum: ['ASC', 'DESC'],
-    description: '오름, 내림차순',
+    description: `조회 방법
+    
+    - ASC (오름차순)  
+    - DESC (내림차순)`,
   })
   @IsIn(['ASC', 'DESC'])
   @IsString()
