@@ -3,7 +3,7 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @Exclude()
-export class GetPartyResponseDto {
+class PartiesDto {
   @Expose()
   @ApiProperty({
     example: '1',
@@ -23,14 +23,6 @@ export class GetPartyResponseDto {
   })
   @IsNotEmpty()
   readonly partyType: object;
-
-  @Expose()
-  @ApiPropertyOptional({
-    example: [{ id: 1, nickname: 'mir', image: '/uploads' }],
-    description: 'partyUser list',
-  })
-  @IsOptional()
-  readonly partyUser: [{ id: number; nickname: string; image: string }];
 
   @Expose()
   @ApiProperty({
@@ -93,4 +85,15 @@ export class GetPartyResponseDto {
   @IsNotEmpty()
   @IsString()
   readonly updatedAt: string;
+}
+
+export class GetPartiesResponseDto {
+  @Expose()
+  @ApiProperty({ description: '파티 데이터 목록', type: [PartiesDto] })
+  @Type(() => PartiesDto)
+  parties: PartiesDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
+
+  @Expose()
+  @ApiProperty({ example: 1, description: '총 데이터 갯수' })
+  total: number;
 }

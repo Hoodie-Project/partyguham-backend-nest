@@ -13,7 +13,7 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
     const { page, limit, sort, order } = query;
 
     const offset = (page - 1) * limit || 0;
-    const [parties, count] = await this.partyRepository
+    const [parties, total] = await this.partyRepository
       .createQueryBuilder('party')
       .leftJoinAndSelect('party.partyType', 'partyType')
       .leftJoinAndSelect('party.partyRecruitments', 'partyRecruitments')
@@ -32,6 +32,6 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
       }
     });
 
-    return { parties, count };
+    return { parties, total };
   }
 }

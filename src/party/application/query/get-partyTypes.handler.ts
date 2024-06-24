@@ -10,8 +10,8 @@ export class GetPartyTypesHandler implements IQueryHandler<GetPartyTypesQuery> {
   constructor(@InjectRepository(PartyTypeEntity) private partyTypeRepository: Repository<PartyTypeEntity>) {}
 
   async execute(query: GetPartyTypesQuery) {
-    const [partyTypes, count] = await this.partyTypeRepository.findAndCount({});
+    const partyTypes = await this.partyTypeRepository.find();
 
-    return { partyTypes, count };
+    return partyTypes;
   }
 }

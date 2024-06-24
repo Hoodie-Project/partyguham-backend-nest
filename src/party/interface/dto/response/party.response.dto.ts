@@ -7,7 +7,7 @@ export class PartyResponseDto {
   @Expose()
   @ApiProperty({
     example: '1',
-    description: 'party PK',
+    description: 'Party ID (파티 고유 번호)',
   })
   @IsString()
   @IsNotEmpty()
@@ -16,7 +16,7 @@ export class PartyResponseDto {
   @Expose()
   @ApiProperty({
     example: '2',
-    description: 'partyType PK',
+    description: 'Party Type ID (파티타입 고유 번호)',
   })
   @IsString()
   @IsNotEmpty()
