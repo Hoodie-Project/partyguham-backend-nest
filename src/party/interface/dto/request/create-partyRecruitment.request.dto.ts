@@ -15,5 +15,5 @@ export class CreatePartyRecruitmentRequestDto {
   @ArrayMinSize(1)
   @IsArray()
   @IsNotEmpty()
-  readonly recruitment: RecruitmentDto[];
+  readonly recruitments: RecruitmentDto[];
 }

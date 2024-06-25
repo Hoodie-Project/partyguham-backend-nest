@@ -53,6 +53,7 @@ import { RejectionPartyApplicationCommand } from '../application/command/rejecti
 import { PartyApis } from '../party.swagger';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
+import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -151,52 +152,20 @@ export class PartyController {
 
   // 모집
   @Post(':partyId/recruitments')
-  @ApiOperation({ summary: '파티 모집 생성하기' })
+  @PartyRecruitmentSwagger.createRecruitment()
   async createRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() dto: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitment);
+    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitments);
 
     return this.commandBus.execute(command);
   }
 
   @Get(':partyId/recruitments')
-  @ApiOperation({ summary: '파티 모집 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 모집',
-    schema: {
-      example: [
-        {
-          id: 27,
-          partyId: 78,
-          positionId: 1,
-          recruiting_count: 1,
-          recruited_count: 0,
-          position: {
-            id: 1,
-            main: '기획',
-            sub: 'UI/UX 기획자',
-          },
-        },
-        {
-          id: 28,
-          partyId: 78,
-          positionId: 9,
-          recruiting_count: 1,
-          recruited_count: 0,
-          position: {
-            id: 9,
-            main: '디자인',
-            sub: '웹 디자이너',
-          },
-        },
-      ],
-    },
-  })
-  async getPartyRecruitment(@Param() param: PartyRequestDto) {
+  @PartyRecruitmentSwagger.getPartyRecruitments()
+  async getPartyRecruitments(@Param() param: PartyRequestDto) {
     const party = new GetPartyRecruitmentQuery(param.partyId);
     const result = this.queryBus.execute(party);
 

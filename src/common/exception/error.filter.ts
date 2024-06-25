@@ -23,7 +23,7 @@ export class CustomErrorExceptionFilter implements ExceptionFilter {
     } else {
       // 기타 Error일 경우 기본적으로 500 에러 상태 코드 사용
       const status = HttpStatus.INTERNAL_SERVER_ERROR;
-      const message = error.message || 'Internal Server Error';
+      const message = error.message || 'INTERNAL_SERVER_ERROR';
 
       response.status(status).json({
         message,

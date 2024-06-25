@@ -35,6 +35,7 @@ export class PartyApis {
         2. 이미지를 저장하는 key는 image 이며, 선택사항 (optional) 입니다.  
         \`\`\`image : 파티에 대한 이미지 파일을 업로드합니다. (jpg, png, jpeg 파일 첨부)  \`\`\`  
         3. 이미지 데이터가 없으면 **null** 으로 저장됩니다.  
+        4. positionId : 파티를 생성하는 유저가 담당할 포지션 ID(PK)를 입력합니다.
         `,
       }),
       ApiResponse({

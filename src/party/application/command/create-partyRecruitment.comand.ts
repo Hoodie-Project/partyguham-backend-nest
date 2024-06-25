@@ -5,6 +5,6 @@ export class CreatePartyRecruitmentCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly partyId: number,
-    readonly recruitment: RecruitmentDto[],
+    readonly recruitments: RecruitmentDto[],
   ) {}
 }
