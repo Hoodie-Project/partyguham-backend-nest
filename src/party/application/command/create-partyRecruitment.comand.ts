@@ -1,10 +1,10 @@
 import { ICommand } from '@nestjs/cqrs';
-import { RecruitmentDto } from 'src/party/interface/dto/recruitmentDto';
+import { RecruitmentRequestDto } from 'src/party/interface/dto/request/recruitment.request.dto';
 
 export class CreatePartyRecruitmentCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly partyId: number,
-    readonly recruitments: RecruitmentDto[],
+    readonly recruitments: RecruitmentRequestDto[],
   ) {}
 }

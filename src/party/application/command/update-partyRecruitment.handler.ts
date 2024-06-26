@@ -35,12 +35,10 @@ export class UpdatePartyRecruitmentHandler implements ICommandHandler<UpdatePart
       throw new UnauthorizedException('파티 모집 수정 권한이 없습니다.');
     }
 
-    const partyRecruitment = await this.partyRecruitmentRepository.update(
-      partyRecruitmentId,
-      positionId,
-      recruiting_count,
-    );
+    await this.partyRecruitmentRepository.update(partyRecruitmentId, positionId, recruiting_count);
 
-    return partyRecruitment;
+    const result = await this.partyRecruitmentRepository.findOne(partyRecruitmentId);
+
+    return result;
   }
 }

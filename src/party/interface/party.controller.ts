@@ -46,13 +46,14 @@ import { CreatePartyApplicationRequestDto } from './dto/request/create-applicati
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { RecruitmentDto } from './dto/recruitmentDto';
+import { RecruitmentRequestDto } from './dto/request/recruitment.request.dto';
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 
 import { PartySwagger } from './party.swagger';
 import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
+import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -168,20 +169,16 @@ export class PartyController {
     const party = new GetPartyRecruitmentQuery(param.partyId);
     const result = this.queryBus.execute(party);
 
-    return result;
+    return plainToInstance(RecruitmentResponseDto, result);
   }
 
   @Patch(':partyId/recruitments/:partyRecruitmentId')
-  @ApiOperation({ summary: '파티 모집 수정' })
-  @ApiResponse({
-    status: 200,
-    description: '모집 수정',
-  })
+  @PartyRecruitmentSwagger.updateRecruitment()
   async updateRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
-    @Body() body: RecruitmentDto,
-  ): Promise<void> {
+    @Body() body: RecruitmentRequestDto,
+  ) {
     const { positionId, recruiting_count } = body;
 
     const command = new UpdatePartyRecruitmentCommand(
@@ -192,15 +189,13 @@ export class PartyController {
       recruiting_count,
     );
 
-    return this.commandBus.execute(command);
+    const result = this.commandBus.execute(command);
+
+    return plainToInstance(RecruitmentResponseDto, result);
   }
 
   @Delete(':partyId/recruitments/:partyRecruitmentId')
-  @ApiOperation({ summary: '파티 모집 삭제' })
-  @ApiResponse({
-    status: 204,
-    description: '모집 삭제',
-  })
+  @PartyRecruitmentSwagger.deleteRecruitment()
   async deleteRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,

@@ -2,6 +2,7 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { PartyResponseDto } from './dto/response/party.response.dto';
+import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
 
 export class PartyRecruitmentSwagger {
   static createRecruitment() {
@@ -25,40 +26,46 @@ export class PartyRecruitmentSwagger {
     return applyDecorators(
       ApiOperation({
         summary: '파티 모집 목록 조회',
-        description: `**파티(partyId)에 있는 파티모집을 모두 조회하는 API 입니다.**
+        description: `**파티(partyId)에 있는 파티모집을 모두 조회하는 API 입니다.**  
+        배열 형식으로 존재하는 파티모집을 리턴합니다.  
+        파티모집이 존재하지 않으면 빈 배열을 리턴합니다.  
       `,
       }),
       ApiResponse({
         status: 200,
-        description: '파티 모집',
-        schema: {
-          example: [
-            {
-              id: 27,
-              partyId: 78,
-              positionId: 1,
-              recruiting_count: 1,
-              recruited_count: 0,
-              position: {
-                id: 1,
-                main: '기획',
-                sub: 'UI/UX 기획자',
-              },
-            },
-            {
-              id: 28,
-              partyId: 78,
-              positionId: 9,
-              recruiting_count: 1,
-              recruited_count: 0,
-              position: {
-                id: 9,
-                main: '디자인',
-                sub: '웹 디자이너',
-              },
-            },
-          ],
-        },
+        description: '파티 모집 목록 조회',
+        type: [RecruitmentResponseDto],
+      }),
+    );
+  }
+
+  static updateRecruitment() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 모집 수정',
+        description: `**파티(partyId)에 있는 파티모집을 수정하는 API 입니다.**  
+        
+      `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '모집 수정',
+        type: RecruitmentResponseDto,
+      }),
+    );
+  }
+
+  static deleteRecruitment() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 모집 삭제',
+        description: `**파티(partyId)에 있는 파티모집을 삭제하는 API 입니다.**  
+        데이터를 완전 삭제 합니다.
+      `,
+      }),
+      ApiResponse({
+        status: 204,
+        description: '모집 삭제',
       }),
     );
   }

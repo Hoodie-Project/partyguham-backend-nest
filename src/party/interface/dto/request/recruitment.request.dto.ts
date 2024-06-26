@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsInt, IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
 
-export class RecruitmentDto {
+export class RecruitmentRequestDto {
   @ApiProperty({
     example: 1,
     description: '포지션 ID (position pk)',
