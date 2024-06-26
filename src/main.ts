@@ -62,7 +62,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalFilters(new CustomErrorExceptionFilter());
+  // app.useGlobalFilters(new CustomErrorExceptionFilter());
 
   const path = process.env.MODE_ENV === 'prod' ? 'api' : 'dev/api';
   app.setGlobalPrefix(`${path}`); // 전체 endpoint

@@ -1,7 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
-import { PartyResponseDto } from './interface/dto/response/party.response.dto';
+import { PartyResponseDto } from './dto/response/party.response.dto';
 
 export class PartyRecruitmentSwagger {
   static createRecruitment() {

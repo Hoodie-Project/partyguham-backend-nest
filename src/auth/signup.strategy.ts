@@ -16,7 +16,7 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
       jwtFromRequest: (request: Request) => {
         if (request && request.cookies) {
           const signupToken = request.cookies['signupToken'];
-          if (!signupToken) throw new UnauthorizedException('signupToken이 cookies에 없습니다.');
+          if (!signupToken) throw new UnauthorizedException('signupToken이 cookies에 없습니다.', 'UNAUTHORIZED');
           return signupToken;
         }
       },
@@ -38,7 +38,7 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
 
       return { oauthId };
     } else {
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
   }
 }

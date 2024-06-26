@@ -1,11 +1,11 @@
 import { applyDecorators } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { PartyTypeResponseDto } from './interface/dto/response/partyType.response.dto';
-import { PartyResponseDto } from './interface/dto/response/party.response.dto';
-import { GetPartiesResponseDto } from './interface/dto/response/get-parties.response.dto';
-import { GetPartyResponseDto } from './interface/dto/response/get-party.response.dto';
+import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
+import { PartyResponseDto } from './dto/response/party.response.dto';
+import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
+import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 
-export class PartyApis {
+export class PartySwagger {
   static getTypes() {
     return applyDecorators(
       ApiOperation({

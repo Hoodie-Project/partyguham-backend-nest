@@ -10,7 +10,7 @@ export class CustomErrorExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    if (error instanceof HttpException) {
+    if (error instanceof HttpException && error.getStatus() < 500) {
       // HttpException일 경우 처리 로직 추가
       const httpException = error as HttpException;
       const status = httpException.getStatus();
@@ -19,16 +19,19 @@ export class CustomErrorExceptionFilter implements ExceptionFilter {
       response.status(status).json({
         ...result,
         path: request.url,
+        timestamp: new Date().toISOString(),
       });
     } else {
-      // 기타 Error일 경우 기본적으로 500 에러 상태 코드 사용
+      // 500 이상 에러 상태 코드 사용
       const status = HttpStatus.INTERNAL_SERVER_ERROR;
-      const message = error.message || 'INTERNAL_SERVER_ERROR';
+      const message = error.message;
 
       response.status(status).json({
         message,
+        error: 'INTERNAL_SERVER_ERROR',
         statusCode: status,
         path: request.url,
+        timestamp: new Date().toISOString(),
       });
     }
   }
