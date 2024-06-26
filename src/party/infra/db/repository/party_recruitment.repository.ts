@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 import { PartyRecruitmentEntity } from '../entity/apply/party_recruitment.entity';
-import { RecruitmentDto } from 'src/party/interface/dto/recruitmentDto';
+import { RecruitmentRequestDto } from 'src/party/interface/dto/request/recruitment.request.dto';
 
 @Injectable()
 export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
@@ -21,7 +21,7 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     return partyRecruitment;
   }
 
-  async bulkInsert(partyId: number, recruitment: RecruitmentDto[]) {
+  async bulkInsert(partyId: number, recruitment: RecruitmentRequestDto[]) {
     const partyRecruitments = recruitment.map((value) => ({
       partyId,
       ...value,
@@ -50,6 +50,7 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
   async findOne(id: number) {
     const partyRecruitment = await this.partyRecruitmentRepository.findOne({
       where: { id },
+      relations: ['position'],
     });
 
     if (!partyRecruitment) {
@@ -60,13 +61,11 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
   }
 
   async update(id: number, positionId: number, recruitingCount: number) {
-    const partyRecruitment = await this.findOne(id);
-
-    await this.partyRecruitmentRepository.save({ ...partyRecruitment, positionId, recruitingCount });
+    return await this.partyRecruitmentRepository.update(id, { positionId, recruitingCount });
   }
 
   async updateRecruitedCount(id: number, recruitedCount: number) {
-    await this.partyRecruitmentRepository.save({ id, recruitedCount });
+    return await this.partyRecruitmentRepository.save({ id, recruitedCount });
   }
 
   async delete(partyId: number) {

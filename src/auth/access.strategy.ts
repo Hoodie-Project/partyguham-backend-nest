@@ -20,18 +20,23 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
   }
 
   async validate(payload: PayloadType) {
+    if (!payload) {
+      // If no payload is provided, throw an UnauthorizedException
+      throw new UnauthorizedException('Unauthorized: Invalid or missing token', 'UNAUTHORIZED');
+    }
+
     if (payload.id) {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(decryptUserId);
       const userId = oauth.userId;
 
       if (!userId) {
-        throw new UnauthorizedException('필수 회원가입이 필요합니다.');
+        throw new UnauthorizedException('필수 회원가입이 필요합니다.', 'UNAUTHORIZED');
       } else {
         return { id: userId };
       }
     } else {
-      throw new UnauthorizedException('Unauthorized');
+      throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
   }
 }

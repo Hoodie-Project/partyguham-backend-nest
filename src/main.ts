@@ -62,7 +62,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  app.useGlobalFilters(new CustomErrorExceptionFilter());
+  // app.useGlobalFilters(new CustomErrorExceptionFilter());
 
   const path = process.env.MODE_ENV === 'prod' ? 'api' : 'dev/api';
   app.setGlobalPrefix(`${path}`); // 전체 endpoint
@@ -81,7 +81,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(`${path}/docs`, app, document);
+  SwaggerModule.setup(`${path}/docs`, app, document, {});
 
   await app.listen(process.env.PORT);
   console.log(`listening on port ${process.env.PORT}`);

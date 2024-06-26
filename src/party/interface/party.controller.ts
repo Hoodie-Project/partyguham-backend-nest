@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -12,47 +11,49 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
+  BadRequestException,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 import { CreatePartyCommand } from '../application/command/create-party.comand';
 import { UpdatePartyCommand } from '../application/command/update-party.comand';
 import { DeletePartyCommand } from '../application/command/delete-party.comand';
+import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
+import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
+import { DeletePartyImageCommand } from '../application/command/delete-partyImage.comand';
+import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
+import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
+import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
+import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 
+import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
+import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
 import { GetPartiesQuery } from '../application/query/get-parties.query';
 import { GetPartyQuery } from '../application/query/get-party.query';
+import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 
 import { PartyRequestDto } from './dto/request/party.param.request.dto';
-
 import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
-
-import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CreatePartyApplicationRequestDto } from './dto/request/create-application.request.dto';
-import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
-import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { DeletePartyImageCommand } from '../application/command/delete-partyImage.comand';
-import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
-import { RecruitmentDto } from './dto/recruitmentDto';
-import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
-import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
-import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
+import { RecruitmentRequestDto } from './dto/request/recruitment.request.dto';
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
-import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
-import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
-import { PartyApis } from '../party.swagger';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
+
+import { PartySwagger } from './party.swagger';
+import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
+import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -64,7 +65,7 @@ export class PartyController {
   ) {}
 
   @Get('types')
-  @PartyApis.getTypes()
+  @PartySwagger.getTypes()
   async getPartyType() {
     const party = new GetPartyTypesQuery();
     const result = this.queryBus.execute(party);
@@ -74,7 +75,7 @@ export class PartyController {
 
   @Post('')
   @UseInterceptors(FileInterceptor('image'))
-  @PartyApis.createParty()
+  @PartySwagger.createParty()
   async createParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
@@ -90,7 +91,7 @@ export class PartyController {
   }
 
   @Get('')
-  @PartyApis.getParties()
+  @PartySwagger.getParties()
   async getParties(@Query() query: PartyQueryRequestDto) {
     const { page, limit, sort, order } = query;
 
@@ -101,7 +102,7 @@ export class PartyController {
   }
 
   @Get(':partyId')
-  @PartyApis.getParty()
+  @PartySwagger.getParty()
   async getParty(@Param() param: PartyRequestDto) {
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
@@ -111,7 +112,7 @@ export class PartyController {
 
   @Patch(':partyId')
   @UseInterceptors(FileInterceptor('image'))
-  @PartyApis.updateParty()
+  @PartySwagger.updateParty()
   async updateParty(
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
@@ -132,7 +133,7 @@ export class PartyController {
   }
 
   @HttpCode(204)
-  @PartyApis.deleteParty()
+  @PartySwagger.deleteParty()
   @Delete(':partyId')
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyCommand(user.id, param.partyId);
@@ -142,7 +143,7 @@ export class PartyController {
 
   @HttpCode(204)
   @Delete(':partyId/image')
-  @PartyApis.deletePartyImage()
+  @PartySwagger.deletePartyImage()
   async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyImageCommand(user.id, param.partyId);
 
@@ -151,69 +152,33 @@ export class PartyController {
 
   // 모집
   @Post(':partyId/recruitments')
-  @ApiOperation({ summary: '파티 모집 생성하기' })
+  @PartyRecruitmentSwagger.createRecruitment()
   async createRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() dto: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitment);
+    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitments);
 
     return this.commandBus.execute(command);
   }
 
   @Get(':partyId/recruitments')
-  @ApiOperation({ summary: '파티 모집 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 모집',
-    schema: {
-      example: [
-        {
-          id: 27,
-          partyId: 78,
-          positionId: 1,
-          recruiting_count: 1,
-          recruited_count: 0,
-          position: {
-            id: 1,
-            main: '기획',
-            sub: 'UI/UX 기획자',
-          },
-        },
-        {
-          id: 28,
-          partyId: 78,
-          positionId: 9,
-          recruiting_count: 1,
-          recruited_count: 0,
-          position: {
-            id: 9,
-            main: '디자인',
-            sub: '웹 디자이너',
-          },
-        },
-      ],
-    },
-  })
-  async getPartyRecruitment(@Param() param: PartyRequestDto) {
+  @PartyRecruitmentSwagger.getPartyRecruitments()
+  async getPartyRecruitments(@Param() param: PartyRequestDto) {
     const party = new GetPartyRecruitmentQuery(param.partyId);
     const result = this.queryBus.execute(party);
 
-    return result;
+    return plainToInstance(RecruitmentResponseDto, result);
   }
 
   @Patch(':partyId/recruitments/:partyRecruitmentId')
-  @ApiOperation({ summary: '파티 모집 수정' })
-  @ApiResponse({
-    status: 200,
-    description: '모집 수정',
-  })
+  @PartyRecruitmentSwagger.updateRecruitment()
   async updateRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
-    @Body() body: RecruitmentDto,
-  ): Promise<void> {
+    @Body() body: RecruitmentRequestDto,
+  ) {
     const { positionId, recruiting_count } = body;
 
     const command = new UpdatePartyRecruitmentCommand(
@@ -224,15 +189,13 @@ export class PartyController {
       recruiting_count,
     );
 
-    return this.commandBus.execute(command);
+    const result = this.commandBus.execute(command);
+
+    return plainToInstance(RecruitmentResponseDto, result);
   }
 
   @Delete(':partyId/recruitments/:partyRecruitmentId')
-  @ApiOperation({ summary: '파티 모집 삭제' })
-  @ApiResponse({
-    status: 204,
-    description: '모집 삭제',
-  })
+  @PartyRecruitmentSwagger.deleteRecruitment()
   async deleteRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,

@@ -21,7 +21,7 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
   ) {}
 
   async execute(command: CreatePartyRecruitmentCommand) {
-    const { userId, partyId, recruitment } = command;
+    const { userId, partyId, recruitments } = command;
 
     const party = await this.partyRepository.findOne(partyId);
 
@@ -35,7 +35,7 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
       throw new UnauthorizedException('파티 모집 권한이 없습니다.');
     }
 
-    const partyRecruitment = await this.partyRecruitmentRepository.bulkInsert(partyId, recruitment);
+    const partyRecruitment = await this.partyRecruitmentRepository.bulkInsert(partyId, recruitments);
 
     return partyRecruitment;
   }

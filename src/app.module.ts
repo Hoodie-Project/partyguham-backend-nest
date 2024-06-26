@@ -5,7 +5,7 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 
-import { APP_INTERCEPTOR } from '@nestjs/core';
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response';
 
 import { AppController } from './app.controller';
@@ -17,6 +17,9 @@ import { PositionModule } from './position/position.module';
 import { LocationModule } from './location/location.module';
 import { PersonalityModule } from './personality/personality.module';
 import { GuildModule } from './guild/guild.module';
+import { NotFoundExceptionFilter } from './common/exception/error-NotFound.filter';
+import { CustomErrorExceptionFilter } from './common/exception/error.filter';
+import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthorized.filter';
 
 @Module({
   imports: [
@@ -44,10 +47,18 @@ import { GuildModule } from './guild/guild.module';
   controllers: [AppController],
   providers: [
     AppService,
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: ResponseInterceptor,
-    // },
+    {
+      provide: APP_FILTER,
+      useClass: CustomErrorExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundExceptionFilter,
+    },
   ],
 })
 export class AppModule {
