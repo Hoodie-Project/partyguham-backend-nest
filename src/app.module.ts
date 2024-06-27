@@ -20,6 +20,7 @@ import { GuildModule } from './guild/guild.module';
 import { NotFoundExceptionFilter } from './common/exception/error-NotFound.filter';
 import { CustomErrorExceptionFilter } from './common/exception/error.filter';
 import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthorized.filter';
+import { ReportModule } from './report/report.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthoriz
     }),
     UserModule,
     PartyModule,
-    GuildModule,
+    ReportModule,
+    // GuildModule,
   ],
   controllers: [AppController],
   providers: [
