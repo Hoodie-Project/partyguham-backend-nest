@@ -4,7 +4,7 @@ import { IsInt, IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
 export class RecruitmentRequestDto {
   @ApiProperty({
     example: 1,
-    description: '포지션 ID (position pk)',
+    description: 'Position ID (PK - 포지션)',
   })
   @IsInt()
   @IsPositive()

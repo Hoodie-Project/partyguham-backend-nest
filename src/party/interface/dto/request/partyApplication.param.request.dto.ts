@@ -4,7 +4,7 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 export class PartyApplicationParamRequestDto {
   @ApiProperty({
     example: 1,
-    description: '파티 ID (party_id)',
+    description: 'party ID (PK - 파티)',
   })
   @IsInt()
   @IsNotEmpty()
@@ -12,7 +12,7 @@ export class PartyApplicationParamRequestDto {
 
   @ApiProperty({
     example: 3,
-    description: '파티 모집 ID (party_recruitment_id)',
+    description: 'party recruitment ID (PK - 파티 모집)',
   })
   @IsInt()
   @IsNotEmpty()
@@ -20,7 +20,7 @@ export class PartyApplicationParamRequestDto {
 
   @ApiProperty({
     example: 3,
-    description: '파티 지원 ID (party_application_id)',
+    description: 'party application ID (PK - 파티 지원)',
   })
   @IsInt()
   @IsNotEmpty()

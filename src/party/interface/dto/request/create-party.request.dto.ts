@@ -1,7 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { File } from 'buffer';
+import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreatePartyRequestDto {
+  @ApiProperty({
+    example: 'image file (jpg, jpeg, png)',
+    description: '업로드할 이미지 파일',
+    required: false,
+  })
+  @IsOptional()
+  readonly image: File; // 스웨거 문서용 표기
+
   @ApiProperty({
     example: '파티구함',
     description: '제목',
@@ -20,7 +29,7 @@ export class CreatePartyRequestDto {
 
   @ApiProperty({
     example: 1,
-    description: '파티 타입 id(pk)',
+    description: 'party type ID (PK - 파티 타입)',
   })
   @IsInt()
   @IsNotEmpty()
@@ -28,7 +37,7 @@ export class CreatePartyRequestDto {
 
   @ApiProperty({
     example: 1,
-    description: '포지션 id(pk)',
+    description: 'position ID (PK - 포지션)',
   })
   @IsInt()
   @IsNotEmpty()

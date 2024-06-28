@@ -5,6 +5,7 @@ export class UpdatePartyRequestDto {
   @ApiProperty({
     example: '파티구함',
     description: '제목',
+    required: false,
   })
   @IsString()
   @IsOptional()
@@ -13,6 +14,7 @@ export class UpdatePartyRequestDto {
   @ApiProperty({
     example: '풀스텍 구함',
     description: '본문',
+    required: false,
   })
   @IsString()
   @IsOptional()

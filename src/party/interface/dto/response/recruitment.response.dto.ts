@@ -6,8 +6,8 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class RecruitmentResponseDto {
   @Expose()
   @ApiProperty({
-    example: '1',
-    description: 'Party recruitments ID (파티모집 ID)',
+    example: 1,
+    description: 'Party recruitments ID (PK - 파티모집)',
   })
   @IsString()
   @IsNotEmpty()
@@ -15,8 +15,8 @@ export class RecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: '1',
-    description: 'Party recruitments ID (파티모집 ID)',
+    example: 1,
+    description: 'Party ID (PK - 파티)',
   })
   @IsString()
   @IsNotEmpty()

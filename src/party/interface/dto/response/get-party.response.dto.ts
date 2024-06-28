@@ -1,13 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Expose, Type } from 'class-transformer';
+import { Exclude, Expose } from 'class-transformer';
 import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @Exclude()
 export class GetPartyResponseDto {
   @Expose()
   @ApiProperty({
-    example: '1',
-    description: 'Party ID (파티타입 번호)',
+    example: 1,
+    description: 'Party ID (PK - 파티)',
   })
   @IsString()
   @IsNotEmpty()
@@ -19,7 +19,7 @@ export class GetPartyResponseDto {
       id: 1,
       type: '미정',
     },
-    description: 'Party Type ID (파티타입 고유 번호)',
+    description: 'Party Type ID (PK - 파티 타입)',
   })
   @IsNotEmpty()
   readonly partyType: object;
