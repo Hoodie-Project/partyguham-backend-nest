@@ -4,6 +4,7 @@ import { Party } from './party';
 
 interface PartyData {
   id: number;
+  partyTypeId: number;
   title: string;
   content: string;
   image: string;
@@ -14,11 +15,11 @@ export class PartyFactory {
   constructor(private eventBus: EventBus) {}
 
   create(data: PartyData): Party {
-    const { id, title, content, image } = data;
-    return new Party(id, title, content, image);
+    const { id, partyTypeId, title, content, image } = data;
+    return new Party(id, partyTypeId, title, content, image);
   }
 
-  reconstitute(id: number, title: string, content: string, image: string): Party {
-    return new Party(id, title, content, image);
+  reconstitute(id: number, partyTypeId: number, title: string, content: string, image: string): Party {
+    return new Party(id, partyTypeId, title, content, image);
   }
 }
