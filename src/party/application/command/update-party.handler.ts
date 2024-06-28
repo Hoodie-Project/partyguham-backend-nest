@@ -19,7 +19,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
   ) {}
 
   async execute(command: UpdatePartyCommand) {
-    const { userId, partyId, title, content, image } = command;
+    const { userId, partyId, partyTypeId, title, content, image } = command;
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (!partyUser) {
@@ -38,7 +38,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
       await fs.unlink(party.image);
     }
 
-    party.updateFields(title, content, image);
+    party.updateFields(partyTypeId, title, content, image);
 
     const result = await this.partyRepository.update(party);
 
