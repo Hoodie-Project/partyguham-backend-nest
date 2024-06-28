@@ -4,6 +4,7 @@ export class UpdatePartyCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly partyId: number,
+    readonly partyTypeId: number,
     readonly title: string,
     readonly content: string,
     readonly image: string,

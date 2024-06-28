@@ -1,6 +1,7 @@
 export class Party {
   constructor(
     public id: number,
+    public partyTypeId: number,
     public title: string,
     public content: string,
     public image: string,
@@ -10,7 +11,15 @@ export class Party {
     return this.id;
   }
 
-  updateFields(title: string | undefined, content: string | undefined, image: string | undefined): void {
+  updateFields(
+    partyTypeId: number | undefined,
+    title: string | undefined,
+    content: string | undefined,
+    image: string | undefined,
+  ): void {
+    if (partyTypeId !== undefined) {
+      this.partyTypeId = partyTypeId;
+    }
     if (title !== undefined) {
       this.title = title;
     }

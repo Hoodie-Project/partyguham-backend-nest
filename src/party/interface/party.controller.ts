@@ -122,10 +122,10 @@ export class PartyController {
     if (Object.keys(dto).length === 0 && !file) {
       throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.');
     }
-    const { title, content } = dto;
+    const { partyTypeId, title, content } = dto;
     const imageFilePath = file ? file.path : undefined;
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, title, content, imageFilePath);
+    const command = new UpdatePartyCommand(user.id, param.partyId, partyTypeId, title, content, imageFilePath);
 
     const result = this.commandBus.execute(command);
 
