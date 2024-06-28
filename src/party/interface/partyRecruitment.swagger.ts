@@ -69,4 +69,95 @@ export class PartyRecruitmentSwagger {
       }),
     );
   }
+
+  static createPartyApplication() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 지원 하기',
+        description: `**파티 지원하는 API 입니다.**  
+        지원 중복은 불가합니다.
+          `,
+      }),
+      ApiResponse({
+        status: 201,
+        description: '파티 지원 완료',
+      }),
+    );
+  }
+
+  static getPartyApplication() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 포지션 모집별, 지원자 조회',
+        description: `**파티 포지션 모집별, 지원자 조회하는 API 입니다.**  
+        
+          `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 지원자 조회',
+      }),
+      ApiResponse({
+        status: 401,
+        description: '파티 지원자 조회 권한이 없습니다.',
+      }),
+    );
+  }
+
+  static approvePartyApplication() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 지원자 승인',
+        description: `**파티 지원자 승인하는 API 입니다.**  
+        
+          `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 지원자 승인 완료 \t\n 모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 모집 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+      }),
+    );
+  }
+
+  static rejectPartyApplication() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 지원자 거절',
+        description: `**파티 지원자 거절하는 API 입니다.**  
+        
+          `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 지원자 거절 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 자원자에 대한 거절 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+      }),
+    );
+  }
+
+  static transferPartyLeadership() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티장 위임',
+        description: `**파티장 위임하는 API 입니다.**  
+        
+          `,
+      }),
+    );
+  }
 }
