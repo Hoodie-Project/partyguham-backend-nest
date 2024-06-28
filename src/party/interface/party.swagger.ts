@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
@@ -38,6 +38,7 @@ export class PartySwagger {
         4. positionId : 파티를 생성하는 유저가 담당할 포지션 ID(PK)를 입력합니다.
         `,
       }),
+      ApiConsumes('multipart/form-data'),
       ApiResponse({
         status: 201,
         description: '파티 생성',
@@ -100,6 +101,7 @@ export class PartySwagger {
         4. 이미지 데이터가 없으면 변경하지 않습니다.  
         `,
       }),
+      ApiConsumes('multipart/form-data'),
       ApiResponse({
         status: 200,
         description: '파티 수정 완료',

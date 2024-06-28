@@ -207,56 +207,30 @@ export class PartyController {
 
   // 지원
   @Post(':partyId/recruitments/:partyRecruitmentId/applications')
-  @ApiOperation({ summary: '파티 지원 하기' })
-  @ApiResponse({
-    status: 201,
-    description: '파티 지원 완료',
-  })
+  @PartyRecruitmentSwagger.createPartyApplication()
   async createPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
     @Body() dto: CreatePartyApplicationRequestDto,
   ): Promise<void> {
-    // 지원 했을 때, 중복지원 막아야함
     const command = new CreatePartyApplicationCommand(user.id, param.partyId, param.partyRecruitmentId, dto.message);
 
     return this.commandBus.execute(command);
   }
 
   @Get(':partyId/recruitments/:partyRecruitmentId/applications')
-  @ApiOperation({ summary: '파티 포지션 모집별, 지원자 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 지원자 조회',
-  })
-  @ApiResponse({
-    status: 401,
-    description: '파티 지원자 조회 권한이 없습니다.',
-  })
+  @PartyRecruitmentSwagger.getPartyApplication()
   async getPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
   ): Promise<void> {
-    // 파티장만 조회 가능
     const query = new GetPartyApplicationsQuery(user.id, param.partyId, param.partyRecruitmentId);
 
     return this.queryBus.execute(query);
   }
 
   @Post(':partyId/applications/:partyApplicationId/approval')
-  @ApiOperation({ summary: '파티 지원자 승인' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 지원자 승인 완료 \t\n 모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.',
-  })
-  @ApiResponse({
-    status: 403,
-    description: '파티 모집 권한이 없습니다.',
-  })
-  @ApiResponse({
-    status: 404,
-    description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
-  })
+  @PartyRecruitmentSwagger.approvePartyApplication()
   async approvePartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
@@ -267,19 +241,7 @@ export class PartyController {
   }
 
   @Post(':partyId/applications/:partyApplicationId/rejection')
-  @ApiOperation({ summary: '파티 지원자 거절' })
-  @ApiResponse({
-    status: 200,
-    description: '파티 지원자 거절 완료',
-  })
-  @ApiResponse({
-    status: 403,
-    description: '파티 자원자에 대한 거절 권한이 없습니다.',
-  })
-  @ApiResponse({
-    status: 404,
-    description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
-  })
+  @PartyRecruitmentSwagger.rejectPartyApplication()
   async rejectPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
@@ -321,7 +283,7 @@ export class PartyController {
 
   // 권한
   @Post(':partyId/delegation')
-  @ApiOperation({ summary: '파티장 위임' })
+  @PartyRecruitmentSwagger.transferPartyLeadership()
   async transferPartyLeadership(
     @CurrentUser() user: CurrentUserType,
     @Param('partyId') partyId: number,
