@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  OneToMany,
+  Unique,
+  CreateDateColumn,
+} from 'typeorm';
 
 import { PartyEntity } from '../party/party.entity';
 import { PositionEntity } from 'src/position/entity/position.entity';
@@ -22,6 +31,9 @@ export class PartyRecruitmentEntity {
 
   @Column('smallint', { default: 0 })
   recruitedCount: number; // 모집된
+
+  @CreateDateColumn()
+  createdAt: Date;
 
   @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.partyRecruitment)
   partyApplications: PartyApplicationEntity[];
