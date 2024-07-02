@@ -15,15 +15,15 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     private partyApplicationRepository: Repository<PartyApplicationEntity>,
   ) {}
 
-  async create(userId: number, partyId: number, message: string) {
-    const partyApplication = await this.partyApplicationRepository.save({ userId, partyId, message });
+  async create(userId: number, partyRecruitmentId: number, message: string) {
+    const partyApplication = await this.partyApplicationRepository.save({ userId, partyRecruitmentId, message });
 
     return partyApplication;
   }
 
-  async findAll(partyId: number) {
+  async findAll(partyRecruitmentId: number) {
     const partyApplication = await this.partyApplicationRepository.find({
-      where: { id: partyId },
+      where: { id: partyRecruitmentId },
     });
 
     if (!partyApplication) {
@@ -66,14 +66,14 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     return partyApplication;
   }
 
-  async update(partyId: number, title: string, content: string) {
-    const partyApplication = await this.findOne(partyId);
+  async update(partyRecruitmentId: number, title: string, content: string) {
+    const partyApplication = await this.findOne(partyRecruitmentId);
 
     await this.partyApplicationRepository.save({ ...partyApplication, title, content });
   }
 
-  async delete(partyId: number) {
-    const partyApplication = await this.findOne(partyId);
+  async delete(partyRecruitmentId: number) {
+    const partyApplication = await this.findOne(partyRecruitmentId);
     const status = StatusEnum.DELETED;
 
     await this.partyApplicationRepository.save({ ...partyApplication, status });
