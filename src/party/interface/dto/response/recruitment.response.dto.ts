@@ -36,6 +36,29 @@ export class RecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
+    example: [
+      {
+        id: 4,
+        userId: 12,
+        partyRecruitmentId: 27,
+        message: '참여희망',
+        createdAt: '2024-07-02T05:44:43.632Z',
+      },
+      {
+        id: 5,
+        userId: 13,
+        partyRecruitmentId: 27,
+        message: '참여희망 1',
+        createdAt: '2024-07-02T06:44:43.632Z',
+      },
+    ],
+    description: 'party applications (지원자 정보)',
+  })
+  @IsNotEmpty()
+  readonly partyApplications: object;
+
+  @Expose()
+  @ApiProperty({
     example: 2,
     description: '모집인원',
   })

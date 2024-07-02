@@ -1,5 +1,5 @@
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { PartyRecruitmentEntity } from './party_recruitment.entity';
 
 @Entity('party_invitation')
@@ -10,8 +10,8 @@ export class PartyInvitationEntity {
   @Column({ nullable: true })
   message: string;
 
-  @Column({ nullable: true, type: 'date' })
-  created_at: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.partyInvitations)
   @JoinColumn({ name: 'user_id' })
