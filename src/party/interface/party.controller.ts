@@ -54,6 +54,8 @@ import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { PartySwagger } from './party.swagger';
 import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
+import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
+import { DelegatePartyCommand } from '../application/command/delegate-party.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -281,14 +283,24 @@ export class PartyController {
   //   dto;
   // }
 
-  // 권한
   @Post(':partyId/delegation')
   @PartyRecruitmentSwagger.transferPartyLeadership()
   async transferPartyLeadership(
     @CurrentUser() user: CurrentUserType,
-    @Param('partyId') partyId: number,
-    @Body() dto: CreatePartyRequestDto,
+    @Param() param: PartyRequestDto,
+    @Body() dto: PartyDelegationRequestDto,
   ): Promise<void> {
-    dto;
+    const command = new DelegatePartyCommand(user.id, param.partyId, dto.delegateUserId);
+
+    return this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
+  @PartySwagger.deletePartyUser()
+  @Delete(':partyId')
+  async deletePartyUser(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(user.id, param.partyId);
+
+    this.commandBus.execute(command);
   }
 }

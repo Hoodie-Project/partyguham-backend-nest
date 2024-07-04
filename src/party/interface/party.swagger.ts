@@ -125,6 +125,22 @@ export class PartySwagger {
     );
   }
 
+  static deletePartyUser() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 탈퇴 ',
+        description: `**파티를 탈퇴하는 API 입니다.**  
+        파티장 권한을 가진 사람은 탈퇴 할 수 없습니다.  
+        파티장 권한을 양도하고 탈퇴 가능합니다.
+        `,
+      }),
+      ApiResponse({
+        status: 204,
+        description: '삭제 완료',
+      }),
+    );
+  }
+
   static deletePartyImage() {
     return applyDecorators(
       ApiOperation({
