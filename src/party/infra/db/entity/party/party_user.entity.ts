@@ -6,7 +6,7 @@ import { BaseEntity } from 'src/common/entity/baseEntity';
 
 export enum PartyAuthority {
   MASTER = 'master', // 파티장
-  EDITOR = 'editor', // 수정 권한
+  DEPUTY = 'deputy', // 부파티장
   MEMBER = 'member', // 맴버
 }
 
