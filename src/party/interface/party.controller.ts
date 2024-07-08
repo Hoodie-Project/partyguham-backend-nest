@@ -144,6 +144,24 @@ export class PartyController {
   }
 
   @HttpCode(204)
+  @PartySwagger.deletePartyInMe()
+  @Delete(':partyId/me')
+  async deletePartyInMe(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(user.id, param.partyId);
+
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
+  @PartySwagger.deletePartyInUser()
+  @Delete(':partyId/user/:nickname')
+  async deletePartyInUser(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(user.id, param.partyId);
+
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
   @Delete(':partyId/image')
   @PartySwagger.deletePartyImage()
   async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
@@ -293,14 +311,5 @@ export class PartyController {
     const command = new DelegatePartyCommand(user.id, param.partyId, dto.delegateUserId);
 
     return this.commandBus.execute(command);
-  }
-
-  @HttpCode(204)
-  @PartySwagger.deletePartyUser()
-  @Delete(':partyId')
-  async deletePartyUser(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyCommand(user.id, param.partyId);
-
-    this.commandBus.execute(command);
   }
 }
