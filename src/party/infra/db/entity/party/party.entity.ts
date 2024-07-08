@@ -1,7 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { PartyUserEntity } from './party_user.entity';
-import { PartyInvitationEntity } from '../apply/party_invitation.entity';
-import { PartyApplicationEntity } from '../apply/party_application.entity';
 import { BaseEntity } from 'src/common/entity/baseEntity';
 import { PartyTypeEntity } from './party_type.entity';
 import { PartyRecruitmentEntity } from '../apply/party_recruitment.entity';

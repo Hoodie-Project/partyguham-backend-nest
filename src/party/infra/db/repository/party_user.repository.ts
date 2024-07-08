@@ -25,8 +25,8 @@ export class PartyUserRepository implements IPartyUserRepository {
     await this.partyUserRepository.save({ userId, partyId, positionId, authority });
   }
 
-  async createEditor(userId: number, partyId: number, positionId: number) {
-    const authority = PartyAuthority.EDITOR;
+  async createDeputy(userId: number, partyId: number, positionId: number) {
+    const authority = PartyAuthority.DEPUTY;
 
     await this.partyUserRepository.save({ userId, partyId, positionId, authority });
 
