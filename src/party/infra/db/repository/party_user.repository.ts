@@ -33,7 +33,15 @@ export class PartyUserRepository implements IPartyUserRepository {
     // return this.partyUserFactory
   }
 
+  async findOneById(id: number) {
+    return await this.partyUserRepository.findOne({ where: { id } });
+  }
+
   async findOne(userId: number, partyId: number) {
     return await this.partyUserRepository.findOne({ where: { userId, partyId } });
+  }
+
+  async deleteById(id: number) {
+    await this.partyUserRepository.delete({ id });
   }
 }

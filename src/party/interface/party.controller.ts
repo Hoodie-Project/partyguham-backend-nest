@@ -56,6 +56,8 @@ import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
 import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
 import { DelegatePartyCommand } from '../application/command/delegate-party.comand';
+import { PartyUserParamRequestDto } from './dto/request/partyUser.param.request.dto';
+import { DeletePartyUserCommand } from '../application/command/delete-partyUser.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -154,9 +156,12 @@ export class PartyController {
 
   @HttpCode(204)
   @PartySwagger.deletePartyInUser()
-  @Delete(':partyId/user/:nickname')
-  async deletePartyInUser(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyCommand(user.id, param.partyId);
+  @Delete(':partyId/party-users/:partyUserId')
+  async deletePartyInUser(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyUserParamRequestDto,
+  ): Promise<void> {
+    const command = new DeletePartyUserCommand(user.id, param.partyId, param.partyUserId);
 
     this.commandBus.execute(command);
   }
