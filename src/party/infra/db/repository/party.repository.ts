@@ -20,9 +20,9 @@ export class PartyRepository implements IPartyRepository {
     return await this.partyRepository.save({ partyTypeId, title, content, image });
   }
 
-  async findOne(partyId: number) {
+  async findOne(id: number) {
     return await this.partyRepository.findOne({
-      where: { id: partyId },
+      where: { id },
     });
   }
 
@@ -30,8 +30,13 @@ export class PartyRepository implements IPartyRepository {
     return await this.partyRepository.save({ ...party });
   }
 
-  async delete(partyId: number) {
+  async deletedById(id: number) {
     const status = StatusEnum.DELETED;
-    await this.partyRepository.save({ partyId, status });
+    await this.partyRepository.save({ id, status });
+  }
+
+  async archivedById(id: number) {
+    const status = StatusEnum.ARCHIVED;
+    await this.partyRepository.save({ id, status });
   }
 }

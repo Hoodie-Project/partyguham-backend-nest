@@ -138,9 +138,18 @@ export class PartyController {
   }
 
   @HttpCode(204)
+  @PartySwagger.endParty()
+  @Delete(':partyId')
+  async endParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(user.id, param.partyId);
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
   @PartySwagger.deleteParty()
   @Delete(':partyId')
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    //Deleted
     const command = new DeletePartyCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
