@@ -128,7 +128,7 @@ export class PartySwagger {
   static deleteParty() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 삭제 (softdelete)',
+        summary: '파티 삭제',
         description: `**파티를 삭제하는 API 입니다.**  
         파티 데이터를 완전 삭제 하지 않고, 상태값을 deleted로 변경하여 데이터를 유지합니다.
         `,
@@ -143,7 +143,7 @@ export class PartySwagger {
   static deletePartyInMe() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티에서 스스로 나가기',
+        summary: '파티 나가기',
         description: `**파티를 (본인) 스스로 나가는 API 입니다.**  
         파티장 권한을 가진 사람은 나가기 기능이 불가 합니다. 할 수 없습니다.  
         파티장 권한을 양도하고 나가기가 가능합니다.
@@ -159,9 +159,10 @@ export class PartySwagger {
   static deletePartyInUser() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 특정 유저 내보내기',
+        summary: '파티 유저 내보내기',
         description: `**파티를 탈퇴하는 API 입니다.**  
-        파티장 권한을 가진 사람만 가능한 기능입니다.
+        파티장 권한을 가진 사람만 가능한 기능입니다.  
+        partyUserId (파티 유저 ID)를 통해 유저를 내보냅니다.
         `,
       }),
       ApiResponse({
