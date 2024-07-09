@@ -56,6 +56,11 @@ import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
 import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
 import { DelegatePartyCommand } from '../application/command/delegate-party.comand';
+import { PartyUserParamRequestDto } from './dto/request/partyUser.param.request.dto';
+import { DeletePartyUserCommand } from '../application/command/delete-partyUser.comand';
+import { LeavePartyCommand } from '../application/command/leave-party.comand';
+import { ArchivePartyCommand } from '../application/command/archive-party.comand';
+import { ActivePartyCommand } from '../application/command/active-party.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -138,25 +143,45 @@ export class PartyController {
   @PartySwagger.deleteParty()
   @Delete(':partyId')
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    //Deleted
     const command = new DeletePartyCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
   }
 
   @HttpCode(204)
+  @PartySwagger.endParty()
+  @Patch(':partyId/end')
+  async endParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new ArchivePartyCommand(user.id, param.partyId);
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
+  @PartySwagger.activeParty()
+  @Patch(':partyId/active')
+  async activeParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new ActivePartyCommand(user.id, param.partyId);
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
   @PartySwagger.deletePartyInMe()
-  @Delete(':partyId/me')
+  @Delete(':partyId/party-users/me')
   async deletePartyInMe(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyCommand(user.id, param.partyId);
+    const command = new LeavePartyCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
   }
 
   @HttpCode(204)
   @PartySwagger.deletePartyInUser()
-  @Delete(':partyId/user/:nickname')
-  async deletePartyInUser(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyCommand(user.id, param.partyId);
+  @Delete(':partyId/party-users/:partyUserId')
+  async deletePartyInUser(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyUserParamRequestDto,
+  ): Promise<void> {
+    const command = new DeletePartyUserCommand(user.id, param.partyId, param.partyUserId);
 
     this.commandBus.execute(command);
   }

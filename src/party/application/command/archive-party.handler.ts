@@ -4,18 +4,18 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
-import { DeletePartyCommand } from './delete-party.comand';
+import { ArchivePartyCommand } from './archive-party.comand';
 
 @Injectable()
-@CommandHandler(DeletePartyCommand)
-export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
+@CommandHandler(ArchivePartyCommand)
+export class ArchivePartyHandler implements ICommandHandler<ArchivePartyCommand> {
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
 
-  async execute(command: DeletePartyCommand) {
+  async execute(command: ArchivePartyCommand) {
     const { userId, partyId } = command;
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
@@ -23,6 +23,6 @@ export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
       throw new ForbiddenException('권한이 없습니다.');
     }
 
-    await this.partyRepository.deleteById(partyId);
+    await this.partyRepository.archivedById(partyId);
   }
 }
