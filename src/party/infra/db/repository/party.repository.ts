@@ -30,13 +30,18 @@ export class PartyRepository implements IPartyRepository {
     return await this.partyRepository.save({ ...party });
   }
 
-  async deletedById(id: number) {
+  async deleteById(id: number) {
     const status = StatusEnum.DELETED;
     await this.partyRepository.save({ id, status });
   }
 
   async archivedById(id: number) {
     const status = StatusEnum.ARCHIVED;
+    await this.partyRepository.save({ id, status });
+  }
+
+  async activeById(id: number) {
+    const status = StatusEnum.ACTIVE;
     await this.partyRepository.save({ id, status });
   }
 }

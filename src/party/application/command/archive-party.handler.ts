@@ -23,6 +23,6 @@ export class ArchivePartyHandler implements ICommandHandler<ArchivePartyCommand>
       throw new ForbiddenException('권한이 없습니다.');
     }
 
-    await this.partyRepository.deletedById(partyId);
+    await this.partyRepository.archivedById(partyId);
   }
 }

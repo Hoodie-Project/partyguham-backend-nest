@@ -5,6 +5,7 @@ export interface IPartyRepository {
   create: (partyTypeId: number, title: string, content: string, image: string) => Promise<PartyEntity>;
   findOne: (id: number) => Promise<PartyEntity>;
   update: (party: Party) => Promise<PartyEntity>;
-  deletedById: (id: number) => Promise<void>;
+  deleteById: (id: number) => Promise<void>;
   archivedById: (id: number) => Promise<void>;
+  activeById: (id: number) => Promise<void>;
 }

@@ -125,6 +125,21 @@ export class PartySwagger {
     );
   }
 
+  static activeParty() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 활성화',
+        description: `**파티를 재활성화하는 API 입니다.**  
+        종료(archived)된 파티에서 상태값 active 상태로 변경하여 데이터를 유지합니다.
+        `,
+      }),
+      ApiResponse({
+        status: 204,
+        description: '삭제 완료',
+      }),
+    );
+  }
+
   static deleteParty() {
     return applyDecorators(
       ApiOperation({
