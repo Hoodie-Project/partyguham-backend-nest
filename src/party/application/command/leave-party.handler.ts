@@ -13,6 +13,10 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
     const { userId, partyId } = command;
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
+    if (partyUser.authority !== 'member') {
+      throw new ForbiddenException('ACCESS_DENIED');
+    }
+
     if (partyUser) {
       throw new NotFoundException('NOT_FOUND');
     }
