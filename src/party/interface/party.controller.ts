@@ -61,6 +61,7 @@ import { DeletePartyUserCommand } from '../application/command/delete-partyUser.
 import { LeavePartyCommand } from '../application/command/leave-party.comand';
 import { ArchivePartyCommand } from '../application/command/archive-party.comand';
 import { ActivePartyCommand } from '../application/command/active-party.comand';
+import { UpdatePartyUserCommand } from '../application/command/update-partyUser.comand';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -172,6 +173,18 @@ export class PartyController {
     const command = new LeavePartyCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
+  }
+
+  // 파티원 포지션 변경 - 파티장만 변경 가능
+  @PartySwagger.updatePartyInUser()
+  @Patch(':partyId/party-users/:partyUserId')
+  async updatePartyInUser(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyUserParamRequestDto,
+  ): Promise<void> {
+    const command = new UpdatePartyUserCommand(user.id, param.partyId, param.partyUserId);
+
+    return this.commandBus.execute(command);
   }
 
   @HttpCode(204)

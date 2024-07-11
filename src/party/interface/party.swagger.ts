@@ -171,6 +171,22 @@ export class PartySwagger {
     );
   }
 
+  static updatePartyInUser() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 유저 데이터 변경',
+        description: `**파티에 속해있는 유저 데이터를 변경하는 API 입니다.**  
+        파티장 권한을 가진 사람만 가능한 기능입니다.  
+        partyUserId (파티 유저 ID)에 대해 포지션 변경이 가능합니다.
+        `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '변경 완료',
+      }),
+    );
+  }
+
   static deletePartyInUser() {
     return applyDecorators(
       ApiOperation({

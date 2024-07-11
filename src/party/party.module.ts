@@ -39,6 +39,7 @@ import { DeletePartyUserHandler } from './application/command/delete-partyUser.h
 import { LeavePartyHandler } from './application/command/leave-party.handler';
 import { ArchivePartyHandler } from './application/command/archive-party.handler';
 import { ActivePartyHandler } from './application/command/active-party.handler';
+import { UpdatePartyUserHandler } from './application/command/update-partyUser.handler';
 
 const uploadDir = 'images/party';
 
@@ -49,6 +50,7 @@ const commandHandlers = [
   ArchivePartyHandler,
   ActivePartyHandler,
   DeletePartyUserHandler,
+  UpdatePartyUserHandler,
   DeletePartyImageHandler,
   CreatePartyRecruitmentHandler,
   UpdatePartyRecruitmentHandler,
