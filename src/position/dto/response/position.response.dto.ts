@@ -8,7 +8,7 @@ export class PositionResponseDto {
   id: number;
 
   @Expose()
-  @ApiProperty({ example: '기획', description: '기획, 디자인, 개발, 마케터/광고' })
+  @ApiProperty({ example: '기획자', description: '기획자, 디자이너, 개발자, 마케터/광고' })
   main: string;
 
   @Expose()

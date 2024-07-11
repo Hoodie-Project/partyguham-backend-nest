@@ -16,8 +16,8 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
     const party = await this.partyRepository
       .createQueryBuilder('party')
       .leftJoinAndSelect('party.partyRecruitments', 'partyRecruitments')
-      .leftJoinAndSelect('partyRecruitments.partyApplications', 'partyApplications')
       .leftJoinAndSelect('partyRecruitments.position', 'position')
+      .leftJoinAndSelect('partyRecruitments.partyApplications', 'partyApplications')
       .where('party.id = :id', { id: partyId })
       .getOne();
 
