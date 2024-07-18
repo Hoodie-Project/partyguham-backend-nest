@@ -21,7 +21,7 @@ export class CreatePartyHandler implements ICommandHandler<CreatePartyCommand> {
     const { userId, title, content, image, partyTypeId, positionId } = command;
     const partyType = await this.partyTypeRepository.findOne(partyTypeId);
     if (!partyType) {
-      throw new NotFoundException('party Type이 존재하지 않습니다.');
+      throw new NotFoundException('NOT_FOUND', 'Party Type이 존재하지 않습니다.');
     }
 
     const party = await this.partyRepository.create(partyTypeId, title, content, image);

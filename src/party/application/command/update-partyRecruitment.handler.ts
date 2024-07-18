@@ -23,10 +23,10 @@ export class UpdatePartyRecruitmentHandler implements ICommandHandler<UpdatePart
   async execute(command: UpdatePartyRecruitmentCommand) {
     const { userId, partyId, partyRecruitmentId, positionId, recruiting_count } = command;
 
-    const party = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOne(partyId);
 
-    if (!party) {
-      throw new BadRequestException('모집하려고 하는 파티가 존재하지 않습니다.');
+    if (findParty) {
+      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);

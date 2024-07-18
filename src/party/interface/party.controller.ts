@@ -59,9 +59,10 @@ import { DelegatePartyCommand } from '../application/command/delegate-party.coma
 import { PartyUserParamRequestDto } from './dto/request/partyUser.param.request.dto';
 import { DeletePartyUserCommand } from '../application/command/delete-partyUser.comand';
 import { LeavePartyCommand } from '../application/command/leave-party.comand';
-import { ArchivePartyCommand } from '../application/command/archive-party.comand';
+import { EndPartyCommand } from '../application/command/end-party.comand';
 import { ActivePartyCommand } from '../application/command/active-party.comand';
 import { UpdatePartyUserCommand } from '../application/command/update-partyUser.comand';
+import { UpdatePartyUserRequestDto } from './dto/request/update-partyUser.request.dto';
 
 @ApiTags('파티')
 @UseGuards(AccessJwtAuthGuard)
@@ -128,7 +129,7 @@ export class PartyController {
     @Body() dto: UpdatePartyRequestDto,
   ) {
     if (Object.keys(dto).length === 0 && !file) {
-      throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.');
+      throw new BadRequestException('BAD_REQUEST', '변경하려는 이미지 또는 정보가 없습니다.');
     }
     const { partyTypeId, title, content } = dto;
     const imageFilePath = file ? file.path : undefined;
@@ -141,20 +142,10 @@ export class PartyController {
   }
 
   @HttpCode(204)
-  @PartySwagger.deleteParty()
-  @Delete(':partyId')
-  async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    //Deleted
-    const command = new DeletePartyCommand(user.id, param.partyId);
-
-    this.commandBus.execute(command);
-  }
-
-  @HttpCode(204)
   @PartySwagger.endParty()
   @Patch(':partyId/end')
   async endParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new ArchivePartyCommand(user.id, param.partyId);
+    const command = new EndPartyCommand(user.id, param.partyId);
     this.commandBus.execute(command);
   }
 
@@ -167,30 +158,39 @@ export class PartyController {
   }
 
   @HttpCode(204)
-  @PartySwagger.deletePartyInMe()
+  @PartySwagger.deleteParty()
+  @Delete(':partyId')
+  async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(user.id, param.partyId);
+
+    this.commandBus.execute(command);
+  }
+
+  @HttpCode(204)
+  @PartySwagger.leaveParty()
   @Delete(':partyId/party-users/me')
-  async deletePartyInMe(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+  async leaveParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new LeavePartyCommand(user.id, param.partyId);
 
     this.commandBus.execute(command);
   }
 
-  // 파티원 포지션 변경 - 파티장만 변경 가능
-  @PartySwagger.updatePartyInUser()
+  @PartySwagger.updatePartyUser()
   @Patch(':partyId/party-users/:partyUserId')
-  async updatePartyInUser(
+  async updatePartyUser(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
+    @Body() body: UpdatePartyUserRequestDto,
   ): Promise<void> {
-    const command = new UpdatePartyUserCommand(user.id, param.partyId, param.partyUserId);
+    const command = new UpdatePartyUserCommand(user.id, param.partyId, param.partyUserId, body.positionId);
 
     return this.commandBus.execute(command);
   }
 
   @HttpCode(204)
-  @PartySwagger.deletePartyInUser()
+  @PartySwagger.kickUserFromParty()
   @Delete(':partyId/party-users/:partyUserId')
-  async deletePartyInUser(
+  async kickUserFromParty(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
   ): Promise<void> {

@@ -19,17 +19,22 @@ export class DeletePartyImageHandler implements ICommandHandler<DeletePartyImage
 
   async execute(command: DeletePartyImageCommand) {
     const { userId, partyId } = command;
+
+    const findParty = await this.partyRepository.findOne(partyId);
+
+    if (findParty) {
+      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+    }
+
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (!partyUser) {
-      throw new NotFoundException('파티에 소속되지 않았거나, 파티를 찾을 수 없습니다.');
+      throw new NotFoundException('PARTY_USER_NOT_EXIST', '파티 유저를 찾을 수 없습니다.');
     }
 
     if (partyUser.authority === PartyAuthority.MEMBER) {
-      throw new UnauthorizedException('파티 수정 권한이 없습니다.');
+      throw new UnauthorizedException('ACCESS_DENIED', '파티 수정 권한이 없습니다.');
     }
-
-    const findParty = await this.partyRepository.findOne(partyId);
 
     const party = this.partyFactory.create(findParty);
 
