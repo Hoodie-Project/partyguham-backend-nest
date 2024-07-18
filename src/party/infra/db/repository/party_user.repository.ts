@@ -29,8 +29,10 @@ export class PartyUserRepository implements IPartyUserRepository {
     const authority = PartyAuthority.DEPUTY;
 
     await this.partyUserRepository.save({ userId, partyId, positionId, authority });
+  }
 
-    // return this.partyUserFactory
+  async updateByPositionId(id: number, positionId: number) {
+    return await this.partyUserRepository.save({ id, positionId });
   }
 
   async findOneById(id: number) {

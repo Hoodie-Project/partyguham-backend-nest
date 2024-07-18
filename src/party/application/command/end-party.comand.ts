@@ -1,6 +1,6 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class ArchivePartyCommand implements ICommand {
+export class EndPartyCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly partyId: number,

@@ -37,7 +37,7 @@ import { ApprovePartyApplicationHandler } from './application/command/approve-pa
 import { RejectionPartyApplicationHandler } from './application/command/rejection-partyApplication.handler';
 import { DeletePartyUserHandler } from './application/command/delete-partyUser.handler';
 import { LeavePartyHandler } from './application/command/leave-party.handler';
-import { ArchivePartyHandler } from './application/command/archive-party.handler';
+import { EndPartyHandler } from './application/command/end-party.handler';
 import { ActivePartyHandler } from './application/command/active-party.handler';
 import { UpdatePartyUserHandler } from './application/command/update-partyUser.handler';
 
@@ -47,7 +47,7 @@ const commandHandlers = [
   CreatePartyHandler,
   UpdatePartyHandler,
   DeletePartyHandler,
-  ArchivePartyHandler,
+  EndPartyHandler,
   ActivePartyHandler,
   DeletePartyUserHandler,
   UpdatePartyUserHandler,

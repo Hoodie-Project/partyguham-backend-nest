@@ -5,5 +5,6 @@ export class UpdatePartyUserCommand implements ICommand {
     readonly userId: number,
     readonly partyId: number,
     readonly partyUserId: number,
+    readonly positionId: number,
   ) {}
 }

@@ -44,6 +44,10 @@ export class PartySwagger {
         description: '파티 생성',
         type: PartyResponseDto,
       }),
+      ApiResponse({
+        status: 204,
+        description: 'Party Type이 존재하지 않습니다.',
+      }),
     );
   }
 
@@ -86,6 +90,10 @@ export class PartySwagger {
         description: '파티 상세 정보 조회',
         type: GetPartyResponseDto,
       }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
+      }),
     );
   }
 
@@ -107,6 +115,19 @@ export class PartySwagger {
         description: '파티 수정 완료',
         type: PartyResponseDto,
       }),
+
+      ApiResponse({
+        status: 400,
+        description: '변경하려는 이미지 또는 정보가 없습니다.',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 수정 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
+      }),
     );
   }
 
@@ -120,7 +141,15 @@ export class PartySwagger {
       }),
       ApiResponse({
         status: 204,
-        description: '삭제 완료',
+        description: '파티 종료 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 종료 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
       }),
     );
   }
@@ -135,7 +164,15 @@ export class PartySwagger {
       }),
       ApiResponse({
         status: 204,
-        description: '삭제 완료',
+        description: '활성화 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 활성화 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
       }),
     );
   }
@@ -152,10 +189,18 @@ export class PartySwagger {
         status: 204,
         description: '삭제 완료',
       }),
+      ApiResponse({
+        status: 403,
+        description: '파티 삭제 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
+      }),
     );
   }
 
-  static deletePartyInMe() {
+  static leaveParty() {
     return applyDecorators(
       ApiOperation({
         summary: '파티 나가기',
@@ -166,12 +211,20 @@ export class PartySwagger {
       }),
       ApiResponse({
         status: 204,
-        description: '삭제 완료',
+        description: '파티 나가기 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티장은 파티를 나갈 수 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티유저를 찾을 수 없습니다. \t\n파티를 찾을 수 없습니다.',
       }),
     );
   }
 
-  static updatePartyInUser() {
+  static updatePartyUser() {
     return applyDecorators(
       ApiOperation({
         summary: '파티 유저 데이터 변경',
@@ -184,10 +237,18 @@ export class PartySwagger {
         status: 200,
         description: '변경 완료',
       }),
+      ApiResponse({
+        status: 403,
+        description: '파티 유저 수정 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티유저를 찾을 수 없습니다. \t\n파티를 찾을 수 없습니다.',
+      }),
     );
   }
 
-  static deletePartyInUser() {
+  static kickUserFromParty() {
     return applyDecorators(
       ApiOperation({
         summary: '파티 유저 내보내기',
@@ -199,6 +260,14 @@ export class PartySwagger {
       ApiResponse({
         status: 204,
         description: '삭제 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 유저를 내보낼 권한이 없습니다.  파티장은 내보낼 수 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티유저를 찾을 수 없습니다. \t\n파티를 찾을 수 없습니다.',
       }),
     );
   }
@@ -214,6 +283,10 @@ export class PartySwagger {
       ApiResponse({
         status: 204,
         description: '삭제 완료',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
       }),
     );
   }
