@@ -20,19 +20,11 @@ export class PartyTypeRepository implements IPartyTypeRepository {
       where: { id: partyTypeId },
     });
 
-    if (!party) {
-      throw new NotFoundException('파티가 존재하지 않습니다');
-    }
-
     return party;
   }
 
   async findAll() {
     const party = await this.partyRepository.find({});
-
-    if (!party) {
-      throw new NotFoundException('파티가 존재하지 않습니다');
-    }
 
     return party;
   }

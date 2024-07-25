@@ -26,10 +26,6 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
       where: { id: partyRecruitmentId },
     });
 
-    if (!partyApplication) {
-      throw new NotFoundException('파티 모집이 존재하지 않습니다');
-    }
-
     return partyApplication;
   }
 
@@ -37,10 +33,6 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     const partyApplication = await this.partyApplicationRepository.findOne({
       where: { id: partyApplicationId },
     });
-
-    if (!partyApplication) {
-      throw new NotFoundException('파티 모집이 존재하지 않습니다');
-    }
 
     return partyApplication;
   }
@@ -50,10 +42,6 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
       where: { id: partyApplicationId },
       relations: ['partyRecruitment'],
     });
-
-    if (!partyApplication) {
-      throw new NotFoundException('파티 모집이 존재하지 않습니다');
-    }
 
     return partyApplication;
   }

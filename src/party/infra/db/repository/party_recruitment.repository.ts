@@ -40,10 +40,6 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
       where: { partyId },
     });
 
-    if (!partyRecruitment) {
-      throw new NotFoundException('파티 모집이 존재하지 않습니다');
-    }
-
     return partyRecruitment;
   }
 
@@ -52,10 +48,6 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
       where: { id },
       relations: ['position'],
     });
-
-    if (!partyRecruitment) {
-      throw new NotFoundException('파티 모집이 존재하지 않습니다');
-    }
 
     return partyRecruitment;
   }
