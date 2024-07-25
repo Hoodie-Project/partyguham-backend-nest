@@ -308,35 +308,14 @@ export class PartyController {
     return this.commandBus.execute(command);
   }
 
-  // @Delete(':partyId/applications/:partyApplicationId')
-  // @ApiOperation({ summary: '파티 지원 삭제(취소)' })
-  // async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param() param: PartyApplicationParamRequestDto,): Promise<void> {
-  //   // 지원자만 내정보에서 취소 가능
-  //   partyId;
-  // }
-
-  // 초대
-  // @Post(':partyId/invitation/:nickname')
-  // @ApiOperation({ summary: '파티 초대' })
-  // async sendPartyInvitation(
-  //   @CurrentUser() user: CurrentUserType,
-  //   @Param('partyId') partyId: number,
-  //   @Param('nickname') nickname: string,
-  //   @Body() dto: PartyRequestDto,
-  // ): Promise<void> {
-  //   dto;
-  // }
-
-  // @Delete(':partyId/invitation/:nickname')
-  // @ApiOperation({ summary: '파티 초대 취소' })
-  // async deletePartyInvitation(
-  //   @CurrentUser() user: CurrentUserType,
-  //   @Param('partyId') partyId: number,
-  //   @Param('nickname') nickname: string,
-  //   @Body() dto: PartyRequestDto,
-  // ): Promise<void> {
-  //   dto;
-  // }
+  @Delete(':partyId/applications/:partyApplicationId')
+  @ApiOperation({ summary: '파티 지원 삭제(취소)' })
+  async deletePartyApplication(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyApplicationParamRequestDto,
+  ): Promise<void> {
+    // 지원자가 내정보에서 취소
+  }
 
   @Post(':partyId/delegation')
   @PartyRecruitmentSwagger.transferPartyLeadership()
