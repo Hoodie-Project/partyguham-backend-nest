@@ -1,4 +1,4 @@
-import { NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
@@ -26,7 +26,7 @@ export class GetPartyApplicationsHandler implements IQueryHandler<GetPartyApplic
       .getOne();
 
     if (partyUser.authority !== PartyAuthority.MASTER) {
-      throw new UnauthorizedException('파티 지원자 조회 권한이 없습니다.');
+      throw new ForbiddenException('파티 지원자 조회 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const partyApplicationUser = await this.partyApplicationRepository

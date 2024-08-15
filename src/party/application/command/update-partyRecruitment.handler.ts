@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -26,13 +26,13 @@ export class UpdatePartyRecruitmentHandler implements ICommandHandler<UpdatePart
     const findParty = await this.partyRepository.findOne(partyId);
 
     if (findParty) {
-      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MEMBER) {
-      throw new UnauthorizedException('파티 모집 수정 권한이 없습니다.');
+      throw new ForbiddenException('파티 모집 수정 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     await this.partyRecruitmentRepository.update(partyRecruitmentId, positionId, recruiting_count);

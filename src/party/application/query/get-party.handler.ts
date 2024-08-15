@@ -29,7 +29,7 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
       .getOne();
 
     if (!party) {
-      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
     if (party.status === 'deleted') {

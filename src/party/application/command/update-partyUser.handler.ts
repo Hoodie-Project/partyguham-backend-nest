@@ -21,19 +21,19 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
     const findParty = await this.partyRepository.findOne(partyId);
 
     if (findParty) {
-      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority !== 'master') {
-      throw new ForbiddenException('ACCESS_DENIED', '파티 유저 수정 권한이 없습니다.');
+      throw new ForbiddenException('파티 유저 수정 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const findPartyUser = await this.partyUserRepository.findOneById(partyUserId);
 
     if (!findPartyUser) {
-      throw new NotFoundException('PARTY_USER_NOT_EXIST', '파티유저를 찾을 수 없습니다.');
+      throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
     }
 
     await this.partyUserRepository.updateByPositionId(partyUserId, positionId);

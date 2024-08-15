@@ -19,17 +19,17 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
     const findParty = await this.partyRepository.findOne(partyId);
 
     if (findParty) {
-      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === 'master') {
-      throw new ForbiddenException('FORBIDDEN', '파티장은 파티를 나갈 수 없습니다.');
+      throw new ForbiddenException('파티장은 파티를 나갈 수 없습니다.', 'FORBIDDEN');
     }
 
     if (partyUser) {
-      throw new NotFoundException('PARTY_USER__NOT_EXIST', '파티유저를 찾을 수 없습니다.');
+      throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER__NOT_EXIST');
     }
 
     await this.partyUserRepository.deleteById(partyUser.id);

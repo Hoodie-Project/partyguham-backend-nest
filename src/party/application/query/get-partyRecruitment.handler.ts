@@ -22,7 +22,7 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       .getOne();
 
     if (!party) {
-      throw new NotFoundException('파티가 존재하지 않습니다');
+      throw new NotFoundException('파티가 존재하지 않습니다', 'PARTY_NOT_EXIST');
     }
 
     return party.partyRecruitments;

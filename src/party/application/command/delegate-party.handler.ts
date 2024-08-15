@@ -28,14 +28,14 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('요청한 파티가 유효하지 않습니다.');
+      throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
     }
 
     // 파티장만 승인 가능
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MASTER) {
-      throw new ForbiddenException('파티 모집 권한이 없습니다.');
+      throw new ForbiddenException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(delegateUserId);

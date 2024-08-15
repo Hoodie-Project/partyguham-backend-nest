@@ -26,13 +26,13 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('모집하려고 하는 파티가 존재하지 않습니다.');
+      throw new BadRequestException('모집하려고 하는 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MEMBER) {
-      throw new UnauthorizedException('파티 모집 권한이 없습니다.');
+      throw new UnauthorizedException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const partyRecruitment = await this.partyRecruitmentRepository.bulkInsert(partyId, recruitments);
