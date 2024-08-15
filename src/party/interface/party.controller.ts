@@ -46,7 +46,6 @@ import { CreatePartyApplicationRequestDto } from './dto/request/create-applicati
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { RecruitmentRequestDto } from './dto/request/recruitment.request.dto';
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
@@ -128,7 +127,7 @@ export class PartyController {
     @Body() dto: UpdatePartyRequestDto,
   ) {
     if (Object.keys(dto).length === 0 && !file) {
-      throw new BadRequestException('BAD_REQUEST', '변경하려는 이미지 또는 정보가 없습니다.');
+      throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.', 'BAD_REQUEST');
     }
     const { partyTypeId, title, content } = dto;
     const imageFilePath = file ? file.path : undefined;
@@ -213,9 +212,11 @@ export class PartyController {
   async createRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
-    @Body() dto: CreatePartyRecruitmentRequestDto,
+    @Body() body: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitments);
+    const { positionId, recruiting_count } = body;
+
+    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, recruiting_count);
 
     return this.commandBus.execute(command);
   }
@@ -234,7 +235,7 @@ export class PartyController {
   async updateRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
-    @Body() body: RecruitmentRequestDto,
+    @Body() body: CreatePartyRecruitmentRequestDto,
   ) {
     const { positionId, recruiting_count } = body;
 

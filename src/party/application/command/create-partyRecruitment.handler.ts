@@ -1,4 +1,11 @@
-import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -21,7 +28,7 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
   ) {}
 
   async execute(command: CreatePartyRecruitmentCommand) {
-    const { userId, partyId, recruitments } = command;
+    const { userId, partyId, positionId, recruiting_count } = command;
 
     const party = await this.partyRepository.findOne(partyId);
 
@@ -35,8 +42,20 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
       throw new UnauthorizedException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    const partyRecruitment = await this.partyRecruitmentRepository.bulkInsert(partyId, recruitments);
+    const partyUserCount = await this.partyUserRepository.count(partyId);
+    const partyRecruitment = await this.partyRecruitmentRepository.findAllByPartyId(partyId);
 
-    return partyRecruitment;
+    let recruitingCount = partyRecruitment.reduce(
+      (acc, value) => acc + value.recruitingCount - value.recruitedCount,
+      0,
+    );
+
+    if (partyUserCount + recruiting_count + recruitingCount > 17) {
+      throw new ForbiddenException('파티 모집 인원이 16명 초과되는 모집을 생성 할 수 없습니다.', 'LIMIT_EXCEEDED');
+    }
+
+    const result = await this.partyRecruitmentRepository.create(partyId, positionId, recruiting_count);
+
+    return result;
   }
 }

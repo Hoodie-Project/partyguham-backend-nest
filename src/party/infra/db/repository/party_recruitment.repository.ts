@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 import { PartyRecruitmentEntity } from '../entity/apply/party_recruitment.entity';
-import { RecruitmentRequestDto } from 'src/party/interface/dto/request/recruitment.request.dto';
 
 @Injectable()
 export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
@@ -21,19 +20,19 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     return partyRecruitment;
   }
 
-  async bulkInsert(partyId: number, recruitment: RecruitmentRequestDto[]) {
-    const partyRecruitments = recruitment.map((value) => ({
-      partyId,
-      ...value,
-    }));
+  // async bulkInsert(partyId: number, recruitment: RecruitmentRequestDto[]) {
+  //   const partyRecruitments = recruitment.map((value) => ({
+  //     partyId,
+  //     ...value,
+  //   }));
 
-    try {
-      const result = await this.partyRecruitmentRepository.save(partyRecruitments);
-      return result;
-    } catch (error) {
-      if (error.driverError.code === '23505') throw new BadRequestException('중복으로 포지션을 넣을 수 없습니다.');
-    }
-  }
+  //   try {
+  //     const result = await this.partyRecruitmentRepository.save(partyRecruitments);
+  //     return result;
+  //   } catch (error) {
+  //     if (error.driverError.code === '23505') throw new BadRequestException('중복으로 포지션을 넣을 수 없습니다.');
+  //   }
+  // }
 
   async findAllByPartyId(partyId: number) {
     const partyRecruitment = await this.partyRecruitmentRepository.find({

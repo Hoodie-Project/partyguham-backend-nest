@@ -13,6 +13,10 @@ export class PartyUserRepository implements IPartyUserRepository {
     private partyUserRepository: Repository<PartyUserEntity>,
   ) {}
 
+  async count(partyId: number) {
+    return await this.partyUserRepository.count({ where: { partyId } });
+  }
+
   async createMember(userId: number, partyId: number, positionId: number) {
     const authority = PartyAuthority.MEMBER;
 
