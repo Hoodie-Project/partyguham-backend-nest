@@ -25,6 +25,8 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
     parties.forEach((party) => {
       if (party.status === 'deleted') {
         party['tag'] = '파티 종료';
+      } else if (party.status === 'archived') {
+        party['tag'] = '파티 완료';
       } else if (party.partyRecruitments.length === 0) {
         party['tag'] = '진행중';
       } else {
