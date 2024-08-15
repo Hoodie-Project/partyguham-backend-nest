@@ -46,7 +46,6 @@ import { CreatePartyApplicationRequestDto } from './dto/request/create-applicati
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { RecruitmentRequestDto } from './dto/request/recruitment.request.dto';
 import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
@@ -91,7 +90,6 @@ export class PartyController {
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
-
     const imageFilePath = file ? file.path : null;
 
     const command = new CreatePartyCommand(user.id, title, content, imageFilePath, partyTypeId, positionId);
@@ -129,7 +127,7 @@ export class PartyController {
     @Body() dto: UpdatePartyRequestDto,
   ) {
     if (Object.keys(dto).length === 0 && !file) {
-      throw new BadRequestException('BAD_REQUEST', '변경하려는 이미지 또는 정보가 없습니다.');
+      throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.', 'BAD_REQUEST');
     }
     const { partyTypeId, title, content } = dto;
     const imageFilePath = file ? file.path : undefined;
@@ -214,9 +212,11 @@ export class PartyController {
   async createRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
-    @Body() dto: CreatePartyRecruitmentRequestDto,
+    @Body() body: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, dto.recruitments);
+    const { positionId, recruiting_count } = body;
+
+    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, recruiting_count);
 
     return this.commandBus.execute(command);
   }
@@ -235,7 +235,7 @@ export class PartyController {
   async updateRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentParamRequestDto,
-    @Body() body: RecruitmentRequestDto,
+    @Body() body: CreatePartyRecruitmentRequestDto,
   ) {
     const { positionId, recruiting_count } = body;
 
@@ -309,35 +309,14 @@ export class PartyController {
     return this.commandBus.execute(command);
   }
 
-  // @Delete(':partyId/applications/:partyApplicationId')
-  // @ApiOperation({ summary: '파티 지원 삭제(취소)' })
-  // async deletePartyApplication(@CurrentUser() user: CurrentUserType, @Param() param: PartyApplicationParamRequestDto,): Promise<void> {
-  //   // 지원자만 내정보에서 취소 가능
-  //   partyId;
-  // }
-
-  // 초대
-  // @Post(':partyId/invitation/:nickname')
-  // @ApiOperation({ summary: '파티 초대' })
-  // async sendPartyInvitation(
-  //   @CurrentUser() user: CurrentUserType,
-  //   @Param('partyId') partyId: number,
-  //   @Param('nickname') nickname: string,
-  //   @Body() dto: PartyRequestDto,
-  // ): Promise<void> {
-  //   dto;
-  // }
-
-  // @Delete(':partyId/invitation/:nickname')
-  // @ApiOperation({ summary: '파티 초대 취소' })
-  // async deletePartyInvitation(
-  //   @CurrentUser() user: CurrentUserType,
-  //   @Param('partyId') partyId: number,
-  //   @Param('nickname') nickname: string,
-  //   @Body() dto: PartyRequestDto,
-  // ): Promise<void> {
-  //   dto;
-  // }
+  @Delete(':partyId/applications/:partyApplicationId')
+  @ApiOperation({ summary: '파티 지원 삭제(취소)' })
+  async deletePartyApplication(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyApplicationParamRequestDto,
+  ): Promise<void> {
+    // 지원자가 내정보에서 취소
+  }
 
   @Post(':partyId/delegation')
   @PartyRecruitmentSwagger.transferPartyLeadership()

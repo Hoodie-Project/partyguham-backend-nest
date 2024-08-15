@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, GoneException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -21,13 +21,16 @@ export class EndPartyHandler implements ICommandHandler<EndPartyCommand> {
     const findParty = await this.partyRepository.findOne(partyId);
 
     if (findParty) {
-      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
+    }
+    if (findParty.status === 'deleted') {
+      throw new GoneException('종료된 파티 입니다.', 'DELETED');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority !== 'master') {
-      throw new ForbiddenException('ACCESS_DENIED', '파티 종료 권한이 없습니다.');
+      throw new ForbiddenException('파티 종료 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     await this.partyRepository.archivedById(partyId);

@@ -1,4 +1,11 @@
-import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  GoneException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -23,17 +30,23 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     const findParty = await this.partyRepository.findOne(partyId);
 
     if (findParty) {
-      throw new NotFoundException('PARTY_NOT_EXIST', '파티를 찾을 수 없습니다.');
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
+    }
+    if (findParty.status === 'deleted') {
+      throw new GoneException('종료된 파티 입니다.', 'DELETED');
+    }
+    if (findParty.status === 'archived') {
+      throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (!partyUser) {
-      throw new NotFoundException('PARTY_USER_NOT_EXIST', '파티유저를 찾을 수 없습니다.');
+      throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
     }
 
     if (partyUser.authority === PartyAuthority.MEMBER) {
-      throw new ForbiddenException('ACCESS_DENIED', '파티 수정 권한이 없습니다.');
+      throw new ForbiddenException('파티 수정 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const party = this.partyFactory.create(findParty);

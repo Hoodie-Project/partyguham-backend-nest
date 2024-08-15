@@ -1,4 +1,12 @@
-import { BadRequestException, ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  GoneException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -25,17 +33,23 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
   async execute(command: DelegatePartyCommand) {
     const { userId, partyId, delegateUserId } = command;
 
-    const party = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOne(partyId);
 
-    if (!party) {
-      throw new BadRequestException('요청한 파티가 유효하지 않습니다.');
+    if (!findParty) {
+      throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
+    }
+    if (findParty.status === 'deleted') {
+      throw new GoneException('종료된 파티 입니다.', 'DELETED');
+    }
+    if (findParty.status === 'archived') {
+      throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
     // 파티장만 승인 가능
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MASTER) {
-      throw new ForbiddenException('파티 모집 권한이 없습니다.');
+      throw new ForbiddenException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(delegateUserId);

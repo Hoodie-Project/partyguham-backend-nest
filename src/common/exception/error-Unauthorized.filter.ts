@@ -8,13 +8,14 @@ export class UnauthorizedExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
 
-    const result = exception.getResponse() as { message: any; statusCode: number };
+    const result = exception.getResponse() as { message: any; error: any; statusCode: number };
     const message = result.message;
     const statusCode = result.statusCode;
+    const error = result.error;
 
     response.status(statusCode).json({
       message,
-      error: 'UNAUTHORIZED',
+      error: error || 'UNAUTHORIZED',
       statusCode,
       path: request.url,
       timestamp: new Date().toISOString(),

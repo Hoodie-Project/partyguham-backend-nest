@@ -7,14 +7,16 @@ export class NotFoundExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
     const request = ctx.getRequest<Request>();
+    console.log(exception);
 
-    const result = exception.getResponse() as { message: any; statusCode: number };
+    const result = exception.getResponse() as { message: any; error: any; statusCode: number };
     const message = result.message;
     const statusCode = result.statusCode;
+    const error = result.error;
 
     response.status(statusCode).json({
       message,
-      error: 'NOT_FOUND',
+      error: error || 'NOT_FOUND',
       statusCode,
       path: request.url,
       timestamp: new Date().toISOString(),
