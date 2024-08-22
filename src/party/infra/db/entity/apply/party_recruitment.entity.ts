@@ -32,6 +32,9 @@ export class PartyRecruitmentEntity {
   @Column('smallint', { default: 0 })
   recruitedCount: number; // 모집된
 
+  @Column('text', { nullable: true })
+  content: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

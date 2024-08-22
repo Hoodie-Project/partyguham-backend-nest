@@ -14,8 +14,13 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     private partyRecruitmentRepository: Repository<PartyRecruitmentEntity>,
   ) {}
 
-  async create(partyId: number, positionId: number, recruitingCount: number) {
-    const partyRecruitment = await this.partyRecruitmentRepository.save({ partyId, positionId, recruitingCount });
+  async create(partyId: number, positionId: number, content: string, recruitingCount: number) {
+    const partyRecruitment = await this.partyRecruitmentRepository.save({
+      partyId,
+      positionId,
+      content,
+      recruitingCount,
+    });
 
     return partyRecruitment;
   }

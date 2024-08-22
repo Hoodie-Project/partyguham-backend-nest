@@ -214,13 +214,14 @@ export class PartyController {
     @Param() param: PartyRequestDto,
     @Body() body: CreatePartyRecruitmentRequestDto,
   ): Promise<void> {
-    const { positionId, recruiting_count } = body;
+    const { positionId, content, recruiting_count } = body;
 
-    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, recruiting_count);
+    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, content, recruiting_count);
 
     return this.commandBus.execute(command);
   }
 
+  //! 모집 공고 조회 방법 쿼리 -> 최근 등록일 추가
   @Get(':partyId/recruitments')
   @PartyRecruitmentSwagger.getPartyRecruitments()
   async getPartyRecruitments(@Param() param: PartyRequestDto) {
@@ -276,6 +277,7 @@ export class PartyController {
     return this.commandBus.execute(command);
   }
 
+  // 지원자 조회시 최근 지원자
   @Get(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.getPartyApplication()
   async getPartyApplication(
