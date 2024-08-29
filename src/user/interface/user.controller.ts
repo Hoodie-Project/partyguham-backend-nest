@@ -15,341 +15,47 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
-import { KakaoCodeCommand } from '../application/command/kakao-code.command';
-import { CreateUserCommand } from '../application/command/create-user.command';
-import { UpdateUserCommand } from '../application/command/update-user.command';
-
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
-
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
-import { UserQueryRequestDto } from './dto/request/user.query.request.dto';
-
-import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
-import { GetUserQuery } from '../application/query/get-user.query';
-import { GetUsersQuery } from '../application/query/get-users.query';
-
 import { UserResponseDto } from './dto/response/UserResponseDto';
-import { FollowQueryRequestDto } from './dto/request/follow.user.request.dto';
-import { GetFollowQuery } from '../application/query/get-follow.query';
-import { FollowResponseDto } from './dto/response/FollowResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
-import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
-import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
-
-import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
-import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
 import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
-
-import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
-import { CreateUserPersonalityCommand } from '../application/command/create.userPersonality.command';
 import { UserPersonalityResponseDto } from './dto/response/UserPersonalityResponseDto';
-import { DeleteUserPersonalityCommand } from '../application/command/delete-userPersonality.command';
-
-import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
-import { DeleteUserCareerCommand } from '../application/command/delete-userCareer.command';
-import { GoogleCodeCommand } from '../application/command/google-code.command';
-import { GoogleLoginCommand } from '../application/command/google-login.command';
-import { AppOauthRequestDto } from './dto/request/app-oauth.request.dto';
-import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
-import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
-import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
+import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
+
+import { CreateUserCommand } from '../application/command/create-user.command';
+import { UpdateUserCommand } from '../application/command/update-user.command';
+import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
+import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
+
+import { GetUserQuery } from '../application/query/get-user.query';
+import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
+import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
+
+import { CreateUserPersonalityCommand } from '../application/command/create.userPersonality.command';
+import { DeleteUserPersonalityCommand } from '../application/command/delete-userPersonality.command';
+import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
+import { DeleteUserCareerCommand } from '../application/command/delete-userCareer.command';
+import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { DeleteUserLocationsCommand } from '../application/command/delete-userLocations.command';
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 
-@ApiTags('user API')
+@ApiTags('user')
 @Controller('users')
 export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
-
-  @Get('kakao/login')
-  @ApiOperation({ summary: '카카오 로그인 (응답은 /kakao/callback API 확인)' })
-  async signinByKakao(@Res() res: Response) {
-    const command = new KakaoCodeCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-  }
-
-  @Get('kakao/callback')
-  @ApiOperation({
-    summary: '웹/앱 사용 X // 로그인 시도에 대한 카카오 서버에 대한 응답 (카카오 로그인 리다이렉트 API)',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '로그인 완료',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 401,
-    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-  })
-  async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
-    const command = new KakaoLoginCommand(code);
-
-    const result = await this.commandBus.execute(command);
-
-    if (result.type === 'login') {
-      res.cookie('refreshToken', result.refreshToken, {
-        secure: true, // HTTPS 연결에서만 쿠키 전송
-        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
-      });
-
-      res.status(200).redirect(`${process.env.BASE_URL}`);
-    }
-
-    if (result.type === 'signup') {
-      req.session.email = result.email;
-      req.session.image = result.image;
-
-      res.cookie('signupToken', result.signupAccessToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
-      });
-
-      res.status(401).redirect(`${process.env.BASE_URL}/join`);
-    }
-  }
-
-  @Post('kakao/app/login')
-  @ApiOperation({
-    summary: 'App Kakao 로그인',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '로그인 완료',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-    schema: { example: { accessToken: 'token' } },
-  })
-  @ApiResponse({
-    status: 401,
-    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-    schema: { example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' } },
-  })
-  async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
-    const command = new KakaoAppLoginCommand(dto.uid);
-
-    const result = await this.commandBus.execute(command);
-    if (result.type === 'login') {
-      res.cookie('refreshToken', result.refreshToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-      });
-
-      res.status(200).json({ accessToken: result.accessToken });
-    }
-
-    if (result.type === 'signup') {
-      res.cookie('signupToken', result.signupAccessToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-        expires: new Date(Date.now() + 3600000),
-      });
-
-      res.status(401).json({ message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' });
-    }
-  }
-
-  @Get('google/login')
-  @ApiOperation({ summary: '구글 로그인 (응답은 /google/callback API 확인)' })
-  async signinByGoogle(@Res() res: Response) {
-    const command = new GoogleCodeCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-  }
-
-  @Get('google/callback')
-  @ApiOperation({
-    summary: '사용 X // 로그인 시도에 대한 구글 서버에 대한 응답 (구글 로그인 리다이렉트 API)',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '로그인 완료',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-  })
-  @ApiResponse({
-    status: 401,
-    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행 ',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-  })
-  async googleCallback(
-    @Req() req: Request,
-    @Res() res: Response,
-    @Query('code') code: string,
-    @Query('scope') scope: string,
-  ) {
-    const command = new GoogleLoginCommand(code);
-
-    const result = await this.commandBus.execute(command);
-
-    if (result.type === 'login') {
-      res.cookie('refreshToken', result.refreshToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-      });
-      res.json({ accessToken: result.accessToken });
-      res.redirect(`${process.env.BASE_URL}`);
-    }
-
-    if (result.type === 'signup') {
-      req.session.email = result.email;
-      req.session.image = result.image;
-
-      res.cookie('signupToken', result.signupAccessToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
-      });
-
-      res.status(401).redirect(`${process.env.BASE_URL}/join`);
-    }
-  }
-
-  @Post('google/app/login')
-  @ApiOperation({
-    summary: 'App Google 로그인',
-  })
-  @ApiResponse({
-    status: 200,
-    description: '로그인 가능',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-    schema: { example: { accessToken: 'token' } },
-  })
-  @ApiResponse({
-    status: 401,
-    description: '회원가입이 되어있지 않아 로그인 권한이 없음 / 회원가입 진행 ',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-    schema: { example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요.' } },
-  })
-  async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() dto: AppOauthRequestDto) {
-    const command = new GoogleAppLoginCommand(dto.uid);
-
-    const result = await this.commandBus.execute(command);
-
-    if (result.type === 'login') {
-      res.cookie('refreshToken', result.refreshToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-      });
-      res.status(200).json({ accessToken: result.accessToken });
-    }
-
-    if (result.type === 'signup') {
-      res.cookie('signupToken', result.signupAccessToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
-      });
-
-      res.status(401).json({ message: '로그인이 불가능 하여, 회원가입을 시도 해주세요' });
-    }
-  }
-
-  @ApiHeader({ name: 'cookies', description: 'signupToken' })
-  @UseGuards(SignupJwtAuthGuard)
-  @Get('me/oauth')
-  @ApiOperation({ summary: '웹에서만 사용가능 - session에서 oauth 본인 데이터 호출 (email, image)' })
-  @ApiResponse({
-    status: 200,
-    description: '이메일, oauth 이미지 URL 데이터',
-    schema: { example: { email: 'email@partyguam.net', image: 'image URL' } },
-  })
-  async getData(@Req() req: Request) {
-    const email = req.session.email || null;
-    const image = req.session.image || null;
-
-    return { email, image };
-  }
-
   @UseGuards(SignupJwtAuthGuard)
   @Get('check-nickname')
   @ApiOperation({ summary: '닉네임 중복검사' })
@@ -373,7 +79,7 @@ export class UserController {
 
   @UseGuards(SignupJwtAuthGuard)
   @Post('')
-  @ApiOperation({ summary: '회원가입 (필수)' })
+  @ApiOperation({ summary: '필수회원가입 (유저생성)' })
   @ApiResponse({
     status: 201,
     description: '회원가입하여 유저 생성 완료, 로그인 완료 (token 리턴)',
@@ -656,24 +362,24 @@ export class UserController {
     await this.commandBus.execute(command);
   }
 
-  @HttpCode(204)
-  @Delete('logout')
-  @ApiOperation({ summary: '로그아웃' })
-  @ApiResponse({
-    status: 204,
-    description: `'refreshToken' clearCookie`,
-  })
-  async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
-    res.clearCookie('refreshToken');
-  }
-
   @UseGuards(AccessJwtAuthGuard)
-  @Delete('signout')
-  @ApiOperation({ summary: '회원탈퇴' })
-  async signout(@CurrentUser() user: CurrentUserType): Promise<void> {
-    const command = new DeleteUserCommand(user.id);
+  @Get('nickname/:nickname')
+  @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 유저 정보를 가져왔습니다.',
+    type: UserResponseDto,
+  })
+  @ApiResponse({
+    status: 404,
+    description: '데이터를 찾을 수 없습니다.',
+  })
+  async getUser(@Param() param: UserParamRequestDto) {
+    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
 
-    return this.commandBus.execute(command);
+    const result = this.queryBus.execute(userInfoByNickname);
+
+    return plainToInstance(UserResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -709,6 +415,26 @@ export class UserController {
     return plainToInstance(UserResponseDto, result);
   }
 
+  @HttpCode(204)
+  @Delete('logout')
+  @ApiOperation({ summary: '로그아웃' })
+  @ApiResponse({
+    status: 204,
+    description: `'refreshToken' clearCookie`,
+  })
+  async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
+    res.clearCookie('refreshToken');
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete('signout')
+  @ApiOperation({ summary: '회원탈퇴' })
+  async signout(@CurrentUser() user: CurrentUserType): Promise<void> {
+    const command = new DeleteUserCommand(user.id);
+
+    return this.commandBus.execute(command);
+  }
+
   // @UseGuards(AccessJwtAuthGuard)
   // @Patch('image')
   // @ApiOperation({ summary: '(개발중) 이미지 변경' })
@@ -718,26 +444,6 @@ export class UserController {
   //   type: UserResponseDto,
   // })
   // async updateImage(@CurrentUser() account) {}
-
-  @UseGuards(AccessJwtAuthGuard)
-  @Get('nickname/:nickname')
-  @ApiOperation({ summary: '닉네임으로 유저 조회' })
-  @ApiResponse({
-    status: 200,
-    description: '성공적으로 유저 정보를 가져왔습니다.',
-    type: UserResponseDto,
-  })
-  @ApiResponse({
-    status: 404,
-    description: '데이터를 찾을 수 없습니다.',
-  })
-  async getUser(@Param() param: UserParamRequestDto) {
-    const userInfoByNickname = new UserByNicknameQuery(param.nickname);
-
-    const result = this.queryBus.execute(userInfoByNickname);
-
-    return plainToInstance(UserResponseDto, result);
-  }
 
   // @Get('list')
   // @ApiOperation({ summary: '(개발중) 유저 다수 조회' })

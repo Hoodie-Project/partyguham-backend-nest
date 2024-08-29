@@ -290,4 +290,15 @@ export class PartySwagger {
       }),
     );
   }
+
+  static transferPartyLeadership() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티장 위임',
+        description: `**파티장 위임하는 API 입니다.**  
+        
+          `,
+      }),
+    );
+  }
 }

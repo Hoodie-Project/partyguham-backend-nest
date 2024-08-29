@@ -21,6 +21,7 @@ import { NotFoundExceptionFilter } from './common/exception/error-NotFound.filte
 import { CustomErrorExceptionFilter } from './common/exception/error.filter';
 import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthorized.filter';
 import { ReportModule } from './report/report.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ReportModule } from './report/report.module';
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.MODE_ENV !== 'prod',
     }),
+    AuthModule,
     UserModule,
     PartyModule,
     ReportModule,

@@ -45,6 +45,8 @@ import { GoogleAppLoginHandler } from './application/command/google-app-login.ha
 import { DeleteUserLocationsHandler } from './application/command/delete-userLocations.handler';
 import { DeleteUserPersonalityByQuestionHandler } from './application/command/delete-userPersonalityByQuestion.handler';
 import { DeleteUserCareersHandler } from './application/command/delete-userCareers.handler';
+import { WebOauthController } from './interface/web-oauth.controller';
+import { AppOauthController } from './interface/app-oauth.controller';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -92,7 +94,7 @@ const repositories = [
 ];
 
 @Module({
-  controllers: [UserController],
+  controllers: [WebOauthController, AppOauthController, UserController],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   imports: [
     TypeOrmModule.forFeature([

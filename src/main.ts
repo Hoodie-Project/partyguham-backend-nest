@@ -75,7 +75,6 @@ async function bootstrap() {
     .setTitle('party-guam API')
     .setDescription('파티괌 API 문서 입니다.')
     .setVersion('1.0')
-    .addTag('party-guam')
     .addBearerAuth({ type: 'http' }, 'accessToken')
     .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
     .build();
