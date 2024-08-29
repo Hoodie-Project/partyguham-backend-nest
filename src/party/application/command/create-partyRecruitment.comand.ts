@@ -5,6 +5,7 @@ export class CreatePartyRecruitmentCommand implements ICommand {
     readonly userId: number,
     readonly partyId: number,
     readonly positionId: number,
+    readonly content: string,
     readonly recruiting_count: number,
   ) {}
 }

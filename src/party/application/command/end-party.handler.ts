@@ -5,6 +5,7 @@ import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { EndPartyCommand } from './end-party.comand';
+import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 
 @Injectable()
 @CommandHandler(EndPartyCommand)
@@ -13,6 +14,7 @@ export class EndPartyHandler implements ICommandHandler<EndPartyCommand> {
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
+    @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
   ) {}
 
   async execute(command: EndPartyCommand) {
@@ -33,6 +35,7 @@ export class EndPartyHandler implements ICommandHandler<EndPartyCommand> {
       throw new ForbiddenException('파티 종료 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
+    await this.partyRecruitmentRepository.deleteAll(partyId);
     await this.partyRepository.archivedById(partyId);
   }
 }

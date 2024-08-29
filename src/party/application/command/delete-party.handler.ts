@@ -5,6 +5,7 @@ import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { DeletePartyCommand } from './delete-party.comand';
+import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 
 @Injectable()
 @CommandHandler(DeletePartyCommand)
@@ -13,6 +14,7 @@ export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
+    @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
   ) {}
 
   async execute(command: DeletePartyCommand) {
@@ -30,6 +32,7 @@ export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
       throw new ForbiddenException('파티 삭제 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
+    await this.partyRecruitmentRepository.deleteAll(partyId);
     await this.partyRepository.deleteById(partyId);
   }
 }

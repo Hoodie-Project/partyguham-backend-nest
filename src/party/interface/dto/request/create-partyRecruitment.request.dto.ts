@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsNotEmpty, IsPositive, Max, Min } from 'class-validator';
+import { IsInt, IsNotEmpty, IsPositive, IsString, Max, Min } from 'class-validator';
 
 export class CreatePartyRecruitmentRequestDto {
   @ApiProperty({
@@ -10,6 +10,14 @@ export class CreatePartyRecruitmentRequestDto {
   @IsPositive()
   @IsNotEmpty()
   readonly positionId: number;
+
+  @ApiProperty({
+    example: '해당 포지션에서 다양한 툴을 사용가능한 사람을 모집해요!',
+    description: '모집에 대한 본문',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly content: string;
 
   @ApiProperty({
     example: 1,

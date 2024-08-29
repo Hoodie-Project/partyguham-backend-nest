@@ -22,13 +22,12 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
-    @Inject('PartyTypeRepository') private partyTypeRepository: IPartyTypeRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
   ) {}
 
   async execute(command: CreatePartyRecruitmentCommand) {
-    const { userId, partyId, positionId, recruiting_count } = command;
+    const { userId, partyId, positionId, content, recruiting_count } = command;
 
     const party = await this.partyRepository.findOne(partyId);
 
@@ -54,7 +53,7 @@ export class CreatePartyRecruitmentHandler implements ICommandHandler<CreatePart
       throw new ForbiddenException('파티 모집 인원이 16명 초과되는 모집을 생성 할 수 없습니다.', 'LIMIT_EXCEEDED');
     }
 
-    const result = await this.partyRecruitmentRepository.create(partyId, positionId, recruiting_count);
+    const result = await this.partyRecruitmentRepository.create(partyId, positionId, content, recruiting_count);
 
     return result;
   }

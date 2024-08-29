@@ -7,6 +7,9 @@ export class PartyInvitationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  partyRecruitmentId: number;
+
   @Column({ nullable: true })
   message: string;
 
@@ -21,6 +24,6 @@ export class PartyInvitationEntity {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'party_id' })
+  @JoinColumn({ name: 'party_recruitment_id' })
   partyRecruitment: PartyRecruitmentEntity;
 }
