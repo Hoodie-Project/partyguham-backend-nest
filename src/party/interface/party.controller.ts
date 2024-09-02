@@ -47,9 +47,10 @@ import { ActivePartyCommand } from '../application/command/active-party.comand';
 import { GetPartiesQuery } from '../application/query/get-parties.query';
 import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
+import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
+import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 
 @ApiTags('party')
-@UseGuards(AccessJwtAuthGuard)
 @Controller('parties')
 export class PartyController {
   constructor(
@@ -57,6 +58,7 @@ export class PartyController {
     private queryBus: QueryBus,
   ) {}
 
+  @UseGuards(AccessJwtAuthGuard)
   @Get('types')
   @PartySwagger.getTypes()
   async getPartyType() {
@@ -66,6 +68,7 @@ export class PartyController {
     return plainToInstance(PartyTypeResponseDto, result);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @Post('')
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.createParty()
@@ -102,6 +105,16 @@ export class PartyController {
     return plainToInstance(GetPartyResponseDto, result);
   }
 
+  @Get(':partyId/users')
+  @PartySwagger.getPartyUser()
+  async getPartyUser(@Param() param: PartyRequestDto) {
+    const party = new GetPartyUserQuery(param.partyId);
+    const result = this.queryBus.execute(party);
+
+    return plainToInstance(GetPartyUserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
   @Patch(':partyId')
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.updateParty()
@@ -124,6 +137,7 @@ export class PartyController {
     return plainToInstance(PartyResponseDto, result);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.endParty()
   @Patch(':partyId/end')
@@ -132,6 +146,7 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.activeParty()
   @Patch(':partyId/active')
@@ -140,6 +155,7 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.deleteParty()
   @Delete(':partyId')
@@ -149,6 +165,7 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.leaveParty()
   @Delete(':partyId/party-users/me')
@@ -158,6 +175,7 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.updatePartyUser()
   @Patch(':partyId/party-users/:partyUserId')
   async updatePartyUser(
@@ -170,6 +188,7 @@ export class PartyController {
     return this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.kickUserFromParty()
   @Delete(':partyId/party-users/:partyUserId')
@@ -182,6 +201,7 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @Delete(':partyId/image')
   @PartySwagger.deletePartyImage()
@@ -191,6 +211,7 @@ export class PartyController {
     this.commandBus.execute(command);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @Post(':partyId/delegation')
   @PartySwagger.transferPartyLeadership()
   async transferPartyLeadership(

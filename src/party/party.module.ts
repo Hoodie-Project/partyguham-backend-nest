@@ -41,6 +41,7 @@ import { EndPartyHandler } from './application/command/end-party.handler';
 import { ActivePartyHandler } from './application/command/active-party.handler';
 import { UpdatePartyUserHandler } from './application/command/update-partyUser.handler';
 import { PartyRecruitmentApplicationController } from './interface/party-recruitment-application.controller';
+import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
 
 const uploadDir = 'images/party';
 
@@ -65,6 +66,7 @@ const commandHandlers = [
 const queryHandlers = [
   GetPartiesHandler,
   GetPartyHandler,
+  GetPartyUserHandler,
   GetPartyTypesHandler,
   GetPartyRecruitmentHandler,
   GetPartyApplicationsHandler,
