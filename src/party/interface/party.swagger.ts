@@ -4,6 +4,7 @@ import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
+import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 
 export class PartySwagger {
   static getTypes() {
@@ -89,6 +90,30 @@ export class PartySwagger {
         status: 200,
         description: '파티 상세 정보 조회',
         type: GetPartyResponseDto,
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
+      }),
+    );
+  }
+
+  static getPartyUser() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 유저 정보 조회',
+        description: `**파티 유저 정보 조회하는 API 입니다.**  
+
+        - partyUser : 파티에 속한 유저 데이터 입니다.
+        <partyUser 파티 나열 방식>
+        1순위(권한) : master(파티장) -> deputy(부파티장) -> member(멤버)
+        2순위(포지션) : 기획자 -> 디자이너 -> 개발자 -> 마케터/광고
+        `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 유저 정보 조회',
+        type: GetPartyUserResponseDto,
       }),
       ApiResponse({
         status: 404,
