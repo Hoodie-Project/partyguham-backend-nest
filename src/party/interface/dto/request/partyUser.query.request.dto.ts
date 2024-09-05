@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PartyUserQueryRequestDto {
@@ -24,7 +24,7 @@ export class PartyUserQueryRequestDto {
   @IsNotEmpty()
   public order: 'ASC' | 'DESC';
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: ['기획자', '디자이너', '개발자', '마케터/광고'],
     description: '직군 조회에 대한 선택 옵션',
   })
@@ -32,4 +32,11 @@ export class PartyUserQueryRequestDto {
   @IsString()
   @IsOptional()
   public main: string;
+
+  @ApiPropertyOptional({
+    description: '이름 검색 조회에 대한 선택 옵션',
+  })
+  @IsString()
+  @IsOptional()
+  public nickname: string;
 }
