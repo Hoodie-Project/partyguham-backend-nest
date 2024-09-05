@@ -49,6 +49,7 @@ import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
+import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
 
 @ApiTags('party')
 @Controller('parties')
@@ -107,8 +108,10 @@ export class PartyController {
 
   @Get(':partyId/users')
   @PartySwagger.getPartyUser()
-  async getPartyUser(@Param() param: PartyRequestDto) {
-    const party = new GetPartyUserQuery(param.partyId);
+  async getPartyUser(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
+    const { sort, order, main } = query;
+
+    const party = new GetPartyUserQuery(param.partyId, sort, order, main);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(GetPartyUserResponseDto, result);
