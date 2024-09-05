@@ -15,7 +15,7 @@ export class GetPartyUserResponseDto {
   readonly id: number;
 
   @Expose()
-  @ApiPropertyOptional({
+  @ApiProperty({
     example: [
       {
         authority: 'master',
@@ -53,48 +53,17 @@ export class GetPartyUserResponseDto {
           image: null,
         },
       },
-      {
-        authority: 'member',
-        position: {
-          main: '디자이너',
-          sub: '공간 디자이너',
-        },
-        user: {
-          id: 18,
-          nickname: 'mir6',
-          image: null,
-        },
-      },
-      {
-        authority: 'member',
-        position: {
-          main: '개발자',
-          sub: '프론트엔드',
-        },
-        user: {
-          id: 15,
-          nickname: 'mir3',
-          image: null,
-        },
-      },
     ],
-    description: 'partyUser list',
+    description: `파티에 해당하는 유저 리스트
+
+    < partyUser - authority >
+    master = 파티장
+    deputy = 부파티장
+    member = 파티원
+    `,
   })
   @IsNotEmpty()
-  readonly partyUser: [
-    {
-      authority: PartyAuthority;
-      position: {
-        main: string;
-        sub: string;
-      };
-      user: {
-        id: number;
-        nickname: string;
-        image: string | null;
-      };
-    },
-  ];
+  readonly partyUser: [];
 
   @Expose()
   @ApiProperty({
@@ -104,49 +73,4 @@ export class GetPartyUserResponseDto {
   @IsNotEmpty()
   @IsString()
   readonly title: string;
-
-  @Expose()
-  @ApiProperty({
-    example: '풀스텍 구함',
-    description: '본문',
-  })
-  @IsNotEmpty()
-  @IsString()
-  readonly content: string;
-
-  @Expose()
-  @ApiProperty({
-    example: '/uploads/...',
-    description: '이미지 서버 경로',
-  })
-  @IsNotEmpty()
-  @IsString()
-  readonly image: string;
-
-  @Expose()
-  @ApiProperty({
-    example: 'active',
-    description: '파티상태',
-  })
-  @IsNotEmpty()
-  @IsString()
-  readonly status: string;
-
-  @Expose()
-  @ApiProperty({
-    example: '2024-06-07T12:17:57.248Z',
-    description: '생성일자',
-  })
-  @IsNotEmpty()
-  @IsString()
-  readonly createdAt: string;
-
-  @Expose()
-  @ApiProperty({
-    example: '2024-06-07T12:17:57.248Z',
-    description: '수정일자',
-  })
-  @IsNotEmpty()
-  @IsString()
-  readonly updatedAt: string;
 }
