@@ -26,7 +26,7 @@ export class PartyUserQueryRequestDto {
 
   @ApiPropertyOptional({
     enum: ['기획자', '디자이너', '개발자', '마케터/광고'],
-    description: '직군 조회에 대한 선택 옵션',
+    description: '직군 조건 조회 (선택 옵션)',
   })
   @IsIn(['기획자', '디자이너', '개발자', '마케터/광고'])
   @IsString()
@@ -34,7 +34,7 @@ export class PartyUserQueryRequestDto {
   public main: string;
 
   @ApiPropertyOptional({
-    description: '이름 검색 조회에 대한 선택 옵션',
+    description: '닉네임 조건 조회 (선택 옵션)',
   })
   @IsString()
   @IsOptional()
