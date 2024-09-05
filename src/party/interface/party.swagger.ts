@@ -104,10 +104,20 @@ export class PartySwagger {
         summary: '파티 유저 정보 조회',
         description: `**파티 유저 정보 조회하는 API 입니다.**  
 
+        - id : 파티 고유 ID 입니다 (PK)
         - partyUser : 파티에 속한 유저 데이터 입니다.
-        <partyUser 파티 나열 방식>
-        1순위(권한) : master(파티장) -> deputy(부파티장) -> member(멤버)
-        2순위(포지션) : 기획자 -> 디자이너 -> 개발자 -> 마케터/광고
+
+        <partyUser AND조건 조회> 
+        자동 정렬
+        1 순위 (권한) : master(파티장) -> deputy(부파티장) -> member(멤버)
+        2 순위 (포지션) : 기획자 -> 디자이너 -> 개발자 -> 마케터/광고
+
+        선택 옵션
+        3 순위 (합류순) : order, sort 대입에 따른 조회
+        필수 기본옵션 값 (order=DESC(내림차순) / sort=createdAt(합류일))
+        4 순위 (직군 / 이름) : 선택값. 이름 검색은 해당 검색 데이터가 포함된 모든 유저 조회
+
+
         `,
       }),
       ApiResponse({

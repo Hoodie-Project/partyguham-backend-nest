@@ -109,9 +109,9 @@ export class PartyController {
   @Get(':partyId/users')
   @PartySwagger.getPartyUser()
   async getPartyUser(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
-    const { sort, order, main } = query;
+    const { sort, order, main, nickname } = query;
 
-    const party = new GetPartyUserQuery(param.partyId, sort, order, main);
+    const party = new GetPartyUserQuery(param.partyId, sort, order, main, nickname);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(GetPartyUserResponseDto, result);

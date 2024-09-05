@@ -11,7 +11,7 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
   constructor(@InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>) {}
 
   async execute(query: GetPartyUserQuery) {
-    const { partyId, sort, order, main } = query;
+    const { partyId, sort, order, main, nickname } = query;
     console.log(main);
 
     const partyQuery = this.partyRepository
@@ -21,7 +21,6 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
       .leftJoin('partyUser.user', 'user') // user 정보를 조인하고 선택
       .select([
         'party.id',
-        'party.title',
         'partyUser.authority',
         'user.id',
         'user.nickname',
@@ -54,10 +53,14 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
       partyQuery.andWhere('position.main = :main', { main });
     }
 
+    if (nickname !== undefined && nickname !== null) {
+      partyQuery.andWhere('user.nickname LIKE :nickname', { nickname: `%${nickname}%` });
+    }
+
     const party = await partyQuery.getOne();
 
     if (!party) {
-      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
+      throw new NotFoundException('파티 유저를 찾을 수 없습니다.', 'PARTY_USERS_NOT_EXIST');
     }
 
     return party;

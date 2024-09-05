@@ -64,13 +64,4 @@ export class GetPartyUserResponseDto {
   })
   @IsNotEmpty()
   readonly partyUser: [];
-
-  @Expose()
-  @ApiProperty({
-    example: '파티구함',
-    description: '제목',
-  })
-  @IsNotEmpty()
-  @IsString()
-  readonly title: string;
 }
