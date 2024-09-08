@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -22,6 +22,7 @@ import { RejectionPartyApplicationCommand } from '../application/command/rejecti
 
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
+import { PartyRecruitmentQueryRequestDto } from './dto/request/partyRecruitment.query.request.dto';
 
 @ApiTags('party recruitment/application')
 @UseGuards(AccessJwtAuthGuard)
@@ -49,8 +50,10 @@ export class PartyRecruitmentApplicationController {
   //! 모집 공고 조회 방법 쿼리 -> 최근 등록일 추가
   @Get(':partyId/recruitments')
   @PartyRecruitmentSwagger.getPartyRecruitments()
-  async getPartyRecruitments(@Param() param: PartyRequestDto) {
-    const party = new GetPartyRecruitmentQuery(param.partyId);
+  async getPartyRecruitments(@Param() param: PartyRequestDto, @Query() query: PartyRecruitmentQueryRequestDto) {
+    const { sort, order, main } = query;
+
+    const party = new GetPartyRecruitmentQuery(param.partyId, sort, order, main);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(RecruitmentResponseDto, result);

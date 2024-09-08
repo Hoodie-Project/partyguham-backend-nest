@@ -11,6 +11,19 @@ import { PositionQueryRequestDto } from './dto/request/location.query.request.dt
 export class PositionController {
   constructor(private positionService: PositionService) {}
 
+  @Get('description')
+  @ApiOperation({
+    summary: '이 엔드포인트는 실제로 구현되지 않고, Swagger 문서화를 위해 사용됩니다.',
+    description: `포지션(직군/직무)에 해당하는 API 입니다.
+    
+    main - 직군(기획자/디자이너/개발자)
+    sub - 직무(PM/웹디자이너/프론트엔드)
+    `,
+  })
+  getLocationOverview() {
+    // 이 엔드포인트는 실제로 구현되지 않고, Swagger 문서화를 위해 사용됩니다.
+  }
+
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Get('')

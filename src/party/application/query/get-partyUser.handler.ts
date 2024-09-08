@@ -12,7 +12,6 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
 
   async execute(query: GetPartyUserQuery) {
     const { partyId, sort, order, main, nickname } = query;
-    console.log(main);
 
     const partyQuery = this.partyRepository
       .createQueryBuilder('party')
