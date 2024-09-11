@@ -5,7 +5,7 @@ import { personalityQuestionResponseDto } from './dto/response/personality.respo
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 @ApiTags('personality')
-@Controller('personality')
+@Controller('personalities')
 export class PersonalityController {
   constructor(private personalityService: PersonalityService) {}
 
