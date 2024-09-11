@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -10,24 +10,22 @@ import { PartyRequestDto } from './dto/request/party.param.request.dto';
 import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
 import { CreatePartyApplicationRequestDto } from './dto/request/create-application.request.dto';
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
-import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
+
 import { RecruitmentResponseDto } from './dto/response/recruitment.response.dto';
 
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
 import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
 import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
-import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
-import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
 import { PartyRecruitmentQueryRequestDto } from './dto/request/partyRecruitment.query.request.dto';
 
-@ApiTags('party recruitment/application')
+@ApiTags('party recruitment (파티 모집 공고)')
 @UseGuards(AccessJwtAuthGuard)
 @Controller('parties')
-export class PartyRecruitmentApplicationController {
+export class PartyRecruitmentController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
@@ -115,36 +113,5 @@ export class PartyRecruitmentApplicationController {
     const query = new GetPartyApplicationsQuery(user.id, param.partyId, param.partyRecruitmentId);
 
     return this.queryBus.execute(query);
-  }
-
-  @Post(':partyId/applications/:partyApplicationId/approval')
-  @PartyRecruitmentSwagger.approvePartyApplication()
-  async approvePartyApplication(
-    @CurrentUser() user: CurrentUserType,
-    @Param() param: PartyApplicationParamRequestDto,
-  ): Promise<void> {
-    const command = new ApprovePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
-
-    return this.commandBus.execute(command);
-  }
-
-  @Post(':partyId/applications/:partyApplicationId/rejection')
-  @PartyRecruitmentSwagger.rejectPartyApplication()
-  async rejectPartyApplication(
-    @CurrentUser() user: CurrentUserType,
-    @Param() param: PartyApplicationParamRequestDto,
-  ): Promise<void> {
-    const command = new RejectionPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
-
-    return this.commandBus.execute(command);
-  }
-
-  @Delete(':partyId/applications/:partyApplicationId')
-  @ApiOperation({ summary: '파티 지원 삭제(취소)' })
-  async deletePartyApplication(
-    @CurrentUser() user: CurrentUserType,
-    @Param() param: PartyApplicationParamRequestDto,
-  ): Promise<void> {
-    // 지원자가 내정보에서 취소
   }
 }

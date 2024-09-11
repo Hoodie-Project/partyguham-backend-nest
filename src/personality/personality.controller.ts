@@ -4,8 +4,8 @@ import { PersonalityService } from './personality.service';
 import { personalityQuestionResponseDto } from './dto/response/personality.response.dto';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
-@ApiTags('personality')
-@Controller('personality')
+@ApiTags('personality (개인 성향)')
+@Controller('personalities')
 export class PersonalityController {
   constructor(private personalityService: PersonalityService) {}
 

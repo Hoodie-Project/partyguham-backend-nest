@@ -171,7 +171,7 @@ export class PartySwagger {
       ApiOperation({
         summary: '파티 종료',
         description: `**파티를 종료하는 API 입니다.**  
-        파티 데이터를 완전 삭제 하지 않고, 상태값을 ARCHIVED 상태로 변경하여 데이터를 유지합니다.
+        파티 데이터를 완전 삭제 하지 않고, 상태값(party.status)을 종료(archived) 상태로 변경하여 데이터를 유지합니다.
         `,
       }),
       ApiResponse({
@@ -192,9 +192,9 @@ export class PartySwagger {
   static activeParty() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 활성화',
-        description: `**파티를 재활성화하는 API 입니다.**  
-        종료(archived)된 파티에서 상태값 active 상태로 변경하여 데이터를 유지합니다.
+        summary: '종료 파티 활성화',
+        description: `**종료된 파티를 재활성화하는 API 입니다.**  
+        상태값(party.status)이 종료(archived)된 파티에서 활성(active) 상태로 변경하여 데이터를 유지합니다.
         `,
       }),
       ApiResponse({
@@ -217,7 +217,7 @@ export class PartySwagger {
       ApiOperation({
         summary: '파티 삭제',
         description: `**파티를 삭제하는 API 입니다.**  
-        파티 데이터를 완전 삭제 하지 않고, 상태값을 deleted로 변경하여 데이터를 유지합니다.
+        파티 데이터를 완전 삭제 하지 않고, 상태값(party.status)을 삭제(deleted)로 변경하여 데이터를 유지합니다.
         `,
       }),
       ApiResponse({

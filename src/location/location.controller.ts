@@ -6,7 +6,7 @@ import { plainToInstance } from 'class-transformer';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { LocationQueryRequestDto } from './dto/request/location.query.request.dto';
 
-@ApiTags('location')
+@ApiTags('location (지역/장소)')
 @Controller('locations')
 export class LocationController {
   constructor(private locationService: LocationService) {}
