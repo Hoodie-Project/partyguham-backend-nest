@@ -9,7 +9,7 @@ import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
 
-@ApiTags('web-oauth')
+@ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
 export class WebOauthController {
   constructor(private commandBus: CommandBus) {}

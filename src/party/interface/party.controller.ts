@@ -51,7 +51,7 @@ import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
 
-@ApiTags('party')
+@ApiTags('party (파티 - 프로젝트 모집 단위)')
 @Controller('parties')
 export class PartyController {
   constructor(

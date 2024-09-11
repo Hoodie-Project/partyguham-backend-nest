@@ -6,7 +6,7 @@ import { plainToInstance } from 'class-transformer';
 import { ReportRequestDto } from './dto/request/report.request.dto';
 import { ReportResponseDto } from './dto/response/report.response.dto';
 
-@ApiTags('report')
+@ApiTags('report (신고)')
 @Controller('reports')
 export class ReportController {
   constructor(private reportService: ReportService) {}

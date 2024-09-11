@@ -8,7 +8,7 @@ import { AppOauthRequestDto } from './dto/request/app-oauth.request.dto';
 import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
 
-@ApiTags('app-oauth')
+@ApiTags('app-oauth (앱 오픈 인증)')
 @Controller('users')
 export class AppOauthController {
   constructor(private commandBus: CommandBus) {}

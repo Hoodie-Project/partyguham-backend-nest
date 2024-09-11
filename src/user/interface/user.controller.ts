@@ -49,7 +49,7 @@ import { DeleteUserLocationsCommand } from '../application/command/delete-userLo
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 
-@ApiTags('user')
+@ApiTags('user (회원/유저)')
 @Controller('users')
 export class UserController {
   constructor(
