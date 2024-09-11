@@ -40,8 +40,9 @@ import { LeavePartyHandler } from './application/command/leave-party.handler';
 import { EndPartyHandler } from './application/command/end-party.handler';
 import { ActivePartyHandler } from './application/command/active-party.handler';
 import { UpdatePartyUserHandler } from './application/command/update-partyUser.handler';
-import { PartyRecruitmentApplicationController } from './interface/party-recruitment-application.controller';
+import { PartyRecruitmentController } from './interface/party-recruitment.controller';
 import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
+import { PartyApplicationController } from './interface/party-application.controller';
 
 const uploadDir = 'images/party';
 
@@ -83,7 +84,7 @@ const repositories = [
 ];
 
 @Module({
-  controllers: [PartyController, PartyRecruitmentApplicationController],
+  controllers: [PartyController, PartyRecruitmentController, PartyApplicationController],
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   imports: [
     ServeStaticModule.forRoot({
