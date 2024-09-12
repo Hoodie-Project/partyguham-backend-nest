@@ -1,18 +1,46 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
+import { IsNotEmpty } from 'class-validator';
 
 @Exclude()
 export class GetPartyUserResponseDto {
   @Expose()
   @ApiProperty({
-    example: 1,
-    description: 'Party ID (PK - 파티)',
+    example: [
+      {
+        authority: 'master',
+        position: {
+          main: '디자이너',
+          sub: 'UI/UX',
+        },
+        user: {
+          id: 12,
+          nickname: 'mir2',
+          image: null,
+        },
+      },
+      {
+        authority: 'deputy',
+        position: {
+          main: '마케터 광고',
+          sub: '컨텐츠 마케터',
+        },
+        user: {
+          id: 17,
+          nickname: 'mir5',
+          image: null,
+        },
+      },
+    ],
+    description: `파티에 해당하는 유저 리스트
+
+    < partyUser - authority >
+    master = 파티장
+    deputy = 부파티장
+    `,
   })
-  @IsString()
   @IsNotEmpty()
-  readonly id: number;
+  readonly partyAdmin: [];
 
   @Expose()
   @ApiProperty({
@@ -57,8 +85,6 @@ export class GetPartyUserResponseDto {
     description: `파티에 해당하는 유저 리스트
 
     < partyUser - authority >
-    master = 파티장
-    deputy = 부파티장
     member = 파티원
     `,
   })
