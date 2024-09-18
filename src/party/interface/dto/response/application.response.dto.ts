@@ -6,6 +6,24 @@ import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class RecruitmentResponseDto {
   @Expose()
   @ApiProperty({
+    example: 1,
+    description: 'Party recruitments ID (PK - 파티모집)',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly id: number;
+
+  @Expose()
+  @ApiProperty({
+    example: 1,
+    description: 'Party ID (PK - 파티)',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly partyId: number;
+
+  @Expose()
+  @ApiProperty({
     example: '기획',
     description: 'Position Main (직군)',
   })
@@ -47,18 +65,24 @@ export class RecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: 1,
-    description: '현재 지원수',
+    example: [
+      {
+        id: 4,
+        userId: 12,
+        partyRecruitmentId: 27,
+        message: '참여희망',
+        createdAt: '2024-07-02T05:44:43.632Z',
+      },
+      {
+        id: 5,
+        userId: 13,
+        partyRecruitmentId: 27,
+        message: '참여희망 1',
+        createdAt: '2024-07-02T06:44:43.632Z',
+      },
+    ],
+    description: 'party applications (지원자 정보)',
   })
   @IsNotEmpty()
   readonly applicationCount: object;
-
-  @Expose()
-  @ApiProperty({
-    example: '2024-06-07T12:17:57.248Z',
-    description: '생성일자',
-  })
-  @IsString()
-  @IsNotEmpty()
-  readonly createdAt: string;
 }
