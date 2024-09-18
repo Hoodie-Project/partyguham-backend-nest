@@ -29,7 +29,7 @@ import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitm
 import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
 import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
 import { DeletePartyImageHandler } from './application/command/delete-partyImage.handler';
-import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
+import { GetPartyRecruitmentsHandler } from './application/query/get-partyRecruitments.handler';
 import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
 import { DeletePartyRecruitmentHandler } from './application/command/delete-partyRecruitment.handler';
 import { GetPartyApplicationsHandler } from './application/query/get-partyApplications.handler';
@@ -43,6 +43,7 @@ import { UpdatePartyUserHandler } from './application/command/update-partyUser.h
 import { PartyRecruitmentController } from './interface/party-recruitment.controller';
 import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
 import { PartyApplicationController } from './interface/party-application.controller';
+import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
 
 const uploadDir = 'images/party';
 
@@ -69,6 +70,7 @@ const queryHandlers = [
   GetPartyHandler,
   GetPartyUserHandler,
   GetPartyTypesHandler,
+  GetPartyRecruitmentsHandler,
   GetPartyRecruitmentHandler,
   GetPartyApplicationsHandler,
 ];
