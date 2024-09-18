@@ -36,6 +36,31 @@ export class RecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
+    example: '해당 포지션에서 다양한 툴을 사용가능한 사람을 모집해요!',
+    description: '모집에 대한 본문',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly content: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 2,
+    description: '모집인원',
+  })
+  @IsNotEmpty()
+  readonly recruitingCount: number;
+
+  @Expose()
+  @ApiProperty({
+    example: 1,
+    description: '모집된 인원',
+  })
+  @IsNotEmpty()
+  readonly recruitedCount: number;
+
+  @Expose()
+  @ApiProperty({
     example: [
       {
         id: 4,
@@ -56,20 +81,4 @@ export class RecruitmentResponseDto {
   })
   @IsNotEmpty()
   readonly partyApplications: object;
-
-  @Expose()
-  @ApiProperty({
-    example: 2,
-    description: '모집인원',
-  })
-  @IsNotEmpty()
-  readonly recruitingCount: number;
-
-  @Expose()
-  @ApiProperty({
-    example: 1,
-    description: '모집된 인원',
-  })
-  @IsNotEmpty()
-  readonly recruitedCount: number;
 }

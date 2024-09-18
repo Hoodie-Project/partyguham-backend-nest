@@ -19,7 +19,7 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       .leftJoinAndSelect('partyRecruitments.position', 'position')
       .leftJoinAndSelect('partyRecruitments.partyApplications', 'partyApplications')
       .where('party.id = :id', { id: partyId })
-      .addOrderBy(`partyUser.${sort}`, order);
+      .addOrderBy(`partyRecruitments.${sort}`, order);
 
     if (main !== undefined && main !== null) {
       partyQuery.andWhere('position.main = :main', { main });
