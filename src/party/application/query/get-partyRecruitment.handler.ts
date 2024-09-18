@@ -13,24 +13,36 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
   async execute(query: GetPartyRecruitmentQuery) {
     const { partyId, sort, order, main } = query;
 
-    const partyQuery = await this.partyRepository
+    const partyQuery = this.partyRepository
       .createQueryBuilder('party')
-      .leftJoinAndSelect('party.partyRecruitments', 'partyRecruitments')
-      .leftJoinAndSelect('partyRecruitments.position', 'position')
-      .leftJoinAndSelect('partyRecruitments.partyApplications', 'partyApplications')
+      .leftJoin('party.partyRecruitments', 'partyRecruitments')
+      .leftJoin('partyRecruitments.position', 'position')
+      .leftJoin('partyRecruitments.partyApplications', 'partyApplications')
+      .select([
+        'position.main AS main',
+        'position.sub AS sub',
+        'partyRecruitments.content AS content',
+        'partyRecruitments.recruitingCount AS "recruitingCount"',
+        'partyRecruitments.recruitedCount AS "recruitedCount"',
+        'partyRecruitments.createdAt AS "createdAt"',
+      ])
+      .addSelect('COUNT(partyApplications.id)', 'applicationCount') // partyApplications의 개수를 추가
       .where('party.id = :id', { id: partyId })
-      .addOrderBy(`partyRecruitments.${sort}`, order);
+      .orderBy(`partyRecruitments.${sort}`, order)
+      .groupBy('party.id')
+      .addGroupBy('partyRecruitments.id')
+      .addGroupBy('position.id');
 
     if (main !== undefined && main !== null) {
       partyQuery.andWhere('position.main = :main', { main });
     }
 
-    const party = await partyQuery.getOne();
+    const party = await partyQuery.getRawMany();
 
     if (!party) {
       throw new NotFoundException('파티가 존재하지 않습니다', 'PARTY_NOT_EXIST');
     }
 
-    return party.partyRecruitments;
+    return party;
   }
 }
