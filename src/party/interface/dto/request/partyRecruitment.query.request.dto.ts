@@ -4,7 +4,7 @@ import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class PartyRecruitmentQueryRequestDto {
   @ApiProperty({
     enum: ['createdAt'],
-    description: `order에 대한 조회 기준 (default = createdAt) 
+    description: `모집 조회 방법 / order에 대한 조회 기준 (default = createdAt) 
     createdAt = 생성순
     `,
   })
