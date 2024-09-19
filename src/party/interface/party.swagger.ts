@@ -82,8 +82,8 @@ export class PartySwagger {
         summary: '파티 상세 정보 조회',
         description: `**파티 상세 정보 조회하는 API 입니다.**  
 
-        partyUser : 파티에 속한 유저 데이터 입니다.
         partyType : 해당 파티의 타입을 나타냅니다.
+        tag : 해당 파티의 상태를 나타냅니다.
         `,
       }),
       ApiResponse({

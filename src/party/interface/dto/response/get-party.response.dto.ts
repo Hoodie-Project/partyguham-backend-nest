@@ -25,14 +25,6 @@ export class GetPartyResponseDto {
   readonly partyType: object;
 
   @Expose()
-  @ApiPropertyOptional({
-    example: [{ id: 1, nickname: 'mir', image: '/uploads' }],
-    description: 'partyUser list',
-  })
-  @IsOptional()
-  readonly partyUser: [{ id: number; nickname: string; image: string }];
-
-  @Expose()
   @ApiProperty({
     example: '모집중',
     description: '진행중 / 모집중 / 파티종료',
