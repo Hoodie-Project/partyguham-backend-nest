@@ -20,9 +20,11 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       .leftJoin('partyRecruitments.party', 'party')
       .leftJoin('partyRecruitments.position', 'position')
       .leftJoin('partyRecruitments.partyApplications', 'partyApplications')
+      .leftJoinAndSelect('party.partyType', 'partyType')
       .select([
         'party.title AS title',
         'party.image AS image',
+        'partyType.type AS "partyType"',
         'position.main AS main',
         'position.sub AS sub',
         'partyRecruitments.content AS content',
@@ -34,13 +36,16 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       .where('partyRecruitments.id = :id', { id: partyRecruitmentId })
       .groupBy('party.id')
       .addGroupBy('partyRecruitments.id')
-      .addGroupBy('position.id');
+      .addGroupBy('position.id')
+      .addGroupBy('partyType.id');
 
     const party = await partyQuery.getRawOne();
 
     if (!party) {
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
     }
+
+    console.log(party);
 
     // if (party.status === 'deleted') {
     //   party['tag'] = '파티 종료';
