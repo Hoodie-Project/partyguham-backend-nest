@@ -32,11 +32,8 @@ export class PartyRecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: {
-      id: 1,
-      type: '미정',
-    },
-    description: 'Party Type ID (PK - 파티 타입)',
+    example: '미정',
+    description: '파티 타입',
   })
   @IsNotEmpty()
   readonly partyType: object;

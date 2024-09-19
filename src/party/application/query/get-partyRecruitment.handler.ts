@@ -45,8 +45,6 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
     }
 
-    console.log(party);
-
     // if (party.status === 'deleted') {
     //   party['tag'] = '파티 종료';
     // } else if (party.status === 'archived') {

@@ -26,7 +26,7 @@ export class PartyRecruitmentSwagger {
   static getPartyRecruitment() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 모집 조회',
+        summary: '파티 모집 단일 조회',
         description: `**파티모집을 상세 조회하는 API 입니다.**  
         
       `,
@@ -90,7 +90,7 @@ export class PartyRecruitmentSwagger {
   static createPartyApplication() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 지원 하기',
+        summary: '파티 지원하기',
         description: `**파티 지원하는 API 입니다.**  
         지원 중복은 불가합니다.
           `,
