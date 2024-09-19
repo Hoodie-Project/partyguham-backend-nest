@@ -10,14 +10,14 @@ export class PartySwagger {
   static getTypes() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 타입 리스트 조회',
+        summary: '파티 타입 목록 조회',
         description: `**파티에 타입을 결정하는 PK를 조회하는 API 입니다.**    
         파티를 생성 또는 조회 시 필요합니다 (partyTypeId).
         `,
       }),
       ApiResponse({
         status: 200,
-        description: `파티 타입 조회 성공  
+        description: `파티 타입 목록 조회 성공  
         \`\`\`
         1.미정  2.스터디  3.포트폴리오  4.해커톤  5.공모전
         \`\`\`
@@ -79,8 +79,8 @@ export class PartySwagger {
   static getParty() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 상세 정보 조회',
-        description: `**파티 상세 정보 조회하는 API 입니다.**  
+        summary: '파티 단일 조회',
+        description: `**파티 단일 조회하는 API 입니다.**  
 
         partyType : 해당 파티의 타입을 나타냅니다.
         tag : 해당 파티의 상태를 나타냅니다.
@@ -101,8 +101,8 @@ export class PartySwagger {
   static getPartyUsers() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티원 정보 조회',
-        description: `**파티원 정보 조회하는 API 입니다.**
+        summary: '파티원 목록 조회',
+        description: `**파티원 목록 조회하는 API 입니다.**
         < partyAdmin >
         - master : 파티장
         - deputy : 부파티장
@@ -135,8 +135,8 @@ export class PartySwagger {
   static getAdminPartyUsers() {
     return applyDecorators(
       ApiOperation({
-        summary: '관리자 파티원 목록 조회',
-        description: `**관리자 파티원 목록 조회하는 API 입니다.**  
+        summary: '관리자 - 파티원 목록 조회',
+        description: `**관리자가 파티원 목록 조회하는 API 입니다.**  
         관리자/파티원를 구분하지 않습니다.
 
         - id : 파티 고유 ID 입니다 (PK)

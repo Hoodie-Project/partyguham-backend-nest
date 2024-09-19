@@ -15,7 +15,7 @@ export class PartyRecruitmentQueryRequestDto {
 
   @ApiProperty({
     enum: ['ASC', 'DESC'],
-    description: `sort에 대한 조회 방법 (default = DESC)
+    description: `sort에 대한 조회 방법 (default = ASC)
     ASC = 오름 
     DESC = 내림차순`,
   })
