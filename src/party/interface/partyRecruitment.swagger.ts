@@ -26,14 +26,14 @@ export class PartyRecruitmentSwagger {
   static getPartyRecruitment() {
     return applyDecorators(
       ApiOperation({
-        summary: '모집 상세 조회 API',
+        summary: '파티 모집 조회',
         description: `**파티모집을 상세 조회하는 API 입니다.**  
         
       `,
       }),
       ApiResponse({
         status: 200,
-        description: '파티 모집 상세 정보',
+        description: '파티 모집 정보',
         type: PartyRecruitmentResponseDto,
       }),
     );
@@ -42,8 +42,8 @@ export class PartyRecruitmentSwagger {
   static getPartyRecruitments() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티에 해당하는 모집 목록 조회',
-        description: `**파티(partyId)에 있는 파티모집을 모두 조회하는 API 입니다.**  
+        summary: '파티 모집 목록 조회',
+        description: `**파티에 있는 파티모집을 모두 조회하는 API 입니다.**  
         배열 형식으로 존재하는 파티모집을 리턴합니다.  
         파티모집이 존재하지 않으면 빈 배열을 리턴합니다.  
       `,

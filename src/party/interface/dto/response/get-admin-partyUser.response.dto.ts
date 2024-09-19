@@ -8,44 +8,7 @@ export class GetPartyUserResponseDto {
   @ApiProperty({
     example: [
       {
-        authority: 'master',
-        position: {
-          main: '디자이너',
-          sub: 'UI/UX',
-        },
-        user: {
-          id: 12,
-          nickname: 'mir2',
-          image: null,
-        },
-      },
-      {
-        authority: 'deputy',
-        position: {
-          main: '마케터 광고',
-          sub: '컨텐츠 마케터',
-        },
-        user: {
-          id: 17,
-          nickname: 'mir5',
-          image: null,
-        },
-      },
-    ],
-    description: `파티에 해당하는 유저 리스트
-
-    < partyAdmin - authority >
-    master = 파티장
-    deputy = 부파티장
-    `,
-  })
-  @IsNotEmpty()
-  readonly partyAdmin: [];
-
-  @Expose()
-  @ApiProperty({
-    example: [
-      {
+        createdAt: '2024-07-05T01:04:44.235Z',
         authority: 'master',
         position: {
           main: '개발자',
@@ -58,6 +21,7 @@ export class GetPartyUserResponseDto {
         },
       },
       {
+        createdAt: '2024-07-05T01:04:44.235Z',
         authority: 'deputy',
         position: {
           main: '마케터 광고',
@@ -70,6 +34,7 @@ export class GetPartyUserResponseDto {
         },
       },
       {
+        createdAt: '2024-07-05T01:04:44.235Z',
         authority: 'member',
         position: {
           main: '기획자',
@@ -82,10 +47,7 @@ export class GetPartyUserResponseDto {
         },
       },
     ],
-    description: `파티에 해당하는 유저 리스트
-
-    < partyUser - authority >
-    member = 파티원
+    description: `파티원 리스트
     `,
   })
   @IsNotEmpty()

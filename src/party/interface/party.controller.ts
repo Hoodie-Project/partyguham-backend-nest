@@ -50,6 +50,7 @@ import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
+import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
 
 @ApiTags('party (파티 - 프로젝트 모집 단위)')
 @Controller('parties')
@@ -107,11 +108,22 @@ export class PartyController {
   }
 
   @Get(':partyId/users')
-  @PartySwagger.getPartyUser()
-  async getPartyUser(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
+  @PartySwagger.getPartyUsers()
+  async getPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
     const { sort, order, main, nickname } = query;
 
     const party = new GetPartyUserQuery(param.partyId, sort, order, main, nickname);
+    const result = this.queryBus.execute(party);
+
+    return plainToInstance(GetPartyUserResponseDto, result);
+  }
+
+  @Get(':partyId/admin/users')
+  @PartySwagger.getAdminPartyUsers()
+  async getAdminPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
+    const { sort, order, main, nickname } = query;
+
+    const party = new GetAdminPartyUserQuery(param.partyId, sort, order, main, nickname);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(GetPartyUserResponseDto, result);

@@ -98,27 +98,62 @@ export class PartySwagger {
     );
   }
 
-  static getPartyUser() {
+  static getPartyUsers() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 유저 정보 조회',
-        description: `**파티 유저 정보 조회하는 API 입니다.**  
+        summary: '파티원 정보 조회',
+        description: `**파티원 정보 조회하는 API 입니다.**
+        < partyAdmin >
+        - master : 파티장
+        - deputy : 부파티장
+        < partyUser >
+        - member : 파티원
 
-        - id : 파티 고유 ID 입니다 (PK)
-        - partyUser : 파티에 속한 유저 데이터 입니다.
+        관리자/파티원을 구분하여 정보를 주고 있습니다.
 
         선택 옵션
         - 합류순 : order, sort 대입에 따른 조회
         
-        기본 선택 옵션 값 (order=DESC(내림차순) / sort=createdAt(합류일))
-        - 직군 / 이름 : 선택값. 이름 검색은 해당 검색 데이터가 포함된 모든 유저 조회
+        기본 선택 옵션 값 (order=ASC(오름차순) / sort=createdAt(합류일))
+        - 직군 / 이름 : 선택값. 이름 검색은 해당 검색 데이터가 포함된 모든 파티원 조회
 
 
         `,
       }),
       ApiResponse({
         status: 200,
-        description: '파티 유저 정보 조회',
+        description: '파티원 정보 조회',
+        type: GetPartyUserResponseDto,
+      }),
+      ApiResponse({
+        status: 404,
+        description: `파티를 찾을 수 없습니다.`,
+      }),
+    );
+  }
+
+  static getAdminPartyUsers() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '관리자 파티원 목록 조회',
+        description: `**관리자 파티원 목록 조회하는 API 입니다.**  
+        관리자/파티원를 구분하지 않습니다.
+
+        - id : 파티 고유 ID 입니다 (PK)
+        - partyUser : 파티에 속한 파티원 데이터 입니다.
+
+        선택 옵션
+        - 합류순 : order, sort 대입에 따른 조회
+        
+        기본 선택 옵션 값 (order=ASC(오름차순) / sort=createdAt(합류일))
+        - 직군 / 이름 : 선택값. 이름 검색은 해당 검색 데이터가 포함된 모든 파티원 조회
+
+
+        `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티원 정보 조회',
         type: GetPartyUserResponseDto,
       }),
       ApiResponse({
@@ -258,10 +293,10 @@ export class PartySwagger {
   static updatePartyUser() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 유저 데이터 변경',
+        summary: '파티원 데이터 변경',
         description: `**파티에 속해있는 유저 데이터를 변경하는 API 입니다.**  
         파티장 권한을 가진 사람만 가능한 기능입니다.  
-        partyUserId (파티 유저 ID)에 대해 포지션 변경이 가능합니다.
+        partyUserId (파티원 ID)에 대해 포지션 변경이 가능합니다.
         `,
       }),
       ApiResponse({
@@ -270,7 +305,7 @@ export class PartySwagger {
       }),
       ApiResponse({
         status: 403,
-        description: '파티 유저 수정 권한이 없습니다.',
+        description: '파티원 수정 권한이 없습니다.',
       }),
       ApiResponse({
         status: 404,
@@ -282,10 +317,10 @@ export class PartySwagger {
   static kickUserFromParty() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 유저 내보내기',
+        summary: '파티원 내보내기',
         description: `**파티를 탈퇴하는 API 입니다.**  
         파티장 권한을 가진 사람만 가능한 기능입니다.  
-        partyUserId (파티 유저 ID)를 통해 유저를 내보냅니다.
+        partyUserId (파티원 ID)를 통해 유저를 내보냅니다.
         `,
       }),
       ApiResponse({
@@ -294,7 +329,7 @@ export class PartySwagger {
       }),
       ApiResponse({
         status: 403,
-        description: '파티 유저를 내보낼 권한이 없습니다.  파티장은 내보낼 수 없습니다.',
+        description: '파티원를 내보낼 권한이 없습니다.  파티장은 내보낼 수 없습니다.',
       }),
       ApiResponse({
         status: 404,

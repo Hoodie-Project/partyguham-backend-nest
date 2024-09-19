@@ -44,6 +44,7 @@ import { PartyRecruitmentController } from './interface/party-recruitment.contro
 import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
 import { PartyApplicationController } from './interface/party-application.controller';
 import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
+import { GetAdminPartyUserHandler } from './application/query/get-admin-partyUser.handler';
 
 const uploadDir = 'images/party';
 
@@ -69,6 +70,7 @@ const queryHandlers = [
   GetPartiesHandler,
   GetPartyHandler,
   GetPartyUserHandler,
+  GetAdminPartyUserHandler,
   GetPartyTypesHandler,
   GetPartyRecruitmentsHandler,
   GetPartyRecruitmentHandler,
