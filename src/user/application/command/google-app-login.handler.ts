@@ -16,7 +16,12 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     private authService: AuthService,
   ) {}
 
-  async execute({ uid }: GoogleAppLoginCommand) {
+  async execute({ googleAccessToken }: GoogleAppLoginCommand) {
+    const googleUserInfo = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo`, {
+      headers: {
+        Authorization: `Bearer ${googleAccessToken}`,
+      },
+    });
     // google
     // data: {
     //   id: '108484888597910532761',
@@ -28,22 +33,29 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     //   locale: 'ko'
     // }
 
-    const decryptUid = this.authService.appDecrypt(String(uid));
-    const oauth = await this.oauthService.findByExternalId(decryptUid);
+    const externalId: string = googleUserInfo.data.id;
+    const email = googleUserInfo.data.email;
+    const image = googleUserInfo.data.picture;
+
+    const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken };
+      return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (!oauth) {
-      const createOauth = await this.oauthService.createWithoutUserId(decryptUid, PlatformEnum.GOOGLE, null);
+      const createOauth = await this.oauthService.createWithoutUserId(
+        externalId,
+        PlatformEnum.GOOGLE,
+        googleAccessToken,
+      );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken };
+      return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (oauth.userId) {
