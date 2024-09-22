@@ -16,7 +16,14 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     private authService: AuthService,
   ) {}
 
-  async execute({ uid }: KakaoAppLoginCommand) {
+  async execute({ kakaoAccessToken }: KakaoAppLoginCommand) {
+    const kakaoUserInfo = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
+      headers: {
+        Authorization: `Bearer ${kakaoAccessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+      },
+    });
+
     //! kakaoUserInfo
     // data: {
     //   id: 3405515435,
@@ -35,23 +42,26 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     //     email: 'hoodiev.team@gmail.com'
     //   }
     // }
-    const decryptUid = this.authService.appDecrypt(String(uid));
 
-    const oauth = await this.oauthService.findByExternalId(decryptUid);
+    const externalId: string = kakaoUserInfo.data.id;
+    const email = kakaoUserInfo.data.kakao_account.email;
+    const image = kakaoUserInfo.data.properties.profile_image;
+
+    const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken };
+      return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (!oauth) {
-      const createOauth = await this.oauthService.createWithoutUserId(decryptUid, PlatformEnum.KAKAO, null);
+      const createOauth = await this.oauthService.createWithoutUserId(externalId, PlatformEnum.KAKAO, kakaoAccessToken);
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken };
+      return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (oauth.userId) {
