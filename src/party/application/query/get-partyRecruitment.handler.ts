@@ -45,16 +45,13 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
     }
 
-    // if (party.status === 'deleted') {
-    //   party['tag'] = '파티 종료';
-    // } else if (party.status === 'archived') {
-    //   party['tag'] = '파티 완료';
-    // } else if (party.partyRecruitments.length === 0) {
-    //   party['tag'] = '진행중';
-    // } else {
-    party['tag'] = '모집중';
-    // }
-    // 파티 모집이 존재한다면 무조건 모집중이기 때문
+    if (party.status === 'deleted') {
+      party['tag'] = '파티 종료';
+    } else if (party.status === 'archived') {
+      party['tag'] = '파티 완료';
+    } else if (party.status === 'active') {
+      party['tag'] = '진행중';
+    }
 
     return party;
   }
