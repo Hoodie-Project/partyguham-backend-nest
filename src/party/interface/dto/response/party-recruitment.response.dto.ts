@@ -6,8 +6,8 @@ import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class PartyRecruitmentResponseDto {
   @Expose()
   @ApiProperty({
-    example: '모집중',
-    description: '진행중 / 모집중 / 파티종료',
+    example: '진행중',
+    description: '진행중 / 파티완료 / 파티종료',
   })
   @IsNotEmpty()
   readonly tag: string;
