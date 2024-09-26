@@ -63,7 +63,7 @@ export class PartySwagger {
         parties : 요청한 limit 만큼의 데이터를 리턴합니다.
         - tag : 파티에 표시할 태그를 리턴합니다.
             진행중 
-            파티 종료
+            종료
         - partyType : 해당 파티의 타입을 나타냅니다.
         `,
       }),

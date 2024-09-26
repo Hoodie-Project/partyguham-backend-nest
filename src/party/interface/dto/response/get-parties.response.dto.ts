@@ -27,7 +27,7 @@ class PartiesDto {
   @Expose()
   @ApiProperty({
     example: '진행중',
-    description: '진행중 / 파티완료 / 파티종료',
+    description: '진행중 / 종료',
   })
   @IsNotEmpty()
   readonly tag: string;
