@@ -33,10 +33,8 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
       party['tag'] = '파티 종료';
     } else if (party.status === 'archived') {
       party['tag'] = '파티 완료';
-    } else if (party.partyRecruitments.length === 0) {
+    } else if (party.status === 'active') {
       party['tag'] = '진행중';
-    } else {
-      party['tag'] = '모집중';
     }
 
     return party;
