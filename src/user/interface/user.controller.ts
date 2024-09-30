@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
@@ -59,7 +59,17 @@ export class UserController {
 
   @UseGuards(SignupJwtAuthGuard)
   @Get('check-nickname')
-  @ApiOperation({ summary: '닉네임 중복검사' })
+  @ApiOperation({
+    summary: '닉네임 중복검사',
+    description: `**닉네임 중복검사 API 입니다.**  
+    signupToken을 이용하여 인증하고, 위치는 헤더(authorization) 또는 쿠키(signupToken) 으로 인증 가능합니다.  
+    존재하지 않거나, 이중으로 존재할 시 401을 리턴합니다.
+    `,
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {signupToken}',
+  })
   @ApiResponse({
     status: 200,
     description: '사용가능한 닉네임 입니다.',
@@ -80,7 +90,13 @@ export class UserController {
 
   @UseGuards(SignupJwtAuthGuard)
   @Post('')
-  @ApiOperation({ summary: '필수회원가입 (유저생성)' })
+  @ApiOperation({
+    summary: '필수회원가입 (유저생성)',
+    description: `**필수 회원가입 API 입니다.**  
+    signupToken을 이용하여 인증하고, 위치는 헤더(authorization) 또는 쿠키(signupToken) 으로 인증 가능합니다.  
+    존재하지 않거나, 이중으로 존재할 시 401을 리턴합니다.
+    `,
+  })
   @ApiResponse({
     status: 201,
     description: '회원가입하여 유저 생성 완료, 로그인 완료 (token 리턴)',
