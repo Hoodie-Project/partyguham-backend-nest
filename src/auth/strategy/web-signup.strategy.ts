@@ -2,12 +2,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
-import { OauthService } from './oauth.service';
-import { AuthService } from './auth.service';
-import { PayloadType } from './jwt.payload';
+import { OauthService } from '../oauth.service';
+import { AuthService } from '../auth.service';
+import { PayloadType } from '../jwt.payload';
 
 @Injectable()
-export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
+export class WebSignupStrategy extends PassportStrategy(Strategy, 'signup') {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,

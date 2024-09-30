@@ -4,21 +4,23 @@ import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
 import { AuthEntity } from './entity/auth.entity';
-import { AccessStrategy } from './access.strategy';
+import { AccessStrategy } from './strategy/access.strategy';
 import { AuthRepository } from './repository/auth.repository';
-import { RefreshStrategy } from './refresh.strategy';
+import { RefreshStrategy } from './strategy/refresh.strategy';
 import { AuthController } from './auth.controller';
 import { OauthEntity } from './entity/oauth.entity';
 import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
-import { SignupStrategy } from './signup.strategy';
+import { WebSignupStrategy } from './strategy/web-signup.strategy';
+import { AppSignupStrategy } from './strategy/app-signup.strategy';
 
 @Module({
   controllers: [AuthController],
   providers: [
     AccessStrategy,
     RefreshStrategy,
-    SignupStrategy,
+    WebSignupStrategy,
+    AppSignupStrategy,
     AuthRepository,
     OauthRepository,
     AuthService,

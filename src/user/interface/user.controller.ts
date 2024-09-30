@@ -1,28 +1,13 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpCode,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Req,
-  Res,
-  UseGuards,
-} from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
-import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
 import { UserResponseDto } from './dto/response/UserResponseDto';
-import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
 import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
 import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
@@ -31,15 +16,9 @@ import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
 
-import { CreateUserCommand } from '../application/command/create-user.command';
 import { UpdateUserCommand } from '../application/command/update-user.command';
 import { CreateUserLocationCommand } from '../application/command/create-userLocation.command';
 import { DeleteUserLocationCommand } from '../application/command/delete-userLocation.command';
-
-import { GetUserQuery } from '../application/query/get-user.query';
-import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
-import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
-
 import { CreateUserPersonalityCommand } from '../application/command/create.userPersonality.command';
 import { DeleteUserPersonalityCommand } from '../application/command/delete-userPersonality.command';
 import { CreateUserCareerCommand } from '../application/command/create-userCareer.command';
@@ -49,6 +28,9 @@ import { DeleteUserLocationsCommand } from '../application/command/delete-userLo
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 
+import { GetUserQuery } from '../application/query/get-user.query';
+import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
+
 @ApiTags('user (회원/유저)')
 @Controller('users')
 export class UserController {
@@ -56,76 +38,6 @@ export class UserController {
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
-  @UseGuards(SignupJwtAuthGuard)
-  @Get('check-nickname')
-  @ApiOperation({ summary: '닉네임 중복검사' })
-  @ApiResponse({
-    status: 200,
-    description: '사용가능한 닉네임 입니다.',
-  })
-  @ApiResponse({
-    status: 409,
-    description: '중복된 닉네임 입니다.',
-  })
-  async checkNickname(@Query() query: NicknameQueryRequestDto) {
-    const { nickname } = query;
-
-    const getUserInfoQuery = new GetCheckNicknameQuery(nickname);
-
-    await this.queryBus.execute(getUserInfoQuery);
-
-    return '사용가능한 닉네임 입니다.';
-  }
-
-  @UseGuards(SignupJwtAuthGuard)
-  @Post('')
-  @ApiOperation({ summary: '필수회원가입 (유저생성)' })
-  @ApiResponse({
-    status: 201,
-    description: '회원가입하여 유저 생성 완료, 로그인 완료 (token 리턴)',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-    schema: { example: { accessToken: 'token' } },
-  })
-  async signUp(
-    @CurrentUser() user: CurrentSignupType,
-    @Req() req: Request,
-    @Res() res: Response,
-    @Body() dto: CreateUserRequestDto,
-  ): Promise<void> {
-    const { nickname, email, gender, birth } = dto;
-
-    const oauthId = user.oauthId;
-    const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
-
-    const result = await this.commandBus.execute(command);
-
-    req.session.destroy((err) => {
-      if (err) {
-        console.error('Error destroying session:', err);
-        res.redirect(302, `${process.env.BASE_URL}`);
-      }
-    });
-
-    res.clearCookie('signupToken');
-    // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-
-    res.cookie('refreshToken', result.refreshToken, {
-      secure: true,
-      httpOnly: true,
-      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
-    });
-    res.status(201).send({ accessToken: result.accessToken });
-  }
-
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/locations')
