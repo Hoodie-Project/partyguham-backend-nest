@@ -46,9 +46,9 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
     }
 
     if (party.status === 'deleted') {
-      party['tag'] = '파티 종료';
+      party['tag'] = '삭제';
     } else if (party.status === 'archived') {
-      party['tag'] = '파티 완료';
+      party['tag'] = '종료';
     } else if (party.status === 'active') {
       party['tag'] = '진행중';
     }
