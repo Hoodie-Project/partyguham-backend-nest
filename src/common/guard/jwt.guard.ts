@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
-export class WebSignupJwtAuthGuard extends AuthGuard('webSignup') {}
-
-@Injectable()
-export class AppSignupJwtAuthGuard extends AuthGuard('appSignup') {}
+export class SignupJwtAuthGuard extends AuthGuard('signup') {}
 
 @Injectable()
 export class AccessJwtAuthGuard extends AuthGuard('access') {}

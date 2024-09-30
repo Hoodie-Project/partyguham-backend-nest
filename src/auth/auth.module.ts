@@ -11,16 +11,14 @@ import { AuthController } from './auth.controller';
 import { OauthEntity } from './entity/oauth.entity';
 import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
-import { WebSignupStrategy } from './strategy/web-signup.strategy';
-import { AppSignupStrategy } from './strategy/app-signup.strategy';
+import { SignupStrategy } from './strategy/signup.strategy';
 
 @Module({
   controllers: [AuthController],
   providers: [
     AccessStrategy,
     RefreshStrategy,
-    WebSignupStrategy,
-    AppSignupStrategy,
+    SignupStrategy,
     AuthRepository,
     OauthRepository,
     AuthService,
