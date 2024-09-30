@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PartyQueryRequestDto {
   @ApiProperty({
@@ -41,4 +41,31 @@ export class PartyQueryRequestDto {
   @IsString()
   @IsNotEmpty()
   public order: 'ASC' | 'DESC';
+
+  @ApiProperty({
+    enum: ['active', 'archived'],
+    description: `파티 상태
+    active - 진행중
+    archived - 종료
+    `,
+  })
+  @IsString()
+  @IsOptional()
+  public status: string;
+
+  @ApiProperty({
+    enum: ['미정', '스터디', '포트폴리오', '해커톤', '공모전'],
+    description: '파티 타입',
+  })
+  @IsString()
+  @IsOptional()
+  public partyType: string;
+
+  @ApiProperty({
+    example: '모동숲 파티',
+    description: '검색 기능 (제목에 관하여)',
+  })
+  @IsString()
+  @IsOptional()
+  public titleSearch: string;
 }

@@ -27,10 +27,10 @@ export class PartyRecruitmentEntity {
   positionId: number;
 
   @Column('smallint', { default: 1 })
-  recruitingCount: number; // 모집중
+  recruitingCount: number; // 모집중 인원
 
   @Column('smallint', { default: 0 })
-  recruitedCount: number; // 모집된
+  recruitedCount: number; // 모집된 인원
 
   @Column('text', { nullable: true })
   content: string;

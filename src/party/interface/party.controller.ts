@@ -90,9 +90,9 @@ export class PartyController {
   @Get('')
   @PartySwagger.getParties()
   async getParties(@Query() query: PartyQueryRequestDto) {
-    const { page, limit, sort, order } = query;
+    const { page, limit, sort, order, status, partyType, titleSearch } = query;
 
-    const parties = new GetPartiesQuery(page, limit, sort, order);
+    const parties = new GetPartiesQuery(page, limit, sort, order, status, partyType, titleSearch);
     const result = this.queryBus.execute(parties);
 
     return plainToInstance(GetPartiesResponseDto, result);
