@@ -24,6 +24,9 @@ import { PartyRecruitmentQueryRequestDto } from './dto/request/partyRecruitment.
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
 import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto copy';
 import { PartyRecruitmentResponseDto } from './dto/response/party-recruitment.response.dto';
+import { RecruitmentsQueryRequestDto } from './dto/request/recruitment.query.request.dto';
+import { GetRecruitmentsQuery } from '../application/query/get-recruitments.query';
+import { GetPartyRecruitmentsResponseDto } from './dto/response/get-recruitments.response.dto';
 
 @ApiTags('party recruitment (파티 모집 공고)')
 @Controller('parties')
@@ -32,6 +35,19 @@ export class PartyRecruitmentController {
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
+
+  @Get('recruitments')
+  @PartyRecruitmentSwagger.getRecruitments()
+  async getRecruitments(@Query() query: RecruitmentsQueryRequestDto) {
+    const { page, limit, sort, order, main, positionIds, titleSearch } = query;
+
+    const positionIdArray = positionIds ? positionIds.split(',').map(Number) : null;
+
+    const party = new GetRecruitmentsQuery(page, limit, sort, order, main, positionIdArray, titleSearch);
+    const result = this.queryBus.execute(party);
+
+    return plainToInstance(GetPartyRecruitmentsResponseDto, result);
+  }
 
   @Get('recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.getPartyRecruitment()

@@ -1,0 +1,50 @@
+import { NotFoundException } from '@nestjs/common';
+import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { Repository } from 'typeorm';
+import { GetRecruitmentsQuery } from './get-recruitments.query';
+import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
+
+@QueryHandler(GetRecruitmentsQuery)
+export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuery> {
+  constructor(
+    @InjectRepository(PartyRecruitmentEntity) private partyrecruitmentRepository: Repository<PartyRecruitmentEntity>,
+  ) {}
+
+  async execute(query: GetRecruitmentsQuery) {
+    const { page, limit, sort, order, main, positionIds, titleSearch } = query;
+
+    const offset = (page - 1) * limit || 0;
+
+    const recruitmentsQuery = this.partyrecruitmentRepository
+      .createQueryBuilder('partyRecruitments')
+      .leftJoin('partyRecruitments.party', 'party')
+      .leftJoin('partyRecruitments.position', 'position')
+      .select(['partyRecruitments', 'party.title', 'party.image', 'position'])
+      .limit(limit)
+      .offset(offset)
+      .where('1=1')
+      .orderBy(`partyRecruitments.${sort}`, order);
+
+    if (positionIds !== undefined && positionIds !== null && positionIds.length !== 0) {
+      recruitmentsQuery.andWhere('position.id IN (:...positionIds)', { positionIds }); // 배열로 받은 ids를 IN 조건에 전달
+    }
+
+    if (main !== undefined && main !== null) {
+      recruitmentsQuery.andWhere('position.main = :main', { main });
+    }
+
+    if (titleSearch !== undefined && titleSearch !== null) {
+      recruitmentsQuery.andWhere('party.title LIKE :title', { title: `%${titleSearch}%` });
+    }
+
+    const [partyRecruitments, total] = await recruitmentsQuery.getManyAndCount();
+
+    if (!partyRecruitments) {
+      throw new NotFoundException('파티모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
+    }
+
+    return { total, partyRecruitments };
+  }
+}

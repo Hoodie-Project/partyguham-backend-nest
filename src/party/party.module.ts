@@ -45,6 +45,7 @@ import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
 import { PartyApplicationController } from './interface/party-application.controller';
 import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
 import { GetAdminPartyUserHandler } from './application/query/get-admin-partyUser.handler';
+import { GetRecruitmentsHandler } from './application/query/get-recruitments.handler';
 
 const uploadDir = 'images/party';
 
@@ -72,6 +73,7 @@ const queryHandlers = [
   GetPartyUserHandler,
   GetAdminPartyUserHandler,
   GetPartyTypesHandler,
+  GetRecruitmentsHandler,
   GetPartyRecruitmentsHandler,
   GetPartyRecruitmentHandler,
   GetPartyApplicationsHandler,
@@ -88,7 +90,7 @@ const repositories = [
 ];
 
 @Module({
-  controllers: [PartyController, PartyRecruitmentController, PartyApplicationController],
+  controllers: [PartyRecruitmentController, PartyApplicationController, PartyController],
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   imports: [
     ServeStaticModule.forRoot({
