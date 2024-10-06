@@ -18,7 +18,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { AccessJwtAuthGuard, OptionalAccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PartySwagger } from './party.swagger';
 
 import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
@@ -98,15 +98,19 @@ export class PartyController {
     return plainToInstance(GetPartiesResponseDto, result);
   }
 
+  @UseGuards(OptionalAccessJwtAuthGuard)
   @Get(':partyId')
   @PartySwagger.getParty()
-  async getParty(@Param() param: PartyRequestDto) {
+  async getParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto) {
+    console.log(user);
+
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(GetPartyResponseDto, result);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/users')
   @PartySwagger.getPartyUsers()
   async getPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
@@ -118,6 +122,7 @@ export class PartyController {
     return plainToInstance(GetPartyUserResponseDto, result);
   }
 
+  @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/admin/users')
   @PartySwagger.getAdminPartyUsers()
   async getAdminPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {

@@ -55,8 +55,9 @@ export class PartySwagger {
   static getParties() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 목록 조회',
+        summary: '파티 목록 조회 (홈)',
         description: `**파티 목록을 조회하는 API 입니다.**  
+        사용처 : 홈페이지 파티 목록 조회
 
         total : 파티 전체 데이터 수
 
