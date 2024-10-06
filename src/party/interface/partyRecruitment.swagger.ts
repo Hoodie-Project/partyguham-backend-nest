@@ -39,6 +39,25 @@ export class PartyRecruitmentSwagger {
     );
   }
 
+  static getRecruitments() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티모집 목록 조회 (홈)',
+        description: `**파티모집을 모두 조회하는 API 입니다.**  
+        사용처 : 홈페이지 파티모집 목록 조회
+
+        배열 형식으로 존재하는 파티모집을 리턴합니다.  
+        파티모집이 존재하지 않으면 빈 배열을 리턴합니다.  
+      `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티에 해당하는 목록 조회',
+        type: [PartyRecruitmentsResponseDto],
+      }),
+    );
+  }
+
   static getPartyRecruitments() {
     return applyDecorators(
       ApiOperation({
