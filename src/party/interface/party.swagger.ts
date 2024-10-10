@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiConsumes, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
@@ -82,8 +82,16 @@ export class PartySwagger {
         summary: '파티 단일 조회',
         description: `**파티 단일 조회하는 API 입니다.**  
 
-        partyType : 해당 파티의 타입을 나타냅니다.
-        tag : 해당 파티의 상태를 나타냅니다.
+        - partyType : 해당 파티의 타입을 나타냅니다.
+        - tag : 해당 파티의 상태를 나타냅니다.
+        - myInfo : access token이 유효하다면 해당 유저의 데이터를 같이 보냅니다.  
+        access token이 유효하지 않거나, 해당 파티의 유저가 아니면 Null을 리턴합니다.
+        `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}  
+        access token은 선택값 입니다.
         `,
       }),
       ApiResponse({

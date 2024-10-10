@@ -14,7 +14,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
@@ -99,12 +99,11 @@ export class PartyController {
   }
 
   @UseGuards(OptionalAccessJwtAuthGuard)
-  @Get(':partyId')
   @PartySwagger.getParty()
+  @Get(':partyId')
   async getParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto) {
-    console.log(user);
-
-    const party = new GetPartyQuery(param.partyId);
+    const userId = user.id;
+    const party = new GetPartyQuery(param.partyId, userId);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(GetPartyResponseDto, result);

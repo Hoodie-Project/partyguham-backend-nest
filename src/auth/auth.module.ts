@@ -12,13 +12,11 @@ import { OauthEntity } from './entity/oauth.entity';
 import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
 import { SignupStrategy } from './strategy/signup.strategy';
-import { OptionalAccessStrategy } from './strategy/optional-access.strategy';
 
 @Module({
   controllers: [AuthController],
   providers: [
     AccessStrategy,
-    OptionalAccessStrategy,
     RefreshStrategy,
     SignupStrategy,
     AuthRepository,

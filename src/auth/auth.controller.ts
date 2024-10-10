@@ -28,4 +28,17 @@ export class AuthController {
 
     return { appEncrypt, appDecrypt };
   }
+
+  @ApiOperation({ summary: 'admin access token' })
+  @Post('admin/token')
+  async adminToken() {
+    if (process.env.MODE_ENV === 'local') {
+      const id = await this.authService.encrypt(String(1));
+      const accessToken = await this.authService.createAccessToken(id);
+
+      return { accessToken };
+    } else {
+      return null;
+    }
+  }
 }
