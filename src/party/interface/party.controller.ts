@@ -24,14 +24,14 @@ import { PartySwagger } from './party.swagger';
 import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
 import { UpdatePartyUserRequestDto } from './dto/request/update-partyUser.request.dto';
 import { PartyUserParamRequestDto } from './dto/request/partyUser.param.request.dto';
-import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { PartyRequestDto } from './dto/request/party.param.request.dto';
 import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
-import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
 import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
 import { PartyResponseDto } from './dto/response/party.response.dto';
+import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
+import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
 
 import { CreatePartyCommand } from '../application/command/create-party.comand';
 import { UpdatePartyCommand } from '../application/command/update-party.comand';
@@ -44,12 +44,9 @@ import { LeavePartyCommand } from '../application/command/leave-party.comand';
 import { EndPartyCommand } from '../application/command/end-party.comand';
 import { ActivePartyCommand } from '../application/command/active-party.comand';
 
-import { GetPartiesQuery } from '../application/query/get-parties.query';
 import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
-import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
-import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
 
 @ApiTags('party (파티 - 프로젝트 모집 단위)')
@@ -85,17 +82,6 @@ export class PartyController {
     const command = new CreatePartyCommand(user.id, title, content, imageFilePath, partyTypeId, positionId);
 
     return this.commandBus.execute(command);
-  }
-
-  @Get('')
-  @PartySwagger.getParties()
-  async getParties(@Query() query: PartyQueryRequestDto) {
-    const { page, limit, sort, order, status, partyType, titleSearch } = query;
-
-    const parties = new GetPartiesQuery(page, limit, sort, order, status, partyType, titleSearch);
-    const result = this.queryBus.execute(parties);
-
-    return plainToInstance(GetPartiesResponseDto, result);
   }
 
   @UseGuards(OptionalAccessJwtAuthGuard)
