@@ -7,6 +7,30 @@ import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 
 export class PartySwagger {
+  static getParties() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 목록 조회',
+        description: `**파티 목록을 조회하는 API 입니다.**  
+        사용처 : 홈페이지 파티 목록 조회
+
+        total : 파티 전체 데이터 수
+
+        parties : 요청한 limit 만큼의 데이터를 리턴합니다.
+        - tag : 파티에 표시할 태그를 리턴합니다.
+            진행중 
+            종료
+        - partyType : 해당 파티의 타입을 나타냅니다.
+        `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 목록 리스트 조회',
+        type: GetPartiesResponseDto,
+      }),
+    );
+  }
+
   static getTypes() {
     return applyDecorators(
       ApiOperation({
@@ -48,30 +72,6 @@ export class PartySwagger {
       ApiResponse({
         status: 204,
         description: 'Party Type이 존재하지 않습니다.',
-      }),
-    );
-  }
-
-  static getParties() {
-    return applyDecorators(
-      ApiOperation({
-        summary: '파티 목록 조회 (홈)',
-        description: `**파티 목록을 조회하는 API 입니다.**  
-        사용처 : 홈페이지 파티 목록 조회
-
-        total : 파티 전체 데이터 수
-
-        parties : 요청한 limit 만큼의 데이터를 리턴합니다.
-        - tag : 파티에 표시할 태그를 리턴합니다.
-            진행중 
-            종료
-        - partyType : 해당 파티의 타입을 나타냅니다.
-        `,
-      }),
-      ApiResponse({
-        status: 200,
-        description: '파티 목록 리스트 조회',
-        type: GetPartiesResponseDto,
       }),
     );
   }
