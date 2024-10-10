@@ -11,12 +11,15 @@ export class AccessJwtAuthGuard extends AuthGuard('access') {}
 export class RefreshJwtAuthGuard extends AuthGuard('refresh') {}
 
 @Injectable()
-export class OptionalAccessJwtAuthGuard extends AuthGuard('optional-access') {
+export class OptionalAccessJwtAuthGuard extends AuthGuard('access') {
   handleRequest(err, user, info, context) {
-    // 토큰이 없는 경우도 통과시키기 위해 null 반환
-    if (err || !user) {
-      return null; // 로그인되지 않은 상태로 처리
+    // user은 'OptionalAccessStrategy'를 통한 결과값 반환
+    if (!user) {
+      // 토큰이 없거나 잘못된 경우 null 반환
+      return null;
     }
-    return user; // 로그인된 사용자 정보 반환
+
+    // 토큰이 유효하면 user 반환
+    return user;
   }
 }

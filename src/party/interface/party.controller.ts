@@ -102,7 +102,7 @@ export class PartyController {
   @Get(':partyId')
   @PartySwagger.getParty()
   async getParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto) {
-    console.log(user);
+    console.log('user', user);
 
     const party = new GetPartyQuery(param.partyId);
     const result = this.queryBus.execute(party);
