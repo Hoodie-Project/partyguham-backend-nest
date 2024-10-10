@@ -16,7 +16,7 @@ export class OptionalAccessJwtAuthGuard extends AuthGuard('access') {
     // user은 'OptionalAccessStrategy'를 통한 결과값 반환
     if (!user) {
       // 토큰이 없거나 잘못된 경우 null 반환
-      return null;
+      return { id: null };
     }
 
     // 토큰이 유효하면 user 반환
