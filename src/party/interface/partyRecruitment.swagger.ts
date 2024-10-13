@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { PartyRecruitmentsResponseDto } from './dto/response/party-recruitments.response.dto';
@@ -9,7 +9,7 @@ export class PartyRecruitmentSwagger {
   static getRecruitments() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티모집 목록 조회',
+        summary: '파티 모집 공고 목록 조회',
         description: `**파티모집을 모두 조회하는 API 입니다.**  
         사용처 : 홈페이지 파티모집 목록 조회
 
@@ -19,8 +19,37 @@ export class PartyRecruitmentSwagger {
       }),
       ApiResponse({
         status: 200,
-        description: '파티에 해당하는 목록 조회',
+        description: '파티 모집 목록 조회',
         type: [PartyRecruitmentsResponseDto],
+      }),
+    );
+  }
+  static getRecruitmentsPersonalized() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '개인화 - 파티 모집 공고 목록 조회',
+        description: `**파티 모집 공고를 조회하는 API 입니다.**  
+        사용처 : 홈페이지 맞춤 모집 공고 조회
+        
+        '주포지션에 대한 내용'에 대한 세부프로필이 없을 경우 결과를 보내지 않고, 404를 리턴합니다.
+        배열 형식으로 존재하는 파티모집을 리턴합니다.  
+        파티모집이 존재하지 않으면 빈 배열을 리턴합니다.  
+      `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '개인화된 파티 모집 목록 조회',
+        type: [PartyRecruitmentsResponseDto],
+      }),
+      ApiResponse({
+        status: 404,
+        description: '주포지션을 입력하지 않았습니다.',
       }),
     );
   }

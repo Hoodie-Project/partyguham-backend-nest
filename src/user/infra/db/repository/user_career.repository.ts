@@ -32,6 +32,12 @@ export class UserCareerRepository implements IUserCareerRepository {
     return result;
   }
 
+  async findByUserIdAndPrimary(userId: number) {
+    const result = await this.userCareerRepository.findOne({ where: { userId, careerType: CareerTypeEnum.PRIMARY } });
+
+    return result;
+  }
+
   async create(userId: number, positionId: number, years: number, careerType: CareerTypeEnum) {
     const result = await this.userCareerRepository.save({ userId, positionId, years, careerType });
 

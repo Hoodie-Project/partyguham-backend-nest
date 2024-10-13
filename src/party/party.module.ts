@@ -47,6 +47,8 @@ import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruit
 import { GetAdminPartyUserHandler } from './application/query/get-admin-partyUser.handler';
 import { GetRecruitmentsHandler } from './application/query/get-recruitments.handler';
 import { PartyLandingController } from './interface/party-landing.controller';
+import { GetRecruitmentsPersonalizedHandler } from './application/query/get-recruitmentsPersonalized.handler';
+import { UserModule } from 'src/user/user.module';
 
 const uploadDir = 'images/party';
 
@@ -75,6 +77,7 @@ const queryHandlers = [
   GetAdminPartyUserHandler,
   GetPartyTypesHandler,
   GetRecruitmentsHandler,
+  GetRecruitmentsPersonalizedHandler,
   GetPartyRecruitmentsHandler,
   GetPartyRecruitmentHandler,
   GetPartyApplicationsHandler,
@@ -122,7 +125,6 @@ const repositories = [
         },
       }),
     }),
-    CqrsModule,
     TypeOrmModule.forFeature([
       PartyEntity,
       PartyTypeEntity,
@@ -131,6 +133,8 @@ const repositories = [
       PartyApplicationEntity,
       PartyInvitationEntity,
     ]),
+    CqrsModule,
+    UserModule,
   ],
 })
 export class PartyModule {}
