@@ -5,14 +5,6 @@ import { Exclude, Expose } from 'class-transformer';
 export class UserCareerResponseDto {
   @Expose()
   @ApiProperty({ example: 1 })
-  id: number;
-
-  @Expose()
-  @ApiProperty({ example: 1 })
-  userId: number;
-
-  @Expose()
-  @ApiProperty({ example: 1 })
   positionId: number;
 
   @Expose()
