@@ -96,6 +96,7 @@ const repositories = [
 @Module({
   controllers: [WebOauthController, AppOauthController, UserController],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
+  exports: [UserService, ...repositories],
   imports: [
     TypeOrmModule.forFeature([
       UserEntity,

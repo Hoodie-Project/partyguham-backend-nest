@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class RecruitmentsQueryRequestDto {
+export class RecruitmentsPersonalizedQueryRequestDto {
   @ApiProperty({
     example: 1,
     description: '페이지',
@@ -39,29 +39,4 @@ export class RecruitmentsQueryRequestDto {
   @IsString()
   @IsNotEmpty()
   public order: 'ASC' | 'DESC';
-
-  @ApiPropertyOptional({
-    enum: ['기획자', '디자이너', '개발자', '마케터/광고'],
-    description: '직군 조건 조회 (선택 옵션)',
-  })
-  @IsIn(['기획자', '디자이너', '개발자', '마케터/광고'])
-  @IsString()
-  @IsOptional()
-  public main: string;
-
-  @ApiPropertyOptional({
-    description: 'position ID (PK - 포지션)',
-    example: '1,2,3',
-  })
-  @IsString()
-  @IsOptional()
-  public positionIds: string;
-
-  @ApiPropertyOptional({
-    example: '모동숲 파티',
-    description: '검색 기능 (제목에 관하여)',
-  })
-  @IsString()
-  @IsOptional()
-  public titleSearch: string;
 }
