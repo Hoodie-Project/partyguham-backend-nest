@@ -57,7 +57,7 @@ export class RecruitmentsQueryRequestDto {
   @IsOptional()
   public positionIds: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: '모동숲 파티',
     description: '검색 기능 (제목에 관하여)',
   })
