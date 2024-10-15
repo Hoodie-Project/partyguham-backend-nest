@@ -4,6 +4,7 @@ import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { PartyRecruitmentsResponseDto } from './dto/response/party-recruitments.response.dto';
 import { PartyRecruitmentResponseDto } from './dto/response/party-recruitment.response.dto';
+import { GetPartyRecruitmentsResponseDto } from './dto/response/get-recruitments.response.dto';
 
 export class PartyRecruitmentSwagger {
   static getRecruitments() {
@@ -20,7 +21,7 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 200,
         description: '파티 모집 목록 조회',
-        type: [PartyRecruitmentsResponseDto],
+        type: GetPartyRecruitmentsResponseDto,
       }),
     );
   }
@@ -45,7 +46,7 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 200,
         description: '개인화된 파티 모집 목록 조회',
-        type: [PartyRecruitmentsResponseDto],
+        type: GetPartyRecruitmentsResponseDto,
       }),
       ApiResponse({
         status: 404,
