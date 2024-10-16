@@ -64,6 +64,12 @@ export class PartyRecruitmentSwagger {
         한 번에 최소 1개, 최대 5개까지 데이터를 받아 모집 생성 가능합니다.  
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 201,
         description: '파티 생성',
@@ -113,6 +119,12 @@ export class PartyRecruitmentSwagger {
         
       `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 200,
         description: '모집 수정',
@@ -129,6 +141,12 @@ export class PartyRecruitmentSwagger {
         삭제할 레코드의 ID를 배열 형태로 요청 본문에 포함하여 전송합니다.
         사용자가 지정한 ID 배열을 기반으로 해당 레코드를 일괄적으로 삭제합니다.
         `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
       ApiResponse({
         status: 204,
@@ -149,6 +167,12 @@ export class PartyRecruitmentSwagger {
         데이터를 완전 삭제 합니다.
       `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 204,
         description: '모집 삭제',
@@ -164,6 +188,12 @@ export class PartyRecruitmentSwagger {
         지원 중복은 불가합니다.
           `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 201,
         description: '파티 지원 완료',
@@ -178,6 +208,12 @@ export class PartyRecruitmentSwagger {
         description: `**파티 포지션 모집별, 지원자 조회하는 API 입니다.**  
         
           `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
       ApiResponse({
         status: 200,
@@ -197,6 +233,12 @@ export class PartyRecruitmentSwagger {
         description: `**파티 지원자 승인하는 API 입니다.**  
         
           `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
       ApiResponse({
         status: 200,
@@ -220,6 +262,12 @@ export class PartyRecruitmentSwagger {
         description: `**파티 지원자 거절하는 API 입니다.**  
         
           `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
       ApiResponse({
         status: 200,
