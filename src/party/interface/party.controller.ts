@@ -49,6 +49,7 @@ import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
 
+@ApiBearerAuth('AccessJwt')
 @ApiTags('party (파티 - 프로젝트 모집 단위)')
 @Controller('parties')
 export class PartyController {
