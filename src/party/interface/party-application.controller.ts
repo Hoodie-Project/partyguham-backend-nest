@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -11,6 +11,7 @@ import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.
 import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
 import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 
+@ApiBearerAuth('AccessJwt')
 @ApiTags('party application (파티 지원자)')
 @UseGuards(AccessJwtAuthGuard)
 @Controller('parties')
