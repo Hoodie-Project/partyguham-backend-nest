@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -23,6 +23,8 @@ import { DeletePartyRecruitmentCommand } from '../application/command/delete-par
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { GetPartyRecruitmentsQuery } from '../application/query/get-partyRecruitments.query';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
+import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/delete-partyRecruitment.body.request.dto';
+import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
 
 @ApiTags('party recruitment (파티 모집 공고)')
 @Controller('parties')
@@ -92,15 +94,32 @@ export class PartyRecruitmentController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
+  @Put(':partyId/recruitments')
+  @PartyRecruitmentSwagger.batchDeleteRecruitment()
+  @HttpCode(204)
+  async batchDeleteRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: DeletePartyRecruitmentBodyRequestDto,
+    @Param() param: PartyRequestDto,
+  ): Promise<void> {
+    const { partyRecruitmentIds } = body;
+
+    const command = new BatchDeletePartyRecruitmentCommand(user.id, param.partyId, partyRecruitmentIds);
+
+    return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
   @Delete(':partyId/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.deleteRecruitment()
+  @HttpCode(204)
   async deleteRecruitment(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
   ): Promise<void> {
     const command = new DeletePartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
 
-    return this.commandBus.execute(command);
+    this.commandBus.execute(command);
   }
 
   // 지원

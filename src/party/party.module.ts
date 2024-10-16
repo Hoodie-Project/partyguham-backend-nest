@@ -1,33 +1,41 @@
-import { Module } from '@nestjs/common';
-import { PartyController } from './interface/party.controller';
-import { CqrsModule } from '@nestjs/cqrs';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { PartyEntity } from './infra/db/entity/party/party.entity';
-import { PartyFactory } from './domain/party/party.factory';
-import { PartyRepository } from './infra/db/repository/party.repository';
-import { CreatePartyHandler } from './application/command/create-party.handler';
-import { PartyUserRepository } from './infra/db/repository/party_user.repository';
-import { GetPartiesHandler } from './application/query/get-parties.handler';
-import { GetPartyHandler } from './application/query/get-party.handler';
-import { PartyUserEntity } from './infra/db/entity/party/party_user.entity';
-import { UpdatePartyHandler } from './application/command/update-party.handler';
-import { DeletePartyHandler } from './application/command/delete-party.handler';
-import { PartyApplicationEntity } from './infra/db/entity/apply/party_application.entity';
-import { PartyInvitationEntity } from './infra/db/entity/apply/party_invitation.entity';
-import { GetPartyTypesHandler } from './application/query/get-partyTypes.handler';
-import { PartyTypeEntity } from './infra/db/entity/party/party_type.entity';
-import { PartyTypeRepository } from './infra/db/repository/party_type.repository';
-import { MulterModule } from '@nestjs/platform-express';
-
-import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { MulterModule } from '@nestjs/platform-express';
+import { UserModule } from 'src/user/user.module';
+import { CqrsModule } from '@nestjs/cqrs';
+import { diskStorage } from 'multer';
 import { ServeStaticModule } from '@nestjs/serve-static';
+
+import { PartyFactory } from './domain/party/party.factory';
+
+import { PartyController } from './interface/party.controller';
+import { PartyApplicationController } from './interface/party-application.controller';
+import { PartyLandingController } from './interface/party-landing.controller';
+import { PartyRecruitmentController } from './interface/party-recruitment.controller';
+
+import { PartyEntity } from './infra/db/entity/party/party.entity';
+import { PartyUserEntity } from './infra/db/entity/party/party_user.entity';
+import { PartyApplicationEntity } from './infra/db/entity/apply/party_application.entity';
+import { PartyInvitationEntity } from './infra/db/entity/apply/party_invitation.entity';
+import { PartyTypeEntity } from './infra/db/entity/party/party_type.entity';
+
+import { PartyRepository } from './infra/db/repository/party.repository';
+import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
+import { PartyUserRepository } from './infra/db/repository/party_user.repository';
+import { PartyTypeRepository } from './infra/db/repository/party_type.repository';
+import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
+
+import { GetPartiesHandler } from './application/query/get-parties.handler';
+import { GetPartyHandler } from './application/query/get-party.handler';
+import { GetPartyTypesHandler } from './application/query/get-partyTypes.handler';
+import { UpdatePartyHandler } from './application/command/update-party.handler';
+import { DeletePartyHandler } from './application/command/delete-party.handler';
+import { CreatePartyHandler } from './application/command/create-party.handler';
 import { CreatePartyApplicationHandler } from './application/command/create-partyApplication.handler';
 import { CreatePartyRecruitmentHandler } from './application/command/create-partyRecruitment.handler';
-import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
 import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
-import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
 import { DeletePartyImageHandler } from './application/command/delete-partyImage.handler';
 import { GetPartyRecruitmentsHandler } from './application/query/get-partyRecruitments.handler';
 import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
@@ -40,15 +48,12 @@ import { LeavePartyHandler } from './application/command/leave-party.handler';
 import { EndPartyHandler } from './application/command/end-party.handler';
 import { ActivePartyHandler } from './application/command/active-party.handler';
 import { UpdatePartyUserHandler } from './application/command/update-partyUser.handler';
-import { PartyRecruitmentController } from './interface/party-recruitment.controller';
 import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
-import { PartyApplicationController } from './interface/party-application.controller';
 import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
 import { GetAdminPartyUserHandler } from './application/query/get-admin-partyUser.handler';
 import { GetRecruitmentsHandler } from './application/query/get-recruitments.handler';
-import { PartyLandingController } from './interface/party-landing.controller';
 import { GetRecruitmentsPersonalizedHandler } from './application/query/get-recruitmentsPersonalized.handler';
-import { UserModule } from 'src/user/user.module';
+import { BatchDeletePartyRecruitmentHandler } from './application/command/batchDelete-partyRecruitment.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -62,6 +67,7 @@ const commandHandlers = [
   CreatePartyRecruitmentHandler,
   UpdatePartyRecruitmentHandler,
   DeletePartyRecruitmentHandler,
+  BatchDeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
   LeavePartyHandler,
   ApprovePartyApplicationHandler,

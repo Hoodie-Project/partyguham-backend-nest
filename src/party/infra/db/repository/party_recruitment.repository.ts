@@ -64,11 +64,15 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     return await this.partyRecruitmentRepository.save({ id, recruitedCount });
   }
 
-  async delete(RecruitmentId: number) {
-    const partyRecruitment = await this.findOne(RecruitmentId);
+  async delete(recruitmentId: number) {
+    const partyRecruitment = await this.findOne(recruitmentId);
     const status = StatusEnum.DELETED;
 
     await this.partyRecruitmentRepository.save({ ...partyRecruitment, status });
+  }
+
+  async batchDelete(recruitmentIds: number[]) {
+    await this.partyRecruitmentRepository.delete(recruitmentIds);
   }
 
   async deleteAll(partyId: number) {
