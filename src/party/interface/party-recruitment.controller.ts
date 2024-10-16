@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -94,7 +94,7 @@ export class PartyRecruitmentController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Put(':partyId/recruitments')
+  @Post(':partyId/recruitments/batch-delete')
   @PartyRecruitmentSwagger.batchDeleteRecruitment()
   @HttpCode(204)
   async batchDeleteRecruitment(
