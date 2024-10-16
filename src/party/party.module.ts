@@ -50,8 +50,6 @@ import { PartyLandingController } from './interface/party-landing.controller';
 import { GetRecruitmentsPersonalizedHandler } from './application/query/get-recruitmentsPersonalized.handler';
 import { UserModule } from 'src/user/user.module';
 
-const uploadDir = 'images/party';
-
 const commandHandlers = [
   CreatePartyHandler,
   UpdatePartyHandler,
@@ -93,13 +91,16 @@ const repositories = [
   { provide: 'PartyApplicationRepository', useClass: PartyApplicationRepository },
 ];
 
+const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
+const uploadDir = 'images/party';
+
 @Module({
   controllers: [PartyLandingController, PartyRecruitmentController, PartyApplicationController, PartyController],
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   imports: [
     ServeStaticModule.forRoot({
       rootPath: uploadDir, // 정적 파일이 저장된 디렉토리
-      serveRoot: '/' + uploadDir, // 정적 파일에 접근할 경로 설정
+      serveRoot: mainRoot + '/' + uploadDir, // 정적 파일에 접근할 경로 설정
     }),
     MulterModule.register({
       // dest: '../upload',
