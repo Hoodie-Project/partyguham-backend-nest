@@ -64,6 +64,12 @@ export class PartySwagger {
         `,
       }),
       ApiConsumes('multipart/form-data'),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 201,
         description: '파티 생성',
@@ -159,6 +165,12 @@ export class PartySwagger {
 
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 200,
         description: '파티원 정보 조회',
@@ -184,6 +196,12 @@ export class PartySwagger {
         `,
       }),
       ApiConsumes('multipart/form-data'),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 200,
         description: '파티 수정 완료',
@@ -213,6 +231,12 @@ export class PartySwagger {
         파티 데이터를 완전 삭제 하지 않고, 상태값(party.status)을 종료(archived) 상태로 변경하여 데이터를 유지합니다.
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 204,
         description: '파티 종료 완료',
@@ -236,6 +260,12 @@ export class PartySwagger {
         상태값(party.status)이 종료(archived)된 파티에서 활성(active) 상태로 변경하여 데이터를 유지합니다.
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 204,
         description: '활성화 완료',
@@ -258,6 +288,12 @@ export class PartySwagger {
         description: `**파티를 삭제하는 API 입니다.**  
         파티 데이터를 완전 삭제 하지 않고, 상태값(party.status)을 삭제(deleted)로 변경하여 데이터를 유지합니다.
         `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
       ApiResponse({
         status: 204,
@@ -283,6 +319,12 @@ export class PartySwagger {
         파티장 권한을 양도하고 나가기가 가능합니다.
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 204,
         description: '파티 나가기 완료',
@@ -306,6 +348,12 @@ export class PartySwagger {
         파티장 권한을 가진 사람만 가능한 기능입니다.  
         partyUserId (파티원 ID)에 대해 포지션 변경이 가능합니다.
         `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
       ApiResponse({
         status: 200,
@@ -331,6 +379,12 @@ export class PartySwagger {
         partyUserId (파티원 ID)를 통해 유저를 내보냅니다.
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 204,
         description: '삭제 완료',
@@ -354,6 +408,12 @@ export class PartySwagger {
         파티 이미지를 서버에서 삭제하고, image 데이터를 **null**로 저장합니다.
         `,
       }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
       ApiResponse({
         status: 204,
         description: '삭제 완료',
@@ -372,6 +432,12 @@ export class PartySwagger {
         description: `**파티장 위임하는 API 입니다.**  
         
           `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
       }),
     );
   }

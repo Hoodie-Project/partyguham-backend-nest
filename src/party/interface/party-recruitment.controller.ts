@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -26,6 +26,7 @@ import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitm
 import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/delete-partyRecruitment.body.request.dto';
 import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
 
+@ApiBearerAuth('AccessJwt')
 @ApiTags('party recruitment (파티 모집 공고)')
 @Controller('parties')
 export class PartyRecruitmentController {
@@ -94,7 +95,7 @@ export class PartyRecruitmentController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Put(':partyId/recruitments')
+  @Post(':partyId/recruitments/batch-delete')
   @PartyRecruitmentSwagger.batchDeleteRecruitment()
   @HttpCode(204)
   async batchDeleteRecruitment(
