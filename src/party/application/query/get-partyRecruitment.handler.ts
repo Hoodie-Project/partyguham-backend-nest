@@ -25,6 +25,7 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
         'party.title AS title',
         'party.image AS image',
         'partyType.type AS "partyType"',
+        'position.id AS "positionId"',
         'position.main AS main',
         'position.sub AS sub',
         'partyRecruitments.content AS content',

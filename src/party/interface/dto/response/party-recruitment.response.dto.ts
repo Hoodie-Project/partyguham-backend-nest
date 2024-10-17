@@ -39,6 +39,11 @@ export class PartyRecruitmentResponseDto {
   readonly partyType: object;
 
   @Expose()
+  @ApiProperty({ example: 1, description: 'position ID (PK - 포지션)' })
+  @IsNotEmpty()
+  positionId: number;
+
+  @Expose()
   @ApiProperty({
     example: '기획',
     description: 'Position Main (직군)',
