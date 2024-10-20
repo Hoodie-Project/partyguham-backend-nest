@@ -56,7 +56,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     // }
     const externalId: string = kakaoUserInfo.data.id;
     const email = kakaoUserInfo.data.kakao_account.email;
-    const image = kakaoUserInfo.data.properties.profile_image;
+    // const image = kakaoUserInfo.data.properties.profile_image;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
@@ -64,7 +64,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken, email, image };
+      return { type: 'signup', signupAccessToken, email };
     }
 
     if (!oauth) {
@@ -72,7 +72,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken, email, image };
+      return { type: 'signup', signupAccessToken, email };
     }
 
     if (oauth.userId) {
