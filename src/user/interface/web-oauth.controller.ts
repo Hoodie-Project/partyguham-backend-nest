@@ -140,7 +140,7 @@ export class WebOauthController {
         httpOnly: true,
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
-      res.json({ accessToken: result.accessToken });
+
       res.redirect(`${process.env.BASE_URL}`);
     }
 
