@@ -57,7 +57,11 @@ export class WebOauthController {
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
-    const result = await this.commandBus.execute(command);
+    let result:
+      | { type: 'signup'; signupAccessToken: string; email: string }
+      | { type: 'login'; accessToken: string; refreshToken: string };
+
+    result = await this.commandBus.execute(command);
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
@@ -66,12 +70,12 @@ export class WebOauthController {
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
 
-      res.status(200).redirect(`${process.env.BASE_URL}`);
+      res.redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
       req.session.email = result.email;
-      req.session.image = result.image;
+      // req.session.image = result.image;
 
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
@@ -80,7 +84,7 @@ export class WebOauthController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.status(401).redirect(`${process.env.BASE_URL}/join`);
+      res.redirect(`${process.env.BASE_URL}/join`);
     }
   }
 
@@ -132,7 +136,11 @@ export class WebOauthController {
   ) {
     const command = new GoogleLoginCommand(code);
 
-    const result = await this.commandBus.execute(command);
+    let result:
+      | { type: 'signup'; signupAccessToken: string; email: string }
+      | { type: 'login'; accessToken: string; refreshToken: string };
+
+    result = await this.commandBus.execute(command);
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
@@ -146,7 +154,7 @@ export class WebOauthController {
 
     if (result.type === 'signup') {
       req.session.email = result.email;
-      req.session.image = result.image;
+      // req.session.image = result.image;
 
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
@@ -155,7 +163,7 @@ export class WebOauthController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.status(401).redirect(`${process.env.BASE_URL}/join`);
+      res.redirect(`${process.env.BASE_URL}/join`);
     }
   }
 

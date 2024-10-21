@@ -5,6 +5,7 @@ import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
+import { GetAdminPartyUserResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 
 export class PartySwagger {
   static getParties() {
@@ -174,7 +175,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '파티원 정보 조회',
-        type: GetPartyUserResponseDto,
+        type: GetAdminPartyUserResponseDto,
       }),
       ApiResponse({
         status: 404,
