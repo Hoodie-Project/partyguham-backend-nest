@@ -18,7 +18,7 @@ export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecr
   async execute(query: GetRecruitmentsPersonalizedQuery) {
     const { page, limit, sort, order, userId } = query;
     const userCarerr = await this.userService.findByUserIdAndPrimary(userId);
-    console.log(userCarerr);
+
     if (!userCarerr) {
       throw new NotFoundException('주포지션을 입력하지 않았습니다.', 'USER_CARRER_NOT_EXIST');
     }

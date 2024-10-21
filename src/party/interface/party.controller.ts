@@ -48,6 +48,7 @@ import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
+import { GetAdminPartyUserResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party (파티 - 프로젝트 모집 단위)')
@@ -117,7 +118,7 @@ export class PartyController {
     const party = new GetAdminPartyUserQuery(param.partyId, sort, order, main, nickname);
     const result = this.queryBus.execute(party);
 
-    return plainToInstance(GetPartyUserResponseDto, result);
+    return plainToInstance(GetAdminPartyUserResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)

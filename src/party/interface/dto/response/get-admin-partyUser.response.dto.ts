@@ -3,7 +3,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 
 @Exclude()
-export class GetPartyUserResponseDto {
+export class GetAdminPartyUserResponseDto {
   @Expose()
   @ApiProperty({
     example: [

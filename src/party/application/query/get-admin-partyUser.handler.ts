@@ -46,8 +46,6 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
-    console.log(partyUser);
-
     return partyUser;
   }
 }
