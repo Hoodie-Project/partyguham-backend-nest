@@ -76,6 +76,10 @@ export class PartyRecruitmentDto {
     example: {
       title: '제목2',
       image: '/uploads/images/party/1718338843645-484895188-스크린샷 2024-03-03 오후 5.08.26.png',
+      partyType: {
+        id: 1,
+        type: '미정',
+      },
     },
     description: '파티 제목/이미지',
   })

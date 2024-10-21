@@ -29,8 +29,9 @@ export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecr
     const recruitmentsQuery = this.partyrecruitmentRepository
       .createQueryBuilder('partyRecruitments')
       .leftJoin('partyRecruitments.party', 'party')
+      .leftJoin('party.partyType', 'partyType')
       .leftJoin('partyRecruitments.position', 'position')
-      .select(['partyRecruitments', 'party.title', 'party.image', 'position'])
+      .select(['partyRecruitments', 'party.title', 'party.image', 'partyType', 'position'])
       .limit(limit)
       .offset(offset)
       .where('partyRecruitments.positionId = :positionId', { positionId: userPrimaryPosition })

@@ -20,8 +20,9 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
     const recruitmentsQuery = this.partyrecruitmentRepository
       .createQueryBuilder('partyRecruitments')
       .leftJoin('partyRecruitments.party', 'party')
+      .leftJoin('party.partyType', 'partyType')
       .leftJoin('partyRecruitments.position', 'position')
-      .select(['partyRecruitments', 'party.title', 'party.image', 'position'])
+      .select(['partyRecruitments', 'party.title', 'party.image', 'partyType', 'position'])
       .limit(limit)
       .offset(offset)
       .where('1=1')
