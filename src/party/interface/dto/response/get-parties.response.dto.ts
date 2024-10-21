@@ -85,6 +85,15 @@ class PartiesDto {
   @IsNotEmpty()
   @IsString()
   readonly updatedAt: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 1,
+    description: '모집공고 갯수',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly recruitmentCount: number;
 }
 
 export class GetPartiesResponseDto {

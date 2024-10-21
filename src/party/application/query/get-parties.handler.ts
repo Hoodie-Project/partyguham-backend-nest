@@ -20,6 +20,7 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
     const partiesQuery = this.partyRepository
       .createQueryBuilder('party')
       .leftJoinAndSelect('party.partyType', 'partyType')
+      .loadRelationCountAndMap('party.recruitmentCount', 'party.partyRecruitments')
       .limit(limit)
       .offset(offset)
       .orderBy(`party.${sort}`, order);
