@@ -49,6 +49,8 @@ import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
 import { GetAdminPartyUserResponseDto } from './dto/response/get-admin-partyUser.response.dto';
+import { DeletePartyUsersBodyRequestDto } from './dto/request/delete-partyUsers.body.request.dto';
+import { DeletePartyUsersCommand } from '../application/command/delete-partyUsers.comand';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party (파티 - 프로젝트 모집 단위)')
@@ -204,6 +206,22 @@ export class PartyController {
     @Param() param: PartyUserParamRequestDto,
   ): Promise<void> {
     const command = new DeletePartyUserCommand(user.id, param.partyId, param.partyUserId);
+
+    this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @HttpCode(204)
+  @PartySwagger.kickUsersFromParty()
+  @Post(':partyId/party-users/batch-delete')
+  async kickUsersFromParty(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: DeletePartyUsersBodyRequestDto,
+    @Param() param: PartyUserParamRequestDto,
+  ): Promise<void> {
+    const { partyUserIds } = body;
+
+    const command = new DeletePartyUsersCommand(user.id, param.partyId, partyUserIds);
 
     this.commandBus.execute(command);
   }

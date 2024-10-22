@@ -23,7 +23,7 @@ import { DeletePartyRecruitmentCommand } from '../application/command/delete-par
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { GetPartyRecruitmentsQuery } from '../application/query/get-partyRecruitments.query';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
-import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/delete-partyRecruitment.body.request.dto';
+import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/delete-partyRecruitments.body.request.dto';
 import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
 
 @ApiBearerAuth('AccessJwt')
