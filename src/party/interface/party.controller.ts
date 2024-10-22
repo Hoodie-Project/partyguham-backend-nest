@@ -217,7 +217,7 @@ export class PartyController {
   async kickUsersFromParty(
     @CurrentUser() user: CurrentUserType,
     @Body() body: DeletePartyUsersBodyRequestDto,
-    @Param() param: PartyUserParamRequestDto,
+    @Param() param: PartyRequestDto,
   ): Promise<void> {
     const { partyUserIds } = body;
 
