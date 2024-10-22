@@ -7,6 +7,8 @@ export interface IPartyUserRepository {
   createDeputy: (userId: number, partyId: number, positionId: number) => Promise<void>;
   updateByPositionId: (id: number, positionId: number) => Promise<PartyUserEntity>;
   findOneById: (id: number) => Promise<PartyUserEntity>;
+  findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
   findOne: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   deleteById: (id: number) => Promise<void>;
+  batchDelete: (id: number[]) => Promise<void>;
 }

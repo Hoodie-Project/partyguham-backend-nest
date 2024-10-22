@@ -375,7 +375,37 @@ export class PartySwagger {
     return applyDecorators(
       ApiOperation({
         summary: '파티원 내보내기',
-        description: `**파티를 탈퇴하는 API 입니다.**  
+        description: `**파티에서 파티원을 추방시키는 API 입니다.**  
+        파티장 권한을 가진 사람만 가능한 기능입니다.  
+        partyUserId (파티원 ID)를 통해 유저를 내보냅니다.
+        `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 204,
+        description: '삭제 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티원를 내보낼 권한이 없습니다.  파티장은 내보낼 수 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티유저를 찾을 수 없습니다. \t\n파티를 찾을 수 없습니다.',
+      }),
+    );
+  }
+
+  static kickUsersFromParty() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티원 다수 내보내기',
+        description: `**파티에서 파티원 다수를 추방시키는 API 입니다.**  
         파티장 권한을 가진 사람만 가능한 기능입니다.  
         partyUserId (파티원 ID)를 통해 유저를 내보냅니다.
         `,

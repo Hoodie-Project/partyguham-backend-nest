@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -43,11 +43,21 @@ export class PartyUserRepository implements IPartyUserRepository {
     return await this.partyUserRepository.findOne({ where: { id } });
   }
 
+  async findByIds(ids: number[]) {
+    return await this.partyUserRepository.find({
+      where: { id: In(ids) },
+    });
+  }
+
   async findOne(userId: number, partyId: number) {
     return await this.partyUserRepository.findOne({ where: { userId, partyId } });
   }
 
   async deleteById(id: number) {
     await this.partyUserRepository.delete({ id });
+  }
+
+  async batchDelete(ids: number[]) {
+    await this.partyUserRepository.delete(ids);
   }
 }
