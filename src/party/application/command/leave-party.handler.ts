@@ -25,7 +25,7 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
 
     const findParty = await this.partyRepository.findOne(partyId);
 
-    if (findParty) {
+    if (!findParty) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
     if (findParty.status === 'deleted') {
