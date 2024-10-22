@@ -5,7 +5,7 @@ import { PartyResponseDto } from './dto/response/party.response.dto';
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
-import { GetAdminPartyUserResponseDto } from './dto/response/get-admin-partyUser.response.dto';
+import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 
 export class PartySwagger {
   static getParties() {
@@ -154,6 +154,8 @@ export class PartySwagger {
         description: `**관리자가 파티원 목록 조회하는 API 입니다.**  
         관리자/파티원를 구분하지 않습니다.
 
+        total : 파티유저수
+
         - id : 파티 고유 ID 입니다 (PK)
         - partyUser : 파티에 속한 파티원 데이터 입니다.
 
@@ -175,7 +177,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '파티원 정보 조회',
-        type: GetAdminPartyUserResponseDto,
+        type: GetAdminPartyUsersResponseDto,
       }),
       ApiResponse({
         status: 404,

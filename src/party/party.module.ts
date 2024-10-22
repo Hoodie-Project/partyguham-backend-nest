@@ -54,6 +54,7 @@ import { GetAdminPartyUserHandler } from './application/query/get-admin-partyUse
 import { GetRecruitmentsHandler } from './application/query/get-recruitments.handler';
 import { GetRecruitmentsPersonalizedHandler } from './application/query/get-recruitmentsPersonalized.handler';
 import { BatchDeletePartyRecruitmentHandler } from './application/command/batchDelete-partyRecruitment.handler';
+import { DeletePartyUsersHandler } from './application/command/delete-partyUsers.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -62,6 +63,7 @@ const commandHandlers = [
   EndPartyHandler,
   ActivePartyHandler,
   DeletePartyUserHandler,
+  DeletePartyUsersHandler,
   UpdatePartyUserHandler,
   DeletePartyImageHandler,
   CreatePartyRecruitmentHandler,

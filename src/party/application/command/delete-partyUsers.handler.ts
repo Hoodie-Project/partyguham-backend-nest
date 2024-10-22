@@ -15,7 +15,7 @@ import { DeletePartyUsersCommand } from './delete-partyUsers.comand';
 
 @Injectable()
 @CommandHandler(DeletePartyUsersCommand)
-export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUsersCommand> {
+export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsersCommand> {
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
@@ -27,7 +27,7 @@ export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUsersC
 
     const findParty = await this.partyRepository.findOne(partyId);
 
-    if (findParty) {
+    if (!findParty) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
     if (findParty.status === 'deleted') {

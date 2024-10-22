@@ -12,7 +12,9 @@ import {
   UseGuards,
   UseInterceptors,
   BadRequestException,
+  Res,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -48,7 +50,7 @@ import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
-import { GetAdminPartyUserResponseDto } from './dto/response/get-admin-partyUser.response.dto';
+import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 import { DeletePartyUsersBodyRequestDto } from './dto/request/delete-partyUsers.body.request.dto';
 import { DeletePartyUsersCommand } from '../application/command/delete-partyUsers.comand';
 
@@ -115,12 +117,12 @@ export class PartyController {
   @Get(':partyId/admin/users')
   @PartySwagger.getAdminPartyUsers()
   async getAdminPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
-    const { sort, order, main, nickname } = query;
+    const { page, limit, sort, order, main, nickname } = query;
 
-    const party = new GetAdminPartyUserQuery(param.partyId, sort, order, main, nickname);
+    const party = new GetAdminPartyUserQuery(param.partyId, page, limit, sort, order, main, nickname);
     const result = this.queryBus.execute(party);
 
-    return plainToInstance(GetAdminPartyUserResponseDto, result);
+    return plainToInstance(GetAdminPartyUsersResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -211,19 +213,21 @@ export class PartyController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @HttpCode(204)
   @PartySwagger.kickUsersFromParty()
   @Post(':partyId/party-users/batch-delete')
   async kickUsersFromParty(
     @CurrentUser() user: CurrentUserType,
     @Body() body: DeletePartyUsersBodyRequestDto,
-    @Param() param: PartyUserParamRequestDto,
+    @Param() param: PartyRequestDto,
+    @Res() res: Response,
   ): Promise<void> {
     const { partyUserIds } = body;
 
     const command = new DeletePartyUsersCommand(user.id, param.partyId, partyUserIds);
 
     this.commandBus.execute(command);
+
+    res.status(204);
   }
 
   @UseGuards(AccessJwtAuthGuard)

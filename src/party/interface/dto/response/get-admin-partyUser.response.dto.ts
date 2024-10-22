@@ -1,55 +1,66 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Expose } from 'class-transformer';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 
 @Exclude()
-export class GetAdminPartyUserResponseDto {
+export class PartyUserResponseDto {
   @Expose()
   @ApiProperty({
-    example: [
-      {
-        createdAt: '2024-07-05T01:04:44.235Z',
-        authority: 'master',
-        position: {
-          main: '개발자',
-          sub: '백엔드',
-        },
-        user: {
-          id: 12,
-          nickname: 'mir2',
-          image: null,
-        },
-      },
-      {
-        createdAt: '2024-07-05T01:04:44.235Z',
-        authority: 'deputy',
-        position: {
-          main: '마케터 광고',
-          sub: '컨텐츠 마케터',
-        },
-        user: {
-          id: 17,
-          nickname: 'mir5',
-          image: null,
-        },
-      },
-      {
-        createdAt: '2024-07-05T01:04:44.235Z',
-        authority: 'member',
-        position: {
-          main: '기획자',
-          sub: 'UI/UX 기획자',
-        },
-        user: {
-          id: 16,
-          nickname: 'mir4',
-          image: null,
-        },
-      },
-    ],
-    description: `파티원 리스트
-    `,
+    example: {
+      id: 12,
+      nickname: 'mir2',
+      image: null,
+    },
+    description: '유저 데이터',
   })
-  @IsNotEmpty()
-  readonly partyUser: [];
+  readonly user: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 'master',
+    description: '권한',
+  })
+  readonly authority: string;
+
+  @Expose()
+  @ApiProperty({
+    example: {
+      main: '개발자',
+      sub: '백엔드',
+    },
+    description: '유저 포지션',
+  })
+  readonly position: string;
+
+  @Expose()
+  @ApiProperty({
+    example: '2024-06-07T12:17:57.248Z',
+    description: '참여일자',
+  })
+  readonly createdAt: string;
+
+  @Expose()
+  @ApiProperty({
+    example: '2024-06-07T12:17:57.248Z',
+    description: '유저 최근 수정일자',
+  })
+  readonly updateAt: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 'active',
+    description: '유저 데이터 상태값',
+  })
+  readonly status: string;
+}
+
+export class GetAdminPartyUsersResponseDto {
+  @Expose()
+  @ApiProperty({ example: 1, description: '총 데이터 갯수' })
+  total: number;
+
+  @Expose()
+  @ApiProperty({ description: '파티 데이터 목록', type: [PartyUserResponseDto] })
+  // @Type(() => PartyUserResponseDto)
+  partyUser: PartyUserResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
 }
