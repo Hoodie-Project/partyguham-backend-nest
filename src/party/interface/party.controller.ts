@@ -12,7 +12,9 @@ import {
   UseGuards,
   UseInterceptors,
   BadRequestException,
+  Res,
 } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -211,19 +213,21 @@ export class PartyController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @HttpCode(204)
   @PartySwagger.kickUsersFromParty()
   @Post(':partyId/party-users/batch-delete')
   async kickUsersFromParty(
     @CurrentUser() user: CurrentUserType,
     @Body() body: DeletePartyUsersBodyRequestDto,
     @Param() param: PartyRequestDto,
+    @Res() res: Response,
   ): Promise<void> {
     const { partyUserIds } = body;
 
     const command = new DeletePartyUsersCommand(user.id, param.partyId, partyUserIds);
 
     this.commandBus.execute(command);
+
+    res.status(204);
   }
 
   @UseGuards(AccessJwtAuthGuard)
