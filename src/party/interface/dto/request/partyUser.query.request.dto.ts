@@ -3,6 +3,22 @@ import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PartyUserQueryRequestDto {
   @ApiProperty({
+    example: 1,
+    description: '페이지',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  public page: number;
+
+  @ApiProperty({
+    example: 5,
+    description: '요청 받을 데이터 갯수',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  public limit: number;
+
+  @ApiProperty({
     enum: ['createdAt'],
     description: `order에 대한 조회 기준 (default = createdAt) 
     createdAt = 생성순

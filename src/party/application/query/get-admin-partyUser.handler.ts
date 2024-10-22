@@ -1,34 +1,37 @@
 import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 
 import { Repository } from 'typeorm';
 import { GetAdminPartyUserQuery } from './get-admin-partyUser.query';
+import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 
 @QueryHandler(GetAdminPartyUserQuery)
 export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUserQuery> {
-  constructor(@InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>) {}
+  constructor(@InjectRepository(PartyUserEntity) private partyUserRepository: Repository<PartyUserEntity>) {}
 
   async execute(query: GetAdminPartyUserQuery) {
-    const { partyId, sort, order, main, nickname } = query;
+    const { partyId, page, limit, sort, order, main, nickname } = query;
+    const offset = (page - 1) * limit || 0;
 
-    const partyMemberQuery = this.partyRepository
-      .createQueryBuilder('party')
-      .leftJoinAndSelect('party.partyUser', 'partyUser') // partyUser 조인
-      .leftJoinAndSelect('partyUser.position', 'position') // partyUser 조인
-      .leftJoin('partyUser.user', 'user') // user 정보를 조인하고 선택
+    const partyMemberQuery = this.partyUserRepository
+      .createQueryBuilder('partyUser')
+      .leftJoinAndSelect('partyUser.position', 'position')
+      .leftJoin('partyUser.user', 'user')
       .select([
-        'party.id',
         'partyUser.authority',
         'partyUser.createdAt',
+        'partyUser.updatedAt',
+        'partyUser.status',
         'user.id',
         'user.nickname',
         'user.image',
         'position.main',
         'position.sub',
       ])
-      .andWhere('party.id = :id', { id: partyId })
+      .limit(limit)
+      .offset(offset)
+      .andWhere('partyUser.partyId = :partyId', { partyId: partyId })
       .orderBy(`partyUser.${sort}`, order);
 
     // 직군 선택 옵션
@@ -40,12 +43,12 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
       partyMemberQuery.andWhere('user.nickname LIKE :nickname', { nickname: `%${nickname}%` });
     }
 
-    const partyUser = await partyMemberQuery.getOne();
+    const [partyUser, total] = await partyMemberQuery.getManyAndCount();
 
     if (!partyUser) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
-    return partyUser;
+    return { total, partyUser };
   }
 }

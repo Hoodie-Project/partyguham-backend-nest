@@ -48,7 +48,7 @@ import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
-import { GetAdminPartyUserResponseDto } from './dto/response/get-admin-partyUser.response.dto';
+import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 import { DeletePartyUsersBodyRequestDto } from './dto/request/delete-partyUsers.body.request.dto';
 import { DeletePartyUsersCommand } from '../application/command/delete-partyUsers.comand';
 
@@ -115,12 +115,12 @@ export class PartyController {
   @Get(':partyId/admin/users')
   @PartySwagger.getAdminPartyUsers()
   async getAdminPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
-    const { sort, order, main, nickname } = query;
+    const { page, limit, sort, order, main, nickname } = query;
 
-    const party = new GetAdminPartyUserQuery(param.partyId, sort, order, main, nickname);
+    const party = new GetAdminPartyUserQuery(param.partyId, page, limit, sort, order, main, nickname);
     const result = this.queryBus.execute(party);
 
-    return plainToInstance(GetAdminPartyUserResponseDto, result);
+    return plainToInstance(GetAdminPartyUsersResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)
