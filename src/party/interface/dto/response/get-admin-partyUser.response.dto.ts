@@ -56,7 +56,11 @@ export class PartyUserResponseDto {
 
 export class GetAdminPartyUsersResponseDto {
   @Expose()
-  @ApiProperty({ example: 1, description: '총 데이터 갯수' })
+  @ApiProperty({ example: 16, description: '파티에 속한 모든 partyUser 데이터 갯수' })
+  totalPartyUserCount: number;
+
+  @Expose()
+  @ApiProperty({ example: 1, description: 'partyUser 데이터 갯수' })
   total: number;
 
   @Expose()
