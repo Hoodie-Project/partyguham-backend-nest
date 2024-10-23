@@ -14,6 +14,17 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
     const { partyId, page, limit, sort, order, main, nickname } = query;
     const offset = (page - 1) * limit || 0;
 
+    // 전체 파티원 수를 조회하는 별도 쿼리
+    const totalPartyUserCount = await this.partyUserRepository
+      .createQueryBuilder('partyUser')
+      .where('partyUser.partyId = :partyId', { partyId: partyId })
+      .getCount();
+
+    if (!totalPartyUserCount) {
+      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
+    }
+
+    // 조건에 따른 파티원 조회
     const partyMemberQuery = this.partyUserRepository
       .createQueryBuilder('partyUser')
       .leftJoinAndSelect('partyUser.position', 'position')
@@ -31,7 +42,7 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
       ])
       .limit(limit)
       .offset(offset)
-      .andWhere('partyUser.partyId = :partyId', { partyId: partyId })
+      .where('partyUser.partyId = :partyId', { partyId: partyId })
       .orderBy(`partyUser.${sort}`, order);
 
     // 직군 선택 옵션
@@ -45,10 +56,6 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
 
     const [partyUser, total] = await partyMemberQuery.getManyAndCount();
 
-    if (!partyUser) {
-      throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
-    }
-
-    return { total, partyUser };
+    return { totalPartyUserCount, total, partyUser };
   }
 }
