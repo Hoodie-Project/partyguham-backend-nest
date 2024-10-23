@@ -70,7 +70,7 @@ export class WebOauthController {
         sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
 
-      res.redirect(`${process.env.BASE_URL}`);
+      res.redirect(`${process.env.BASE_URL}/home`);
     }
 
     if (result.type === 'signup') {
