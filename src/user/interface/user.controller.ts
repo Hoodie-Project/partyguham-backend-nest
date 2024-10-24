@@ -138,7 +138,7 @@ export class UserController {
     res.cookie('refreshToken', result.refreshToken, {
       secure: true,
       httpOnly: true,
-      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
+      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
     });
     res.status(201).send({ accessToken: result.accessToken });
   }

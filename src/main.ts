@@ -45,7 +45,7 @@ async function bootstrap() {
       cookie: {
         httpOnly: true,
         secure: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
         maxAge: 3600000, // 1시간(밀리초 단위)
       },
     }),

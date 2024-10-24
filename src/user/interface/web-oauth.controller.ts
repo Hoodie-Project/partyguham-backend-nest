@@ -67,10 +67,11 @@ export class WebOauthController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+        domain: process.env.MODE_ENV === 'prod' ? 'partyguam.net' : 'localhost',
       });
 
-      res.redirect(`${process.env.BASE_URL}/home`);
+      res.redirect(`${process.env.BASE_URL}`);
     }
 
     if (result.type === 'signup') {
@@ -80,7 +81,7 @@ export class WebOauthController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -146,7 +147,8 @@ export class WebOauthController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        domain: process.env.MODE_ENV === 'prod' ? 'partyguam.net' : 'localhost',
       });
 
       res.redirect(`${process.env.BASE_URL}`);
@@ -159,7 +161,7 @@ export class WebOauthController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
