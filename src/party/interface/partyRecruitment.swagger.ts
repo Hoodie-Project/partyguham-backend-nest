@@ -50,7 +50,16 @@ export class PartyRecruitmentSwagger {
       }),
       ApiResponse({
         status: 404,
-        description: '주포지션을 입력하지 않았습니다.',
+        description: '세부 프로필을 입력하지 않았습니다.',
+        schema: {
+          example: {
+            message: '세부 프로필을 입력하지 않았습니다.',
+            error: 'USER_PROFILE_NOT_EXIST',
+            statusCode: 404,
+            path: '/dev/api/parties/recruitments/personalized?page=1&limit=5&sort=createdAt&order=DESC',
+            timestamp: '2024-09-25T21:20:23.932Z',
+          },
+        },
       }),
     );
   }

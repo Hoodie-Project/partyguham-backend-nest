@@ -32,7 +32,7 @@ export class AuthController {
   @ApiOperation({ summary: 'admin access token' })
   @Post('admin/token')
   async adminToken() {
-    if (process.env.MODE_ENV === 'local') {
+    if (process.env.MODE_ENV !== 'prod') {
       const id = await this.authService.encrypt(String(1));
       const accessToken = await this.authService.createAccessToken(id);
 

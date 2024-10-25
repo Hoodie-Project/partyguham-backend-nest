@@ -17,13 +17,18 @@ export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecr
 
   async execute(query: GetRecruitmentsPersonalizedQuery) {
     const { page, limit, sort, order, userId } = query;
-    const userCarerr = await this.userService.findByUserIdAndPrimary(userId);
+    const userCarerr = await this.userService.findUserCarerrPrimaryByUserId(userId);
 
-    if (!userCarerr) {
-      throw new NotFoundException('주포지션을 입력하지 않았습니다.', 'USER_CARRER_NOT_EXIST');
+    const userLocation = await this.userService.findUserLocationByUserId(userId);
+
+    const userPersonality = await this.userService.findUserPersonalityByUserId(userId);
+
+    // 비동기 개선 필요
+    if (!userCarerr || userLocation.length === 0 || userPersonality.length === 0) {
+      throw new NotFoundException('세부 프로필을 입력하지 않았습니다.', 'USER_PROFILE_NOT_EXIST');
     }
-    const userPrimaryPosition = userCarerr.positionId;
 
+    const userPrimaryPosition = userCarerr.positionId;
     const offset = (page - 1) * limit || 0;
 
     const recruitmentsQuery = this.partyrecruitmentRepository
