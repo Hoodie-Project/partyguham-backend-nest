@@ -32,8 +32,8 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
       recruitmentsQuery.andWhere('position.id IN (:...positionIds)', { positionIds }); // 배열로 받은 ids를 IN 조건에 전달
     }
 
-    if (main !== undefined && main !== null) {
-      recruitmentsQuery.andWhere('position.main = :main', { main });
+    if (main && main.length > 0) {
+      recruitmentsQuery.andWhere('position.main IN (:...main)', { main });
     }
 
     if (titleSearch !== undefined && titleSearch !== null) {
