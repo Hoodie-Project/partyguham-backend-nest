@@ -6,8 +6,8 @@ export class GetRecruitmentsQuery implements IQuery {
     readonly limit: number,
     readonly sort: string,
     readonly order: 'ASC' | 'DESC',
-    readonly main: string | null,
-    readonly positionIds: number[],
-    readonly titleSearch: string,
+    readonly main?: string[] | string,
+    readonly positionIds?: number[],
+    readonly titleSearch?: string,
   ) {}
 }
