@@ -2,9 +2,10 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { PartyRecruitmentsResponseDto } from './dto/response/party-recruitments.response.dto';
-import { PartyRecruitmentResponseDto } from './dto/response/party-recruitment.response.dto';
-import { GetPartyRecruitmentsResponseDto } from './dto/response/get-recruitments.response.dto';
+import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
+import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-recruitment.response.dto';
+import { GetPartyRecruitmentsResponseDto } from './dto/response/recruitment/get-recruitments.response.dto';
+import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
 
 export class PartyRecruitmentSwagger {
   static getRecruitments() {
@@ -227,6 +228,7 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 200,
         description: '파티 지원자 조회',
+        type: PartyApplicationsResponseDto,
       }),
       ApiResponse({
         status: 401,
@@ -250,8 +252,9 @@ export class PartyRecruitmentSwagger {
         required: true,
       }),
       ApiResponse({
-        status: 200,
-        description: '파티 지원자 승인 완료 \t\n 모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.',
+        status: 201,
+        description: '파티 지원자 승인 완료, 지원자도 수락을 해야 합니다.',
+        schema: { example: { message: '지원자를 수락 하였습니다.' } },
       }),
       ApiResponse({
         status: 403,
@@ -279,8 +282,9 @@ export class PartyRecruitmentSwagger {
         required: true,
       }),
       ApiResponse({
-        status: 200,
+        status: 201,
         description: '파티 지원자 거절 완료',
+        schema: { example: { message: '지원자를 거절 하였습니다.' } },
       }),
       ApiResponse({
         status: 403,

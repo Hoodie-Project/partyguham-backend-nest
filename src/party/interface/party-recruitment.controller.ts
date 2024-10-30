@@ -7,13 +7,13 @@ import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 
 import { PartyRequestDto } from './dto/request/party.param.request.dto';
-import { CreatePartyRecruitmentRequestDto } from './dto/request/create-partyRecruitment.request.dto';
-import { CreatePartyApplicationRequestDto } from './dto/request/create-application.request.dto';
-import { PartyRecruitmentsParamRequestDto } from './dto/request/partyRecruitment.param.request.dto';
-import { PartyRecruitmentsResponseDto } from './dto/response/party-recruitments.response.dto';
-import { PartyRecruitmentParamRequestDto } from './dto/request/partyRecruitment.param.request.dto copy';
-import { PartyRecruitmentQueryRequestDto } from './dto/request/partyRecruitment.query.request.dto';
-import { PartyRecruitmentResponseDto } from './dto/response/party-recruitment.response.dto';
+import { CreatePartyRecruitmentRequestDto } from './dto/request/recruitment/create-partyRecruitment.request.dto';
+import { CreatePartyApplicationRequestDto } from './dto/request/application/create-application.request.dto';
+import { PartyRecruitmentsParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto';
+import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
+import { PartyRecruitmentParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto copy';
+import { PartyRecruitmentQueryRequestDto } from './dto/request/recruitment/partyRecruitment.query.request.dto';
+import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-recruitment.response.dto';
 
 import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
 import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
@@ -23,8 +23,10 @@ import { DeletePartyRecruitmentCommand } from '../application/command/delete-par
 import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
 import { GetPartyRecruitmentsQuery } from '../application/query/get-partyRecruitments.query';
 import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
-import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/delete-partyRecruitments.body.request.dto';
+import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/recruitment/delete-partyRecruitments.body.request.dto';
 import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
+import { PartyApplicationQueryRequestDto } from './dto/request/application/partyApplication.query.request.dto';
+import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party recruitment (파티 모집 공고)')
@@ -63,7 +65,7 @@ export class PartyRecruitmentController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() body: CreatePartyRecruitmentRequestDto,
-  ): Promise<void> {
+  ) {
     const { positionId, content, recruiting_count } = body;
 
     const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, content, recruiting_count);
@@ -102,7 +104,7 @@ export class PartyRecruitmentController {
     @CurrentUser() user: CurrentUserType,
     @Body() body: DeletePartyRecruitmentBodyRequestDto,
     @Param() param: PartyRequestDto,
-  ): Promise<void> {
+  ) {
     const { partyRecruitmentIds } = body;
 
     const command = new BatchDeletePartyRecruitmentCommand(user.id, param.partyId, partyRecruitmentIds);
@@ -114,16 +116,13 @@ export class PartyRecruitmentController {
   @Delete(':partyId/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.deleteRecruitment()
   @HttpCode(204)
-  async deleteRecruitment(
-    @CurrentUser() user: CurrentUserType,
-    @Param() param: PartyRecruitmentsParamRequestDto,
-  ): Promise<void> {
+  async deleteRecruitment(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentsParamRequestDto) {
     const command = new DeletePartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
 
     this.commandBus.execute(command);
   }
 
-  // 지원
+  // 모집공고에 지원
   @UseGuards(AccessJwtAuthGuard)
   @Post(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.createPartyApplication()
@@ -131,22 +130,37 @@ export class PartyRecruitmentController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
     @Body() dto: CreatePartyApplicationRequestDto,
-  ): Promise<void> {
+  ) {
     const command = new CreatePartyApplicationCommand(user.id, param.partyId, param.partyRecruitmentId, dto.message);
 
     return this.commandBus.execute(command);
   }
 
-  // 지원자 조회시 최근 지원자
+  // 모집공고 지원자 조회
   @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.getPartyApplication()
   async getPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
-  ): Promise<void> {
-    const query = new GetPartyApplicationsQuery(user.id, param.partyId, param.partyRecruitmentId);
+    @Query() query: PartyApplicationQueryRequestDto,
+  ) {
+    const { partyId, partyRecruitmentId } = param;
+    const { page, limit, sort, order, status } = query;
 
-    return this.queryBus.execute(query);
+    const application = new GetPartyApplicationsQuery(
+      user.id,
+      partyId,
+      partyRecruitmentId,
+      page,
+      limit,
+      sort,
+      order,
+      status,
+    );
+
+    const result = this.queryBus.execute(application);
+
+    return plainToInstance(PartyApplicationsResponseDto, result);
   }
 }

@@ -50,24 +50,31 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       throw new NotFoundException('승인하려는 지원데이터가 없습니다.', 'APLLICATION_NOT_EXIST');
     }
 
+    // 수락하기
+    await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
+
+    return { message: '지원자를 수락 하였습니다.' };
+
+    //! 유저가 승락 해야 되는 부분
     // 파티 소속 시키기
-    await this.partyUserRepository.createMember(
-      partyApplication.userId,
-      partyId,
-      partyApplication.partyRecruitment.positionId,
-    );
+    // await this.partyUserRepository.createMember(
+    //   partyApplication.userId,
+    //   partyId,
+    //   partyApplication.partyRecruitment.positionId,
+    // );
 
     // 모집 카운트 + 1
-    await this.partyRecruitmentRepository.updateRecruitedCount(
-      partyApplication.partyRecruitment.id,
-      partyApplication.partyRecruitment.recruitingCount + 1,
-    );
+    // await this.partyRecruitmentRepository.updateRecruitedCount(
+    //   partyApplication.partyRecruitment.id,
+    //   partyApplication.partyRecruitment.recruitingCount + 1,
+    // );
 
-    await this.partyApplicationRepository.delete(partyApplicationId);
+    // await this.partyApplicationRepository.delete(partyApplicationId);
 
     // 파티 모집 완료시 자동삭제
-    if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount)
-      this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
-    return '모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.';
+    // if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
+    //   this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
+    //   return '모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.';
+    // }
   }
 }

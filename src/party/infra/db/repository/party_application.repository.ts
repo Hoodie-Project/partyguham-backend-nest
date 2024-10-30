@@ -60,6 +60,24 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     await this.partyApplicationRepository.save({ ...partyApplication, title, content });
   }
 
+  async updateStatusApproved(partyRecruitmentId: number) {
+    const partyApplication = await this.findOne(partyRecruitmentId);
+
+    await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.APPROVED });
+  }
+
+  async updateStatusPending(partyRecruitmentId: number) {
+    const partyApplication = await this.findOne(partyRecruitmentId);
+
+    await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.PENDING });
+  }
+
+  async updateStatusRejected(partyRecruitmentId: number) {
+    const partyApplication = await this.findOne(partyRecruitmentId);
+
+    await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.REJECTED });
+  }
+
   async delete(partyRecruitmentId: number) {
     const partyApplication = await this.findOne(partyRecruitmentId);
     const status = StatusEnum.DELETED;

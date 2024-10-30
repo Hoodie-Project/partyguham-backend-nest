@@ -2,9 +2,10 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { PartyRecruitmentEntity } from './party_recruitment.entity';
+import { BaseEntity } from 'src/common/entity/baseEntity';
 
 @Entity('party_application')
-export class PartyApplicationEntity {
+export class PartyApplicationEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -16,9 +17,6 @@ export class PartyApplicationEntity {
 
   @Column({ nullable: true })
   message: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.partyApplication, {
     onUpdate: 'CASCADE',

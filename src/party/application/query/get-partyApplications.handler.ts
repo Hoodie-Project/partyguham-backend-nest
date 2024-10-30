@@ -17,7 +17,7 @@ export class GetPartyApplicationsHandler implements IQueryHandler<GetPartyApplic
   ) {}
 
   async execute(query: GetPartyApplicationsQuery) {
-    const { userId, partyId, partyRecruitmentId } = query;
+    const { userId, partyId, partyRecruitmentId, page, limit, sort, order, status } = query;
 
     const partyUser = await this.partyUserRepository
       .createQueryBuilder('partyUser')
@@ -29,12 +29,30 @@ export class GetPartyApplicationsHandler implements IQueryHandler<GetPartyApplic
       throw new ForbiddenException('파티 지원자 조회 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    const partyApplicationUser = await this.partyApplicationRepository
+    const offset = (page - 1) * limit || 0;
+    const partyApplicationUserQuery = this.partyApplicationRepository
       .createQueryBuilder('partyApplication')
-      .leftJoinAndSelect('partyApplication.user', 'user')
-      .where('partyUser.partyRecruitmentId = :partyRecruitmentId', { partyRecruitmentId })
-      .getManyAndCount();
+      .leftJoin('partyApplication.user', 'user')
+      .select([
+        'partyApplication.id',
+        'partyApplication.message',
+        'partyApplication.status',
+        'partyApplication.createdAt',
+        'user.id',
+        'user.nickname',
+        'user.image',
+      ])
+      .where('partyApplication.partyRecruitmentId = :partyRecruitmentId', { partyRecruitmentId })
+      .limit(limit)
+      .offset(offset)
+      .orderBy(`partyApplication.${sort}`, order);
 
-    return { count: partyApplicationUser[1], partyApplicationUser };
+    if (status !== undefined && status !== null) {
+      partyApplicationUserQuery.andWhere('partyApplication.status = :status', { status });
+    }
+
+    const [partyApplicationUser, total] = await partyApplicationUserQuery.getManyAndCount();
+
+    return { total, partyApplicationUser };
   }
 }

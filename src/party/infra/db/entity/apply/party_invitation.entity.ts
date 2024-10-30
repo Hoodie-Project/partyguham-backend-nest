@@ -1,9 +1,10 @@
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
 import { PartyRecruitmentEntity } from './party_recruitment.entity';
+import { BaseEntity } from 'src/common/entity/baseEntity';
 
 @Entity('party_invitation')
-export class PartyInvitationEntity {
+export class PartyInvitationEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
