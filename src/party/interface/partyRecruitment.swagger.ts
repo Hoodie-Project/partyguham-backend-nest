@@ -2,9 +2,10 @@ import { applyDecorators } from '@nestjs/common';
 import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { PartyResponseDto } from './dto/response/party.response.dto';
-import { PartyRecruitmentsResponseDto } from './dto/response/party-recruitments.response.dto';
-import { PartyRecruitmentResponseDto } from './dto/response/party-recruitment.response.dto';
-import { GetPartyRecruitmentsResponseDto } from './dto/response/get-recruitments.response.dto';
+import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
+import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-recruitment.response.dto';
+import { GetPartyRecruitmentsResponseDto } from './dto/response/recruitment/get-recruitments.response.dto';
+import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
 
 export class PartyRecruitmentSwagger {
   static getRecruitments() {
@@ -227,6 +228,7 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 200,
         description: '파티 지원자 조회',
+        type: PartyApplicationsResponseDto,
       }),
       ApiResponse({
         status: 401,

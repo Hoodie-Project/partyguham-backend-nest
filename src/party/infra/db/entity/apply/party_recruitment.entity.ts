@@ -13,10 +13,11 @@ import { PartyEntity } from '../party/party.entity';
 import { PositionEntity } from 'src/position/entity/position.entity';
 import { PartyApplicationEntity } from './party_application.entity';
 import { PartyInvitationEntity } from './party_invitation.entity';
+import { BaseEntity } from 'src/common/entity/baseEntity';
 
 @Entity('party_recruitment')
 @Unique(['partyId', 'positionId'])
-export class PartyRecruitmentEntity {
+export class PartyRecruitmentEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -6,7 +6,7 @@ import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorat
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 
-import { PartyApplicationParamRequestDto } from './dto/request/partyApplication.param.request.dto';
+import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
 
 import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
 import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';

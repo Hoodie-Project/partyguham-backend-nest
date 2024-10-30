@@ -10,8 +10,8 @@ import { PartySwagger } from './party.swagger';
 
 import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { PartyQueryRequestDto } from './dto/request/party.query.request.dto';
-import { RecruitmentsQueryRequestDto } from './dto/request/recruitment.query.request.dto';
-import { GetPartyRecruitmentsResponseDto } from './dto/response/get-recruitments.response.dto';
+import { RecruitmentsQueryRequestDto } from './dto/request/recruitment/recruitment.query.request.dto';
+import { GetPartyRecruitmentsResponseDto } from './dto/response/recruitment/get-recruitments.response.dto';
 import { RecruitmentsPersonalizedQueryRequestDto } from './dto/request/recruitmentPersonalized.query.request.dto';
 
 import { GetPartiesQuery } from '../application/query/get-parties.query';
