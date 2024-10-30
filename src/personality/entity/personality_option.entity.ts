@@ -13,10 +13,10 @@ export class PersonalityOptionEntity {
   @Column('text')
   content: string;
 
-  @ManyToOne(() => PersonalityQuestionEntity, (position) => position.personalityOption)
+  @ManyToOne(() => PersonalityQuestionEntity, (position) => position.personalityOptions)
   @JoinColumn({ name: 'personality_question_id' })
   personalityQuestion: PersonalityQuestionEntity;
 
-  @OneToMany(() => UserPersonalityEntity, (userPersonality) => userPersonality.personalityOption)
-  userPersonality: UserPersonalityEntity[];
+  @OneToMany(() => UserPersonalityEntity, (userPersonalities) => userPersonalities.personalityOption)
+  userPersonalities: UserPersonalityEntity[];
 }

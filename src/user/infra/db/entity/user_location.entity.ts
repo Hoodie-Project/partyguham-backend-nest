@@ -13,7 +13,7 @@ export class UserLocationEntity {
   @Column()
   locationId: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.userLocation)
+  @ManyToOne(() => UserEntity, (user) => user.userLocations)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

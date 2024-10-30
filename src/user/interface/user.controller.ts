@@ -407,8 +407,8 @@ export class UserController {
     description: '성공적으로 내정보 목록을 가져왔습니다.',
     type: UserResponseDto,
   })
-  async getMyInfo(@CurrentUser() account): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(account.id);
+  async getMyInfo(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(user.id);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
@@ -423,9 +423,12 @@ export class UserController {
     description: '성공적으로 내정보를 변경 하였습니다.',
     type: UserResponseDto,
   })
-  async updateUser(@CurrentUser() account, @Body() body: UapdateUserRequestDto): Promise<UserResponseDto> {
+  async updateUser(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: UapdateUserRequestDto,
+  ): Promise<UserResponseDto> {
     const { gender, birth } = body;
-    const getUserInfoQuery = new UpdateUserCommand(account.id, gender, birth);
+    const getUserInfoQuery = new UpdateUserCommand(user.id, gender, birth);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
@@ -460,7 +463,7 @@ export class UserController {
   //   description: '.',
   //   type: UserResponseDto,
   // })
-  // async updateImage(@CurrentUser() account) {}
+  // async updateImage(@CurrentUser() user: CurrentUserType,) {}
 
   // @Get('list')
   // @ApiOperation({ summary: '(개발중) 유저 다수 조회' })

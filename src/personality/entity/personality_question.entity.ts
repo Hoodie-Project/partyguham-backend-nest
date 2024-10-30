@@ -12,6 +12,6 @@ export class PersonalityQuestionEntity {
   @Column('smallint')
   responseCount: number;
 
-  @OneToMany(() => PersonalityOptionEntity, (personalityOption) => personalityOption.personalityQuestion)
-  personalityOption: PersonalityOptionEntity[];
+  @OneToMany(() => PersonalityOptionEntity, (personalityOptions) => personalityOptions.personalityQuestion)
+  personalityOptions: PersonalityOptionEntity[];
 }

@@ -30,7 +30,7 @@ export class CreateUserPersonalityHandler implements ICommandHandler<CreateUserP
     personality.forEach((userAnswer) => {
       // 설문조사 질문, 선택지
       const surveyQuestion = surveyPersonality.find((question) => question.id === userAnswer.personalityQuestionId);
-      const surveyOptionIds = surveyQuestion.personalityOption.map((option) => option.id);
+      const surveyOptionIds = surveyQuestion.personalityOptions.map((option) => option.id);
 
       // 이미 설문을 한 항목에 대해 취소
       const duplicated = savedUserPersonalityOptionIds.some((saveOptionId) => surveyOptionIds.includes(saveOptionId));

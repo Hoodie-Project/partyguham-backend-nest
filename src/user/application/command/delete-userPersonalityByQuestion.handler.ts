@@ -23,7 +23,7 @@ export class DeleteUserPersonalityByQuestionHandler implements ICommandHandler<D
     const { userId, personalityQuestionId } = command;
     const question = await this.personalityService.findByQuestionIdWithOption(personalityQuestionId);
 
-    const personalityOptionIds = question.personalityOption.map((option) => option.id);
+    const personalityOptionIds = question.personalityOptions.map((option) => option.id);
 
     const savedUserPersonality = await this.userPersonalityRepository.findByPersonalityOptionIds(
       userId,

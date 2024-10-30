@@ -12,6 +12,7 @@ import { OauthEntity } from '../../../../auth/entity/oauth.entity';
 import { UserLocationEntity } from './user_location.entity';
 import { GuildApplicationEntity } from 'src/guild/infra/db/entity/apply/guild_application.entity';
 import { GuildInvitationEntity } from 'src/guild/infra/db/entity/apply/guild_invitation.entity';
+import { UserPersonalityEntity } from './user_personality.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -48,6 +49,15 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => UserCareerEntity, (userCareer) => userCareer.user)
   userCareers: UserCareerEntity[];
 
+  @OneToMany(() => UserLocationEntity, (userLocation) => userLocation.user)
+  userLocations: UserLocationEntity[];
+
+  @OneToMany(() => UserPersonalityEntity, (UserPersonality) => UserPersonality.user)
+  userPersonalities: UserPersonalityEntity[];
+
+  @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
+  userSkills: UserSkillEntity[];
+
   @OneToMany(() => FollowEntity, (follow) => follow.follower)
   followers: FollowEntity[];
 
@@ -55,16 +65,10 @@ export class UserEntity extends BaseEntity {
   followings: FollowEntity[];
 
   @OneToMany(() => PartyUserEntity, (party) => party.user)
-  parties: PartyUserEntity[];
-
-  @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
-  userSkills: UserSkillEntity[];
-
-  @OneToMany(() => UserLocationEntity, (userLocation) => userLocation.user)
-  userLocation: UserLocationEntity[];
+  partyUsers: PartyUserEntity[];
 
   @OneToMany(() => PartyApplicationEntity, (userExperience) => userExperience.user)
-  partyApplication: PartyApplicationEntity[];
+  partyApplications: PartyApplicationEntity[];
 
   @OneToMany(() => PartyInvitationEntity, (partyInvite) => partyInvite.user)
   partyInvitations: PartyInvitationEntity[];

@@ -22,7 +22,7 @@ export class GuildUserEntity {
   @Column({ type: 'enum', enum: Authority, default: Authority.MEMBER })
   authority: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.parties, {
+  @ManyToOne(() => UserEntity, (user) => user.partyUsers, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })
