@@ -18,7 +18,7 @@ export class PartyApplicationEntity extends BaseEntity {
   @Column({ nullable: true })
   message: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.partyApplication, {
+  @ManyToOne(() => UserEntity, (user) => user.partyApplications, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

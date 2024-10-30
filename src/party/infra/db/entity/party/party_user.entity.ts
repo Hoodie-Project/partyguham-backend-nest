@@ -27,7 +27,7 @@ export class PartyUserEntity extends BaseEntity {
   @Column({ type: 'enum', enum: PartyAuthority })
   authority: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.parties, {
+  @ManyToOne(() => UserEntity, (user) => user.partyUsers, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

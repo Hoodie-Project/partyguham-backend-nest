@@ -12,10 +12,10 @@ export class PersonalityQuestionRepository {
   ) {}
 
   findAllWithOption() {
-    return this.positionQuestionRepository.find({ relations: ['personalityOption'] });
+    return this.positionQuestionRepository.find({ relations: ['personalityOptions'] });
   }
 
   findByQuestionIdWithOption(questionId: number) {
-    return this.positionQuestionRepository.findOne({ where: { id: questionId }, relations: ['personalityOption'] });
+    return this.positionQuestionRepository.findOne({ where: { id: questionId }, relations: ['personalityOptions'] });
   }
 }
