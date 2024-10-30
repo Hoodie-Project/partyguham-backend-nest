@@ -48,7 +48,8 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
       throw new NotFoundException('거절 하려는 파티 지원자 데이터가 없습니다.', 'PARTY_APPLICATION_NOT_EXIST');
     }
 
-    // 승인 취소
-    await this.partyApplicationRepository.delete(partyApplicationId);
+    await this.partyApplicationRepository.updateStatusRejected(partyApplicationId);
+
+    return { message: '지원자를 거절 하였습니다.' };
   }
 }

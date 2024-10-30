@@ -252,8 +252,9 @@ export class PartyRecruitmentSwagger {
         required: true,
       }),
       ApiResponse({
-        status: 200,
-        description: '파티 지원자 승인 완료 \t\n 모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.',
+        status: 201,
+        description: '파티 지원자 승인 완료, 지원자도 수락을 해야 합니다.',
+        schema: { example: { message: '지원자를 수락 하였습니다.' } },
       }),
       ApiResponse({
         status: 403,
@@ -281,8 +282,9 @@ export class PartyRecruitmentSwagger {
         required: true,
       }),
       ApiResponse({
-        status: 200,
+        status: 201,
         description: '파티 지원자 거절 완료',
+        schema: { example: { message: '지원자를 거절 하였습니다.' } },
       }),
       ApiResponse({
         status: 403,

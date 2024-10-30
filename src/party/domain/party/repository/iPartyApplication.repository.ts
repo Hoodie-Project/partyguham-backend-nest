@@ -7,5 +7,8 @@ export interface IPartyApplicationRepository {
   findOneByUserIdAndPartyRecruitmentId: (userId: number, partyRecruitmentId: number) => Promise<PartyApplicationEntity>;
   findAll: (partyId: number) => Promise<PartyApplicationEntity[]>;
   update: (partyId: number, title: string, content: string) => Promise<void>;
+  updateStatusApproved: (partyId: number) => Promise<void>;
+  updateStatusPending: (partyId: number) => Promise<void>;
+  updateStatusRejected: (partyId: number) => Promise<void>;
   delete: (partyId: number) => Promise<void>;
 }
