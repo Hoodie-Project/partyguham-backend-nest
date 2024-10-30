@@ -70,7 +70,12 @@ export class WebOauthController {
         sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
 
-      res.redirect(`${process.env.BASE_URL}`);
+      let redirectURL = process.env.BASE_URL;
+      if (process.env.MODE_ENV === 'dev') {
+        redirectURL = redirectURL + `?token=` + result.refreshToken;
+      }
+
+      res.redirect(`${redirectURL}`);
     }
 
     if (result.type === 'signup') {
@@ -149,7 +154,12 @@ export class WebOauthController {
         sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
       });
 
-      res.redirect(`${process.env.BASE_URL}`);
+      let redirectURL = process.env.BASE_URL;
+      if (process.env.MODE_ENV === 'dev') {
+        redirectURL = redirectURL + `?token=` + result.refreshToken;
+      }
+
+      res.redirect(`${redirectURL}`);
     }
 
     if (result.type === 'signup') {
