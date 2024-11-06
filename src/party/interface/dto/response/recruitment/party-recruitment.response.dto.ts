@@ -1,17 +1,9 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Exclude, Expose, Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { Exclude, Expose, Transform, Type } from 'class-transformer';
+import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @Exclude()
-export class PartyRecruitmentResponseDto {
-  @Expose()
-  @ApiProperty({
-    example: '진행중',
-    description: '진행중 / 종료',
-  })
-  @IsNotEmpty()
-  readonly tag: string;
-
+export class RecruitmentPartyeDto {
   @Expose()
   @ApiProperty({
     example: '파티구함',
@@ -32,24 +24,32 @@ export class PartyRecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: '미정',
+    example: '진행중',
+    description: '진행중 / 종료',
+  })
+  @IsNotEmpty()
+  readonly tag: string;
+
+  @Expose()
+  @ApiProperty({
+    example: {
+      type: '포트폴리오',
+    },
     description: '파티 타입',
   })
   @IsNotEmpty()
   readonly partyType: object;
+}
 
-  @Expose()
-  @ApiProperty({ example: 1, description: 'position ID (PK - 포지션)' })
-  @IsNotEmpty()
-  positionId: number;
-
+@Exclude()
+export class RecruitmentPositionDto {
   @Expose()
   @ApiProperty({
     example: '기획',
     description: 'Position Main (직군)',
   })
   @IsNotEmpty()
-  readonly main: object;
+  readonly main: string;
 
   @Expose()
   @ApiProperty({
@@ -57,7 +57,28 @@ export class PartyRecruitmentResponseDto {
     description: 'Position Sub (직무)',
   })
   @IsNotEmpty()
-  readonly sub: object;
+  readonly sub: string;
+}
+
+@Exclude()
+export class PartyRecruitmentResponseDto {
+  @Expose()
+  @ApiProperty({
+    type: RecruitmentPartyeDto,
+    description: '파티 정보',
+  })
+  @IsNotEmpty()
+  @Type(() => RecruitmentPartyeDto)
+  readonly party: RecruitmentPartyeDto;
+
+  @Expose()
+  @ApiProperty({
+    type: RecruitmentPositionDto,
+    description: '모집 포지션',
+  })
+  @IsNotEmpty()
+  @Type(() => RecruitmentPositionDto)
+  readonly position: RecruitmentPositionDto;
 
   @Expose()
   @ApiProperty({
@@ -86,18 +107,28 @@ export class PartyRecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: 1,
+    example: 3,
     description: '현재 지원수',
   })
+  @IsNumber()
   @IsNotEmpty()
-  readonly applicationCount: object;
+  readonly applicationCount: number;
 
   @Expose()
   @ApiProperty({
     example: '2024-06-07T12:17:57.248Z',
-    description: '생성일자',
+    description: '모집공고 생성일자 (모집일)',
   })
   @IsString()
   @IsNotEmpty()
   readonly createdAt: string;
+
+  @Expose()
+  @ApiProperty({
+    example: true,
+    description: '조회한 유저가 모집공고에 해당하는 파티에 가입 되어있는지에 대한 여부',
+  })
+  @IsBoolean()
+  @IsNotEmpty()
+  readonly isJoined: boolean;
 }
