@@ -28,7 +28,7 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
 
     const party = await partyQuery.getOne();
 
-    if (!party) {
+    if (!party || party.status === 'deleted') {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
@@ -36,9 +36,7 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
 
     party['myInfo'] = myInfo;
 
-    if (party.status === 'deleted') {
-      party['tag'] = '삭제';
-    } else if (party.status === 'archived') {
+    if (party.status === 'archived') {
       party['tag'] = '종료';
     } else if (party.status === 'active') {
       party['tag'] = '진행중';

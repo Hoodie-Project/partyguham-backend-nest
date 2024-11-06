@@ -47,9 +47,7 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
     const [parties, total] = await partiesQuery.getManyAndCount();
 
     parties.forEach((party) => {
-      if (party.status === 'deleted') {
-        party['tag'] = '파티 삭제';
-      } else if (party.status === 'archived') {
+      if (party.status === 'archived') {
         party['tag'] = '종료';
       } else if (party.status === 'active') {
         party['tag'] = '진행중';
