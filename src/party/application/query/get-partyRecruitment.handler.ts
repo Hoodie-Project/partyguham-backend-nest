@@ -5,55 +5,66 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetPartyRecruitmentQuery } from './get-partyRecruitment.query';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
+import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 
 @QueryHandler(GetPartyRecruitmentQuery)
 export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruitmentQuery> {
   constructor(
     @InjectRepository(PartyRecruitmentEntity) private partyRecruitmentRepository: Repository<PartyRecruitmentEntity>,
+    @InjectRepository(PartyUserEntity) private partyUser: Repository<PartyUserEntity>,
   ) {}
 
   async execute(query: GetPartyRecruitmentQuery) {
-    const { partyRecruitmentId } = query;
+    const { userId, partyRecruitmentId } = query;
 
     const partyQuery = this.partyRecruitmentRepository
       .createQueryBuilder('partyRecruitments')
       .leftJoin('partyRecruitments.party', 'party')
       .leftJoin('partyRecruitments.position', 'position')
       .leftJoin('partyRecruitments.partyApplications', 'partyApplications')
-      .leftJoinAndSelect('party.partyType', 'partyType')
+      .leftJoin('party.partyType', 'partyType')
+      .loadRelationCountAndMap('partyRecruitments.applicationCount', 'partyRecruitments.partyApplications')
       .select([
-        'party.title AS title',
-        'party.image AS image',
-        'partyType.type AS "partyType"',
-        'position.id AS "positionId"',
-        'position.main AS main',
-        'position.sub AS sub',
-        'partyRecruitments.content AS content',
-        'partyRecruitments.recruitingCount AS "recruitingCount"',
-        'partyRecruitments.recruitedCount AS "recruitedCount"',
-        'partyRecruitments.createdAt AS "createdAt"',
+        'party.id',
+        'party.title',
+        'party.image',
+        'party.status',
+        'partyType.type',
+        'position.id',
+        'position.main',
+        'position.sub',
+        'partyRecruitments.content',
+        'partyRecruitments.recruitingCount',
+        'partyRecruitments.recruitedCount',
+        'partyRecruitments.createdAt',
       ])
-      .addSelect('COUNT(partyApplications.id)', 'applicationCount') // partyApplications의 개수를 추가
-      .where('partyRecruitments.id = :id', { id: partyRecruitmentId })
-      .groupBy('party.id')
-      .addGroupBy('partyRecruitments.id')
-      .addGroupBy('position.id')
-      .addGroupBy('partyType.id');
+      .where('partyRecruitments.id = :id', { id: partyRecruitmentId });
 
-    const party = await partyQuery.getRawOne();
+    const partyRecruitment = await partyQuery.getOne();
 
-    if (!party) {
+    const partyId = partyRecruitment.party.id;
+    const partyStatus = partyRecruitment.party.status;
+
+    if (!partyRecruitment || partyStatus === 'deleted') {
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
     }
 
-    if (party.status === 'deleted') {
-      party['tag'] = '삭제';
-    } else if (party.status === 'archived') {
-      party['tag'] = '종료';
-    } else if (party.status === 'active') {
-      party['tag'] = '진행중';
+    let isJoined = false;
+    if (userId) {
+      isJoined = !!(await this.partyUser
+        .createQueryBuilder('partyUser')
+        .where('partyUser.userId = :userId', { userId })
+        .andWhere('partyUser.partyId = :partyId', { partyId })
+        .getOne());
+    }
+    partyRecruitment['isJoined'] = isJoined;
+
+    if (partyStatus === 'archived') {
+      partyRecruitment.party['tag'] = '종료';
+    } else if (partyStatus === 'active') {
+      partyRecruitment.party['tag'] = '진행중';
     }
 
-    return party;
+    return partyRecruitment;
   }
 }

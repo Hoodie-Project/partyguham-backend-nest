@@ -92,9 +92,19 @@ export class PartyRecruitmentSwagger {
     return applyDecorators(
       ApiOperation({
         summary: '파티 모집 단일 조회',
-        description: `**파티모집을 상세 조회하는 API 입니다.**  
+        description: `**파티모집 단일 조회하는 API 입니다.**  
         
+        - party.tag : 해당 파티의 상태를 나타냅니다.
+        - isJoined : 조회한 유저가 파티에 가입되어있는지에 대한 여부를 나타냅니다.
+        로그인이 되어있지 않거나 해당 파티에 속해있지 않으면 false 입니다.
+        로그인이 되어있고, 파티에 속해있으면 true 입니다.
       `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}  
+        access token은 선택값 입니다.
+        `,
       }),
       ApiResponse({
         status: 200,

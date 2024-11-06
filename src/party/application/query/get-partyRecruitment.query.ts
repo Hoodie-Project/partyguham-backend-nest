@@ -1,5 +1,8 @@
 import { IQuery } from '@nestjs/cqrs';
 
 export class GetPartyRecruitmentQuery implements IQuery {
-  constructor(readonly partyRecruitmentId: number) {}
+  constructor(
+    readonly userId: number,
+    readonly partyRecruitmentId: number,
+  ) {}
 }
