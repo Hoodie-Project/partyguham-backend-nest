@@ -12,14 +12,6 @@ export class PartyApplicationParamRequestDto {
 
   @ApiProperty({
     example: 3,
-    description: 'party recruitment ID (PK - 파티 모집)',
-  })
-  @IsInt()
-  @IsNotEmpty()
-  readonly partyRecruitmentId: number;
-
-  @ApiProperty({
-    example: 3,
     description: 'party application ID (PK - 파티 지원)',
   })
   @IsInt()
