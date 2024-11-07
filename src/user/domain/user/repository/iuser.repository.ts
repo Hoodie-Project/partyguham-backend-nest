@@ -12,6 +12,7 @@ export interface IUserRepository {
     birth: string,
     birthVisible: boolean,
     portfolio: string,
+    image: string,
   ) => Promise<void>;
   deleteUser: (id: number) => Promise<void>;
   softDeleteUser: (id: number) => Promise<void>;
