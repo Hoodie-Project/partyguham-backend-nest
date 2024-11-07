@@ -179,7 +179,7 @@ export class PartyController {
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.leaveParty()
-  @Delete(':partyId/party-users/me')
+  @Delete(':partyId/users/me')
   async leaveParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new LeavePartyCommand(user.id, param.partyId);
 
@@ -188,7 +188,7 @@ export class PartyController {
 
   @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.updatePartyUser()
-  @Patch(':partyId/party-users/:partyUserId')
+  @Patch(':partyId/users/:partyUserId')
   async updatePartyUser(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
@@ -202,7 +202,7 @@ export class PartyController {
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.kickUserFromParty()
-  @Delete(':partyId/party-users/:partyUserId')
+  @Delete(':partyId/users/:partyUserId')
   async kickUserFromParty(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
@@ -214,7 +214,7 @@ export class PartyController {
 
   @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.kickUsersFromParty()
-  @Post(':partyId/party-users/batch-delete')
+  @Post(':partyId/users/batch-delete')
   async kickUsersFromParty(
     @CurrentUser() user: CurrentUserType,
     @Body() body: DeletePartyUsersBodyRequestDto,
