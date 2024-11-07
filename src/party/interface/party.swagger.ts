@@ -147,6 +147,45 @@ export class PartySwagger {
     );
   }
 
+  static getPartyAuthority() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티원 목록 조회',
+        description: `**파티 권한을 조회하는 API 입니다.**
+        해당 파티에 속해있는 유저라면, 아래의 직급을 리턴합니다.
+        해당 파티에 속해있는 유저가 없으면 '404'을 리턴합니다.  
+        
+        - master : 파티장
+        - deputy : 부파티장
+        - member : 파티원
+
+        `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티원 권한 조회',
+        schema: {
+          example: {
+            authority: 'master',
+          },
+        },
+      }),
+      ApiResponse({
+        status: 404,
+        description: `파티에 속한 유저를 찾을 수 없을 경우 입니다.`,
+        schema: {
+          example: {
+            message: '파티에 속한 유저를 찾을 수 없습니다.',
+            error: 'PARTY_USER_NOT_EXIST',
+            statusCode: 403,
+            path: '/dev/api/parties/801/users/me/authority',
+            timestamp: '2024-11-07T10:07:24.272Z',
+          },
+        },
+      }),
+    );
+  }
+
   static getAdminPartyUsers() {
     return applyDecorators(
       ApiOperation({
