@@ -40,6 +40,9 @@ export class UserEntity extends BaseEntity {
   @Column('varchar', { nullable: true })
   image: string;
 
+  @Column('text', { nullable: true, default: null })
+  portfolio: string;
+
   @OneToOne(() => AuthEntity, (auth) => auth.user)
   auth: AuthEntity;
 

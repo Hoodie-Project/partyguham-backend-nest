@@ -427,9 +427,9 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @Body() body: UapdateUserRequestDto,
   ): Promise<UserResponseDto> {
-    const { gender, birth } = body;
-    const getUserInfoQuery = new UpdateUserCommand(user.id, gender, birth);
+    const { gender, genderVisible, birth, birthVisible, portfolio } = body;
 
+    const getUserInfoQuery = new UpdateUserCommand(user.id, gender, genderVisible, birth, birthVisible, portfolio);
     const result = this.queryBus.execute(getUserInfoQuery);
 
     return plainToInstance(UserResponseDto, result);
