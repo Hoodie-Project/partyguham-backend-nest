@@ -131,7 +131,7 @@ const uploadDir = 'images/party';
         },
         filename: (req, file, callback) => {
           const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const filename = `${uniqueSuffix}-${file.originalname}`;
+          const filename = `${uniqueSuffix}`;
           callback(null, filename);
         },
       }),
