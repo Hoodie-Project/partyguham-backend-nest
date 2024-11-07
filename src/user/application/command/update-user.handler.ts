@@ -12,12 +12,19 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   constructor(
     private userFactory: UserFactory,
     @Inject('UserRepository') private userRepository: IUserRepository,
-    @Inject('UserSkillRepository') private userSkillRepository: IUserSkillRepository,
   ) {}
 
   async execute(command: UpdateUserCommand) {
-    const { id, gender, birth } = command;
-    const user = await this.userRepository.updateUser(id, gender, birth);
+    const { userId, gender, genderVisible, birth, birthVisible, portfolio, image } = command;
+    const user = await this.userRepository.updateUser(
+      userId,
+      gender,
+      genderVisible,
+      birth,
+      birthVisible,
+      portfolio,
+      image,
+    );
 
     return user;
   }

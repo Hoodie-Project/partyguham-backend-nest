@@ -11,7 +11,9 @@ import {
   Query,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
@@ -48,6 +50,7 @@ import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { DeleteUserLocationsCommand } from '../application/command/delete-userLocations.command';
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -417,7 +420,15 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Patch('me')
-  @ApiOperation({ summary: '내정보 변경' })
+  @UseInterceptors(FileInterceptor('image'))
+  @ApiOperation({
+    summary: '내정보 변경',
+    description: `**새로운 파티를 생성하는 API 입니다.**  
+        1. 이미지는 multipart/form-data 형식을 사용합니다.  
+        2. 이미지를 저장하는 key는 image 이며, 선택사항 (optional) 입니다.  
+        \`\`\`image : 파티에 대한 이미지 파일을 업로드합니다. (jpg, png, jpeg 파일 첨부)  \`\`\`  
+        `,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 내정보를 변경 하였습니다.',
@@ -425,11 +436,21 @@ export class UserController {
   })
   async updateUser(
     @CurrentUser() user: CurrentUserType,
+    @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
   ): Promise<UserResponseDto> {
-    const { gender, birth } = body;
-    const getUserInfoQuery = new UpdateUserCommand(user.id, gender, birth);
+    const { gender, genderVisible, birth, birthVisible, portfolio } = body;
+    const image = file ? file.path : null;
 
+    const getUserInfoQuery = new UpdateUserCommand(
+      user.id,
+      gender,
+      genderVisible,
+      birth,
+      birthVisible,
+      portfolio,
+      image,
+    );
     const result = this.queryBus.execute(getUserInfoQuery);
 
     return plainToInstance(UserResponseDto, result);

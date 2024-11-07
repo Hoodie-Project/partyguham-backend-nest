@@ -150,10 +150,10 @@ export class PartySwagger {
   static getPartyAuthority() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티원 목록 조회',
-        description: `**파티 권한을 조회하는 API 입니다.**
-        해당 파티에 속해있는 유저라면, 아래의 직급을 리턴합니다.
-        해당 파티에 속해있는 유저가 없으면 '404'을 리턴합니다.  
+        summary: '나의 파티 권한 조회',
+        description: `**나의 파티원 권한을 조회하는 API 입니다.**  
+        파티에 속해있다면, 아래의 예시 처럼 권한을 리턴합니다.
+        파티에 속해있지 않다면 '404'을 리턴합니다.  
         
         - master : 파티장
         - deputy : 부파티장

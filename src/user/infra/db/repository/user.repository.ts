@@ -53,9 +53,17 @@ export class UserRepository implements IUserRepository {
     return this.userFactory.create(userEntity);
   }
 
-  async updateUser(id: number, gender: string, birth: string): Promise<void> {
+  async updateUser(
+    id: number,
+    gender: string,
+    genderVisible: boolean,
+    birth: string,
+    birthVisible: boolean,
+    portfolio: string,
+    image: string,
+  ): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const user = await this.userRepository.save({ id, gender, birth });
+      const user = await this.userRepository.save({ id, gender, genderVisible, birth, birthVisible, portfolio, image });
 
       await manager.save(user);
     });

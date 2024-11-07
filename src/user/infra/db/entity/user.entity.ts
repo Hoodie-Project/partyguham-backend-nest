@@ -37,6 +37,9 @@ export class UserEntity extends BaseEntity {
   @Column('boolean', { nullable: false, default: true })
   genderVisible: boolean;
 
+  @Column('text', { nullable: true, default: null })
+  portfolio: string;
+
   @Column('varchar', { nullable: true })
   image: string;
 
