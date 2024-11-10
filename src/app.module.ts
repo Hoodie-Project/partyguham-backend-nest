@@ -22,6 +22,7 @@ import { CustomErrorExceptionFilter } from './common/exception/error.filter';
 import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthorized.filter';
 import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AuthModule } from './auth/auth.module';
     UserModule,
     PartyModule,
     ReportModule,
+    BannerModule,
     // GuildModule,
   ],
   controllers: [AppController],
