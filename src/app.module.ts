@@ -45,7 +45,6 @@ import { BannerModule } from './banner/banner.module';
     }),
     AuthModule,
     UserModule,
-    PartyModule,
     ReportModule,
     BannerModule,
     // GuildModule,

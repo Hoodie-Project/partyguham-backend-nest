@@ -69,11 +69,18 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async deleteUser(id: number): Promise<void> {
-    await this.userRepository.delete({ id });
+  async deleteUserById(userId: number): Promise<void> {
+    await this.userRepository.delete({ id: userId });
   }
 
-  async softDeleteUser(id: number) {
-    await this.userRepository.save({ status: StatusEnum.DELETED, where: { id } });
+  async softDeleteUserById(userId: number) {
+    await this.userRepository.save({
+      email: null,
+      portfolio: null,
+      nickname: `#${userId}`,
+      image: null,
+      status: StatusEnum.DELETED,
+      where: { id: userId },
+    });
   }
 }

@@ -6,9 +6,9 @@ import { UserPersonalityRepository } from '../infra/db/repository/user_personali
 @Injectable()
 export class UserService {
   constructor(
-    @Inject('UserCareerRepository') readonly userCareerRepository: UserCareerRepository,
-    @Inject('UserLocationRepository') readonly userLocationRepository: UserLocationRepository,
-    @Inject('UserPersonalityRepository') readonly userPersonalityRepository: UserPersonalityRepository,
+    @Inject('UserCareerRepository') private userCareerRepository: UserCareerRepository,
+    @Inject('UserLocationRepository') private userLocationRepository: UserLocationRepository,
+    @Inject('UserPersonalityRepository') private userPersonalityRepository: UserPersonalityRepository,
   ) {}
 
   async findUserCarerrPrimaryByUserId(userId: number) {
