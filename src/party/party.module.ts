@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserModule } from 'src/user/user.module';
@@ -57,6 +57,9 @@ import { BatchDeletePartyRecruitmentHandler } from './application/command/batchD
 import { DeletePartyUsersHandler } from './application/command/delete-partyUsers.handler';
 import { GetPartyUserAuthorityHandler } from './application/query/get-partyUserAuthority.handler';
 
+import { PartyService } from './application/party.service';
+import { PartyApplicationService } from './application/party-application.service';
+
 const commandHandlers = [
   CreatePartyHandler,
   UpdatePartyHandler,
@@ -90,6 +93,7 @@ const queryHandlers = [
   GetPartyRecruitmentHandler,
   GetPartyApplicationsHandler,
 ];
+const services = [PartyService, PartyApplicationService];
 const eventHandlers = [];
 const factories = [PartyFactory];
 
@@ -106,7 +110,8 @@ const uploadDir = 'images/party';
 
 @Module({
   controllers: [PartyLandingController, PartyRecruitmentController, PartyApplicationController, PartyController],
-  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
+  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories, ...services],
+  exports: [...services],
   imports: [
     ServeStaticModule.forRoot({
       rootPath: uploadDir, // 정적 파일이 저장된 디렉토리
@@ -145,7 +150,7 @@ const uploadDir = 'images/party';
       PartyInvitationEntity,
     ]),
     CqrsModule,
-    UserModule,
+    forwardRef(() => UserModule), // 유저 <-> 파티 순환참조 사용
   ],
 })
 export class PartyModule {}

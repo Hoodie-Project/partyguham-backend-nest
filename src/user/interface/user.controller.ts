@@ -471,7 +471,8 @@ export class UserController {
   @Delete('signout')
   @ApiOperation({ summary: '회원탈퇴' })
   async signout(@CurrentUser() user: CurrentUserType): Promise<void> {
-    const command = new DeleteUserCommand(user.id);
+    const userId = user.id;
+    const command = new DeleteUserCommand(userId);
 
     return this.commandBus.execute(command);
   }

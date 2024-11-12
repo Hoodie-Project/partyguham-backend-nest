@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { UserController } from './interface/user.controller';
 import { UserService } from './application/user.service';
 import { CqrsModule } from '@nestjs/cqrs';
@@ -51,6 +51,7 @@ import { AppOauthController } from './interface/app-oauth.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { PartyModule } from 'src/party/party.module';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -148,6 +149,7 @@ const uploadDir = 'images/user';
     LocationModule,
     PersonalityModule,
     SkillModule,
+    forwardRef(() => PartyModule), // 유저 <-> 파티 순환참조 사용
   ],
 })
 export class UserModule {}

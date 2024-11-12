@@ -78,10 +78,14 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.REJECTED });
   }
 
-  async delete(partyRecruitmentId: number) {
-    const partyApplication = await this.findOne(partyRecruitmentId);
+  async softDeleteById(id: number) {
+    const partyApplication = await this.findOne(id);
     const status = StatusEnum.DELETED;
 
     await this.partyApplicationRepository.save({ ...partyApplication, status });
+  }
+
+  async deleteByUserId(userId: number) {
+    await this.partyApplicationRepository.delete({ userId });
   }
 }

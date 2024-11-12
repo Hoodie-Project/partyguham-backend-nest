@@ -14,6 +14,6 @@ export interface IUserRepository {
     portfolio: string,
     image: string,
   ) => Promise<void>;
-  deleteUser: (id: number) => Promise<void>;
-  softDeleteUser: (id: number) => Promise<void>;
+  deleteUserById: (userId: number) => Promise<void>;
+  softDeleteUserById: (userId: number) => Promise<void>;
 }
