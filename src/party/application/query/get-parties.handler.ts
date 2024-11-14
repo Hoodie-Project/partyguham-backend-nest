@@ -14,7 +14,7 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
   ) {}
 
   async execute(query: GetPartiesQuery) {
-    const { page, limit, sort, order, status, partyType, titleSearch } = query;
+    const { page, limit, sort, order, status, partyTypeId, titleSearch } = query;
 
     const offset = (page - 1) * limit || 0;
     const partiesQuery = this.partyRepository
@@ -33,14 +33,7 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
       partiesQuery.andWhere('party.title LIKE :title', { title: `%${titleSearch}%` });
     }
 
-    if (partyType !== undefined && partyType !== null) {
-      const partyTypeQuery = await this.partyTypeRepository
-        .createQueryBuilder('partyType')
-        .where('partyType.type = :type', { type: partyType })
-        .getOne();
-
-      const partyTypeId = partyTypeQuery.id;
-
+    if (partyTypeId !== undefined) {
       partiesQuery.andWhere('party.partyTypeId = :partyTypeId', { partyTypeId });
     }
 

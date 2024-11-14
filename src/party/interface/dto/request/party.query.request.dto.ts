@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class PartyQueryRequestDto {
   @ApiProperty({
@@ -54,12 +54,12 @@ export class PartyQueryRequestDto {
   public status: string;
 
   @ApiPropertyOptional({
-    enum: ['미정', '스터디', '포트폴리오', '해커톤', '공모전'],
-    description: '파티 타입',
+    example: 1,
+    description: 'party type ID (PK - 파티 타입)',
   })
-  @IsString()
+  @IsNumber()
   @IsOptional()
-  public partyType: string;
+  readonly partyType: number;
 
   @ApiPropertyOptional({
     example: '모동숲 파티',
