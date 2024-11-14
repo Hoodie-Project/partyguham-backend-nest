@@ -7,6 +7,7 @@ import {
   IsIn,
   IsInt,
   IsNotEmpty,
+  IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
@@ -77,6 +78,14 @@ export class RecruitmentsQueryRequestDto {
   @IsNumberString({}, { each: true }) // 각 배열의 값이 숫자 문자열인지 확인
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]), { toClassOnly: true })
   public position: number[];
+
+  @ApiPropertyOptional({
+    example: 1,
+    description: 'party type ID (PK - 파티 타입)',
+  })
+  @IsNumber()
+  @IsOptional()
+  readonly partyType: number;
 
   @ApiPropertyOptional({
     example: '모동숲 파티',

@@ -13,7 +13,7 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
   ) {}
 
   async execute(query: GetRecruitmentsQuery) {
-    const { page, limit, sort, order, main, positionIds, titleSearch } = query;
+    const { page, limit, sort, order, main, positionIds, partyTypeId, titleSearch } = query;
 
     const offset = (page - 1) * limit || 0;
 
@@ -28,7 +28,7 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
       .where('1=1')
       .orderBy(`partyRecruitments.${sort}`, order);
 
-    if (positionIds !== undefined && positionIds !== null && positionIds.length !== 0) {
+    if (positionIds !== undefined && positionIds.length !== 0) {
       recruitmentsQuery.andWhere('position.id IN (:...positionIds)', { positionIds }); // 배열로 받은 ids를 IN 조건에 전달
     }
 
@@ -36,7 +36,11 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
       recruitmentsQuery.andWhere('position.main IN (:...main)', { main });
     }
 
-    if (titleSearch !== undefined && titleSearch !== null) {
+    if (partyTypeId !== undefined) {
+      recruitmentsQuery.andWhere('partyType.id = :id', { id: partyTypeId }); // 배열로 받은 ids를 IN 조건에 전달
+    }
+
+    if (titleSearch !== undefined) {
       recruitmentsQuery.andWhere('party.title LIKE :title', { title: `%${titleSearch}%` });
     }
 
