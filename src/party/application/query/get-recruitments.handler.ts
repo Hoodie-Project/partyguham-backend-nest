@@ -13,7 +13,7 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
   ) {}
 
   async execute(query: GetRecruitmentsQuery) {
-    const { page, limit, sort, order, main, positionIds, partyTypeId, titleSearch } = query;
+    const { page, limit, sort, order, main, positionIds, partyTypeIds, titleSearch } = query;
 
     const offset = (page - 1) * limit || 0;
 
@@ -36,8 +36,8 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
       recruitmentsQuery.andWhere('position.main IN (:...main)', { main });
     }
 
-    if (partyTypeId !== undefined) {
-      recruitmentsQuery.andWhere('partyType.id = :id', { id: partyTypeId }); // 배열로 받은 ids를 IN 조건에 전달
+    if (partyTypeIds !== undefined) {
+      recruitmentsQuery.andWhere('party.partyTypeId IN (:...partyTypeIds)', { partyTypeIds });
     }
 
     if (titleSearch !== undefined) {

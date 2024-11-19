@@ -34,7 +34,7 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
     }
 
     if (partyTypeId !== undefined) {
-      partiesQuery.andWhere('party.partyTypeId = :partyTypeId', { partyTypeId });
+      partiesQuery.andWhere('party.partyTypeId IN (:...partyTypeId)', { partyTypeId });
     }
 
     const [parties, total] = await partiesQuery.getManyAndCount();

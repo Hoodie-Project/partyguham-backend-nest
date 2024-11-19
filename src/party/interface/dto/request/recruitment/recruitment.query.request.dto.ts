@@ -81,12 +81,16 @@ export class RecruitmentsQueryRequestDto {
 
   @ApiPropertyOptional({
     example: 1,
-    description: 'party type ID (PK - 파티 타입)',
+    description:
+      'party type ID (PK - 파티 타입) 하나의 쿼리 파라미터로 여러 개의 값을 전달할 수 있습니다 (예: partyType=1&partyType=2)',
   })
-  @IsNumber()
   @IsOptional()
-  readonly partyType: number;
-
+  @IsArray()
+  @ArrayMaxSize(5)
+  @IsNumber({}, { each: true })
+  @Transform(({ value }) => (Array.isArray(value) ? value.map(Number) : [Number(value)])) // 단일 값도 배열로 변환
+  readonly partyType: number[];
+  //position, partyType - Transform 숫자변환 유무 (결과에 대한 차이는 X)
   @ApiPropertyOptional({
     example: '모동숲 파티',
     description: '검색 기능 (제목에 관하여)',

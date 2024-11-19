@@ -7,7 +7,7 @@ export class GetPartiesQuery implements IQuery {
     readonly sort: string,
     readonly order: 'ASC' | 'DESC',
     readonly status: string | undefined,
-    readonly partyTypeId: number | undefined,
+    readonly partyTypeId: number[] | undefined,
     readonly titleSearch: string | undefined,
   ) {}
 }
