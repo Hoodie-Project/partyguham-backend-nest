@@ -45,7 +45,7 @@ export class PartyLandingController {
   @PartySwagger.getParties()
   async getParties(@Query() query: PartyQueryRequestDto) {
     const { page, limit, sort, order, status, partyType, titleSearch } = query;
-
+    console.log(partyType);
     const parties = new GetPartiesQuery(page, limit, sort, order, status, partyType, titleSearch);
     const result = this.queryBus.execute(parties);
 
