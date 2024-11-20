@@ -122,13 +122,4 @@ export class PartyRecruitmentResponseDto {
   @IsString()
   @IsNotEmpty()
   readonly createdAt: string;
-
-  @Expose()
-  @ApiProperty({
-    example: true,
-    description: '조회한 유저가 모집공고에 해당하는 파티에 가입 되어있는지에 대한 여부',
-  })
-  @IsBoolean()
-  @IsNotEmpty()
-  readonly isJoined: boolean;
 }

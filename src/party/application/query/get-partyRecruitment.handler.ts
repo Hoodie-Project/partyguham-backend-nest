@@ -49,16 +49,6 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
     }
 
-    let isJoined = false;
-    if (userId) {
-      isJoined = !!(await this.partyUser
-        .createQueryBuilder('partyUser')
-        .where('partyUser.userId = :userId', { userId })
-        .andWhere('partyUser.partyId = :partyId', { partyId })
-        .getOne());
-    }
-    partyRecruitment['isJoined'] = isJoined;
-
     if (partyStatus === 'archived') {
       partyRecruitment.party['tag'] = '종료';
     } else if (partyStatus === 'active') {

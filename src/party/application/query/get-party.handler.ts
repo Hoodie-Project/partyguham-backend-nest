@@ -32,10 +32,6 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
 
-    const myInfo = userId ? party.partyUser.find((partyUser) => partyUser.userId === userId) : null;
-
-    party['myInfo'] = myInfo;
-
     if (party.status === 'archived') {
       party['tag'] = '종료';
     } else if (party.status === 'active') {
