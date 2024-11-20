@@ -85,21 +85,4 @@ export class GetPartyResponseDto {
   @IsNotEmpty()
   @IsString()
   readonly updatedAt: string;
-
-  @Expose()
-  @ApiProperty({
-    example: {
-      status: 'active',
-      createdAt: '2024-07-05T01:04:44.235Z',
-      updatedAt: '2024-07-05T01:04:44.235Z',
-      id: 80,
-      userId: 1,
-      partyId: 80,
-      positionId: 1,
-      authority: 'member',
-    },
-    description: `파티에 속한 내정보, 없을시 null 리턴`,
-  })
-  @IsNotEmpty()
-  readonly myInfo: object | null;
 }

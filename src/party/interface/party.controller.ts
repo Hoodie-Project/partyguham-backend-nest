@@ -91,7 +91,6 @@ export class PartyController {
     return this.commandBus.execute(command);
   }
 
-  @UseGuards(OptionalAccessJwtAuthGuard)
   @PartySwagger.getParty()
   @Get(':partyId')
   async getParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto) {
