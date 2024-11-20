@@ -46,26 +46,14 @@ export class GetPartyUserResponseDto {
   @ApiProperty({
     example: [
       {
-        authority: 'master',
+        authority: 'member',
         position: {
           main: '개발자',
-          sub: '백엔드',
+          sub: '프론트엔드',
         },
         user: {
-          id: 12,
-          nickname: 'mir2',
-          image: null,
-        },
-      },
-      {
-        authority: 'deputy',
-        position: {
-          main: '마케터 광고',
-          sub: '컨텐츠 마케터',
-        },
-        user: {
-          id: 17,
-          nickname: 'mir5',
+          id: 15,
+          nickname: 'mir3',
           image: null,
         },
       },
@@ -78,6 +66,18 @@ export class GetPartyUserResponseDto {
         user: {
           id: 16,
           nickname: 'mir4',
+          image: null,
+        },
+      },
+      {
+        authority: 'member',
+        position: {
+          main: '디자이너',
+          sub: '공간 디자이너',
+        },
+        user: {
+          id: 18,
+          nickname: 'mir6',
           image: null,
         },
       },
