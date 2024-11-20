@@ -35,8 +35,8 @@ export class GetPartyUserResponseDto {
     description: `파티에 해당하는 유저 리스트
 
     < partyAdmin - authority >
-    master = 파티장
-    deputy = 부파티장
+    master = 파티장  
+    deputy = 부파티장  
     `,
   })
   @IsNotEmpty()
@@ -82,10 +82,10 @@ export class GetPartyUserResponseDto {
         },
       },
     ],
-    description: `파티에 해당하는 유저 리스트
+    description: `파티에 해당하는 유저 리스트  
 
-    < partyUser - authority >
-    member = 파티원
+    < partyUser - authority >  
+    member = 파티원  
     `,
   })
   @IsNotEmpty()

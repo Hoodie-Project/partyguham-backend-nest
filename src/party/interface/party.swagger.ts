@@ -110,14 +110,15 @@ export class PartySwagger {
     return applyDecorators(
       ApiOperation({
         summary: '파티원 목록 조회',
-        description: `**파티원 목록 조회하는 API 입니다.**
-        < partyAdmin >
-        - master : 파티장
-        - deputy : 부파티장
-        < partyUser >
-        - member : 파티원
+        description: `**파티원 목록 조회하는 API 입니다.**  
 
-        관리자/파티원을 구분하여 정보를 주고 있습니다.
+        관리자(partyAdmin) / 파티원(partyUser) 을 구분하여 정보를 주고 있습니다.
+        partyAdmin  
+        - master (파티장)  
+        - deputy (부파티장)  
+
+        partyUser  
+        - member (일반 파티원)  
 
         선택 옵션
         - 합류순 : order, sort 대입에 따른 조회
