@@ -11,7 +11,7 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
   constructor(@InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>) {}
 
   async execute(query: GetPartyQuery) {
-    const { partyId, userId } = query;
+    const { partyId } = query;
 
     const partyQuery = this.partyRepository
       .createQueryBuilder('party')

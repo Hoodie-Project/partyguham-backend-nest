@@ -4,7 +4,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
+import { PartyApplicationSwagger } from './partyApplication.swagger';
 
 import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
 
@@ -22,7 +22,7 @@ export class PartyApplicationController {
   ) {}
 
   @Post(':partyId/applications/:partyApplicationId/approval')
-  @PartyRecruitmentSwagger.approvePartyApplication()
+  @PartyApplicationSwagger.approvePartyApplication()
   async approvePartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
@@ -33,7 +33,7 @@ export class PartyApplicationController {
   }
 
   @Post(':partyId/applications/:partyApplicationId/rejection')
-  @PartyRecruitmentSwagger.rejectPartyApplication()
+  @PartyApplicationSwagger.rejectPartyApplication()
   async rejectPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
