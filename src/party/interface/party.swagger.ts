@@ -163,6 +163,7 @@ export class PartySwagger {
         description: '파티원 권한 조회',
         schema: {
           example: {
+            userId: 1,
             authority: 'master',
           },
         },
