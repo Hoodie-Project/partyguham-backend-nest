@@ -111,20 +111,23 @@ export class PartySwagger {
       ApiOperation({
         summary: '파티원 목록 조회',
         description: `**파티원 목록 조회하는 API 입니다.**  
+        - 필수 디폴트 값 : (order=ASC(오름차순) / sort=createdAt(합류일))  
+        - 선택 옵션 : 직군 / 이름 
 
-        관리자(partyAdmin) / 파티원(partyUser) 을 구분하여 정보를 주고 있습니다.
+        1. 경력을 표시해야하는 상황은, 파티내 포지션과 개인정보 포지션이 동일할 경우 입니다.
+        유저경력(userCareers) = 파티내 포지션(position.id)
+        -> 경력 표시 (userCareers.years)
+        
+        2. 유저가 본인 경력을 입력하지 않으면 userCareers의 값은 빈 배열 입니다.
+
+        3. 관리자(partyAdmin) / 파티원(partyUser) 을 구분하여 정보를 주고 있습니다.
         partyAdmin  
         - master (파티장)  
         - deputy (부파티장)  
 
         partyUser  
         - member (일반 파티원)  
-
-        선택 옵션
-        - 합류순 : order, sort 대입에 따른 조회
         
-        기본 선택 옵션 값 (order=ASC(오름차순) / sort=createdAt(합류일))
-        - 직군 / 이름 : 선택값. 이름 검색은 해당 검색 데이터가 포함된 모든 파티원 조회
 
 
         `,
