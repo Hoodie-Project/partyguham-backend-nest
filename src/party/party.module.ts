@@ -59,6 +59,7 @@ import { GetPartyUserAuthorityHandler } from './application/query/get-partyUserA
 
 import { PartyService } from './application/party.service';
 import { PartyApplicationService } from './application/party-application.service';
+import { GetSearchHandler } from './application/query/get-search.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -81,6 +82,7 @@ const commandHandlers = [
 ];
 
 const queryHandlers = [
+  GetSearchHandler,
   GetPartiesHandler,
   GetPartyHandler,
   GetPartyUserHandler,
