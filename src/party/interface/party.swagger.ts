@@ -6,8 +6,31 @@ import { GetPartiesResponseDto } from './dto/response/get-parties.response.dto';
 import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
+import { GetSearchResponseDto } from './dto/response/get-partySearch.response.dto';
 
 export class PartySwagger {
+  static getSearch() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티/파티 모집공고 통합검색',
+        description: `**파티, 파티모집공고를 통합검색 하는 API 입니다.**  
+
+        '파티 제목'을 기준으로  
+        - party (파티 목록)  
+        - partyRecruitment (모집 공고 목록)  
+        으로 나누어 동시에 조회하는 API 입니다.  
+
+        default : 최신순 (생성, 내림차순) 으로 나열
+        `,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 목록 리스트 조회',
+        type: GetSearchResponseDto,
+      }),
+    );
+  }
+
   static getParties() {
     return applyDecorators(
       ApiOperation({

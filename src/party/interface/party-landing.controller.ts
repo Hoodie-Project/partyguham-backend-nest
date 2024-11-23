@@ -17,6 +17,9 @@ import { RecruitmentsPersonalizedQueryRequestDto } from './dto/request/recruitme
 import { GetPartiesQuery } from '../application/query/get-parties.query';
 import { GetRecruitmentsQuery } from '../application/query/get-recruitments.query';
 import { GetRecruitmentsPersonalizedQuery } from '../application/query/get-recruitmentsPersonalized.query';
+import { SearchRequestDto } from './dto/request/search.request.dto';
+import { GetSearchQuery } from '../application/query/get-search.query';
+import { GetSearchResponseDto } from './dto/response/get-partySearch.response.dto';
 
 @ApiTags('landing page (렌딩 페이지 API)')
 @Controller('parties')
@@ -25,6 +28,17 @@ export class PartyLandingController {
     private commandBus: CommandBus,
     private queryBus: QueryBus,
   ) {}
+
+  @Get('search')
+  @PartySwagger.getSearch()
+  async getSearch(@Query() query: SearchRequestDto) {
+    const { page, limit, titleSearch } = query;
+
+    const search = new GetSearchQuery(page, limit, titleSearch);
+    const result = this.queryBus.execute(search);
+
+    return plainToInstance(GetSearchResponseDto, result);
+  }
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('recruitments/personalized')
@@ -35,8 +49,8 @@ export class PartyLandingController {
   ) {
     const { page, limit, sort, order } = query;
     const userId = user.id;
-    const party = new GetRecruitmentsPersonalizedQuery(page, limit, sort, order, userId);
-    const result = this.queryBus.execute(party);
+    const partyRecruitment = new GetRecruitmentsPersonalizedQuery(page, limit, sort, order, userId);
+    const result = this.queryBus.execute(partyRecruitment);
 
     return plainToInstance(GetPartyRecruitmentsResponseDto, result);
   }
@@ -57,8 +71,8 @@ export class PartyLandingController {
   async getRecruitments(@Query() query: RecruitmentsQueryRequestDto) {
     const { page, limit, sort, order, main, position, partyType, titleSearch } = query;
 
-    const party = new GetRecruitmentsQuery(page, limit, sort, order, main, position, partyType, titleSearch);
-    const result = this.queryBus.execute(party);
+    const partyRecruitment = new GetRecruitmentsQuery(page, limit, sort, order, main, position, partyType, titleSearch);
+    const result = this.queryBus.execute(partyRecruitment);
 
     return plainToInstance(GetPartyRecruitmentsResponseDto, result);
   }
