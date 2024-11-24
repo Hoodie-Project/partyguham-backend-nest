@@ -6,14 +6,17 @@ import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Repository } from 'typeorm';
 
 import { GetUserQuery } from './get-user.query';
+import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 
 @QueryHandler(GetUserQuery)
 export class GetUserHandler implements IQueryHandler<GetUserQuery> {
-  constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
+  constructor(
+    @InjectRepository(UserEntity) private userRepository: Repository<UserEntity>,
+    @InjectRepository(PartyUserEntity) private partyuserRepository: Repository<PartyUserEntity>,
+  ) {}
 
   async execute(query: GetUserQuery) {
-    const { userId, sort, order } = query;
-    // const offset = (page - 1) * limit || 0;
+    const { userId, page, limit, sort, order } = query;
 
     const user = await this.userRepository
       .createQueryBuilder('user')
@@ -24,10 +27,6 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
       .leftJoin('userCareers.position', 'position')
       .leftJoin('user.userLocations', 'userLocations')
       .leftJoin('userLocations.location', 'location')
-      .leftJoin('user.partyUsers', 'partyUsers')
-      .leftJoin('partyUsers.position', 'partyUserPosition')
-      .leftJoin('partyUsers.party', 'party')
-      .leftJoin('party.partyType', 'partyType')
       .select([
         'user',
         'userPersonality.id',
@@ -41,18 +40,8 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
         'userLocations.id',
         'location.province',
         'location.city',
-        'partyUsers.id',
-        'partyUserPosition.main',
-        'partyUserPosition.sub',
-        'partyUsers.createdAt',
-        'party.id',
-        'party.title',
-        'party.image',
-        'party.createdAt',
-        'partyType.type',
       ])
       .where('user.id = :id', { id: userId })
-      .orderBy(`partyUsers.${sort}`, order)
       .getOne();
 
     if (!user) {
@@ -79,10 +68,35 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
       return acc;
     }, []);
 
+    //내가 속한 파티
+    const offset = (page - 1) * limit || 0;
+    const [partyUsers, total] = await this.partyuserRepository
+      .createQueryBuilder('partyUser')
+      .leftJoin('partyUser.position', 'partyUserPosition')
+      .leftJoin('partyUser.party', 'party')
+      .leftJoin('party.partyType', 'partyType')
+      .select([
+        'partyUser.id',
+        'partyUserPosition.main',
+        'partyUserPosition.sub',
+        'partyUser.createdAt',
+        'party.id',
+        'party.title',
+        'party.image',
+        'party.createdAt',
+        'partyType.type',
+      ])
+      .where('partyUser.userId = :userId', { userId })
+      .limit(limit)
+      .offset(offset)
+      .orderBy(`partyUser.${sort}`, order)
+      .getManyAndCount();
+
     // 결과를 응답 형식에 맞춰 반환
     return {
       ...user,
       userPersonalities: formattedPersonalities,
+      myParties: { total, partyUsers },
     };
   }
 }

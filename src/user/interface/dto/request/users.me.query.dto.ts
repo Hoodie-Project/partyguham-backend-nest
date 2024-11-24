@@ -2,21 +2,21 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsIn, IsInt, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UsersMePartyQueryDto {
-  // @ApiProperty({
-  //   example: 1,
-  //   description: 'page',
-  // })
-  // @IsInt()
-  // @IsNotEmpty()
-  // public page: number;
+  @ApiProperty({
+    example: 1,
+    description: 'page',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  public page: number;
 
-  // @ApiProperty({
-  //   example: 5,
-  //   description: '최대 조회 수',
-  // })
-  // @IsInt()
-  // @IsNotEmpty()
-  // public limit: number;
+  @ApiProperty({
+    example: 5,
+    description: '최대 조회 수',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  public limit: number;
 
   @ApiProperty({
     enum: ['createdAt'],

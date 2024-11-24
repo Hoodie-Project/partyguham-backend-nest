@@ -407,7 +407,7 @@ export class UserController {
   @Get('me')
   @ApiOperation({
     summary: '내정보 조회',
-    description: `**내 정보를 조회하는 API 입니다.**  
+    description: `**내 정보를 조회하는 API 입니다.**   
     Query에 sort/order는 partyUsers(파티원)에 참여 여부에 대해 적용되는 내용입니다.`,
   })
   @ApiResponse({
@@ -419,12 +419,13 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @Query() query: UsersMePartyQueryDto,
   ): Promise<UserResponseDto> {
-    const { sort, order } = query;
+    const { page, limit, sort, order } = query;
 
-    const getUserInfoQuery = new GetUserQuery(user.id, sort, order);
+    const getUserInfoQuery = new GetUserQuery(user.id, page, limit, sort, order);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
+    return result;
     return plainToInstance(UserResponseDto, result);
   }
 
