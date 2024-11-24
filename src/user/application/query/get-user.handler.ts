@@ -12,7 +12,8 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
   constructor(@InjectRepository(UserEntity) private userRepository: Repository<UserEntity>) {}
 
   async execute(query: GetUserQuery) {
-    const { userId } = query;
+    const { userId, sort, order } = query;
+    // const offset = (page - 1) * limit || 0;
 
     const user = await this.userRepository
       .createQueryBuilder('user')
@@ -51,6 +52,7 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
         'partyType.type',
       ])
       .where('user.id = :id', { id: userId })
+      .orderBy(`partyUsers.${sort}`, order)
       .getOne();
 
     if (!user) {
