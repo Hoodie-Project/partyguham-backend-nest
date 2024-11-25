@@ -1,44 +1,41 @@
 import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 
 import { Repository } from 'typeorm';
 import { GetPartyRecruitmentsQuery } from './get-partyRecruitments.query';
+import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
 
 @QueryHandler(GetPartyRecruitmentsQuery)
 export class GetPartyRecruitmentsHandler implements IQueryHandler<GetPartyRecruitmentsQuery> {
-  constructor(@InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>) {}
+  constructor(
+    @InjectRepository(PartyRecruitmentEntity) private partyRecruitmentRepository: Repository<PartyRecruitmentEntity>,
+  ) {}
 
   async execute(query: GetPartyRecruitmentsQuery) {
     const { partyId, sort, order, main } = query;
 
-    const partyQuery = this.partyRepository
-      .createQueryBuilder('party')
-      .leftJoin('party.partyRecruitments', 'partyRecruitments')
+    const partyQuery = this.partyRecruitmentRepository
+      .createQueryBuilder('partyRecruitments')
       .leftJoin('partyRecruitments.position', 'position')
-      .leftJoin('partyRecruitments.partyApplications', 'partyApplications')
       .select([
-        'position.main AS main',
-        'position.sub AS sub',
-        'partyRecruitments.id AS "partyRecruitmentId"',
-        'partyRecruitments.content AS content',
-        'partyRecruitments.recruitingCount AS "recruitingCount"',
-        'partyRecruitments.recruitedCount AS "recruitedCount"',
-        'partyRecruitments.createdAt AS "createdAt"',
+        'position.main',
+        'position.sub',
+        'partyRecruitments.id',
+        'partyRecruitments.content',
+        'partyRecruitments.recruitingCount',
+        'partyRecruitments.recruitedCount',
+        'partyRecruitments.createdAt',
       ])
-      .addSelect('COUNT(partyApplications.id)', 'applicationCount') // partyApplications의 개수를 추가
-      .where('party.id = :id', { id: partyId })
-      .orderBy(`partyRecruitments.${sort}`, order)
-      .groupBy('party.id')
-      .addGroupBy('partyRecruitments.id')
-      .addGroupBy('position.id');
+      .loadRelationCountAndMap('partyRecruitments.applicationCount', 'partyRecruitments.partyApplications')
+      .where('partyRecruitments.partyId = :partyId', { partyId })
+      .orderBy(`partyRecruitments.${sort}`, order);
 
     if (main !== undefined && main !== null) {
       partyQuery.andWhere('position.main = :main', { main });
     }
 
-    const party = await partyQuery.getRawMany();
+    const party = await partyQuery.getMany();
 
     if (!party) {
       throw new NotFoundException('파티가 존재하지 않습니다', 'PARTY_NOT_EXIST');

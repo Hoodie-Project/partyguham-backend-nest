@@ -2,17 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-@Exclude()
-export class PartyRecruitmentsResponseDto {
-  @Expose()
-  @ApiProperty({
-    example: 3,
-    description: 'party recruitment ID (PK - 파티 모집)',
-  })
-  @IsInt()
-  @IsNotEmpty()
-  readonly partyRecruitmentId: number;
-
+class PostionDto {
   @Expose()
   @ApiProperty({
     example: '기획',
@@ -28,6 +18,18 @@ export class PartyRecruitmentsResponseDto {
   })
   @IsNotEmpty()
   readonly sub: object;
+}
+
+@Exclude()
+export class PartyRecruitmentsResponseDto {
+  @Expose()
+  @ApiProperty({
+    example: 3,
+    description: 'party recruitment ID (PK - 파티 모집)',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  readonly id: number;
 
   @Expose()
   @ApiProperty({
@@ -70,4 +72,14 @@ export class PartyRecruitmentsResponseDto {
   @IsString()
   @IsNotEmpty()
   readonly createdAt: string;
+
+  @Expose()
+  @ApiProperty({
+    example: PostionDto,
+    description: '모집 포지션',
+  })
+  @Type(() => PostionDto)
+  @IsString()
+  @IsNotEmpty()
+  readonly position: PostionDto;
 }
