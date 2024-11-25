@@ -113,7 +113,7 @@ const uploadDir = 'images/party';
 @Module({
   controllers: [PartyLandingController, PartyRecruitmentController, PartyApplicationController, PartyController],
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories, ...services],
-  exports: [...services],
+  exports: [...services, TypeOrmModule],
   imports: [
     ServeStaticModule.forRoot({
       rootPath: uploadDir, // 정적 파일이 저장된 디렉토리

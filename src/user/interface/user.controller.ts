@@ -20,6 +20,7 @@ import { plainToInstance } from 'class-transformer';
 import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
@@ -32,6 +33,7 @@ import { UserPersonalityResponseDto } from './dto/response/UserPersonalityRespon
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
+import { UsersMePartyQueryDto } from './dto/request/users.me.query.dto';
 
 import { CreateUserCommand } from '../application/command/create-user.command';
 import { UpdateUserCommand } from '../application/command/update-user.command';
@@ -50,7 +52,6 @@ import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { DeleteUserLocationsCommand } from '../application/command/delete-userLocations.command';
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
-import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -404,17 +405,27 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Get('me')
-  @ApiOperation({ summary: '내정보 조회' })
+  @ApiOperation({
+    summary: '내정보 조회',
+    description: `**내 정보를 조회하는 API 입니다.**   
+    Query에 sort/order는 partyUsers(파티원)에 참여 여부에 대해 적용되는 내용입니다.`,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 내정보 목록을 가져왔습니다.',
     type: UserResponseDto,
   })
-  async getMyInfo(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(user.id);
+  async getMyInfo(
+    @CurrentUser() user: CurrentUserType,
+    @Query() query: UsersMePartyQueryDto,
+  ): Promise<UserResponseDto> {
+    const { page, limit, sort, order } = query;
+
+    const getUserInfoQuery = new GetUserQuery(user.id, page, limit, sort, order);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
+    return result;
     return plainToInstance(UserResponseDto, result);
   }
 
