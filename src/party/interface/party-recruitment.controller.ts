@@ -27,6 +27,7 @@ import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/recruitment/
 import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
 import { PartyApplicationQueryRequestDto } from './dto/request/application/partyApplication.query.request.dto';
 import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
+import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party recruitment (파티 모집 공고)')
@@ -136,7 +137,9 @@ export class PartyRecruitmentController {
   ) {
     const command = new CreatePartyApplicationCommand(user.id, param.partyId, param.partyRecruitmentId, dto.message);
 
-    return this.commandBus.execute(command);
+    const result = this.commandBus.execute(command);
+
+    return plainToInstance(CreatePartyApplicationResponseDto, result);
   }
 
   // 모집공고 지원자 조회

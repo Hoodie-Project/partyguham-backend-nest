@@ -6,6 +6,7 @@ import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-r
 import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-recruitment.response.dto';
 import { GetPartyRecruitmentsResponseDto } from './dto/response/recruitment/get-recruitments.response.dto';
 import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
+import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
 
 export class PartyRecruitmentSwagger {
   static getRecruitments() {
@@ -217,6 +218,15 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 201,
         description: '파티 지원 완료',
+        type: CreatePartyApplicationResponseDto,
+      }),
+      ApiResponse({
+        status: 403,
+        description: '모집공고 요청이 올바르지 않음',
+      }),
+      ApiResponse({
+        status: 409,
+        description: '지원신청 중복 요청',
       }),
     );
   }
