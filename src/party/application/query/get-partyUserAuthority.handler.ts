@@ -1,4 +1,4 @@
-import { ForbiddenException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -21,7 +21,7 @@ export class GetPartyUserAuthorityHandler implements IQueryHandler<GetPartyUserA
       .getOne();
 
     if (!partyUser) {
-      throw new ForbiddenException('파티에 속한 유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
+      throw new NotFoundException('파티에 속한 유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
     }
 
     return partyUser;

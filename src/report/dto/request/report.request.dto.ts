@@ -4,7 +4,8 @@ import { IsIn, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class ReportRequestDto {
   @ApiProperty({
     example: 'party',
-    description: '신고 대상',
+    enum: ['party', 'user'],
+    description: '신고 대상 (party : 파티, user: 유저)',
   })
   @IsIn(['party', 'user'])
   @IsString()
