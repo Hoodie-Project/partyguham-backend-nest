@@ -198,7 +198,7 @@ export class PartySwagger {
           example: {
             message: '파티에 속한 유저를 찾을 수 없습니다.',
             error: 'PARTY_USER_NOT_EXIST',
-            statusCode: 403,
+            statusCode: 404,
             path: '/dev/api/parties/801/users/me/authority',
             timestamp: '2024-11-07T10:07:24.272Z',
           },
