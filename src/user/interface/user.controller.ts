@@ -425,7 +425,6 @@ export class UserController {
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
-    return result;
     return plainToInstance(UserResponseDto, result);
   }
 
