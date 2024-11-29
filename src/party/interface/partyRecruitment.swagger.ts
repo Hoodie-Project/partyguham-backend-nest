@@ -7,6 +7,7 @@ import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-re
 import { GetPartyRecruitmentsResponseDto } from './dto/response/recruitment/get-partyRecruitments.response.dto';
 import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
 import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
+import { CreatePartyRecruitmentsResponseDto } from './dto/response/recruitment/create-partyRecruitments.response.dto';
 
 export class PartyRecruitmentSwagger {
   static getRecruitments() {
@@ -84,7 +85,7 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 201,
         description: '파티 생성',
-        type: PartyResponseDto,
+        type: CreatePartyRecruitmentsResponseDto,
       }),
     );
   }
