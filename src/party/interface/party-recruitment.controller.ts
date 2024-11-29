@@ -28,6 +28,7 @@ import { BatchDeletePartyRecruitmentCommand } from '../application/command/batch
 import { PartyApplicationQueryRequestDto } from './dto/request/application/partyApplication.query.request.dto';
 import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
 import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
+import { CreatePartyRecruitmentsResponseDto } from './dto/response/recruitment/create-partyRecruitments.response.dto';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party recruitment (파티 모집 공고)')
@@ -73,8 +74,9 @@ export class PartyRecruitmentController {
     const { positionId, content, recruiting_count } = body;
 
     const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, content, recruiting_count);
+    const result = this.commandBus.execute(command);
 
-    return this.commandBus.execute(command);
+    return plainToInstance(CreatePartyRecruitmentsResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)
