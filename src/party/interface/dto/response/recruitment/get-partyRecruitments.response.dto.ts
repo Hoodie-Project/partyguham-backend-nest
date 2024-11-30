@@ -101,11 +101,11 @@ export class PartyRecruitmentDto {
 
 export class GetPartyRecruitmentsResponseDto {
   @Expose()
-  @ApiProperty({ description: '파티 데이터 목록', type: [PartyRecruitmentDto] })
-  @Type(() => PartyRecruitmentDto)
-  parties: PartyRecruitmentDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
-
-  @Expose()
   @ApiProperty({ example: 1, description: '총 데이터 갯수' })
   total: number;
+
+  @Expose()
+  @ApiProperty({ description: '파티 데이터 목록', type: [PartyRecruitmentDto] })
+  @Type(() => PartyRecruitmentDto)
+  partyRecruitments: PartyRecruitmentDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
 }
