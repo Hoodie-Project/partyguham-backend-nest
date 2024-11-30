@@ -51,11 +51,11 @@ export class GetSearchHandler implements IQueryHandler<GetSearchQuery> {
       .where('party.title LIKE :title', { title: `%${titleSearch}%` })
       .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE });
 
-    const recruitments = await recruitmentsQuery.getManyAndCount();
+    const partyRecruitments = await recruitmentsQuery.getManyAndCount();
 
     return {
       party: { total: parties[1], parties: parties[0] },
-      partyRecruitment: { total: recruitments[1], partyRecruitment: recruitments[0] },
+      partyRecruitment: { total: partyRecruitments[1], partyRecruitments: partyRecruitments[0] },
     };
   }
 }
