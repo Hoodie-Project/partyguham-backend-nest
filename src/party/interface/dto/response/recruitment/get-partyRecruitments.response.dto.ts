@@ -1,6 +1,25 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose, Type } from 'class-transformer';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+
+@Exclude()
+export class RecruitmentPositionDto {
+  @Expose()
+  @ApiProperty({
+    example: '기획',
+    description: 'Position Main (직군)',
+  })
+  @IsNotEmpty()
+  readonly main: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 'UI/UX 기획자',
+    description: 'Position Sub (직무)',
+  })
+  @IsNotEmpty()
+  readonly sub: string;
+}
 
 @Exclude()
 export class PartyRecruitmentDto {
@@ -11,23 +30,7 @@ export class PartyRecruitmentDto {
   })
   @IsInt()
   @IsNotEmpty()
-  readonly partyRecruitmentId: number;
-
-  @Expose()
-  @ApiProperty({
-    example: '기획',
-    description: 'Position Main (직군)',
-  })
-  @IsNotEmpty()
-  readonly main: object;
-
-  @Expose()
-  @ApiProperty({
-    example: 'UI/UX 기획자',
-    description: 'Position Sub (직무)',
-  })
-  @IsNotEmpty()
-  readonly sub: object;
+  readonly id: number;
 
   @Expose()
   @ApiProperty({
@@ -56,14 +59,6 @@ export class PartyRecruitmentDto {
 
   @Expose()
   @ApiProperty({
-    example: 1,
-    description: '현재 지원수',
-  })
-  @IsNotEmpty()
-  readonly applicationCount: object;
-
-  @Expose()
-  @ApiProperty({
     example: '2024-06-07T12:17:57.248Z',
     description: '생성일자',
   })
@@ -88,15 +83,12 @@ export class PartyRecruitmentDto {
 
   @Expose()
   @ApiProperty({
-    example: {
-      id: 1,
-      main: '기획자',
-      sub: 'UI/UX 기획자',
-    },
-    description: '포지션 정보',
+    type: RecruitmentPositionDto,
+    description: '모집 포지션',
   })
   @IsNotEmpty()
-  readonly position: object;
+  @Type(() => RecruitmentPositionDto)
+  readonly position: RecruitmentPositionDto;
 }
 
 export class GetPartyRecruitmentsResponseDto {
