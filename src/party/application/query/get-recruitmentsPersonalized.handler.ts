@@ -36,7 +36,7 @@ export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecr
       .leftJoin('partyRecruitments.party', 'party')
       .leftJoin('party.partyType', 'partyType')
       .leftJoin('partyRecruitments.position', 'position')
-      .select(['partyRecruitments', 'party.title', 'party.image', 'partyType', 'position'])
+      .select(['partyRecruitments', 'party.id', 'party.title', 'party.image', 'partyType', 'position'])
       .limit(limit)
       .offset(offset)
       .where('partyRecruitments.positionId = :positionId', { positionId: userPrimaryPosition })
