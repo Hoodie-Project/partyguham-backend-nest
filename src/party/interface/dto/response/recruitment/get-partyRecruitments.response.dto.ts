@@ -6,6 +6,15 @@ import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 export class RecruitmentPositionDto {
   @Expose()
   @ApiProperty({
+    example: 3,
+    description: 'position ID (PK - 포지션)',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  readonly id: number;
+
+  @Expose()
+  @ApiProperty({
     example: '기획',
     description: 'Position Main (직군)',
   })
@@ -69,6 +78,7 @@ export class PartyRecruitmentDto {
   @Expose()
   @ApiProperty({
     example: {
+      id: 1,
       title: '제목2',
       image: '/uploads/images/party/1718338843645-484895188-스크린샷 2024-03-03 오후 5.08.26.png',
       partyType: {

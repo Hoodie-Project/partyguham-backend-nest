@@ -44,7 +44,7 @@ export class GetSearchHandler implements IQueryHandler<GetSearchQuery> {
       .leftJoin('partyRecruitments.party', 'party')
       .leftJoin('party.partyType', 'partyType')
       .leftJoin('partyRecruitments.position', 'position')
-      .select(['partyRecruitments', 'party.title', 'party.image', 'partyType', 'position'])
+      .select(['partyRecruitments', 'party.id', 'party.title', 'party.image', 'partyType', 'position'])
       .limit(limit)
       .offset(offset)
       .orderBy(`partyRecruitments.createdAt`, 'DESC')
