@@ -16,7 +16,7 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
   ) {}
 
   async execute(query: GetUserQuery) {
-    const { userId, page, limit, sort, order } = query;
+    const { userId } = query;
 
     const user = await this.userRepository
       .createQueryBuilder('user')
@@ -68,35 +68,10 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
       return acc;
     }, []);
 
-    //내가 속한 파티
-    const offset = (page - 1) * limit || 0;
-    const [partyUsers, total] = await this.partyuserRepository
-      .createQueryBuilder('partyUser')
-      .leftJoin('partyUser.position', 'partyUserPosition')
-      .leftJoin('partyUser.party', 'party')
-      .leftJoin('party.partyType', 'partyType')
-      .select([
-        'partyUser.id',
-        'partyUserPosition.main',
-        'partyUserPosition.sub',
-        'partyUser.createdAt',
-        'party.id',
-        'party.title',
-        'party.image',
-        'party.createdAt',
-        'partyType.type',
-      ])
-      .where('partyUser.userId = :userId', { userId })
-      .limit(limit)
-      .offset(offset)
-      .orderBy(`partyUser.${sort}`, order)
-      .getManyAndCount();
-
     // 결과를 응답 형식에 맞춰 반환
     return {
       ...user,
       userPersonalities: formattedPersonalities,
-      myParties: { total, partyUsers },
     };
   }
 }
