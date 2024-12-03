@@ -3,7 +3,7 @@ import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard, OptionalAccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 
 import { PartyRequestDto } from './dto/request/party.param.request.dto';
@@ -39,7 +39,6 @@ export class PartyRecruitmentController {
     private queryBus: QueryBus,
   ) {}
 
-  @UseGuards(OptionalAccessJwtAuthGuard)
   @Get('recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.getPartyRecruitment()
   async getRecruitmentById(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentParamRequestDto) {

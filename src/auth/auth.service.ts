@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
 import { AuthRepository } from './repository/auth.repository';
+import { OauthService } from './oauth.service';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +14,7 @@ export class AuthService {
   private readonly appIv = process.env.APP_CIPHERIV_IV_SECRET;
   constructor(
     private jwtService: JwtService,
+    private oauthService: OauthService,
     private authRepository: AuthRepository,
   ) {}
 
@@ -23,6 +25,32 @@ export class AuthService {
       expiresIn: '1h',
       algorithm: 'HS256',
     });
+  }
+
+  async validateSignupAccessToken(token: string): Promise<any> {
+    // try {
+    // 토큰 검증
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SIGNUP_SECRET,
+      algorithms: ['HS256'],
+    });
+
+    // 추가적인 검증 로직 (예: 유저 확인, 특정 조건 등)
+    if (!payload || !payload.id) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+    const decryptUserId = Number(this.decrypt(payload.id));
+    const oauth = await this.oauthService.findById(decryptUserId);
+    const oauthId = oauth.id;
+
+    if (oauth.userId) {
+      throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
+    }
+
+    return oauthId;
+    // } catch (error) {
+    //   throw new UnauthorizedException('Invalid or expired token');
+    // }
   }
 
   async createAccessToken(id: string) {

@@ -54,6 +54,7 @@ import { diskStorage } from 'multer';
 import { PartyModule } from 'src/party/party.module';
 import { GetMyPartiesHandler } from './application/query/get-myParties.handler';
 import { GetMyPartyApplicationHandler } from './application/query/get-myPartyApplications.handler';
+import { LinkOauthHandler } from './application/command/link-oauth.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -65,6 +66,8 @@ const commandHandlers = [
   GoogleCodeHandler,
   GoogleLoginHandler,
   GoogleAppLoginHandler,
+
+  LinkOauthHandler,
 
   CreateUserLocationHandler,
   DeleteUserLocationHandler,

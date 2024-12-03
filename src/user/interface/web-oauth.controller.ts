@@ -1,5 +1,5 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -8,6 +8,8 @@ import { KakaoCodeCommand } from '../application/command/kakao-code.command';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
+import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { LinkOauthCommand } from '../application/command/link-oauth.command';
 
 @ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
@@ -191,5 +193,34 @@ export class WebOauthController {
     const image = req.session.image || null;
 
     return { email, image };
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('me/oauth/link')
+  @ApiOperation({
+    summary: '필수회원가입 (유저생성)',
+    description: `**필수 회원가입 API 입니다.**  
+    signupToken을 이용하여 인증하고, 위치는 헤더(authorization) 또는 쿠키(signupToken) 으로 인증 가능합니다.  
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '이메일, oauth 이미지 URL 데이터',
+    schema: { example: '연동이 완료 되었습니다.' },
+  })
+  async linkOauth(@CurrentUser() user: CurrentUserType, @Req() req: Request, @Res() res: Response): Promise<void> {
+    const userId = user.id;
+    const signupToken = req.cookies['signupToken'];
+
+    if (!signupToken) {
+      throw new UnauthorizedException('signupToken이 쿠키에 없습니다.');
+    }
+
+    const command = new LinkOauthCommand(userId, signupToken);
+    await this.commandBus.execute(command);
+
+    res.clearCookie('signupToken');
+    res.status(200).send({ message: '연동이 완료되었습니다.' });
   }
 }

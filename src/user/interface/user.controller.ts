@@ -420,13 +420,8 @@ export class UserController {
     description: '성공적으로 내정보 목록을 가져왔습니다.',
     type: UserResponseDto,
   })
-  async getMyInfo(
-    @CurrentUser() user: CurrentUserType,
-    @Query() query: UsersMePartyQueryDto,
-  ): Promise<UserResponseDto> {
-    const { page, limit, sort, order } = query;
-
-    const getUserInfoQuery = new GetUserQuery(user.id, page, limit, sort, order);
+  async getMyInfo(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(user.id);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 

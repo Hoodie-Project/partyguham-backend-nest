@@ -20,7 +20,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard, OptionalAccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PartySwagger } from './party.swagger';
 
 import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
