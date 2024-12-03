@@ -23,6 +23,9 @@ export class OauthEntity {
   @Column({ nullable: true })
   accessToken: string;
 
+  @Column({ nullable: true })
+  signupToken: string;
+
   @ManyToOne(() => UserEntity, (user) => user.auth, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
