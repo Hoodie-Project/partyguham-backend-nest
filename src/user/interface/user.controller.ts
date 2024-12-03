@@ -53,6 +53,11 @@ import { DeleteUserLocationsCommand } from '../application/command/delete-userLo
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 
+import { GetMyPartiesQuery } from '../application/query/get-myParties.query';
+import { GetMyPartiesResponseDto } from './dto/response/myPartiesDto';
+import { GetMyPartyApplicationsQuery } from '../application/query/get-myPartyApplications.query';
+import { GetMyPartyApplicationResponseDto } from './dto/response/myPartyApplicationsDto';
+
 @ApiTags('user (회원/유저)')
 @Controller('users')
 export class UserController {
@@ -426,6 +431,50 @@ export class UserController {
     const result = this.queryBus.execute(getUserInfoQuery);
 
     return plainToInstance(UserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/parties')
+  @ApiOperation({
+    summary: '나의 파티 조회',
+    description: `**내가 속한 파티를 조회하는 API 입니다.**   
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 목록을 가져왔습니다.',
+    type: GetMyPartiesResponseDto,
+  })
+  async getParties(@CurrentUser() user: CurrentUserType, @Query() query: UsersMePartyQueryDto) {
+    const { page, limit, sort, order } = query;
+
+    const getUserInfoQuery = new GetMyPartiesQuery(user.id, page, limit, sort, order);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+
+    return plainToInstance(GetMyPartiesResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/parties/applications')
+  @ApiOperation({
+    summary: '나의 지원 목록',
+    description: `**내가 지원한 모집공고를 조회하는 API 입니다.**   
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 목록을 가져왔습니다.',
+    type: GetMyPartyApplicationResponseDto,
+  })
+  async getPartyRecruitments(@CurrentUser() user: CurrentUserType, @Query() query: UsersMePartyQueryDto) {
+    const { page, limit, sort, order } = query;
+
+    const getPartyApplicationQuery = new GetMyPartyApplicationsQuery(user.id, page, limit, sort, order);
+
+    const result = this.queryBus.execute(getPartyApplicationQuery);
+
+    return plainToInstance(GetMyPartyApplicationResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)
