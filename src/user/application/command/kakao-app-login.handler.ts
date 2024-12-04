@@ -4,7 +4,7 @@ import { AuthService } from 'src/auth/auth.service';
 
 import axios from 'axios';
 
-import { PlatformEnum } from 'src/auth/entity/oauth.entity';
+import { ProviderEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
 import { KakaoAppLoginCommand } from './kakao-app-login.command';
 
@@ -57,7 +57,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     }
 
     if (!oauth) {
-      const createOauth = await this.oauthService.createWithoutUserId(externalId, PlatformEnum.KAKAO, kakaoAccessToken);
+      const createOauth = await this.oauthService.createWithoutUserId(externalId, ProviderEnum.KAKAO, kakaoAccessToken);
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 

@@ -17,7 +17,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
-import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -57,6 +57,7 @@ import { GetMyPartiesQuery } from '../application/query/get-myParties.query';
 import { GetMyPartiesResponseDto } from './dto/response/myPartiesDto';
 import { GetMyPartyApplicationsQuery } from '../application/query/get-myPartyApplications.query';
 import { GetMyPartyApplicationResponseDto } from './dto/response/myPartyApplicationsDto';
+import { GetUserOauthQuery } from '../application/query/get-userOauth.query';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -425,6 +426,21 @@ export class UserController {
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
+    return plainToInstance(UserResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/oauth/oauth')
+  @ApiOperation({
+    summary: '내 소셜 계정 조회',
+    description: `**내 소셜 계정을 전체 조회하는 API 입니다.**   
+    `,
+  })
+  async getMyOauth(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserOauthQuery(user.id);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+    return result;
     return plainToInstance(UserResponseDto, result);
   }
 

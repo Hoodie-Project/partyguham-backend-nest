@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { OauthRepository } from './repository/oauth.repository';
-import { PlatformEnum } from './entity/oauth.entity';
+import { ProviderEnum } from './entity/oauth.entity';
 
 @Injectable()
 export class OauthService {
@@ -19,8 +19,8 @@ export class OauthService {
     return this.oauthRepository.findByExternalId(externalId);
   }
 
-  async createWithoutUserId(externalId: string, platform: PlatformEnum, accessToken: string) {
-    return this.oauthRepository.createWithoutUserId(externalId, platform, accessToken);
+  async createWithoutUserId(externalId: string, provider: ProviderEnum, accessToken: string) {
+    return this.oauthRepository.createWithoutUserId(externalId, provider, accessToken);
   }
 
   async updateUserIdById(id: number, userId: number) {
