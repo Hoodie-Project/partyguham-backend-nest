@@ -24,7 +24,7 @@ export class OauthRepository {
     return oauthEntity;
   }
 
-  async findByUserId(userId: number) {
+  async findOneByUserId(userId: number) {
     const oauthEntity = await this.oauthRepository.findOne({
       where: { userId },
     });
@@ -32,6 +32,14 @@ export class OauthRepository {
     if (!oauthEntity) {
       return null;
     }
+
+    return oauthEntity;
+  }
+
+  async findByUserId(userId: number) {
+    const oauthEntity = await this.oauthRepository.find({
+      where: { userId },
+    });
 
     return oauthEntity;
   }

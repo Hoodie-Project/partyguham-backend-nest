@@ -19,6 +19,10 @@ export class OauthService {
     return this.oauthRepository.findByExternalId(externalId);
   }
 
+  async findByUserId(userId: number) {
+    return this.oauthRepository.findByUserId(userId);
+  }
+
   async createWithoutUserId(externalId: string, provider: ProviderEnum, accessToken: string) {
     return this.oauthRepository.createWithoutUserId(externalId, provider, accessToken);
   }
