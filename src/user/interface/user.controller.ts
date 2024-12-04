@@ -430,18 +430,23 @@ export class UserController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Get('me/oauth/oauth')
+  @Get('me/oauth')
   @ApiOperation({
-    summary: '내 소셜 계정 조회',
-    description: `**내 소셜 계정을 전체 조회하는 API 입니다.**   
+    summary: '나의 소셜 계정 조회',
+    description: `**나의 소셜 계정을 전체 조회하는 API 입니다.**   
     `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '소셜 목록을 가져왔습니다. 연동된 소셜 계정만 배열안에 값을 표기합니다.',
+    schema: { example: ['kakao, google'] },
   })
   async getMyOauth(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
     const getUserInfoQuery = new GetUserOauthQuery(user.id);
 
     const result = this.queryBus.execute(getUserInfoQuery);
+
     return result;
-    return plainToInstance(UserResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)

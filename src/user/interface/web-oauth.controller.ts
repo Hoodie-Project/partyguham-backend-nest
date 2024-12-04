@@ -262,7 +262,7 @@ export class WebOauthController {
 
   @ApiHeader({ name: 'cookies', description: 'signupToken' })
   @UseGuards(SignupJwtAuthGuard)
-  @Get('me/oauth')
+  @Get('me/oauth/profile')
   @ApiOperation({ summary: 'session에서 oauth 본인 데이터 호출 (email, image)' })
   @ApiResponse({
     status: 200,
