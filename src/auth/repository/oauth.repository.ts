@@ -2,7 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { OauthEntity, PlatformEnum } from '../entity/oauth.entity';
+import { OauthEntity, ProviderEnum } from '../entity/oauth.entity';
 
 @Injectable()
 export class OauthRepository {
@@ -48,8 +48,8 @@ export class OauthRepository {
     return oauthEntity;
   }
 
-  async createWithoutUserId(externalId: string, platform: PlatformEnum, accessToken: string) {
-    const oauthEntity = await this.oauthRepository.save({ externalId, platform, accessToken });
+  async createWithoutUserId(externalId: string, provider: ProviderEnum, accessToken: string) {
+    const oauthEntity = await this.oauthRepository.save({ externalId, provider, accessToken });
 
     return oauthEntity;
   }

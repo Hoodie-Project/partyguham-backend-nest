@@ -6,6 +6,11 @@ export enum PlatformEnum {
   GOOGLE = 'google',
 }
 
+export enum ProviderEnum {
+  KAKAO = 'kakao',
+  GOOGLE = 'google',
+}
+
 @Entity({ name: 'oauth' })
 export class OauthEntity {
   @PrimaryGeneratedColumn()
@@ -20,11 +25,11 @@ export class OauthEntity {
   @Column('enum', { enum: PlatformEnum })
   platform: PlatformEnum;
 
-  @Column({ nullable: true })
-  accessToken: string;
+  @Column('enum', { enum: ProviderEnum, default: ProviderEnum.KAKAO })
+  provider: ProviderEnum;
 
   @Column({ nullable: true })
-  signupToken: string;
+  accessToken: string;
 
   @ManyToOne(() => UserEntity, (user) => user.auth, {
     onDelete: 'CASCADE',

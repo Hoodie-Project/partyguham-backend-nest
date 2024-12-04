@@ -55,6 +55,9 @@ import { PartyModule } from 'src/party/party.module';
 import { GetMyPartiesHandler } from './application/query/get-myParties.handler';
 import { GetMyPartyApplicationHandler } from './application/query/get-myPartyApplications.handler';
 import { LinkOauthHandler } from './application/command/link-oauth.handler';
+import { GetUserOauthHandler } from './application/query/get-userOauth.handler';
+import { KakaoLinkLoginHandler } from './application/command/kakaoLink-login.handler';
+import { KakaoLinkCodeHandler } from './application/command/kakaoLink-code.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -62,7 +65,10 @@ const commandHandlers = [
 
   KakaoCodeHandler,
   KakaoLoginHandler,
+  KakaoLinkLoginHandler,
+  KakaoLinkCodeHandler,
   KakaoAppLoginHandler,
+
   GoogleCodeHandler,
   GoogleLoginHandler,
   GoogleAppLoginHandler,
@@ -87,6 +93,7 @@ const queryHandlers = [
   UserByNicknameHandler,
   GetUserHandler,
   GetUsersHandler,
+  GetUserOauthHandler,
   GetMyPartiesHandler,
   GetMyPartyApplicationHandler,
   GetFollowHandler,

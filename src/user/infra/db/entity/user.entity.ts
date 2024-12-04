@@ -47,7 +47,7 @@ export class UserEntity extends BaseEntity {
   auth: AuthEntity;
 
   @OneToMany(() => OauthEntity, (oauth) => oauth.user)
-  oauth: OauthEntity[];
+  oauths: OauthEntity[];
 
   @OneToMany(() => UserCareerEntity, (userCareer) => userCareer.user)
   userCareers: UserCareerEntity[];

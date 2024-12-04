@@ -10,6 +10,8 @@ import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { LinkOauthCommand } from '../application/command/link-oauth.command';
+import { KakaoLinkCodeCommand } from '../application/command/kakaoLink-code.command';
+import { KakaoLinkLoginCommand } from '../application/command/kakaoLink-login.command';
 
 @ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
@@ -92,6 +94,85 @@ export class WebOauthController {
       });
 
       res.redirect(`${process.env.BASE_URL}/join`);
+    }
+  }
+
+  @Get('kakao/link')
+  @ApiOperation({ summary: '카카오 연동 (응답은 /kakao/link/callback API 확인)' })
+  async linkByKakao(@Res() res: Response) {
+    const command = new KakaoLinkCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @Get('kakao/link/callback')
+  @ApiOperation({
+    summary: '연동 시도에 대한 카카오 서버에 대한 응답 (/kakao/link 리다이렉트 API)',
+    description: `존재하는 계정 - refreshToken, 연동 가능 계정 - linkToken`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그인되어 홈으로 리다이렉트',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: '회원가입이 되어있지 않아 연동가능, linkToken 발급',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'linkToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
+  })
+  async linkCallbackByKakao(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
+    const command = new KakaoLinkLoginCommand(code);
+
+    let result:
+      | { type: 'link'; linkToken: string; email: string }
+      | { type: 'login'; accessToken: string; refreshToken: string };
+
+    result = await this.commandBus.execute(command);
+
+    if (result.type === 'login') {
+      res.cookie('refreshToken', result.refreshToken, {
+        secure: true, // HTTPS 연결에서만 쿠키 전송
+        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+      });
+
+      let redirectURL = process.env.BASE_URL;
+      if (process.env.MODE_ENV === 'dev') {
+        redirectURL = redirectURL + `?token=` + result.refreshToken;
+      }
+
+      res.redirect(`${redirectURL}`);
+    }
+
+    if (result.type === 'link') {
+      res.cookie('linkToken', result.linkToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.status(201).json({
+        message: '연동이 가능합니다.',
+      });
     }
   }
 
@@ -199,9 +280,9 @@ export class WebOauthController {
   @UseGuards(AccessJwtAuthGuard)
   @Post('me/oauth/link')
   @ApiOperation({
-    summary: '필수회원가입 (유저생성)',
-    description: `**필수 회원가입 API 입니다.**  
-    signupToken을 이용하여 인증하고, 위치는 헤더(authorization) 또는 쿠키(signupToken) 으로 인증 가능합니다.  
+    summary: '계정 연동',
+    description: `**계정을 연동하는 API 입니다.**  
+    /users/(:연결하고자하는 oauth)/link API를 사용하여 linkToken를 발급 받아 쿠키에 있는 상태 입니다.
     `,
   })
   @ApiResponse({
@@ -209,18 +290,22 @@ export class WebOauthController {
     description: '이메일, oauth 이미지 URL 데이터',
     schema: { example: '연동이 완료 되었습니다.' },
   })
+  @ApiResponse({
+    status: 401,
+    description: '쿠키가 존재하지 않음',
+  })
   async linkOauth(@CurrentUser() user: CurrentUserType, @Req() req: Request, @Res() res: Response): Promise<void> {
     const userId = user.id;
-    const signupToken = req.cookies['signupToken'];
+    const linkToken = req.cookies['linkToken'];
 
-    if (!signupToken) {
-      throw new UnauthorizedException('signupToken이 쿠키에 없습니다.');
+    if (!linkToken) {
+      throw new UnauthorizedException('linkToken이 쿠키에 없습니다.');
     }
 
-    const command = new LinkOauthCommand(userId, signupToken);
+    const command = new LinkOauthCommand(userId, linkToken);
     await this.commandBus.execute(command);
 
-    res.clearCookie('signupToken');
+    res.clearCookie('linkToken');
     res.status(200).send({ message: '연동이 완료되었습니다.' });
   }
 }

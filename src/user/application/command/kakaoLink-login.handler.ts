@@ -6,24 +6,37 @@ import axios from 'axios';
 
 import { ProviderEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
-import { KakaoAppLoginCommand } from './kakao-app-login.command';
+import { KakaoLinkLoginCommand } from './kakaoLink-login.command';
 
 @Injectable()
-@CommandHandler(KakaoAppLoginCommand)
-export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginCommand> {
+@CommandHandler(KakaoLinkLoginCommand)
+export class KakaoLinkLoginHandler implements ICommandHandler<KakaoLinkLoginCommand> {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
 
-  async execute({ kakaoAccessToken }: KakaoAppLoginCommand) {
+  async execute({ code }: KakaoLinkLoginCommand) {
+    const kakao_api_url = await axios.get(
+      `https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id=${process.env.KAKAO_RESTAPI_KEY}&redirect_url=${process.env.KAKAO_LINK_REDIRECT_URI}&code=${code}&client_secret=${process.env.KAKAO_CLIENT_SECRET}`,
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+        },
+      },
+    );
+
+    const kakaoData = await kakao_api_url.data;
+
+    const kakaoAccessToken = kakaoData.access_token;
+    const kakaoRefreshToken = kakaoData.refresh_token;
+
     const kakaoUserInfo = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
       headers: {
         Authorization: `Bearer ${kakaoAccessToken}`,
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
     });
-
     //! kakaoUserInfo
     // data: {
     //   id: 3405515435,
@@ -42,26 +55,25 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     //     email: 'hoodiev.team@gmail.com'
     //   }
     // }
-
     const externalId: string = kakaoUserInfo.data.id;
     const email = kakaoUserInfo.data.kakao_account.email;
-    const image = kakaoUserInfo.data.properties.profile_image;
+    // const image = kakaoUserInfo.data.properties.profile_image;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+      const linkToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken, email, image };
+      return { type: 'link', linkToken, email };
     }
 
     if (!oauth) {
       const createOauth = await this.oauthService.createWithoutUserId(externalId, ProviderEnum.KAKAO, kakaoAccessToken);
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+      const linkToken = await this.authService.signupAccessToken(encryptOauthId);
 
-      return { type: 'signup', signupAccessToken, email, image };
+      return { type: 'link', linkToken, email };
     }
 
     if (oauth.userId) {

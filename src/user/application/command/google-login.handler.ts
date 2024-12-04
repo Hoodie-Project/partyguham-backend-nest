@@ -4,7 +4,7 @@ import { AuthService } from 'src/auth/auth.service';
 
 import axios from 'axios';
 
-import { PlatformEnum } from 'src/auth/entity/oauth.entity';
+import { ProviderEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
 import { GoogleLoginCommand } from './google-login.command';
 
@@ -70,7 +70,7 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
     if (!oauth) {
       const createOauth = await this.oauthService.createWithoutUserId(
         externalId,
-        PlatformEnum.GOOGLE,
+        ProviderEnum.GOOGLE,
         googleAccessToken,
       );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
