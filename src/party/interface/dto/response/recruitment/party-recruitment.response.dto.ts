@@ -24,11 +24,12 @@ export class RecruitmentPartyeDto {
 
   @Expose()
   @ApiProperty({
-    example: '진행중',
-    description: '진행중 / 종료',
+    example: 'active',
+    description: '파티 상태 active - 진행중, archived - 종료(보관됨)',
   })
   @IsNotEmpty()
-  readonly tag: string;
+  @IsString()
+  readonly status: string;
 
   @Expose()
   @ApiProperty({

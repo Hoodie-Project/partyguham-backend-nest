@@ -31,6 +31,55 @@ export class RecruitmentPositionDto {
 }
 
 @Exclude()
+export class RecruitmentPartyeDto {
+  @Expose()
+  @ApiProperty({
+    example: 3,
+    description: 'Party ID (PK - 파티)',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  readonly id: number;
+
+  @Expose()
+  @ApiProperty({
+    example: '파티구함',
+    description: '제목',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly title: string;
+
+  @Expose()
+  @ApiProperty({
+    example: '/uploads/...',
+    description: '이미지 서버 경로',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly image: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 'active',
+    description: '파티 상태 active - 진행중, archived - 종료(보관됨)',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly status: string;
+
+  @Expose()
+  @ApiProperty({
+    example: {
+      type: '포트폴리오',
+    },
+    description: '파티 타입',
+  })
+  @IsNotEmpty()
+  readonly partyType: object;
+}
+
+@Exclude()
 export class PartyRecruitmentDto {
   @Expose()
   @ApiProperty({
@@ -77,19 +126,12 @@ export class PartyRecruitmentDto {
 
   @Expose()
   @ApiProperty({
-    example: {
-      id: 1,
-      title: '제목2',
-      image: '/uploads/images/party/1718338843645-484895188-스크린샷 2024-03-03 오후 5.08.26.png',
-      partyType: {
-        id: 1,
-        type: '미정',
-      },
-    },
-    description: '파티 제목/이미지',
+    type: RecruitmentPartyeDto,
+    description: '파티 정보',
   })
   @IsNotEmpty()
-  readonly party: object;
+  @Type(() => RecruitmentPartyeDto)
+  readonly party: RecruitmentPartyeDto;
 
   @Expose()
   @ApiProperty({

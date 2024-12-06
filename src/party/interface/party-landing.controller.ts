@@ -40,6 +40,17 @@ export class PartyLandingController {
     return plainToInstance(GetSearchResponseDto, result);
   }
 
+  @Get('')
+  @PartySwagger.getParties()
+  async getParties(@Query() query: PartyQueryRequestDto) {
+    const { page, limit, sort, order, status, partyType, titleSearch } = query;
+
+    const parties = new GetPartiesQuery(page, limit, sort, order, status, partyType, titleSearch);
+    const result = this.queryBus.execute(parties);
+
+    return plainToInstance(GetPartiesResponseDto, result);
+  }
+
   @UseGuards(AccessJwtAuthGuard)
   @Get('recruitments/personalized')
   @PartyRecruitmentSwagger.getRecruitmentsPersonalized()
@@ -53,17 +64,6 @@ export class PartyLandingController {
     const result = this.queryBus.execute(partyRecruitment);
 
     return plainToInstance(GetPartyRecruitmentsResponseDto, result);
-  }
-
-  @Get('')
-  @PartySwagger.getParties()
-  async getParties(@Query() query: PartyQueryRequestDto) {
-    const { page, limit, sort, order, status, partyType, titleSearch } = query;
-    console.log(partyType);
-    const parties = new GetPartiesQuery(page, limit, sort, order, status, partyType, titleSearch);
-    const result = this.queryBus.execute(parties);
-
-    return plainToInstance(GetPartiesResponseDto, result);
   }
 
   @Get('recruitments')

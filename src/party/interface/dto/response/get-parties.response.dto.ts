@@ -26,14 +26,6 @@ class PartiesDto {
 
   @Expose()
   @ApiProperty({
-    example: '진행중',
-    description: '진행중 / 종료',
-  })
-  @IsNotEmpty()
-  readonly tag: string;
-
-  @Expose()
-  @ApiProperty({
     example: '파티구함',
     description: '제목',
   })
@@ -62,7 +54,7 @@ class PartiesDto {
   @Expose()
   @ApiProperty({
     example: 'active',
-    description: '파티상태',
+    description: '파티 상태 active - 진행중, archived - 종료(보관됨)',
   })
   @IsNotEmpty()
   @IsString()

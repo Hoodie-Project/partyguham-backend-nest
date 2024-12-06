@@ -34,6 +34,7 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
         'party.id',
         'party.title',
         'party.image',
+        'party.status',
         'party.createdAt',
         'partyType.type',
       ])
@@ -42,14 +43,6 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
       .offset(offset)
       .orderBy(`partyApplication.${sort}`, order)
       .getManyAndCount();
-
-    // parties.forEach((party) => {
-    //   if (party.status === 'archived') {
-    //     party['tag'] = '종료';
-    //   } else if (party.status === 'active') {
-    //     party['tag'] = '진행중';
-    //   }
-    // });
 
     // 결과를 응답 형식에 맞춰 반환
     return {

@@ -41,18 +41,10 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
       .where('partyRecruitments.id = :id', { id: partyRecruitmentId });
 
     const partyRecruitment = await partyQuery.getOne();
-
-    const partyId = partyRecruitment.party.id;
     const partyStatus = partyRecruitment.party.status;
 
     if (!partyRecruitment || partyStatus === 'deleted') {
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
-    }
-
-    if (partyStatus === 'archived') {
-      partyRecruitment.party['tag'] = '종료';
-    } else if (partyStatus === 'active') {
-      partyRecruitment.party['tag'] = '진행중';
     }
 
     return partyRecruitment;
