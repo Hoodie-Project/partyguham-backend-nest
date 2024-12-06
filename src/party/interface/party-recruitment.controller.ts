@@ -39,6 +39,7 @@ export class PartyRecruitmentController {
     private queryBus: QueryBus,
   ) {}
 
+  @UseGuards(AccessJwtAuthGuard)
   @Get('recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.getPartyRecruitment()
   async getRecruitmentById(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentParamRequestDto) {
