@@ -25,31 +25,23 @@ export class GetSearchHandler implements IQueryHandler<GetSearchQuery> {
       .limit(limit)
       .offset(offset)
       .orderBy(`party.createdAt`, 'DESC')
-      .where('party.title LIKE :title', { title: `%${titleSearch}%` })
-      .andWhere('party.status = :status', { status: StatusEnum.ACTIVE })
-      .andWhere('party.status = :status', { status: StatusEnum.ARCHIVED });
+      .where('party.title LIKE :title', { title: `%${titleSearch}%` });
+    // .andWhere('party.status = :status', { status: StatusEnum.ACTIVE })
+    // .andWhere('party.status = :status', { status: StatusEnum.ARCHIVED });
 
     const parties = await partiesQuery.getManyAndCount();
-
-    parties[0].forEach((party) => {
-      if (party.status === 'archived') {
-        party['tag'] = '종료';
-      } else if (party.status === 'active') {
-        party['tag'] = '진행중';
-      }
-    });
 
     const recruitmentsQuery = this.partyrecruitmentRepository
       .createQueryBuilder('partyRecruitments')
       .leftJoin('partyRecruitments.party', 'party')
       .leftJoin('party.partyType', 'partyType')
       .leftJoin('partyRecruitments.position', 'position')
-      .select(['partyRecruitments', 'party.id', 'party.title', 'party.image', 'partyType', 'position'])
+      .select(['partyRecruitments', 'party.id', 'party.title', 'party.image', 'party.status', 'partyType', 'position'])
       .limit(limit)
       .offset(offset)
       .orderBy(`partyRecruitments.createdAt`, 'DESC')
-      .where('party.title LIKE :title', { title: `%${titleSearch}%` })
-      .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE });
+      .where('party.title LIKE :title', { title: `%${titleSearch}%` });
+    // .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE });
 
     const partyRecruitments = await recruitmentsQuery.getManyAndCount();
 

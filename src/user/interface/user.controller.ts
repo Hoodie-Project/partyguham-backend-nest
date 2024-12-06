@@ -454,6 +454,9 @@ export class UserController {
   @ApiOperation({
     summary: '나의 파티 조회',
     description: `**내가 속한 파티를 조회하는 API 입니다.**   
+    party.status ='active'(진행중)  
+    party.status = 'archived' (종료)  
+    
     `,
   })
   @ApiResponse({

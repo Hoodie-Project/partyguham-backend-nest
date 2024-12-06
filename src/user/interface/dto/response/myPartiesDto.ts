@@ -52,6 +52,13 @@ export class PartyeDto {
 
   @Expose()
   @ApiProperty({
+    example: 'active',
+    description: '유저 데이터 상태값',
+  })
+  readonly status: string;
+
+  @Expose()
+  @ApiProperty({
     example: {
       type: '포트폴리오',
     },
