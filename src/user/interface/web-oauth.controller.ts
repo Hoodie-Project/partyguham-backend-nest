@@ -170,9 +170,7 @@ export class WebOauthController {
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
-      res.status(201).json({
-        message: '연동이 가능합니다.',
-      });
+      res.redirect(`${process.env.BASE_URL}/my/account`);
     }
   }
 
