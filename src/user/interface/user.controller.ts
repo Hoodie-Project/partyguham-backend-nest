@@ -547,14 +547,15 @@ export class UserController {
 
   @UseGuards(AccessJwtAuthGuard)
   @Delete('signout')
+  @HttpCode(204)
   @ApiOperation({ summary: '회원탈퇴' })
+  @ApiResponse({ status: 204, description: '회원 탈퇴 성공' })
   async signout(@CurrentUser() user: CurrentUserType): Promise<void> {
     const userId = user.id;
     const command = new DeleteUserCommand(userId);
 
-    return this.commandBus.execute(command);
+    await this.commandBus.execute(command);
   }
-
   // @UseGuards(AccessJwtAuthGuard)
   // @Patch('image')
   // @ApiOperation({ summary: '(개발중) 이미지 변경' })
