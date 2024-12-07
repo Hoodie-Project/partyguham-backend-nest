@@ -440,7 +440,7 @@ export class UserController {
   })
   @ApiHeader({
     name: 'Authorization',
-    description: 'Bearer {signupToken}',
+    description: 'Bearer {accessToken}',
   })
   @ApiResponse({
     status: 200,

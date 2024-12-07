@@ -5,13 +5,6 @@ import { Exclude, Expose } from 'class-transformer';
 export class UserResponseDto {
   @Expose()
   @ApiProperty({
-    example: 1,
-    description: 'user ID (PK - 유저)',
-  })
-  id: number;
-
-  @Expose()
-  @ApiProperty({
     example: 'partyguam@hoodiev.com',
     description: '이메일',
   })
