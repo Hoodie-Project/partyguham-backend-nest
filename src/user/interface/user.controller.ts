@@ -389,6 +389,7 @@ export class UserController {
     await this.commandBus.execute(command);
   }
 
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Get('nickname/:nickname')
   @ApiOperation({ summary: '닉네임으로 유저 조회' })
@@ -409,6 +410,7 @@ export class UserController {
     return plainToInstance(UserResponseDto, result);
   }
 
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Get('me')
   @ApiOperation({
@@ -436,10 +438,27 @@ export class UserController {
     description: `**나의 소셜 계정을 전체 조회하는 API 입니다.**   
     `,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer {signupToken}',
+  })
   @ApiResponse({
     status: 200,
     description: '소셜 목록을 가져왔습니다. 연동된 소셜 계정만 배열안에 값을 표기합니다.',
-    schema: { example: ['kakao, google'] },
+    schema: {
+      example: [
+        {
+          provider: 'google',
+          email: 'example@gmail.com',
+          image: '/image',
+        },
+        {
+          provider: 'kakao',
+          email: 'example@kakao.com',
+          image: null,
+        },
+      ],
+    },
   })
   async getMyOauth(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
     const getUserInfoQuery = new GetUserOauthQuery(user.id);
@@ -449,6 +468,7 @@ export class UserController {
     return result;
   }
 
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Get('me/parties')
   @ApiOperation({
@@ -474,6 +494,7 @@ export class UserController {
     return plainToInstance(GetMyPartiesResponseDto, result);
   }
 
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Get('me/parties/applications')
   @ApiOperation({
@@ -496,6 +517,7 @@ export class UserController {
     return plainToInstance(GetMyPartyApplicationResponseDto, result);
   }
 
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Patch('me')
   @UseInterceptors(FileInterceptor('image'))
@@ -545,6 +567,7 @@ export class UserController {
     res.status(200).clearCookie('refreshToken').send();
   }
 
+  @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Delete('signout')
   @HttpCode(204)

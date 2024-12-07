@@ -23,6 +23,12 @@ export class OauthEntity {
   @Column({ nullable: true })
   accessToken: string;
 
+  @Column('varchar', { nullable: false, default: 'example@email.com' })
+  email: string;
+
+  @Column('text', { nullable: true })
+  image: string;
+
   @ManyToOne(() => UserEntity, (user) => user.auth, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
