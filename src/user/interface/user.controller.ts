@@ -535,15 +535,14 @@ export class UserController {
     return plainToInstance(UserResponseDto, result);
   }
 
-  @HttpCode(204)
   @Delete('logout')
   @ApiOperation({ summary: '로그아웃' })
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: `'refreshToken' clearCookie`,
   })
-  async logout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
-    res.clearCookie('refreshToken');
+  async logout(@Res() res: Response): Promise<void> {
+    res.status(200).clearCookie('refreshToken').send();
   }
 
   @UseGuards(AccessJwtAuthGuard)
