@@ -39,6 +39,14 @@ export class UapdateUserRequestDto {
   public birthVisible: boolean;
 
   @ApiProperty({
+    description: '포트폴리오 제목',
+    example: '포트폴리오 제목',
+  })
+  @IsString()
+  @IsOptional()
+  public portfolioTitle: string;
+
+  @ApiProperty({
     description: '포트폴리오 링크',
     example: 'https://example.com/..',
   })

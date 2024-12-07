@@ -59,11 +59,21 @@ export class UserRepository implements IUserRepository {
     genderVisible: boolean,
     birth: string,
     birthVisible: boolean,
+    portfolioTitle: string,
     portfolio: string,
     image: string,
   ): Promise<void> {
     await this.dataSource.transaction(async (manager) => {
-      const user = await this.userRepository.save({ id, gender, genderVisible, birth, birthVisible, portfolio, image });
+      const user = await this.userRepository.save({
+        id,
+        gender,
+        genderVisible,
+        birth,
+        birthVisible,
+        portfolioTitle,
+        portfolio,
+        image,
+      });
 
       await manager.save(user);
     });

@@ -28,7 +28,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     const kakaoData = await kakao_api_url.data;
 
     const kakaoAccessToken = kakaoData.access_token;
-    const kakaoRefreshToken = kakaoData.refresh_token;
+    // const kakaoRefreshToken = kakaoData.refresh_token;
 
     const kakaoUserInfo = await axios.get(`https://kapi.kakao.com/v2/user/me`, {
       headers: {
@@ -36,7 +36,8 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
         'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
       },
     });
-    //! kakaoUserInfo
+
+    //kakaoUserInfo =
     // data: {
     //   id: 3405515435,
     //   connected_at: '2024-03-24T14:18:43Z',
@@ -54,9 +55,14 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     //     email: 'hoodiev.team@gmail.com'
     //   }
     // }
+
     const externalId: string = kakaoUserInfo.data.id;
     const email = kakaoUserInfo.data.kakao_account.email;
-    // const image = kakaoUserInfo.data.properties.profile_image;
+
+    let image = null;
+    if (kakaoUserInfo.data.kakao_account.profile_image_needs_agreement) {
+      image = kakaoUserInfo.data.properties.profile_image;
+    }
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
@@ -68,7 +74,13 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     }
 
     if (!oauth) {
-      const createOauth = await this.oauthService.createWithoutUserId(externalId, ProviderEnum.KAKAO, kakaoAccessToken);
+      const createOauth = await this.oauthService.createWithoutUserId(
+        externalId,
+        ProviderEnum.KAKAO,
+        kakaoAccessToken,
+        email,
+        image,
+      );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
 

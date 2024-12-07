@@ -72,6 +72,8 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
         externalId,
         ProviderEnum.GOOGLE,
         googleAccessToken,
+        email,
+        image,
       );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
       const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);

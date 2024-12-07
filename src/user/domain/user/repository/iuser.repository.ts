@@ -11,6 +11,7 @@ export interface IUserRepository {
     genderVisible: boolean,
     birth: string,
     birthVisible: boolean,
+    portfolioTitle: string,
     portfolio: string,
     image: string,
   ) => Promise<void>;

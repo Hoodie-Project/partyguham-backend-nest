@@ -54,6 +54,20 @@ export class UserResponseDto {
 
   @Expose()
   @ApiProperty({
+    description: '포트폴리오 제목',
+    example: '포트폴리오 제목',
+  })
+  public portfolioTitle: string;
+
+  @Expose()
+  @ApiProperty({
+    description: '포트폴리오 링크',
+    example: 'https://example.com/..',
+  })
+  public portfolio: string;
+
+  @Expose()
+  @ApiProperty({
     example: '/image/..',
     description: '이미지 경로',
   })

@@ -23,8 +23,14 @@ export class OauthService {
     return this.oauthRepository.findByUserId(userId);
   }
 
-  async createWithoutUserId(externalId: string, provider: ProviderEnum, accessToken: string) {
-    return this.oauthRepository.createWithoutUserId(externalId, provider, accessToken);
+  async createWithoutUserId(
+    externalId: string,
+    provider: ProviderEnum,
+    accessToken: string,
+    eamil: string,
+    image: string,
+  ) {
+    return this.oauthRepository.createWithoutUserId(externalId, provider, accessToken, eamil, image);
   }
 
   async updateUserIdById(id: number, userId: number) {

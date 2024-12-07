@@ -16,8 +16,10 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
   async execute(command: DeleteUserCommand) {
     const { userId } = command;
     // 유저 삭제
-    this.userRepository.softDeleteUserById(userId);
+    await this.userRepository.softDeleteUserById(userId);
     // 파티 지원 삭제
-    this.partyApplicationService.deletePartyApplicationByUserId(userId);
+    await this.partyApplicationService.deletePartyApplicationByUserId(userId);
+
+    return;
   }
 }

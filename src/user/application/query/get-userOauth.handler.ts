@@ -19,10 +19,6 @@ export class GetUserOauthHandler implements IQueryHandler<GetUserOauthQuery> {
       throw new InternalServerErrorException('계정이 없습니다.');
     }
 
-    const result = oauth.map((oauth) => {
-      return oauth.provider;
-    });
-
-    return result;
+    return oauth;
   }
 }
