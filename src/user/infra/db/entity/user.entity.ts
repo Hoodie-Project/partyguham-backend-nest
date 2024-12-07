@@ -37,10 +37,13 @@ export class UserEntity extends BaseEntity {
   @Column('boolean', { nullable: false, default: true })
   genderVisible: boolean;
 
+  @Column('varchar', { nullable: true })
+  portfolioTitle: string;
+
   @Column('text', { nullable: true, default: null })
   portfolio: string;
 
-  @Column('varchar', { nullable: true })
+  @Column('text', { nullable: true })
   image: string;
 
   @OneToOne(() => AuthEntity, (auth) => auth.user)

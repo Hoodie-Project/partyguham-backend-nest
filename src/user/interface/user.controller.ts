@@ -517,7 +517,7 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
   ): Promise<UserResponseDto> {
-    const { gender, genderVisible, birth, birthVisible, portfolio } = body;
+    const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
     const image = file ? file.path : null;
 
     const getUserInfoQuery = new UpdateUserCommand(
@@ -526,6 +526,7 @@ export class UserController {
       genderVisible,
       birth,
       birthVisible,
+      portfolioTitle,
       portfolio,
       image,
     );

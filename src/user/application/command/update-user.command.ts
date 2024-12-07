@@ -7,6 +7,7 @@ export class UpdateUserCommand implements ICommand {
     readonly genderVisible: boolean,
     readonly birth: string,
     readonly birthVisible: boolean,
+    readonly portfolioTitle: string,
     readonly portfolio: string,
     readonly image: string,
   ) {}

@@ -15,13 +15,14 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   ) {}
 
   async execute(command: UpdateUserCommand) {
-    const { userId, gender, genderVisible, birth, birthVisible, portfolio, image } = command;
+    const { userId, gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio, image } = command;
     const user = await this.userRepository.updateUser(
       userId,
       gender,
       genderVisible,
       birth,
       birthVisible,
+      portfolioTitle,
       portfolio,
       image,
     );
