@@ -29,26 +29,14 @@ export class UserRepository implements IUserRepository {
     return this.userFactory.reconstitute(userEntity);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    const userEntity = await this.userRepository.findOne({
-      where: { email },
-    });
-
-    if (!userEntity) {
-      return null;
-    }
-
-    return this.userFactory.reconstitute(userEntity);
-  }
-
   async prepare() {
     const userEntity = await this.userRepository.save({ status: StatusEnum.INACTIVE });
 
     return userEntity.id;
   }
 
-  async createUser(nickname: string, email: string, gender: string, birth: string): Promise<User> {
-    const userEntity = await this.userRepository.save({ nickname, email, gender, birth });
+  async createUser(nickname: string, gender: string, birth: string): Promise<User> {
+    const userEntity = await this.userRepository.save({ nickname, gender, birth });
 
     return this.userFactory.create(userEntity);
   }

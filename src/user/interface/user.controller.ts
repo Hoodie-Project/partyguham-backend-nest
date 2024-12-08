@@ -127,10 +127,10 @@ export class UserController {
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
   ): Promise<void> {
-    const { nickname, email, gender, birth } = dto;
+    const { nickname, gender, birth } = dto;
 
     const oauthId = user.oauthId;
-    const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
+    const command = new CreateUserCommand(oauthId, nickname, gender, birth);
 
     const result = await this.commandBus.execute(command);
 

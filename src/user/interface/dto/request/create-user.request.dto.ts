@@ -13,16 +13,6 @@ export class CreateUserRequestDto {
   readonly nickname: string;
 
   @ApiProperty({
-    example: 'email@party.com',
-    description: '이메일 길이 최대 60',
-  })
-  @MaxLength(60)
-  @IsEmail()
-  @IsString()
-  @IsNotEmpty()
-  readonly email: string;
-
-  @ApiProperty({
     description: 'M: 남성, F: 여성',
     example: 'M',
   })
