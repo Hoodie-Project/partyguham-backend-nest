@@ -16,7 +16,7 @@ export class UapdateUserRequestDto {
 
   @ApiProperty({
     description: '성별 공개 여부 : true / false',
-    example: true,
+    example: 'false',
   })
   @Transform((value) => {
     const genderVisible = value.obj.genderVisible;
@@ -38,8 +38,8 @@ export class UapdateUserRequestDto {
   public birth: string;
 
   @ApiProperty({
-    description: '생년월일 공개 여부',
-    example: '성별 공개 여부 : true / false',
+    description: '성별 공개 여부 : true / false',
+    example: 'true',
   })
   @Transform((value) => {
     const birthVisible = value.obj.birthVisible;

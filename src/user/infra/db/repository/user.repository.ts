@@ -29,6 +29,12 @@ export class UserRepository implements IUserRepository {
     return this.userFactory.reconstitute(userEntity);
   }
 
+  async findById(id: number) {
+    return await this.userRepository.findOne({
+      where: { id },
+    });
+  }
+
   async prepare() {
     const userEntity = await this.userRepository.save({ status: StatusEnum.INACTIVE });
 
@@ -50,8 +56,18 @@ export class UserRepository implements IUserRepository {
     portfolioTitle: string,
     portfolio: string,
     image: string,
-  ): Promise<void> {
-    await this.userRepository.update(id, { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio });
+  ) {
+    const result = await this.userRepository.update(id, {
+      gender,
+      genderVisible,
+      birth,
+      birthVisible,
+      portfolioTitle,
+      portfolio,
+      image,
+    });
+
+    return await this.findById(id);
   }
 
   async deleteUserById(userId: number): Promise<void> {

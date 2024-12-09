@@ -1,3 +1,4 @@
+import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { User } from '../user';
 
 export interface IUserRepository {
@@ -13,7 +14,7 @@ export interface IUserRepository {
     portfolioTitle: string,
     portfolio: string,
     image: string,
-  ) => Promise<void>;
+  ) => Promise<UserEntity>;
   deleteUserById: (userId: number) => Promise<void>;
   softDeleteUserById: (userId: number) => Promise<void>;
 }
