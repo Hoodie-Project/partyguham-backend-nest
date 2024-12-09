@@ -4,7 +4,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserFactory } from '../../domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { UpdateUserCommand } from './update-user.command';
-import { IUserSkillRepository } from 'src/user/domain/user/repository/iuser.skill.repository';
 
 @Injectable()
 @CommandHandler(UpdateUserCommand)

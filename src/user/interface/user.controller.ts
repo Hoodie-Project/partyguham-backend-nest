@@ -524,9 +524,9 @@ export class UserController {
   @ApiOperation({
     summary: '내정보 변경',
     description: `**새로운 파티를 생성하는 API 입니다.**  
-        1. 이미지는 multipart/form-data 형식을 사용합니다.  
+        1. multipart/form-data 형식을 사용합니다.  
         2. 이미지를 저장하는 key는 image 이며, 선택사항 (optional) 입니다.  
-        \`\`\`image : 파티에 대한 이미지 파일을 업로드합니다. (jpg, png, jpeg 파일 첨부)  \`\`\`  
+        \`\`\`(key)image : (value) 파티에 대한 이미지 파일을 업로드합니다. - jpg, png, jpeg 파일 첨부   \`\`\`  
         `,
   })
   @ApiResponse({
@@ -538,7 +538,7 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
-  ): Promise<UserResponseDto> {
+  ) {
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
     const image = file ? file.path : null;
 
@@ -552,7 +552,7 @@ export class UserController {
       portfolio,
       image,
     );
-    const result = this.queryBus.execute(getUserInfoQuery);
+    const result = this.commandBus.execute(getUserInfoQuery);
 
     return plainToInstance(UserResponseDto, result);
   }

@@ -14,9 +14,6 @@ export class PartyInvitationEntity extends BaseEntity {
   @Column({ nullable: true })
   message: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
   @ManyToOne(() => UserEntity, (user) => user.partyInvitations)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;

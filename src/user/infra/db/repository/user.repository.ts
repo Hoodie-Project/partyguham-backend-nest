@@ -51,20 +51,7 @@ export class UserRepository implements IUserRepository {
     portfolio: string,
     image: string,
   ): Promise<void> {
-    await this.dataSource.transaction(async (manager) => {
-      const user = await this.userRepository.save({
-        id,
-        gender,
-        genderVisible,
-        birth,
-        birthVisible,
-        portfolioTitle,
-        portfolio,
-        image,
-      });
-
-      await manager.save(user);
-    });
+    await this.userRepository.update(id, { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio });
   }
 
   async deleteUserById(userId: number): Promise<void> {

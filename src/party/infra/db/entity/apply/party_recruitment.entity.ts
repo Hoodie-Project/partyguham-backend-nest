@@ -36,9 +36,6 @@ export class PartyRecruitmentEntity extends BaseEntity {
   @Column('text', { nullable: true })
   content: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
   @OneToMany(() => PartyApplicationEntity, (partyApplication) => partyApplication.partyRecruitment)
   partyApplications: PartyApplicationEntity[];
 
