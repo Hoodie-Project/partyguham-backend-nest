@@ -29,16 +29,10 @@ export class UserRepository implements IUserRepository {
     return this.userFactory.reconstitute(userEntity);
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    const userEntity = await this.userRepository.findOne({
-      where: { email },
+  async findById(id: number) {
+    return await this.userRepository.findOne({
+      where: { id },
     });
-
-    if (!userEntity) {
-      return null;
-    }
-
-    return this.userFactory.reconstitute(userEntity);
   }
 
   async prepare() {
@@ -47,8 +41,8 @@ export class UserRepository implements IUserRepository {
     return userEntity.id;
   }
 
-  async createUser(nickname: string, email: string, gender: string, birth: string): Promise<User> {
-    const userEntity = await this.userRepository.save({ nickname, email, gender, birth });
+  async createUser(nickname: string, gender: string, birth: string): Promise<User> {
+    const userEntity = await this.userRepository.save({ nickname, gender, birth });
 
     return this.userFactory.create(userEntity);
   }
@@ -62,21 +56,18 @@ export class UserRepository implements IUserRepository {
     portfolioTitle: string,
     portfolio: string,
     image: string,
-  ): Promise<void> {
-    await this.dataSource.transaction(async (manager) => {
-      const user = await this.userRepository.save({
-        id,
-        gender,
-        genderVisible,
-        birth,
-        birthVisible,
-        portfolioTitle,
-        portfolio,
-        image,
-      });
-
-      await manager.save(user);
+  ) {
+    const result = await this.userRepository.update(id, {
+      gender,
+      genderVisible,
+      birth,
+      birthVisible,
+      portfolioTitle,
+      portfolio,
+      image,
     });
+
+    return await this.findById(id);
   }
 
   async deleteUserById(userId: number): Promise<void> {

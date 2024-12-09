@@ -58,10 +58,12 @@ import { LinkOauthHandler } from './application/command/link-oauth.handler';
 import { GetUserOauthHandler } from './application/query/get-userOauth.handler';
 import { KakaoLinkLoginHandler } from './application/command/kakaoLink-login.handler';
 import { KakaoLinkCodeHandler } from './application/command/kakaoLink-code.handler';
+import { UpdateUserHandler } from './application/command/update-user.handler';
 
 const commandHandlers = [
   CreateUserHandler,
   DeleteUserHandler,
+  UpdateUserHandler,
 
   KakaoCodeHandler,
   KakaoLoginHandler,

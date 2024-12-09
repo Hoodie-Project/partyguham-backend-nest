@@ -9,6 +9,6 @@ export class BannerEntity extends BaseEntity {
   @Column({ nullable: false })
   title: string;
 
-  @Column('varchar', { nullable: true })
+  @Column('varchar', { nullable: false })
   image: string;
 }

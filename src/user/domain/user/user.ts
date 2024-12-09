@@ -1,7 +1,6 @@
 export interface UserProperties {
   id: number;
   nickname: string;
-  email: string;
   gender: string;
   birth: string;
   image: string;

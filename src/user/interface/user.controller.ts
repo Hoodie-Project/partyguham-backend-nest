@@ -58,6 +58,7 @@ import { GetMyPartiesResponseDto } from './dto/response/myPartiesDto';
 import { GetMyPartyApplicationsQuery } from '../application/query/get-myPartyApplications.query';
 import { GetMyPartyApplicationResponseDto } from './dto/response/myPartyApplicationsDto';
 import { GetUserOauthQuery } from '../application/query/get-userOauth.query';
+import { UpdateUserResponseDto } from './dto/response/update-UserResponseDto';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -127,10 +128,10 @@ export class UserController {
     @Res() res: Response,
     @Body() dto: CreateUserRequestDto,
   ): Promise<void> {
-    const { nickname, email, gender, birth } = dto;
+    const { nickname, gender, birth } = dto;
 
     const oauthId = user.oauthId;
-    const command = new CreateUserCommand(oauthId, nickname, email, gender, birth);
+    const command = new CreateUserCommand(oauthId, nickname, gender, birth);
 
     const result = await this.commandBus.execute(command);
 
@@ -524,9 +525,9 @@ export class UserController {
   @ApiOperation({
     summary: '내정보 변경',
     description: `**새로운 파티를 생성하는 API 입니다.**  
-        1. 이미지는 multipart/form-data 형식을 사용합니다.  
+        1. multipart/form-data 형식을 사용합니다. boolean 값을 string 으로 보내어도 서버에서 변환합니다.  
         2. 이미지를 저장하는 key는 image 이며, 선택사항 (optional) 입니다.  
-        \`\`\`image : 파티에 대한 이미지 파일을 업로드합니다. (jpg, png, jpeg 파일 첨부)  \`\`\`  
+        \`\`\`(key)image : (value) 파티에 대한 이미지 파일을 업로드합니다. - jpg, png, jpeg 파일 첨부   \`\`\`  
         `,
   })
   @ApiResponse({
@@ -538,7 +539,7 @@ export class UserController {
     @CurrentUser() user: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
-  ): Promise<UserResponseDto> {
+  ) {
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
     const image = file ? file.path : null;
 
@@ -552,9 +553,9 @@ export class UserController {
       portfolio,
       image,
     );
-    const result = this.queryBus.execute(getUserInfoQuery);
+    const result = await this.commandBus.execute(getUserInfoQuery);
 
-    return plainToInstance(UserResponseDto, result);
+    return plainToInstance(UpdateUserResponseDto, result);
   }
 
   @Delete('logout')
