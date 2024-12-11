@@ -177,7 +177,7 @@ export class PartyAdminController {
   }
 
   @Post(':partyId/admin/applications/:partyApplicationId/approval')
-  @PartyApplicationSwagger.approvePartyApplication()
+  @PartyApplicationSwagger.approveAdminPartyApplication()
   async approvePartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
@@ -188,7 +188,7 @@ export class PartyAdminController {
   }
 
   @Post(':partyId/admin/applications/:partyApplicationId/rejection')
-  @PartyApplicationSwagger.rejectPartyApplication()
+  @PartyApplicationSwagger.rejectAdminPartyApplication()
   async rejectPartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,

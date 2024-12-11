@@ -1,4 +1,11 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -8,6 +15,7 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { ApproveAdminPartyApplicationCommand } from './approve-adminPartyApplication.comand';
+import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 
 @Injectable()
 @CommandHandler(ApproveAdminPartyApplicationCommand)
@@ -32,8 +40,8 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     // 파티장만 승인 가능
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
-    if (partyUser) {
-      throw new ConflictException('이미 파티유저 입니다.', 'ALREADY_EXIST');
+    if (partyUser.authority === PartyAuthority.MASTER) {
+      throw new ForbiddenException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
@@ -45,28 +53,6 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     // 수락하기
     await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
 
-    return { message: '수락 하였습니다.' };
-
-    //! 유저가 승락 해야 되는 부분
-    // 파티 소속 시키기
-    // await this.partyUserRepository.createMember(
-    //   partyApplication.userId,
-    //   partyId,
-    //   partyApplication.partyRecruitment.positionId,
-    // );
-
-    // 모집 카운트 + 1
-    // await this.partyRecruitmentRepository.updateRecruitedCount(
-    //   partyApplication.partyRecruitment.id,
-    //   partyApplication.partyRecruitment.recruitingCount + 1,
-    // );
-
-    // await this.partyApplicationRepository.delete(partyApplicationId);
-
-    // 파티 모집 완료시 자동삭제
-    // if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
-    //   this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
-    //   return '모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.';
-    // }
+    return { message: '지원자를 수락 하였습니다.' };
   }
 }
