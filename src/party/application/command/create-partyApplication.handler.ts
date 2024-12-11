@@ -42,7 +42,11 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
       throw new ConflictException('이미 지원신청을 완료 했습니다.', 'ALREADY_EXIST');
     }
 
-    const partyApplication = await this.partyApplicationRepository.create(userId, partyRecruitmentId, message);
+    const partyApplication = await this.partyApplicationRepository.createStatusPending(
+      userId,
+      partyRecruitmentId,
+      message,
+    );
 
     return partyApplication;
   }

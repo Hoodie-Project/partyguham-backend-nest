@@ -24,12 +24,12 @@ export class PartyApplicationDto {
 
   @Expose()
   @ApiProperty({
-    example: 'active',
+    example: 'pending',
     description: `지원자 상태  
     
-    검토중 - active
+    검토중 - pending
+    응답대기 - processing
     수락 - approved
-    응답대기 - pending
     거절 - rejected`,
   })
   @IsNotEmpty()
