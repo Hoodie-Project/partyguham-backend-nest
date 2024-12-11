@@ -61,6 +61,7 @@ import { PartyService } from './application/party.service';
 import { PartyApplicationService } from './application/party-application.service';
 import { GetSearchHandler } from './application/query/get-search.handler';
 import { PartyAdminController } from './interface/party-admin.controller';
+import { ApproveAdminPartyApplicationHandler } from './application/command/approve-adminPartyApplication.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -78,6 +79,7 @@ const commandHandlers = [
   BatchDeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
   LeavePartyHandler,
+  ApproveAdminPartyApplicationHandler,
   ApprovePartyApplicationHandler,
   RejectionPartyApplicationHandler,
 ];

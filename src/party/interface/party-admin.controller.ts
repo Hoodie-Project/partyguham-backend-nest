@@ -45,6 +45,10 @@ import { ActivePartyCommand } from '../application/command/active-party.comand';
 import { DeletePartyUsersCommand } from '../application/command/delete-partyUsers.comand';
 
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
+import { PartyApplicationSwagger } from './partyApplication.swagger';
+import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
+import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
+import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party admin (파티 관리자)')
@@ -88,6 +92,16 @@ export class PartyAdminController {
     const result = this.commandBus.execute(command);
 
     return plainToInstance(PartyResponseDto, result);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @HttpCode(204)
+  @Delete(':partyId/image')
+  @PartySwagger.deletePartyImage()
+  async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyImageCommand(user.id, param.partyId);
+
+    this.commandBus.execute(command);
   }
 
   @UseGuards(AccessJwtAuthGuard)
@@ -162,14 +176,26 @@ export class PartyAdminController {
     res.status(204);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
-  @HttpCode(204)
-  @Delete(':partyId/image')
-  @PartySwagger.deletePartyImage()
-  async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyImageCommand(user.id, param.partyId);
+  @Post(':partyId/admin/applications/:partyApplicationId/approval')
+  @PartyApplicationSwagger.approvePartyApplication()
+  async approvePartyApplication(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyApplicationParamRequestDto,
+  ): Promise<void> {
+    const command = new ApprovePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
 
-    this.commandBus.execute(command);
+    return this.commandBus.execute(command);
+  }
+
+  @Post(':partyId/admin/applications/:partyApplicationId/rejection')
+  @PartyApplicationSwagger.rejectPartyApplication()
+  async rejectPartyApplication(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyApplicationParamRequestDto,
+  ): Promise<void> {
+    const command = new RejectionPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+
+    return this.commandBus.execute(command);
   }
 
   @UseGuards(AccessJwtAuthGuard)

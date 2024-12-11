@@ -12,7 +12,7 @@ import { ApprovePartyApplicationCommand } from '../application/command/approve-p
 import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 
 @ApiBearerAuth('AccessJwt')
-@ApiTags('party application (파티 지원자)')
+@ApiTags('party application (파티 지원)')
 @UseGuards(AccessJwtAuthGuard)
 @Controller('parties')
 export class PartyApplicationController {
