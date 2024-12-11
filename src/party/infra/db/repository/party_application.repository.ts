@@ -15,8 +15,13 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     private partyApplicationRepository: Repository<PartyApplicationEntity>,
   ) {}
 
-  async create(userId: number, partyRecruitmentId: number, message: string) {
-    const partyApplication = await this.partyApplicationRepository.save({ userId, partyRecruitmentId, message });
+  async createStatusPending(userId: number, partyRecruitmentId: number, message: string) {
+    const partyApplication = await this.partyApplicationRepository.save({
+      userId,
+      partyRecruitmentId,
+      message,
+      status: StatusEnum.PENDING,
+    });
 
     return partyApplication;
   }
@@ -60,16 +65,16 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     await this.partyApplicationRepository.save({ ...partyApplication, title, content });
   }
 
+  async updateStatusProcessing(partyRecruitmentId: number) {
+    const partyApplication = await this.findOne(partyRecruitmentId);
+
+    await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.PROCESSING });
+  }
+
   async updateStatusApproved(partyRecruitmentId: number) {
     const partyApplication = await this.findOne(partyRecruitmentId);
 
     await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.APPROVED });
-  }
-
-  async updateStatusPending(partyRecruitmentId: number) {
-    const partyApplication = await this.findOne(partyRecruitmentId);
-
-    await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.PENDING });
   }
 
   async updateStatusRejected(partyRecruitmentId: number) {

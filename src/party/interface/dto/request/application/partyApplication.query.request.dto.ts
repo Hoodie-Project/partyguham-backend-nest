@@ -43,16 +43,16 @@ export class PartyApplicationQueryRequestDto {
   public order: 'ASC' | 'DESC';
 
   @ApiPropertyOptional({
-    enum: ['active', 'approved', 'pending', 'rejected'],
+    enum: ['pending', 'processing', 'approved', 'rejected'],
     description: `지원자 상태  
 
-    검토중 - active
+    검토중 - pending
+    응답대기 - processing
     수락 - approved
-    응답대기 - pending
     거절 - rejected
     `,
   })
-  @IsIn(['active', 'approved', 'pending', 'rejected'])
+  @IsIn(['pending', 'processing', 'approved', 'rejected'])
   @IsString()
   @IsOptional()
   public status: string;

@@ -60,6 +60,9 @@ import { GetPartyUserAuthorityHandler } from './application/query/get-partyUserA
 import { PartyService } from './application/party.service';
 import { PartyApplicationService } from './application/party-application.service';
 import { GetSearchHandler } from './application/query/get-search.handler';
+import { PartyAdminController } from './interface/party-admin.controller';
+import { ApproveAdminPartyApplicationHandler } from './application/command/approve-adminPartyApplication.handler';
+import { RejectionAdminPartyApplicationHandler } from './application/command/rejection-adminPartyApplication.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -77,6 +80,8 @@ const commandHandlers = [
   BatchDeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
   LeavePartyHandler,
+  ApproveAdminPartyApplicationHandler,
+  RejectionAdminPartyApplicationHandler,
   ApprovePartyApplicationHandler,
   RejectionPartyApplicationHandler,
 ];
@@ -111,7 +116,13 @@ const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
 const uploadDir = 'images/party';
 
 @Module({
-  controllers: [PartyLandingController, PartyRecruitmentController, PartyApplicationController, PartyController],
+  controllers: [
+    PartyLandingController,
+    PartyController,
+    PartyAdminController,
+    PartyRecruitmentController,
+    PartyApplicationController,
+  ],
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories, ...services],
   exports: [...services, TypeOrmModule],
   imports: [
