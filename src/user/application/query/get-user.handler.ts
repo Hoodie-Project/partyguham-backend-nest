@@ -30,16 +30,15 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
       .select([
         'user',
         'userPersonality.id',
+        'personalityOption.id',
         'personalityOption.content',
-        'personalityQuestion.content',
+        'personalityQuestion',
         'userCareers.id',
         'userCareers.years',
         'userCareers.careerType',
-        'position.main',
-        'position.sub',
+        'position',
         'userLocations.id',
-        'location.province',
-        'location.city',
+        'location',
       ])
       .where('user.id = :id', { id: userId })
       .getOne();
@@ -48,30 +47,30 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
       throw new NotFoundException('유저가 존재하지 않습니다');
     }
 
-    // 개인 성향 데이터를 1 : N : N 형태로 재구성
-    const formattedPersonalities = user.userPersonalities.reduce((acc, userPersonality) => {
-      const questionContent = userPersonality.personalityOption.personalityQuestion.content;
-      const optionContent = userPersonality.personalityOption.content;
+    // // 개인 성향 데이터를 1 : N : N 형태로 재구성
+    // const formattedPersonalities = user.userPersonalities.reduce((acc, userPersonality) => {
+    //   const questionContent = userPersonality.personalityOption.personalityQuestion.content;
+    //   const optionContent = userPersonality.personalityOption.content;
 
-      // 동일한 질문이 이미 acc에 존재하는지 확인
-      let questionEntry = acc.find((entry) => entry.question === questionContent);
+    //   // 동일한 질문이 이미 acc에 존재하는지 확인
+    //   let questionEntry = acc.find((entry) => entry.question === questionContent);
 
-      if (!questionEntry) {
-        // acc에 없는 질문이면 새로 추가하고 options 배열 생성
-        questionEntry = { question: questionContent, options: [] };
-        acc.push(questionEntry);
-      }
+    //   if (!questionEntry) {
+    //     // acc에 없는 질문이면 새로 추가하고 options 배열 생성
+    //     questionEntry = { question: questionContent, options: [] };
+    //     acc.push(questionEntry);
+    //   }
 
-      // options에 옵션 텍스트만 추가
-      questionEntry.options.push(optionContent);
+    //   // options에 옵션 텍스트만 추가
+    //   questionEntry.options.push(optionContent);
 
-      return acc;
-    }, []);
+    //   return acc;
+    // }, []);
 
     // 결과를 응답 형식에 맞춰 반환
     return {
       ...user,
-      userPersonalities: formattedPersonalities,
+      // userPersonalities: formattedPersonalities,
     };
   }
 }
