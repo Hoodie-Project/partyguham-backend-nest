@@ -18,8 +18,8 @@ export class PartyApplicationSwagger {
       }),
       ApiResponse({
         status: 201,
-        description: '파티 지원자 승인 완료, 지원자도 수락을 해야 합니다.',
-        schema: { example: { message: '지원자를 수락 하였습니다.' } },
+        description: '파티 지원자 승인 완료',
+        schema: { example: { message: '합류를 최종 수락 하였습니다.' } },
       }),
       ApiResponse({
         status: 403,

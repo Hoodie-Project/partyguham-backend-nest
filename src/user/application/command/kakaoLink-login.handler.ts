@@ -64,6 +64,7 @@ export class KakaoLinkLoginHandler implements ICommandHandler<KakaoLinkLoginComm
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
+    // oauth가 있으나 user가 없음
     if (oauth && !oauth.userId) {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
       const linkToken = await this.authService.signupAccessToken(encryptOauthId);
@@ -71,6 +72,7 @@ export class KakaoLinkLoginHandler implements ICommandHandler<KakaoLinkLoginComm
       return { type: 'link', linkToken, email };
     }
 
+    // oauth가 없음 (해당 계정으로 연결이 된적 없음)
     if (!oauth) {
       const createOauth = await this.oauthService.createWithoutUserId(
         externalId,
@@ -85,15 +87,9 @@ export class KakaoLinkLoginHandler implements ICommandHandler<KakaoLinkLoginComm
       return { type: 'link', linkToken, email };
     }
 
+    // 이미 계정이 있음
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-
-      const accessToken = await this.authService.createAccessToken(encryptOauthId);
-      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
-
-      this.authService.saveRefreshToken(oauth.userId, refreshToken);
-
-      return { type: 'login', accessToken, refreshToken };
+      return { type: 'existed' };
     }
   }
 }

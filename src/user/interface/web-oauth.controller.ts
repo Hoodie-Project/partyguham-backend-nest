@@ -141,25 +141,13 @@ export class WebOauthController {
   async linkCallbackByKakao(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLinkLoginCommand(code);
 
-    let result:
-      | { type: 'link'; linkToken: string; email: string }
-      | { type: 'login'; accessToken: string; refreshToken: string };
+    let result: { type: 'link'; linkToken: string; email: string } | { type: 'existed' };
 
     result = await this.commandBus.execute(command);
 
-    if (result.type === 'login') {
-      res.cookie('refreshToken', result.refreshToken, {
-        secure: true, // HTTPS 연결에서만 쿠키 전송
-        httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
-      });
-
+    if (result.type === 'existed') {
       let redirectURL = process.env.BASE_URL;
-      if (process.env.MODE_ENV === 'dev') {
-        redirectURL = redirectURL + `?token=` + result.refreshToken;
-      }
-
-      res.redirect(`${redirectURL}`);
+      res.redirect(`${redirectURL}/my/account?error=existed`);
     }
 
     if (result.type === 'link') {
