@@ -1,4 +1,5 @@
 import * as fs from 'fs';
+import * as path from 'path';
 import { forwardRef, Module } from '@nestjs/common';
 import { UserController } from './interface/user.controller';
 import { UserService } from './application/user.service';
@@ -144,8 +145,10 @@ const uploadDir = 'images/user';
           callback(null, uploadDir);
         },
         filename: (req, file, callback) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          const filename = `${uniqueSuffix}`;
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9); //이미지 파일 이름 랜덤
+          const ext = path.extname(file.originalname); // 파일의 확장자를 추출
+
+          const filename = `${uniqueSuffix}${ext}`;
           callback(null, filename);
         },
       }),
