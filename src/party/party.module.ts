@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { forwardRef, Module } from '@nestjs/common';
+import { BadRequestException, forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { UserModule } from 'src/user/user.module';
@@ -134,7 +134,7 @@ const uploadDir = 'images/party';
       // dest: '../upload',
       fileFilter: (req, file, callback) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-          return callback(new Error('Only JPG, JPEG, or PNG files are allowed!'), false);
+          return callback(new BadRequestException('Only JPG, JPEG, or PNG files are allowed!'), false);
         }
         callback(null, true);
       },
