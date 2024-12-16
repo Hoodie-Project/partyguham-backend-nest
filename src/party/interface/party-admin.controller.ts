@@ -72,7 +72,7 @@ export class PartyAdminController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Patch(':partyId')
+  @Patch(':partyId/admin')
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.updateParty()
   async updateParty(
