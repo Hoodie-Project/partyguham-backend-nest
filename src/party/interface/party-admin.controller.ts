@@ -96,7 +96,7 @@ export class PartyAdminController {
 
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
-  @Delete(':partyId/image')
+  @Delete(':partyId/admin/image')
   @PartySwagger.deletePartyImage()
   async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyImageCommand(user.id, param.partyId);
@@ -107,7 +107,7 @@ export class PartyAdminController {
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.endParty()
-  @Patch(':partyId/end')
+  @Patch(':partyId/admin/end')
   async endParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new EndPartyCommand(user.id, param.partyId);
     this.commandBus.execute(command);
@@ -116,7 +116,7 @@ export class PartyAdminController {
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.activeParty()
-  @Patch(':partyId/active')
+  @Patch(':partyId/admin/active')
   async activeParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new ActivePartyCommand(user.id, param.partyId);
     this.commandBus.execute(command);
@@ -125,7 +125,7 @@ export class PartyAdminController {
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.deleteParty()
-  @Delete(':partyId')
+  @Delete(':partyId/admin')
   async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyCommand(user.id, param.partyId);
 
@@ -134,7 +134,7 @@ export class PartyAdminController {
 
   @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.updatePartyUser()
-  @Patch(':partyId/users/:partyUserId')
+  @Patch(':partyId/admin/users/:partyUserId')
   async updatePartyUser(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
@@ -148,7 +148,7 @@ export class PartyAdminController {
   @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.kickUserFromParty()
-  @Delete(':partyId/users/:partyUserId')
+  @Delete(':partyId/admin/users/:partyUserId')
   async kickUserFromParty(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
@@ -160,7 +160,7 @@ export class PartyAdminController {
 
   @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.kickUsersFromParty()
-  @Post(':partyId/users/batch-delete')
+  @Post(':partyId/admin/users/batch-delete')
   async kickUsersFromParty(
     @CurrentUser() user: CurrentUserType,
     @Body() body: DeletePartyUsersBodyRequestDto,
@@ -199,7 +199,7 @@ export class PartyAdminController {
   }
 
   @UseGuards(AccessJwtAuthGuard)
-  @Post(':partyId/delegation')
+  @Post(':partyId/admin/delegation')
   @PartySwagger.transferPartyLeadership()
   async transferPartyLeadership(
     @CurrentUser() user: CurrentUserType,
