@@ -34,6 +34,7 @@ import { GetPartyQuery } from '../application/query/get-party.query';
 import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
 import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
 import { GetPartyUserAuthorityQuery } from '../application/query/get-partyUserAuthority.query';
+import { testDto } from './dto/request/create-party.request.dto copy';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party (파티 - 프로젝트 모집 단위)')
@@ -65,10 +66,23 @@ export class PartyController {
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
     const image = file ? file.path : null;
-
+    console.log('file', file);
+    console.log('image', image);
     const command = new CreatePartyCommand(user.id, title, content, image, partyTypeId, positionId);
 
     return this.commandBus.execute(command);
+  }
+
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('test')
+  @UseInterceptors(FileInterceptor('image'))
+  @PartySwagger.createParty()
+  async test(@CurrentUser() user: CurrentUserType, @UploadedFile() file: Express.Multer.File, @Body() dto: testDto) {
+    const { test } = dto;
+    const image = file ? file.path : null;
+    console.log('file', file);
+    console.log('image', image);
+    return { image, test };
   }
 
   @PartySwagger.getParty()
