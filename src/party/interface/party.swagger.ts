@@ -7,6 +7,7 @@ import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
 import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
 import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 import { GetSearchResponseDto } from './dto/response/get-partySearch.response.dto';
+import { UpdatePartyResponseDto } from './dto/response/update-party.response.dto';
 
 export class PartySwagger {
   static getSearch() {
@@ -265,7 +266,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '파티 수정 완료',
-        type: PartyResponseDto,
+        type: UpdatePartyResponseDto,
       }),
 
       ApiResponse({

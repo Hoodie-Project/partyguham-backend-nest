@@ -6,14 +6,11 @@ import { IsNotEmpty } from 'class-validator';
 export class PartyUserResponseDto {
   @Expose()
   @ApiProperty({
-    example: {
-      id: 12,
-      nickname: 'mir2',
-      image: null,
-    },
-    description: '유저 데이터',
+    example: 1,
+    description: 'Party User ID (PK - 파티 유저)',
   })
-  readonly user: string;
+  @IsNotEmpty()
+  readonly id: number;
 
   @Expose()
   @ApiProperty({
@@ -21,6 +18,16 @@ export class PartyUserResponseDto {
     description: '권한',
   })
   readonly authority: string;
+
+  @Expose()
+  @ApiProperty({
+    example: {
+      nickname: 'mir2',
+      image: null,
+    },
+    description: '유저 데이터',
+  })
+  readonly user: string;
 
   @Expose()
   @ApiProperty({
@@ -65,6 +72,6 @@ export class GetAdminPartyUsersResponseDto {
 
   @Expose()
   @ApiProperty({ description: '파티 데이터 목록', type: [PartyUserResponseDto] })
-  // @Type(() => PartyUserResponseDto)
+  @Type(() => PartyUserResponseDto)
   partyUser: PartyUserResponseDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
 }

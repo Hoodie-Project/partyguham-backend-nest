@@ -49,6 +49,7 @@ import { PartyApplicationSwagger } from './partyApplication.swagger';
 import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
 import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
 import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
+import { UpdatePartyResponseDto } from './dto/response/update-party.response.dto';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party admin (파티 관리자)')
@@ -91,7 +92,7 @@ export class PartyAdminController {
 
     const result = this.commandBus.execute(command);
 
-    return plainToInstance(PartyResponseDto, result);
+    return plainToInstance(UpdatePartyResponseDto, result);
   }
 
   @UseGuards(AccessJwtAuthGuard)

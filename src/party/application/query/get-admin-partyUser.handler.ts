@@ -30,11 +30,11 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
       .leftJoinAndSelect('partyUser.position', 'position')
       .leftJoin('partyUser.user', 'user')
       .select([
+        'partyUser.id',
         'partyUser.authority',
         'partyUser.createdAt',
         'partyUser.updatedAt',
         'partyUser.status',
-        'user.id',
         'user.nickname',
         'user.image',
         'position.main',
@@ -44,7 +44,6 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
       .offset(offset)
       .where('partyUser.partyId = :partyId', { partyId: partyId })
       .orderBy(`partyUser.${sort}`, order);
-
     // 직군 선택 옵션
     if (main !== undefined && main !== null) {
       partyMemberQuery.andWhere('position.main = :main', { main });
