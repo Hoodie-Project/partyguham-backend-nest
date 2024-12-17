@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
-export class UsersMePartyQueryDto {
+export class mePartyApplicationQueryDto {
   @ApiProperty({
     example: 1,
     description: 'page',
@@ -37,12 +37,16 @@ export class UsersMePartyQueryDto {
   public order: 'ASC' | 'DESC';
 
   @ApiPropertyOptional({
-    enum: ['active', 'archived'],
-    description: `파티 상태
-    active - 진행중
-    archived - 종료
+    enum: ['pending', 'processing', 'approved', 'rejected'],
+    description: `파티 지원자 상태  
+
+    검토중 - pending
+    응답대기 - processing
+    수락 - approved
+    거절 - rejected
     `,
   })
+  @IsIn(['pending', 'processing', 'approved', 'rejected'])
   @IsString()
   @IsOptional()
   public status: string;

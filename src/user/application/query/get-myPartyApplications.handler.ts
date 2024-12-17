@@ -13,11 +13,11 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
   ) {}
 
   async execute(query: GetMyPartyApplicationsQuery) {
-    const { userId, page, limit, sort, order } = query;
+    const { userId, page, limit, sort, order, status } = query;
 
     //내가 속한 파티
     const offset = (page - 1) * limit || 0;
-    const [partyApplications, total] = await this.partyApplicationRepository
+    const partiesQuery = this.partyApplicationRepository
       .createQueryBuilder('partyApplication')
       .leftJoin('partyApplication.partyRecruitment', 'partyRecruitment')
       .leftJoin('partyRecruitment.position', 'position')
@@ -41,8 +41,13 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
       .where('partyApplication.userId = :userId', { userId })
       .limit(limit)
       .offset(offset)
-      .orderBy(`partyApplication.${sort}`, order)
-      .getManyAndCount();
+      .orderBy(`partyApplication.${sort}`, order);
+
+    if (status !== undefined && status !== null) {
+      partiesQuery.andWhere('partyApplication.status = :status', { status });
+    }
+
+    const [partyApplications, total] = await partiesQuery.getManyAndCount();
 
     // 결과를 응답 형식에 맞춰 반환
     return {
