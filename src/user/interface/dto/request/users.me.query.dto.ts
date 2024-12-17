@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsIn, IsInt, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsIn, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class UsersMePartyQueryDto {
   @ApiProperty({
@@ -35,4 +35,15 @@ export class UsersMePartyQueryDto {
   @IsString()
   @IsNotEmpty()
   public order: 'ASC' | 'DESC';
+
+  @ApiPropertyOptional({
+    enum: ['active', 'archived'],
+    description: `파티 상태
+    active - 진행중
+    archived - 종료
+    `,
+  })
+  @IsString()
+  @IsOptional()
+  public status: string;
 }

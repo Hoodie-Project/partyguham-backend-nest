@@ -488,7 +488,7 @@ export class UserController {
   async getParties(@CurrentUser() user: CurrentUserType, @Query() query: UsersMePartyQueryDto) {
     const { page, limit, sort, order } = query;
 
-    const getUserInfoQuery = new GetMyPartiesQuery(user.id, page, limit, sort, order);
+    const getUserInfoQuery = new GetMyPartiesQuery(user.id, page, limit, sort, order, status);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
