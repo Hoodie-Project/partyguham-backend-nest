@@ -15,7 +15,8 @@ export class GetPartyUserAuthorityHandler implements IQueryHandler<GetPartyUserA
 
     const partyUser = await this.partyUserRepository
       .createQueryBuilder('partyUser')
-      .select(['partyUser.authority', 'partyUser.userId'])
+      .leftJoin('partyUser.position', 'position')
+      .select(['partyUser.authority', 'partyUser.id', 'position'])
       .where('partyUser.userId = :userId', { userId })
       .andWhere('partyUser.partyId = :partyId', { partyId })
       .getOne();
