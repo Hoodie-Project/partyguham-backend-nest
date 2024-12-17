@@ -60,6 +60,7 @@ export class PartyQueryRequestDto {
     archived - 종료
     `,
   })
+  @IsIn(['active', 'archived'])
   @IsString()
   @IsOptional()
   public status: string;

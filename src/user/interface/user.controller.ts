@@ -26,6 +26,7 @@ import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
 import { UserParamRequestDto } from './dto/request/user.param.request.dto';
 import { UserResponseDto } from './dto/response/UserResponseDto';
 import { NicknameQueryRequestDto } from './dto/request/nickname.query.request.dto';
+import { mePartyApplicationQueryDto } from './dto/request/me.partyApplication.query.dto';
 import { UserCareerCreateRequestDto } from './dto/request/userCareer.create.request.dto';
 import { UserLocationCreateRequestDto } from './dto/request/userLocation.create.request.dto';
 import { UserLocationResponseDto } from './dto/response/UserLocationResponseDto';
@@ -33,7 +34,10 @@ import { UserPersonalityResponseDto } from './dto/response/UserPersonalityRespon
 import { UserCareerResponseDto } from './dto/response/UserCareerResponseDto';
 import { UapdateUserRequestDto } from './dto/request/update-user.request.dto';
 import { UserPersonalityCreateRequestDto } from './dto/request/userPersonality.create.request.dto';
-import { UsersMePartyQueryDto } from './dto/request/users.me.query.dto';
+import { mePartyQueryDto } from './dto/request/me.party.query.dto';
+import { GetMyPartiesResponseDto } from './dto/response/myPartiesDto';
+import { UpdateUserResponseDto } from './dto/response/update-UserResponseDto';
+import { GetMyPartyApplicationResponseDto } from './dto/response/myPartyApplicationsDto';
 
 import { CreateUserCommand } from '../application/command/create-user.command';
 import { UpdateUserCommand } from '../application/command/update-user.command';
@@ -43,6 +47,9 @@ import { DeleteUserLocationCommand } from '../application/command/delete-userLoc
 import { GetUserQuery } from '../application/query/get-user.query';
 import { UserByNicknameQuery } from '../application/query/get-user-by-nickname.query';
 import { GetCheckNicknameQuery } from '../application/query/get-check-nickname.query';
+import { GetMyPartiesQuery } from '../application/query/get-myParties.query';
+import { GetMyPartyApplicationsQuery } from '../application/query/get-myPartyApplications.query';
+import { GetUserOauthQuery } from '../application/query/get-userOauth.query';
 
 import { CreateUserPersonalityCommand } from '../application/command/create.userPersonality.command';
 import { DeleteUserPersonalityCommand } from '../application/command/delete-userPersonality.command';
@@ -52,13 +59,6 @@ import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { DeleteUserLocationsCommand } from '../application/command/delete-userLocations.command';
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
-
-import { GetMyPartiesQuery } from '../application/query/get-myParties.query';
-import { GetMyPartiesResponseDto } from './dto/response/myPartiesDto';
-import { GetMyPartyApplicationsQuery } from '../application/query/get-myPartyApplications.query';
-import { GetMyPartyApplicationResponseDto } from './dto/response/myPartyApplicationsDto';
-import { GetUserOauthQuery } from '../application/query/get-userOauth.query';
-import { UpdateUserResponseDto } from './dto/response/update-UserResponseDto';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -485,8 +485,8 @@ export class UserController {
     description: '성공적으로 목록을 가져왔습니다.',
     type: GetMyPartiesResponseDto,
   })
-  async getParties(@CurrentUser() user: CurrentUserType, @Query() query: UsersMePartyQueryDto) {
-    const { page, limit, sort, order } = query;
+  async getParties(@CurrentUser() user: CurrentUserType, @Query() query: mePartyQueryDto) {
+    const { page, limit, sort, order, status } = query;
 
     const getUserInfoQuery = new GetMyPartiesQuery(user.id, page, limit, sort, order, status);
 
@@ -508,10 +508,10 @@ export class UserController {
     description: '성공적으로 목록을 가져왔습니다.',
     type: GetMyPartyApplicationResponseDto,
   })
-  async getPartyRecruitments(@CurrentUser() user: CurrentUserType, @Query() query: UsersMePartyQueryDto) {
-    const { page, limit, sort, order } = query;
+  async getPartyRecruitments(@CurrentUser() user: CurrentUserType, @Query() query: mePartyApplicationQueryDto) {
+    const { page, limit, sort, order, status } = query;
 
-    const getPartyApplicationQuery = new GetMyPartyApplicationsQuery(user.id, page, limit, sort, order);
+    const getPartyApplicationQuery = new GetMyPartyApplicationsQuery(user.id, page, limit, sort, order, status);
 
     const result = this.queryBus.execute(getPartyApplicationQuery);
 

@@ -7,5 +7,6 @@ export class GetMyPartyApplicationsQuery implements IQuery {
     readonly limit: number,
     readonly sort: string,
     readonly order: 'ASC' | 'DESC',
+    readonly status: string | undefined,
   ) {}
 }
