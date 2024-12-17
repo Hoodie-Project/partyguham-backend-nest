@@ -12,11 +12,11 @@ export class GetMyPartiesHandler implements IQueryHandler<GetMyPartiesQuery> {
   constructor(@InjectRepository(PartyUserEntity) private partyuserRepository: Repository<PartyUserEntity>) {}
 
   async execute(query: GetMyPartiesQuery) {
-    const { userId, page, limit, sort, order } = query;
+    const { userId, page, limit, sort, order, status } = query;
 
     //내가 속한 파티
     const offset = (page - 1) * limit || 0;
-    const [partyUsers, total] = await this.partyuserRepository
+    const partiesQuery = this.partyuserRepository
       .createQueryBuilder('partyUser')
       .leftJoin('partyUser.position', 'partyUserPosition')
       .leftJoin('partyUser.party', 'party')
@@ -35,8 +35,13 @@ export class GetMyPartiesHandler implements IQueryHandler<GetMyPartiesQuery> {
       .where('partyUser.userId = :userId', { userId })
       .limit(limit)
       .offset(offset)
-      .orderBy(`partyUser.${sort}`, order)
-      .getManyAndCount();
+      .orderBy(`partyUser.${sort}`, order);
+
+    if (status !== undefined && status !== null) {
+      partiesQuery.andWhere('party.status = :status', { status });
+    }
+
+    const [partyUsers, total] = await partiesQuery.getManyAndCount();
 
     return {
       total,
