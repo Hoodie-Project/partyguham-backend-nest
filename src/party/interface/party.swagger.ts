@@ -181,7 +181,7 @@ export class PartySwagger {
       }),
       ApiResponse({
         status: 200,
-        description: '파티 유저 권한 조회',
+        description: '파티 유저(partyUser) 권한 조회',
         schema: {
           example: {
             id: 73,
