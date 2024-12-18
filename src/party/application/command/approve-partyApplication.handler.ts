@@ -1,4 +1,11 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -26,7 +33,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
+      throw new BadRequestException('요청한 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
@@ -35,7 +42,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     }
 
     if (partyApplication.userId !== userId) {
-      throw new BadRequestException('본인이 지원 데이터만 수락 가능합니다.', 'BAD_REQUEST');
+      throw new ForbiddenException('본인이 지원 데이터만 수락 가능합니다.', 'ACCESS_DENIED');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);

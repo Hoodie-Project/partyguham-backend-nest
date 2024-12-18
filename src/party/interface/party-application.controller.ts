@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
@@ -10,6 +10,7 @@ import { PartyApplicationParamRequestDto } from './dto/request/application/party
 
 import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
 import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
+import { DeletePartyApplicationCommand } from '../application/command/delete-partyApplication.comand';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party application (파티 지원)')
@@ -43,12 +44,16 @@ export class PartyApplicationController {
     return this.commandBus.execute(command);
   }
 
+  @HttpCode(204)
   @Delete(':partyId/applications/:partyApplicationId')
+  @PartyApplicationSwagger.deletePartyApplication()
   @ApiOperation({ summary: '파티 지원 삭제(취소)' })
   async deletePartyApplication(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    // 지원자가 내정보에서 취소
+    const command = new DeletePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+
+    return this.commandBus.execute(command);
   }
 }

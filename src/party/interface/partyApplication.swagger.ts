@@ -22,16 +22,12 @@ export class PartyApplicationSwagger {
         schema: { example: { message: '합류를 최종 수락 하였습니다.' } },
       }),
       ApiResponse({
-        status: 400,
+        status: 403,
         description: '본인이 지원 데이터만 수락 가능합니다.',
       }),
       ApiResponse({
-        status: 403,
-        description: '파티 모집 권한이 없습니다.',
-      }),
-      ApiResponse({
         status: 404,
-        description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+        description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 존재하지 않습니다.',
       }),
     );
   }
@@ -61,7 +57,7 @@ export class PartyApplicationSwagger {
       }),
       ApiResponse({
         status: 404,
-        description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+        description: '승인하려는 지원데이터가 없습니다. \t\n 요청한 파티가 존재하지 않습니다.',
       }),
     );
   }
@@ -86,16 +82,12 @@ export class PartyApplicationSwagger {
         schema: { example: { message: '지원을 거절 하였습니다.' } },
       }),
       ApiResponse({
-        status: 400,
+        status: 403,
         description: '본인이 지원 데이터만 거절 가능합니다.',
       }),
       ApiResponse({
-        status: 403,
-        description: '파티 자원자에 대한 거절 권한이 없습니다.',
-      }),
-      ApiResponse({
         status: 404,
-        description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+        description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 존재하지 않습니다.',
       }),
     );
   }
@@ -125,7 +117,36 @@ export class PartyApplicationSwagger {
       }),
       ApiResponse({
         status: 404,
-        description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 유효하지 않습니다.',
+        description: '거절 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 존재하지 않습니다.',
+      }),
+    );
+  }
+
+  static deletePartyApplication() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '유저가 파티 지원을 삭제(취소)',
+        description: `**유저가 파티 지원을 삭제(취소)하는 API 입니다.**   
+        유저가 지원내용은 삭제되고 보관되지 않습니다. 
+          `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 204,
+        description: '파티 지원 삭제(취소) 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '본인이 지원 데이터만 삭제(취소) 가능합니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '삭제 하려는 파티 지원자 데이터가 없습니다. \t\n 요청한 파티가 존재하지 않습니다.',
       }),
     );
   }

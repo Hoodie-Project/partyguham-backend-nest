@@ -11,9 +11,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
-import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 
-import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 import { RejectionPartyApplicationCommand } from './rejection-partyApplication.comand';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 
@@ -24,7 +22,6 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
-    @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
 
   async execute(command: RejectionPartyApplicationCommand) {
@@ -38,20 +35,13 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
     if (!partyApplication) {
-      throw new NotFoundException('거절 하려는 파티 지원자 데이터가 없습니다.', 'PARTY_APPLICATION_NOT_EXIST');
+      throw new NotFoundException('삭제 하려는 파티 지원자 데이터가 없습니다.', 'PARTY_APPLICATION_NOT_EXIST');
     }
 
     if (partyApplication.userId !== userId) {
-      throw new ForbiddenException('본인이 지원 데이터만 거절 가능합니다.', 'ACCESS_DENIED');
+      throw new ForbiddenException('본인이 지원 데이터만 취소 가능합니다.', 'ACCESS_DENIED');
     }
 
-    const partyUser = await this.partyUserRepository.findOne(userId, partyId);
-    if (partyUser) {
-      throw new ConflictException('이미 파티유저 입니다.', 'ALREADY_EXIST');
-    }
-
-    await this.partyApplicationRepository.updateStatusRejected(partyApplicationId);
-
-    return { message: '지원을 거절 하였습니다.' };
+    await this.partyApplicationRepository.deleteById(partyApplicationId);
   }
 }
