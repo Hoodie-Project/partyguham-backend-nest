@@ -23,7 +23,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
-    @Inject('PartyTypeRepository') private partyApplicationRepository: IPartyApplicationRepository,
+    @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
   ) {}
