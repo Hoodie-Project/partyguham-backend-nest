@@ -34,7 +34,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
+      throw new BadRequestException('요청한 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');
     }
 
     // 파티장만 승인 가능

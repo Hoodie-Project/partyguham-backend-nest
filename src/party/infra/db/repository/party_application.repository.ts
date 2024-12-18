@@ -90,6 +90,10 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     await this.partyApplicationRepository.save({ ...partyApplication, status });
   }
 
+  async deleteById(id: number) {
+    await this.partyApplicationRepository.delete({ id });
+  }
+
   async deleteByUserId(userId: number) {
     await this.partyApplicationRepository.delete({ userId });
   }

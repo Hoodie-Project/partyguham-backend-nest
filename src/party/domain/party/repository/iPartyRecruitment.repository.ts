@@ -15,6 +15,7 @@ export interface IPartyRecruitmentRepository {
   update: (id: number, positionId: number, recruitingCount: number) => Promise<UpdateResult>;
   updateRecruitedCount: (id: number, recruitedCount: number) => Promise<PartyRecruitmentEntity>;
   delete: (id: number) => Promise<void>;
+  softDelete: (id: number) => Promise<void>;
   batchDelete: (id: number[]) => Promise<void>;
   deleteAll: (id: number) => Promise<void>;
 }

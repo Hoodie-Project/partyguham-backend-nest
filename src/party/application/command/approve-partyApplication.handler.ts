@@ -1,4 +1,11 @@
-import { BadRequestException, ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
@@ -26,7 +33,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     const party = await this.partyRepository.findOne(partyId);
 
     if (!party) {
-      throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
+      throw new BadRequestException('요청한 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
@@ -35,7 +42,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     }
 
     if (partyApplication.userId !== userId) {
-      throw new BadRequestException('본인이 지원 데이터만 수락 가능합니다.', 'BAD_REQUEST');
+      throw new ForbiddenException('본인이 지원 데이터만 수락 가능합니다.', 'ACCESS_DENIED');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
@@ -47,25 +54,25 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     await this.partyApplicationRepository.updateStatusProcessing(partyApplicationId);
 
     // 파티 소속 시키기
-    // await this.partyUserRepository.createMember(
-    //   partyApplication.userId,
-    //   partyId,
-    //   partyApplication.partyRecruitment.positionId,
-    // );
-
-    // 모집 카운트 + 1
-    // await this.partyRecruitmentRepository.updateRecruitedCount(
-    //   partyApplication.partyRecruitment.id,
-    //   partyApplication.partyRecruitment.recruitingCount + 1,
-    // );
-
-    // await this.partyApplicationRepository.delete(partyApplicationId);
+    await this.partyUserRepository.createMember(
+      partyApplication.userId,
+      partyId,
+      partyApplication.partyRecruitment.positionId,
+    );
 
     // 파티 모집 완료시 자동삭제
-    // if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
-    //   this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
-    //   return '모집이 완료되어 해당 포지션 모집이 삭제 되었습니다.';
-    // }
+    if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
+      this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
+    } else {
+      // 모집 카운트 + 1
+      await this.partyRecruitmentRepository.updateRecruitedCount(
+        partyApplication.partyRecruitment.id,
+        partyApplication.partyRecruitment.recruitingCount + 1,
+      );
+    }
+
+    // 지원에 대한 삭제 보관 2주 (다른 로직에서 처리)
+    // await this.partyApplicationRepository.delete(partyApplicationId);
 
     return { message: '합류를 최종 수락 하였습니다.' };
   }
