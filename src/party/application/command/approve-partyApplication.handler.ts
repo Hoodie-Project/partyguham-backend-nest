@@ -34,6 +34,10 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       throw new NotFoundException('승인하려는 지원데이터가 없습니다.', 'APLLICATION_NOT_EXIST');
     }
 
+    if (partyApplication.userId !== userId) {
+      throw new BadRequestException('본인이 지원 데이터만 수락 가능합니다.', 'BAD_REQUEST');
+    }
+
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
     if (partyUser) {
       throw new ConflictException('이미 파티유저 입니다.', 'ALREADY_EXIST');

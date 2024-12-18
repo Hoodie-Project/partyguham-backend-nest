@@ -5,9 +5,9 @@ export class PartyApplicationSwagger {
   static approvePartyApplication() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 지원 승인',
-        description: `**파티 지원 승인하는 API 입니다.**  
-        
+        summary: '유저가 파티 합류 최종 수락',
+        description: `**유저가 지원한 파티에 합류를 수락하는 API 입니다.**   
+        유저가 지원하여 파티장이 수락 후, 유저가 확인후 수락하여 파티원이 되는 경우 입니다.  
           `,
       }),
       ApiHeader({
@@ -20,6 +20,10 @@ export class PartyApplicationSwagger {
         status: 201,
         description: '파티 지원자 승인 완료',
         schema: { example: { message: '합류를 최종 수락 하였습니다.' } },
+      }),
+      ApiResponse({
+        status: 400,
+        description: '본인이 지원 데이터만 수락 가능합니다.',
       }),
       ApiResponse({
         status: 403,
@@ -35,9 +39,9 @@ export class PartyApplicationSwagger {
   static approveAdminPartyApplication() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 지원 승인',
-        description: `**파티 지원 승인하는 API 입니다.**  
-        
+        summary: '파티장이 파티 지원자 수락',
+        description: `**파티장이 파티 지원자를 수락하는 API 입니다.**   
+        파티장이 파티지원자를 수락하고, 유저에 대한 응답(수락 또는 거절)을 받아야 합니다.  
           `,
       }),
       ApiHeader({
@@ -65,9 +69,9 @@ export class PartyApplicationSwagger {
   static rejectPartyApplication() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 지원 거절',
-        description: `**파티 지원 거절하는 API 입니다.**  
-        
+        summary: '유저가 지원한 파티 합류 최종 거절',
+        description: `**유저가 파티 합류를 거절하는 API 입니다.**   
+        유저가 지원하여 파티장이 수락 하였지만, 유저가 파티 합류를 최종 거절하는 경우 입니다.  
           `,
       }),
       ApiHeader({
@@ -80,6 +84,10 @@ export class PartyApplicationSwagger {
         status: 201,
         description: '파티 지원자 거절 완료',
         schema: { example: { message: '지원을 거절 하였습니다.' } },
+      }),
+      ApiResponse({
+        status: 400,
+        description: '본인이 지원 데이터만 거절 가능합니다.',
       }),
       ApiResponse({
         status: 403,
@@ -95,9 +103,9 @@ export class PartyApplicationSwagger {
   static rejectAdminPartyApplication() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 지원 거절',
-        description: `**파티 지원 거절하는 API 입니다.**  
-        
+        summary: '파티장이 파티 지원자를 거절',
+        description: `**파티장이 파티 지원자를 거절하는 API 입니다.**  
+        파티장이 파티지원자를 거절합니다.
           `,
       }),
       ApiHeader({
