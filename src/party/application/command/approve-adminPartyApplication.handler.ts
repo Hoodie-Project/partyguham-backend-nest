@@ -41,7 +41,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
 
     if (partyUser.authority === PartyAuthority.MASTER) {
-      throw new ForbiddenException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
+      throw new ForbiddenException('파티 지원자에 대한 수락 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
