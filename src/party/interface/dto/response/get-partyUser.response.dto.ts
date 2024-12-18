@@ -3,6 +3,13 @@ import { Exclude, Expose, Type } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 
 class PartyUser {
+  @ApiProperty({
+    example: 1,
+    description: 'Party User ID (PK - 파티유저)',
+  })
+  @IsNotEmpty()
+  readonly id: number;
+
   @IsNotEmpty()
   @ApiProperty({ description: '파티 유저 권한' })
   authority: string;
@@ -22,6 +29,7 @@ export class GetPartyUserResponseDto {
   @ApiProperty({
     example: [
       {
+        id: 1,
         authority: 'master',
         position: {
           id: 23,
@@ -29,7 +37,6 @@ export class GetPartyUserResponseDto {
           sub: '백엔드',
         },
         user: {
-          id: 1,
           nickname: 'mir2',
           image: null,
           userCareers: [
@@ -75,6 +82,7 @@ export class GetPartyUserResponseDto {
   @ApiProperty({
     example: [
       {
+        id: 18,
         authority: 'member',
         position: {
           id: 15,
@@ -82,7 +90,6 @@ export class GetPartyUserResponseDto {
           sub: '공간 디자이너',
         },
         user: {
-          id: 18,
           nickname: 'mir6',
           image: null,
           userCareers: [
@@ -101,7 +108,6 @@ export class GetPartyUserResponseDto {
           sub: '프론트엔드',
         },
         user: {
-          id: 15,
           nickname: 'mir3',
           image: null,
           userCareers: [],

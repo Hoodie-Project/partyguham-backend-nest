@@ -22,8 +22,8 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
       .leftJoin('partyUser.user', 'user')
       .leftJoin('user.userCareers', 'userCareers')
       .select([
+        'partyUser.id',
         'partyUser.authority',
-        'user.id',
         'user.nickname',
         'user.image',
         'userCareers.positionId',
@@ -47,8 +47,8 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
       .leftJoin('partyUser.user', 'user')
       .leftJoin('user.userCareers', 'userCareers')
       .select([
+        'partyUser.id',
         'partyUser.authority',
-        'user.id',
         'user.nickname',
         'user.image',
         'userCareers.positionId',
