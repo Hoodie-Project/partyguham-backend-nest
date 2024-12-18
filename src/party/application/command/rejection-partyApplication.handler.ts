@@ -23,7 +23,7 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
-    @Inject('PartyTypeRepository') private partyApplicationRepository: IPartyApplicationRepository,
+    @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
 
