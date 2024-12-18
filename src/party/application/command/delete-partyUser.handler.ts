@@ -53,6 +53,6 @@ export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUserCo
       throw new ForbiddenException('파티장은 내보낼 수 없습니다.', 'ACCESS_DENIED');
     }
 
-    await this.partyUserRepository.deleteById(partyId);
+    await this.partyUserRepository.deleteById(partyUserId);
   }
 }
