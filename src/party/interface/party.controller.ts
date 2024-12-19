@@ -44,7 +44,6 @@ export class PartyController {
     private queryBus: QueryBus,
   ) {}
 
-  @UseGuards(AccessJwtAuthGuard)
   @Get('types')
   @PartySwagger.getTypes()
   async getPartyType() {
