@@ -146,7 +146,8 @@ export class PartyApplicationSwagger {
       }),
       ApiResponse({
         status: 403,
-        description: '본인이 지원 데이터만 삭제(취소) 가능합니다.',
+        description: `본인이 지원 데이터만 삭제(취소) 가능합니다.  
+        검토중(pending) 상태만 취소가 가능합니다.`,
       }),
       ApiResponse({
         status: 404,

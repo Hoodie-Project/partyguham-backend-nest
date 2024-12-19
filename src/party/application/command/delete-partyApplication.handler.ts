@@ -6,6 +6,7 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { DeletePartyApplicationCommand } from './delete-partyApplication.comand';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 @CommandHandler(DeletePartyApplicationCommand)
@@ -28,6 +29,10 @@ export class DeletePartyApplicationHandler implements ICommandHandler<DeletePart
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
     if (!partyApplication) {
       throw new NotFoundException('삭제 하려는 파티 지원자 데이터가 없습니다.', 'PARTY_APPLICATION_NOT_EXIST');
+    }
+
+    if (partyApplication.status !== StatusEnum.PENDING) {
+      throw new ForbiddenException('검토중(pending) 상태만 취소가 가능합니다.', 'ACCESS_DENIED');
     }
 
     if (partyApplication.userId !== userId) {
