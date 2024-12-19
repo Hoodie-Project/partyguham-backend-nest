@@ -65,7 +65,7 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
   }
 
   async delete(id: number) {
-    await this.partyRecruitmentRepository.save({ id });
+    await this.partyRecruitmentRepository.delete({ id });
   }
 
   async softDelete(recruitmentId: number) {

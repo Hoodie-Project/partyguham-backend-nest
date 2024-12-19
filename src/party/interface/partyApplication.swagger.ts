@@ -23,7 +23,9 @@ export class PartyApplicationSwagger {
       }),
       ApiResponse({
         status: 403,
-        description: '본인이 지원 데이터만 수락 가능합니다.',
+        description: `본인이 지원 데이터만 수락 가능합니다.  
+        파티장의 수락이 선행되어야 합니다.
+        `,
       }),
       ApiResponse({
         status: 404,
@@ -83,7 +85,9 @@ export class PartyApplicationSwagger {
       }),
       ApiResponse({
         status: 403,
-        description: '본인이 지원 데이터만 거절 가능합니다.',
+        description: `본인이 지원 데이터만 거절 가능합니다.  
+        파티장의 수락이 선행되어야 합니다.  
+        `,
       }),
       ApiResponse({
         status: 404,

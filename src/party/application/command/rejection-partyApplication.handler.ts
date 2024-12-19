@@ -16,6 +16,7 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 import { RejectionPartyApplicationCommand } from './rejection-partyApplication.comand';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 @CommandHandler(RejectionPartyApplicationCommand)
@@ -39,6 +40,10 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(partyApplicationId);
     if (!partyApplication) {
       throw new NotFoundException('거절 하려는 파티 지원자 데이터가 없습니다.', 'PARTY_APPLICATION_NOT_EXIST');
+    }
+
+    if (partyApplication.status !== StatusEnum.PROCESSING) {
+      throw new ForbiddenException('파티장의 수락이 선행되어야 합니다.', 'ACCESS_DENIED');
     }
 
     if (partyApplication.userId !== userId) {
