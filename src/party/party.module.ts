@@ -63,6 +63,7 @@ import { GetSearchHandler } from './application/query/get-search.handler';
 import { PartyAdminController } from './interface/party-admin.controller';
 import { ApproveAdminPartyApplicationHandler } from './application/command/approve-adminPartyApplication.handler';
 import { RejectionAdminPartyApplicationHandler } from './application/command/rejection-adminPartyApplication.handler';
+import { DelegatePartyApplicationHandler } from './application/command/delegate-party.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -84,6 +85,7 @@ const commandHandlers = [
   RejectionAdminPartyApplicationHandler,
   ApprovePartyApplicationHandler,
   RejectionPartyApplicationHandler,
+  DelegatePartyApplicationHandler,
 ];
 
 const queryHandlers = [

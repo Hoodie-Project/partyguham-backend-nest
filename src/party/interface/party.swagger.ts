@@ -535,6 +535,25 @@ export class PartySwagger {
         `,
         required: true,
       }),
+      ApiResponse({
+        status: 200,
+        description: '위임 완료',
+      }),
+      ApiResponse({
+        status: 403,
+        description: `파티장 위임 권한이 없습니다.  
+        파티원이 아닙니다.  
+        파티유저를 찾을 수 없습니다.`,
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.\t\n파티유저를 찾을 수 없습니다.',
+      }),
+      ApiResponse({
+        status: 409,
+        description: `완료된 파티 입니다.  
+        위임하려는 유저 직책은 이미 파티장 입니다`,
+      }),
     );
   }
 }
