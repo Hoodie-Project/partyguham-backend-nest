@@ -10,13 +10,11 @@ import {
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
+import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
+
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 
-import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
-import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
-
-import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { DelegatePartyCommand } from './delegate-party.comand';
 
 @Injectable()
@@ -25,13 +23,11 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
-    @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
-    @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
   ) {}
 
   async execute(command: DelegatePartyCommand) {
-    const { userId, partyId, delegateUserId } = command;
+    const { userId, partyId, partyUserId } = command;
 
     const findParty = await this.partyRepository.findOne(partyId);
 
@@ -46,19 +42,29 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
     }
 
     // 파티장만 승인 가능
-    const partyUser = await this.partyUserRepository.findOne(userId, partyId);
+    const partyUserMaster = await this.partyUserRepository.findOne(userId, partyId);
 
-    if (partyUser.authority === PartyAuthority.MASTER) {
-      throw new ForbiddenException('파티 모집 권한이 없습니다.', 'ACCESS_DENIED');
+    if (partyUserMaster.authority !== PartyAuthority.MASTER) {
+      throw new ForbiddenException('파티장 위임 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    const partyApplication = await this.partyApplicationRepository.findOneWithRecruitment(delegateUserId);
+    // 파티원 존재하는지에 대한 여부
+    const partyUserMember = await this.partyUserRepository.findOneById(partyUserId);
+
+    if (!partyUserMember) {
+      throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
+    }
+    if (partyUserMember.partyId !== partyId) {
+      throw new ForbiddenException('파티원이 아닙니다.', 'ACCESS_DENIED');
+    }
+    if (partyUserMember.authority === PartyAuthority.MASTER) {
+      throw new ConflictException('위임하려는 유저 직책은 이미 파티장 입니다.', 'CONFLICT');
+    }
 
     // 권한 변경
-    await this.partyUserRepository.createMember(
-      partyApplication.userId,
-      partyId,
-      partyApplication.partyRecruitment.positionId,
-    );
+    const master = await this.partyUserRepository.updateMember(partyUserMaster.id);
+    const member = await this.partyUserRepository.updateMaster(partyUserId);
+
+    return { master, member };
   }
 }

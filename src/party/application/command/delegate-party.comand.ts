@@ -4,6 +4,6 @@ export class DelegatePartyCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly partyId: number,
-    readonly delegateUserId: number,
+    readonly partyUserId: number,
   ) {}
 }

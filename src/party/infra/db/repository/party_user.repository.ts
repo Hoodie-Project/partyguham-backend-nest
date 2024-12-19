@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { PartyUserEntity, PartyAuthority } from '../entity/party/party_user.entity';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 export class PartyUserRepository implements IPartyUserRepository {
@@ -35,6 +36,24 @@ export class PartyUserRepository implements IPartyUserRepository {
     await this.partyUserRepository.save({ userId, partyId, positionId, authority });
   }
 
+  async updateMember(id: number) {
+    const authority = PartyAuthority.MEMBER;
+
+    await this.partyUserRepository.update({ id }, { authority });
+  }
+
+  async updateMaster(id: number) {
+    const authority = PartyAuthority.MASTER;
+
+    await this.partyUserRepository.update({ id }, { authority });
+  }
+
+  async updateDeputy(id: number) {
+    const authority = PartyAuthority.DEPUTY;
+
+    await this.partyUserRepository.update({ id }, { authority });
+  }
+
   async updateByPositionId(id: number, positionId: number) {
     return await this.partyUserRepository.save({ id, positionId });
   }
@@ -55,6 +74,13 @@ export class PartyUserRepository implements IPartyUserRepository {
 
   async deleteById(id: number) {
     await this.partyUserRepository.delete({ id });
+  }
+
+  async softDeleteById(id: number) {
+    const partyUser = await this.findOneById(id);
+    const status = StatusEnum.DELETED;
+
+    await this.partyUserRepository.save({ ...partyUser, status });
   }
 
   async batchDelete(ids: number[]) {

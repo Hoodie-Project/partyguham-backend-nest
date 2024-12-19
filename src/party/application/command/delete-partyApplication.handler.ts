@@ -1,30 +1,22 @@
-import {
-  BadRequestException,
-  ConflictException,
-  ForbiddenException,
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 
-import { RejectionPartyApplicationCommand } from './rejection-partyApplication.comand';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
+import { DeletePartyApplicationCommand } from './delete-partyApplication.comand';
 
 @Injectable()
-@CommandHandler(RejectionPartyApplicationCommand)
-export class RejectionPartyApplicationHandler implements ICommandHandler<RejectionPartyApplicationCommand> {
+@CommandHandler(DeletePartyApplicationCommand)
+export class DeletePartyApplicationHandler implements ICommandHandler<DeletePartyApplicationCommand> {
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
   ) {}
 
-  async execute(command: RejectionPartyApplicationCommand) {
+  async execute(command: DeletePartyApplicationCommand) {
     const { userId, partyId, partyApplicationId } = command;
 
     const party = await this.partyRepository.findOne(partyId);

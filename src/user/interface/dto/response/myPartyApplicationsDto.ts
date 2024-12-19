@@ -28,7 +28,6 @@ export class PartyDto {
     example: 1,
     description: 'Party ID (PK - 파티)',
   })
-  @IsString()
   @IsNotEmpty()
   readonly id: number;
 
@@ -63,6 +62,14 @@ export class PartyDto {
 
 @Exclude()
 export class partyRecruitmentDto {
+  @Expose()
+  @ApiProperty({
+    example: 1,
+    description: 'Party Recruitment ID (PK - 파티 모집)',
+  })
+  @IsNotEmpty()
+  readonly id: number;
+
   @Expose()
   @ApiProperty({
     type: MyPartiesPositionDto,

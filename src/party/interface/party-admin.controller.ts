@@ -199,16 +199,17 @@ export class PartyAdminController {
     return this.commandBus.execute(command);
   }
 
+  @HttpCode(200)
   @UseGuards(AccessJwtAuthGuard)
-  @Post(':partyId/admin/delegation')
+  @Patch(':partyId/admin/delegation')
   @PartySwagger.transferPartyLeadership()
   async transferPartyLeadership(
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() dto: PartyDelegationRequestDto,
   ): Promise<void> {
-    const command = new DelegatePartyCommand(user.id, param.partyId, dto.delegateUserId);
+    const command = new DelegatePartyCommand(user.id, param.partyId, dto.partyUserId);
 
-    return this.commandBus.execute(command);
+    this.commandBus.execute(command);
   }
 }

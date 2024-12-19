@@ -5,10 +5,14 @@ export interface IPartyUserRepository {
   createMember: (userId: number, partyId: number, positionId: number) => Promise<void>;
   createMaster: (userId: number, partyId: number, positionId: number) => Promise<void>;
   createDeputy: (userId: number, partyId: number, positionId: number) => Promise<void>;
+  updateMember: (id: number) => Promise<void>;
+  updateMaster: (id: number) => Promise<void>;
+  updateDeputy: (id: number) => Promise<void>;
   updateByPositionId: (id: number, positionId: number) => Promise<PartyUserEntity>;
   findOneById: (id: number) => Promise<PartyUserEntity>;
   findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
   findOne: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   deleteById: (id: number) => Promise<void>;
+  softDeleteById: (id: number) => Promise<void>;
   batchDelete: (id: number[]) => Promise<void>;
 }
