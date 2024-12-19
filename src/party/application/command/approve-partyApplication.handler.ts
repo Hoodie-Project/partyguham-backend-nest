@@ -56,7 +56,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     }
 
     // 수락하기(지원자 응답 대기)
-    await this.partyApplicationRepository.updateStatusProcessing(partyApplicationId);
+    await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
 
     // 파티 소속 시키기
     await this.partyUserRepository.createMember(

@@ -34,17 +34,17 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     return partyApplication;
   }
 
-  async findOne(partyApplicationId: number) {
+  async findOne(id: number) {
     const partyApplication = await this.partyApplicationRepository.findOne({
-      where: { id: partyApplicationId },
+      where: { id },
     });
 
     return partyApplication;
   }
 
-  async findOneWithRecruitment(partyApplicationId: number) {
+  async findOneWithRecruitment(id: number) {
     const partyApplication = await this.partyApplicationRepository.findOne({
-      where: { id: partyApplicationId },
+      where: { id },
       relations: ['partyRecruitment'],
     });
 
@@ -65,20 +65,20 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     await this.partyApplicationRepository.save({ ...partyApplication, title, content });
   }
 
-  async updateStatusProcessing(partyRecruitmentId: number) {
-    const partyApplication = await this.findOne(partyRecruitmentId);
+  async updateStatusProcessing(id: number) {
+    const partyApplication = await this.findOne(id);
 
     await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.PROCESSING });
   }
 
-  async updateStatusApproved(partyRecruitmentId: number) {
-    const partyApplication = await this.findOne(partyRecruitmentId);
+  async updateStatusApproved(id: number) {
+    const partyApplication = await this.findOne(id);
 
     await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.APPROVED });
   }
 
-  async updateStatusRejected(partyRecruitmentId: number) {
-    const partyApplication = await this.findOne(partyRecruitmentId);
+  async updateStatusRejected(id: number) {
+    const partyApplication = await this.findOne(id);
 
     await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.REJECTED });
   }
