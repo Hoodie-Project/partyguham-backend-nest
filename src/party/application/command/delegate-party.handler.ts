@@ -35,7 +35,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
       throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
     }
     if (findParty.status === 'deleted') {
-      throw new GoneException('종료된 파티 입니다.', 'DELETED');
+      throw new GoneException('삭제된 파티 입니다.', 'DELETED');
     }
     if (findParty.status === 'archived') {
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
