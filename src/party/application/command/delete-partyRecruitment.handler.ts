@@ -22,7 +22,7 @@ export class DeletePartyRecruitmentHandler implements ICommandHandler<DeletePart
   async execute(command: DeletePartyRecruitmentCommand) {
     const { userId, partyId, partyRecruitmentId } = command;
 
-    const party = await this.partyRepository.findOne(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
     if (!party) {
       throw new BadRequestException('파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');

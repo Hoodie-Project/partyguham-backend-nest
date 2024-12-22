@@ -1,8 +1,9 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsInt, IsOptional, IsString } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsIn, IsInt, IsOptional, IsString } from 'class-validator';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 export class UpdatePartyRequestDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 'image file (jpg, jpeg, png)',
     description: '업로드할 이미지 파일',
     required: false,
@@ -10,7 +11,7 @@ export class UpdatePartyRequestDto {
   @IsOptional()
   readonly image: File; // 스웨거 문서용 표기
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: 1,
     description: 'party type ID (PK - 파티 타입)',
   })
@@ -18,7 +19,7 @@ export class UpdatePartyRequestDto {
   @IsOptional()
   readonly partyTypeId: number;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: '파티구함',
     description: '제목',
     required: false,
@@ -27,7 +28,7 @@ export class UpdatePartyRequestDto {
   @IsOptional()
   readonly title: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     example: '풀스텍 구함',
     description: '본문',
     required: false,
@@ -35,4 +36,16 @@ export class UpdatePartyRequestDto {
   @IsString()
   @IsOptional()
   readonly content: string;
+
+  @ApiPropertyOptional({
+    enum: ['active', 'archived'],
+    description: `파티 상태
+    active - 진행중
+    archived - 종료
+    `,
+  })
+  @IsIn(['active', 'archived'])
+  @IsString()
+  @IsOptional()
+  public status: StatusEnum;
 }

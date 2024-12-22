@@ -31,7 +31,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
   async execute(command: ApprovePartyApplicationCommand) {
     const { userId, partyId, partyApplicationId } = command;
 
-    const party = await this.partyRepository.findOne(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
     if (!party) {
       throw new BadRequestException('요청한 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');
@@ -67,7 +67,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
 
     // 파티 모집 완료시 자동삭제
     if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
-      this.partyRecruitmentRepository.delete(partyApplication.partyRecruitment.id);
+      // 모집 완료 상태 넣기
     } else {
       // 모집 카운트 + 1
       await this.partyRecruitmentRepository.updateRecruitedCount(

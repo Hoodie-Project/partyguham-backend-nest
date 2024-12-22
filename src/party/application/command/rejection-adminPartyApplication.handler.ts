@@ -23,7 +23,7 @@ export class RejectionAdminPartyApplicationHandler implements ICommandHandler<Re
   async execute(command: RejectionAdminPartyApplicationCommand) {
     const { userId, partyId, partyApplicationId } = command;
 
-    const party = await this.partyRepository.findOne(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
     if (!party) {
       throw new BadRequestException('요청한 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');

@@ -1,4 +1,5 @@
 import { ICommand } from '@nestjs/cqrs';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 export class UpdatePartyCommand implements ICommand {
   constructor(
@@ -8,5 +9,6 @@ export class UpdatePartyCommand implements ICommand {
     readonly title: string,
     readonly content: string,
     readonly image: string,
+    readonly status: StatusEnum,
   ) {}
 }

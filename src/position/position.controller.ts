@@ -1,7 +1,6 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query } from '@nestjs/common';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PositionService } from './position.service';
-import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PositionResponseDto } from './dto/response/position.response.dto';
 import { plainToInstance } from 'class-transformer';
 import { PositionQueryRequestDto } from './dto/request/location.query.request.dto';
@@ -24,8 +23,6 @@ export class PositionController {
     // 이 엔드포인트는 실제로 구현되지 않고, Swagger 문서화를 위해 사용됩니다.
   }
 
-  @ApiBearerAuth('AccessJwt')
-  @UseGuards(AccessJwtAuthGuard)
   @Get('')
   @ApiOperation({
     summary: '포지션 항목 조회',

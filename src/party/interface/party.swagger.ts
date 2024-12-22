@@ -289,64 +289,6 @@ export class PartySwagger {
     );
   }
 
-  static endParty() {
-    return applyDecorators(
-      ApiOperation({
-        summary: '파티 종료',
-        description: `**파티를 종료하는 API 입니다.**  
-        파티 데이터를 완전 삭제 하지 않고, 상태값(party.status)을 종료(archived) 상태로 변경하여 데이터를 유지합니다.
-        `,
-      }),
-      ApiHeader({
-        name: 'Authorization',
-        description: `Bearer {access token}
-        `,
-        required: true,
-      }),
-      ApiResponse({
-        status: 204,
-        description: '파티 종료 완료',
-      }),
-      ApiResponse({
-        status: 403,
-        description: '파티 종료 권한이 없습니다.',
-      }),
-      ApiResponse({
-        status: 404,
-        description: '파티를 찾을 수 없습니다.',
-      }),
-    );
-  }
-
-  static activeParty() {
-    return applyDecorators(
-      ApiOperation({
-        summary: '종료 파티 활성화',
-        description: `**종료된 파티를 재활성화하는 API 입니다.**  
-        상태값(party.status)이 종료(archived)된 파티에서 활성(active) 상태로 변경하여 데이터를 유지합니다.
-        `,
-      }),
-      ApiHeader({
-        name: 'Authorization',
-        description: `Bearer {access token}
-        `,
-        required: true,
-      }),
-      ApiResponse({
-        status: 204,
-        description: '활성화 완료',
-      }),
-      ApiResponse({
-        status: 403,
-        description: '파티 활성화 권한이 없습니다.',
-      }),
-      ApiResponse({
-        status: 404,
-        description: '파티를 찾을 수 없습니다.',
-      }),
-    );
-  }
-
   static deleteParty() {
     return applyDecorators(
       ApiOperation({

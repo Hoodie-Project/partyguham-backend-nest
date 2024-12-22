@@ -20,10 +20,14 @@ export class PartyRepository implements IPartyRepository {
     return await this.partyRepository.save({ partyTypeId, title, content, image });
   }
 
-  async findOne(id: number) {
+  async findOneById(id: number) {
     return await this.partyRepository.findOne({
       where: { id },
     });
+  }
+
+  async updateById(id: number, partyTypeId: number, title: string, content: string, image: string, status: StatusEnum) {
+    await this.partyRepository.update(id, { partyTypeId, title, content, image, status });
   }
 
   async update(party: Party) {

@@ -51,6 +51,15 @@ export class UpdatePartyResponseDto {
 
   @Expose()
   @ApiProperty({
+    example: 'active',
+    description: '파티 상태 active - 진행중, archived - 종료(보관됨)',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly status: string;
+
+  @Expose()
+  @ApiProperty({
     example: '2024-06-07T12:17:57.248Z',
     description: '수정일자',
   })

@@ -12,6 +12,8 @@ import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorat
 import { LinkOauthCommand } from '../application/command/link-oauth.command';
 import { KakaoLinkCodeCommand } from '../application/command/kakaoLink-code.command';
 import { KakaoLinkLoginCommand } from '../application/command/kakaoLink-login.command';
+import { GoogleLinkLoginCommand } from '../application/command/googleLink-login.command';
+import { GoogleLinkCodeCommand } from '../application/command/googleLink-code.command';
 
 @ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
@@ -162,6 +164,8 @@ export class WebOauthController {
     }
   }
 
+  // google //
+
   @Get('google/login')
   @ApiOperation({ summary: '구글 로그인 (응답은 /google/callback API 확인)' })
   async signinByGoogle(@Res() res: Response) {
@@ -293,5 +297,70 @@ export class WebOauthController {
 
     res.clearCookie('linkToken');
     res.status(200).send({ message: '연동이 완료되었습니다.' });
+  }
+
+  @Get('google/link')
+  @ApiOperation({ summary: '구글 연동 (응답은 /google/link/callback API 확인)' })
+  async linkByGoogle(@Res() res: Response) {
+    const command = new GoogleLinkCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @Get('google/link/callback')
+  @ApiOperation({
+    summary: '연동 시도에 대한 카카오 서버에 대한 응답 (/google/link 리다이렉트 API)',
+    description: `존재하는 계정 - refreshToken, 연동 가능 계정 - linkToken`,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '로그인되어 홈으로 리다이렉트',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: '회원가입이 되어있지 않아 연동가능, linkToken 발급',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'linkToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
+  })
+  async linkCallbackByGoogle(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
+    const command = new GoogleLinkLoginCommand(code);
+
+    let result: { type: 'link'; linkToken: string; email: string } | { type: 'existed' };
+
+    result = await this.commandBus.execute(command);
+
+    if (result.type === 'existed') {
+      let redirectURL = process.env.BASE_URL;
+      res.redirect(`${redirectURL}/my/account?error=existed`);
+    }
+
+    if (result.type === 'link') {
+      res.cookie('linkToken', result.linkToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.redirect(`${process.env.BASE_URL}/my/account`);
+    }
   }
 }

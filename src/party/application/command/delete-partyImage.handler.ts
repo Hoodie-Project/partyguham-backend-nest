@@ -20,7 +20,7 @@ export class DeletePartyImageHandler implements ICommandHandler<DeletePartyImage
   async execute(command: DeletePartyImageCommand) {
     const { userId, partyId } = command;
 
-    const findParty = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOneById(partyId);
 
     if (!findParty) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
