@@ -29,7 +29,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
   async execute(command: DelegatePartyCommand) {
     const { userId, partyId, partyUserId } = command;
 
-    const findParty = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOneById(partyId);
 
     if (!findParty) {
       throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');

@@ -25,7 +25,7 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
   async execute(command: UpdatePartyUserCommand) {
     const { userId, partyId, partyUserId, positionId } = command;
 
-    const findParty = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOneById(partyId);
 
     if (!findParty) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');

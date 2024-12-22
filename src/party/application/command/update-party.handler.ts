@@ -13,7 +13,6 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { UpdatePartyCommand } from './update-party.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
-import { promises as fs } from 'fs';
 
 @Injectable()
 @CommandHandler(UpdatePartyCommand)
@@ -25,18 +24,15 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
   ) {}
 
   async execute(command: UpdatePartyCommand) {
-    const { userId, partyId, partyTypeId, title, content, image } = command;
+    const { userId, partyId, partyTypeId, title, content, image, status } = command;
 
-    const findParty = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOneById(partyId);
 
     if (!findParty) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
     if (findParty.status === 'deleted') {
-      throw new GoneException('종료된 파티 입니다.', 'DELETED');
-    }
-    if (findParty.status === 'archived') {
-      throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
+      throw new GoneException('삭제된 파티 입니다.', 'DELETED');
     }
 
     const partyUser = await this.partyUserRepository.findOne(userId, partyId);
@@ -49,15 +45,9 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
       throw new ForbiddenException('파티 수정 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    const party = this.partyFactory.create(findParty);
+    await this.partyRepository.updateById(partyId, partyTypeId, title, content, image, status);
 
-    if (party.image && image) {
-      await fs.unlink(party.image);
-    }
-
-    party.updateFields(partyTypeId, title, content, image);
-
-    const result = await this.partyRepository.update(party);
+    const result = await this.partyRepository.findOneById(partyId);
 
     return result;
   }

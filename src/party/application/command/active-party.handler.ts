@@ -18,7 +18,7 @@ export class ActivePartyHandler implements ICommandHandler<ActivePartyCommand> {
   async execute(command: ActivePartyCommand) {
     const { userId, partyId } = command;
 
-    const findParty = await this.partyRepository.findOne(partyId);
+    const findParty = await this.partyRepository.findOneById(partyId);
 
     if (!findParty) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
