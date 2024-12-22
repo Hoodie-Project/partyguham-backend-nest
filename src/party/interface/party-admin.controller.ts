@@ -40,8 +40,6 @@ import { DeletePartyImageCommand } from '../application/command/delete-partyImag
 import { DeletePartyUserCommand } from '../application/command/delete-partyUser.comand';
 import { DelegatePartyCommand } from '../application/command/delegate-party.comand';
 import { UpdatePartyUserCommand } from '../application/command/update-partyUser.comand';
-import { EndPartyCommand } from '../application/command/end-party.comand';
-import { ActivePartyCommand } from '../application/command/active-party.comand';
 import { DeletePartyUsersCommand } from '../application/command/delete-partyUsers.comand';
 
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
@@ -102,24 +100,6 @@ export class PartyAdminController {
   async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
     const command = new DeletePartyImageCommand(user.id, param.partyId);
 
-    this.commandBus.execute(command);
-  }
-
-  @UseGuards(AccessJwtAuthGuard)
-  @HttpCode(204)
-  @PartySwagger.endParty()
-  @Patch(':partyId/admin/end')
-  async endParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new EndPartyCommand(user.id, param.partyId);
-    this.commandBus.execute(command);
-  }
-
-  @UseGuards(AccessJwtAuthGuard)
-  @HttpCode(204)
-  @PartySwagger.activeParty()
-  @Patch(':partyId/admin/active')
-  async activeParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new ActivePartyCommand(user.id, param.partyId);
     this.commandBus.execute(command);
   }
 
