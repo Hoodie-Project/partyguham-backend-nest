@@ -30,7 +30,6 @@ import { PartyApplicationsResponseDto } from './dto/response/application/get-app
 import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
 import { CreatePartyRecruitmentsResponseDto } from './dto/response/recruitment/create-partyRecruitments.response.dto';
 
-@ApiBearerAuth('AccessJwt')
 @ApiTags('party recruitment (파티 모집 공고)')
 @Controller('parties')
 export class PartyRecruitmentController {
@@ -39,7 +38,6 @@ export class PartyRecruitmentController {
     private queryBus: QueryBus,
   ) {}
 
-  @UseGuards(AccessJwtAuthGuard)
   @Get('recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.getPartyRecruitment()
   async getRecruitmentById(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentParamRequestDto) {
@@ -79,6 +77,7 @@ export class PartyRecruitmentController {
     return plainToInstance(CreatePartyRecruitmentsResponseDto, result);
   }
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Patch(':partyId/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.updateRecruitment()
@@ -102,6 +101,7 @@ export class PartyRecruitmentController {
     return plainToInstance(PartyRecruitmentsResponseDto, result);
   }
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post(':partyId/recruitments/batch-delete')
   @PartyRecruitmentSwagger.batchDeleteRecruitment()
@@ -118,6 +118,7 @@ export class PartyRecruitmentController {
     return this.commandBus.execute(command);
   }
 
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Delete(':partyId/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.deleteRecruitment()
@@ -129,6 +130,7 @@ export class PartyRecruitmentController {
   }
 
   // 모집공고에 지원
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Post(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.createPartyApplication()
@@ -145,6 +147,7 @@ export class PartyRecruitmentController {
   }
 
   // 모집공고 지원자 조회
+  @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.getPartyApplication()
