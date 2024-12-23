@@ -1,5 +1,5 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 import { PartyResponseDto } from './dto/response/party.response.dto';
 import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
@@ -69,6 +69,7 @@ export class PartyRecruitmentSwagger {
 
   static createRecruitment() {
     return applyDecorators(
+      ApiBearerAuth('AccessJwt'),
       ApiOperation({
         summary: '파티 모집 생성하기',
         description: `**새로운 파티 모집을 생성하는 API 입니다.**  
