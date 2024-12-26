@@ -236,8 +236,8 @@ export class PartyRecruitmentSwagger {
   static getPartyApplication() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 포지션 모집별, 지원자 조회',
-        description: `**파티 포지션 모집별, 지원자 조회하는 API 입니다.**  
+        summary: '파티 지원자 조회',
+        description: `**파티 지원자 조회하는 API 입니다.**  
         
           `,
       }),
@@ -255,6 +255,10 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 401,
         description: '파티 지원자 조회 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티에 속한 유저를 찾을 수 없습니다.',
       }),
     );
   }
