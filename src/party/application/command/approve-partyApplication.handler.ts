@@ -65,9 +65,10 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       partyApplication.partyRecruitment.positionId,
     );
 
-    // 파티 모집 완료시 자동삭제
+    // 파티 모집 완료시
     if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
       // 모집 완료 상태 넣기
+      await this.partyRecruitmentRepository.updateStatusCompleted(partyApplication.partyRecruitment.id);
     } else {
       // 모집 카운트 + 1
       await this.partyRecruitmentRepository.updateRecruitedCount(
