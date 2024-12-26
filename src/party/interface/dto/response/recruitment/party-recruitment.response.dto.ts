@@ -6,6 +6,15 @@ import { IsBoolean, IsInt, IsNotEmpty, IsNumber, IsOptional, IsString } from 'cl
 export class RecruitmentPartyeDto {
   @Expose()
   @ApiProperty({
+    example: 3,
+    description: 'party ID (PK - 파티)',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  readonly id: number;
+
+  @Expose()
+  @ApiProperty({
     example: '파티구함',
     description: '제목',
   })
@@ -44,6 +53,15 @@ export class RecruitmentPartyeDto {
 
 @Exclude()
 export class RecruitmentPositionDto {
+  @Expose()
+  @ApiProperty({
+    example: 3,
+    description: 'Position ID (PK - 포지션)',
+  })
+  @IsInt()
+  @IsNotEmpty()
+  readonly id: number;
+
   @Expose()
   @ApiProperty({
     example: '기획',
