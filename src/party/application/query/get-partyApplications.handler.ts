@@ -25,9 +25,15 @@ export class GetPartyApplicationsHandler implements IQueryHandler<GetPartyApplic
       .andWhere('partyUser.partyId = :partyId', { partyId })
       .getOne();
 
+    if (!partyUser) {
+      throw new NotFoundException('파티에 속한 유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
+    }
+
     if (partyUser.authority !== PartyAuthority.MASTER) {
       throw new ForbiddenException('파티 지원자 조회 권한이 없습니다.', 'ACCESS_DENIED');
     }
+
+    // partyId, partyRecruitmentId (부모자식 관계인지 확인 필요)
 
     const offset = (page - 1) * limit || 0;
     const partyApplicationUserQuery = this.partyApplicationRepository
