@@ -6,7 +6,7 @@ export enum StatusEnum {
   DELETED = 'deleted', //* 데이터가 삭제된 상태
   PENDING = 'pending', // 데이터가 처리 대기 중인 상태
   PROCESSING = 'processing', // 데이터가 처리 중인 상태
-  COMPLETED = 'completed', // 데이터가 처리가 완료된 상태
+  COMPLETED = 'completed', // 데이터가 처리 완료된 상태
   APPROVED = 'approved', // 데이터가 승인된 상태
   REJECTED = 'rejected', // 데이터가 거절된 상태
   SUSPENDED = 'suspended', // 데이터가 일시 중지된 상태

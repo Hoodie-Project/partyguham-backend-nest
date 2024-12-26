@@ -15,7 +15,7 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
   ) {}
 
   async execute(query: GetPartyRecruitmentQuery) {
-    const { userId, partyRecruitmentId } = query;
+    const { partyRecruitmentId } = query;
 
     const partyQuery = this.partyRecruitmentRepository
       .createQueryBuilder('partyRecruitments')

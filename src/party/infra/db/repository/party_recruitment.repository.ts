@@ -60,6 +60,10 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
     return await this.partyRecruitmentRepository.update(id, { positionId, recruitingCount });
   }
 
+  async updateStatusCompleted(id: number) {
+    await this.partyRecruitmentRepository.update(id, { status: StatusEnum.COMPLETED });
+  }
+
   async updateRecruitedCount(id: number, recruitedCount: number) {
     return await this.partyRecruitmentRepository.save({ id, recruitedCount });
   }
