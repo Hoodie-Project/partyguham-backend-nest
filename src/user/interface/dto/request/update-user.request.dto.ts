@@ -1,10 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsISO8601, IsIn, IsOptional, IsString, Length } from 'class-validator';
 
 export class UapdateUserRequestDto {
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'M: 남성, F: 여성',
     example: 'M',
   })
@@ -14,7 +14,7 @@ export class UapdateUserRequestDto {
   @IsOptional()
   public gender: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '성별 공개 여부 : true / false',
     example: 'false',
   })
@@ -28,7 +28,7 @@ export class UapdateUserRequestDto {
   @IsOptional()
   public genderVisible: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '생년월일',
     example: '2024-01-01',
   })
@@ -37,7 +37,7 @@ export class UapdateUserRequestDto {
   @IsOptional()
   public birth: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '성별 공개 여부 : true / false',
     example: 'true',
   })
@@ -51,7 +51,7 @@ export class UapdateUserRequestDto {
   @IsOptional()
   birthVisible: boolean;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '포트폴리오 제목',
     example: '포트폴리오 제목',
   })
@@ -59,7 +59,7 @@ export class UapdateUserRequestDto {
   @IsOptional()
   public portfolioTitle: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: '포트폴리오 링크',
     example: 'https://example.com/..',
   })
