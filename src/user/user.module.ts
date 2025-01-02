@@ -62,6 +62,7 @@ import { KakaoLinkCodeHandler } from './application/command/kakaoLink-code.handl
 import { UpdateUserHandler } from './application/command/update-user.handler';
 import { GoogleLinkCodeHandler } from './application/command/googleLink-code.handler';
 import { GoogleLinkLoginHandler } from './application/command/googleLink-login.handler';
+import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -73,6 +74,7 @@ const commandHandlers = [
   KakaoLinkLoginHandler,
   KakaoLinkCodeHandler,
   KakaoAppLoginHandler,
+  KakaoAppLinkHandler,
 
   GoogleCodeHandler,
   GoogleLoginHandler,
