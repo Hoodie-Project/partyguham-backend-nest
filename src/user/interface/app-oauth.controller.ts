@@ -1,10 +1,14 @@
 import { CommandBus } from '@nestjs/cqrs';
-import { Controller, Headers, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
+import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import { AppLinkRequestDto } from './dto/request/app-link.request.dto';
+import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { KakaoAppLinkCommand } from '../application/command/kakao-app-link.command';
 
 @ApiTags('app-oauth (앱 오픈 인증)')
 @Controller('users')
@@ -44,6 +48,55 @@ export class AppOauthController {
       res.status(401).json({
         message: '로그인이 불가능 하여, 회원가입을 시도 해주세요',
         signupAccessToken: result.signupAccessToken,
+      });
+    }
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('kakao/app/link')
+  @ApiOperation({
+    summary: 'App Kakao 연동',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '카카오 계정이 연동 되었습니다.',
+    schema: { example: { message: '카카오 계정이 연동 되었습니다.' } },
+  })
+  @ApiResponse({
+    status: 409,
+    description: '해당 카카오 계정은 이미 회원가입된 계정',
+    schema: {
+      example: { message: '연동 불가능한 계정 입니다.' },
+    },
+  })
+  async kakaoAppLink(
+    @CurrentUser() user: CurrentUserType,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: AppLinkRequestDto,
+  ) {
+    const userId = user.id;
+
+    const command = new KakaoAppLinkCommand(userId, body.oauthAccessToken);
+
+    const result = await this.commandBus.execute(command);
+
+    // 이미 회원가입 되어있는 계정
+    if (result.type === 'existed') {
+      res.status(409).json({ message: '연동 불가능한 계정 입니다.' });
+    }
+
+    // 연동됨
+    if (result.type === 'link') {
+      res.status(200).json({
+        message: '카카오 계정이 연동 되었습니다.',
       });
     }
   }

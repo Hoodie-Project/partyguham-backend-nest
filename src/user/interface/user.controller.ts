@@ -533,7 +533,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: '성공적으로 내정보를 변경 하였습니다.',
-    type: UserResponseDto,
+    type: UapdateUserRequestDto,
   })
   async updateUser(
     @CurrentUser() user: CurrentUserType,
