@@ -1,7 +1,7 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { Body, Controller, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
@@ -57,6 +57,12 @@ export class AppOauthController {
   @Post('kakao/app/link')
   @ApiOperation({
     summary: 'App Kakao 연동',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
   })
   @ApiResponse({
     status: 200,
