@@ -75,13 +75,13 @@ export class UserRepository implements IUserRepository {
   }
 
   async softDeleteUserById(userId: number) {
-    await this.userRepository.save({
-      email: null,
-      portfolio: null,
-      nickname: `#${userId}`,
-      image: null,
-      status: StatusEnum.DELETED,
-      where: { id: userId },
-    });
+    await this.userRepository.update(
+      { id: userId }, // 조건
+      {
+        portfolio: null,
+        nickname: `#${userId}`,
+        status: StatusEnum.DELETED,
+      },
+    );
   }
 }
