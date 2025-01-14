@@ -13,7 +13,7 @@ export class PartyRecruitmentSwagger {
   static getRecruitments() {
     return applyDecorators(
       ApiOperation({
-        summary: '파티 모집 공고 목록 조회',
+        summary: '파티 모집 공고 목록 조회 (상태가 active 경우만 리턴합니다.)',
         description: `**파티모집을 모두 조회하는 API 입니다.**  
         사용처 : 홈페이지 파티모집 목록 조회
 
@@ -31,7 +31,7 @@ export class PartyRecruitmentSwagger {
   static getRecruitmentsPersonalized() {
     return applyDecorators(
       ApiOperation({
-        summary: '개인화 - 파티 모집 공고 목록 조회',
+        summary: '개인화 - 파티 모집 공고 목록 조회 (상태가 active 경우만 리턴합니다.)',
         description: `**파티 모집 공고를 조회하는 API 입니다.**  
         사용처 : 홈페이지 맞춤 모집 공고 조회
         

@@ -16,7 +16,7 @@ export class GetPartyRecruitmentsHandler implements IQueryHandler<GetPartyRecrui
   ) {}
 
   async execute(query: GetPartyRecruitmentsQuery) {
-    const { partyId, sort, order, main } = query;
+    const { partyId, sort, order, status, main } = query;
 
     const party = await this.partyRepository
       .createQueryBuilder('party')
@@ -37,10 +37,12 @@ export class GetPartyRecruitmentsHandler implements IQueryHandler<GetPartyRecrui
         'partyRecruitments.content',
         'partyRecruitments.recruitingCount',
         'partyRecruitments.recruitedCount',
+        'partyRecruitments.status',
         'partyRecruitments.createdAt',
       ])
       .loadRelationCountAndMap('partyRecruitments.applicationCount', 'partyRecruitments.partyApplications')
       .where('partyRecruitments.partyId = :partyId', { partyId })
+      .andWhere('partyRecruitments.status = :status', { status })
       .orderBy(`partyRecruitments.${sort}`, order);
 
     if (main !== undefined && main !== null) {

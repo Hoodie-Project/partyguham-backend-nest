@@ -5,6 +5,7 @@ export class GetPartyRecruitmentsQuery implements IQuery {
     readonly partyId: number,
     readonly sort: string,
     readonly order: 'ASC' | 'DESC',
+    readonly status: 'active' | 'completed',
     readonly main: string | null,
   ) {}
 }

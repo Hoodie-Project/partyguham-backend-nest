@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetRecruitmentsQuery } from './get-recruitments.query';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetRecruitmentsQuery)
 export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuery> {
@@ -26,6 +27,7 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
       .limit(limit)
       .offset(offset)
       .where('1=1')
+      .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE })
       .orderBy(`partyRecruitments.${sort}`, order);
 
     if (positionIds !== undefined && positionIds.length !== 0) {

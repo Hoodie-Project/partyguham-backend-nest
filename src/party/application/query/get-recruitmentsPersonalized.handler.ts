@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
 import { GetRecruitmentsPersonalizedQuery } from './get-recruitmentsPersonalized.query';
 import { UserService } from 'src/user/application/user.service';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetRecruitmentsPersonalizedQuery)
 export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecruitmentsPersonalizedQuery> {
@@ -40,6 +41,7 @@ export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecr
       .limit(limit)
       .offset(offset)
       .where('partyRecruitments.positionId = :positionId', { positionId: userPrimaryPosition })
+      .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE })
       .orderBy(`partyRecruitments.${sort}`, order);
 
     const [partyRecruitments, total] = await recruitmentsQuery.getManyAndCount();
