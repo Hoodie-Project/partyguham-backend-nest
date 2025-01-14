@@ -24,6 +24,17 @@ export class PartyRecruitmentQueryRequestDto {
   @IsNotEmpty()
   public order: 'ASC' | 'DESC';
 
+  @ApiProperty({
+    enum: ['active', 'completed'],
+    description: `파티모집 공고 상태   
+    active - 모집중  
+    completed - 모집완료  `,
+  })
+  @IsIn(['active', 'completed'])
+  @IsString()
+  @IsNotEmpty()
+  readonly status: 'active' | 'completed';
+
   @ApiPropertyOptional({
     enum: ['기획자', '디자이너', '개발자', '마케터/광고'],
     description: '직군 조건 조회 (선택 옵션)',

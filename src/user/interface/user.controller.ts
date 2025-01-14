@@ -541,7 +541,7 @@ export class UserController {
     @Body() body: UapdateUserRequestDto,
   ) {
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
-    const image = file ? file.path : null;
+    const image = file ? file.path : undefined;
 
     const getUserInfoQuery = new UpdateUserCommand(
       user.id,

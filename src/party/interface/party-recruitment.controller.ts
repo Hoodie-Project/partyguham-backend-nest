@@ -51,9 +51,9 @@ export class PartyRecruitmentController {
   @Get(':partyId/recruitments')
   @PartyRecruitmentSwagger.getPartyRecruitments()
   async getPartyRecruitments(@Param() param: PartyRequestDto, @Query() query: PartyRecruitmentQueryRequestDto) {
-    const { sort, order, main } = query;
+    const { sort, order, status, main } = query;
 
-    const party = new GetPartyRecruitmentsQuery(param.partyId, sort, order, main);
+    const party = new GetPartyRecruitmentsQuery(param.partyId, sort, order, status, main);
     const result = this.queryBus.execute(party);
 
     return plainToInstance(PartyRecruitmentsResponseDto, result);

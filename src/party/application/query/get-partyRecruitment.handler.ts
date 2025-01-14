@@ -36,6 +36,7 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
         'partyRecruitments.content',
         'partyRecruitments.recruitingCount',
         'partyRecruitments.recruitedCount',
+        'partyRecruitments.status',
         'partyRecruitments.createdAt',
       ])
       .where('partyRecruitments.id = :id', { id: partyRecruitmentId });

@@ -135,6 +135,15 @@ export class PartyRecruitmentResponseDto {
 
   @Expose()
   @ApiProperty({
+    example: 'active',
+    description: '파티모집 공고 상태 active - 모집중, completed - 모집완료',
+  })
+  @IsNotEmpty()
+  @IsString()
+  readonly status: string;
+
+  @Expose()
+  @ApiProperty({
     example: '2024-06-07T12:17:57.248Z',
     description: '모집공고 생성일자 (모집일)',
   })
