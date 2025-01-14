@@ -137,4 +137,53 @@ export class AppOauthController {
       });
     }
   }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('google/app/link')
+  @ApiOperation({
+    summary: 'App Google 연동',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '구글 계정이 연동 되었습니다.',
+    schema: { example: { message: '구글 계정이 연동 되었습니다.' } },
+  })
+  @ApiResponse({
+    status: 409,
+    description: '해당 구글 계정은 이미 회원가입된 계정',
+    schema: {
+      example: { message: '연동 불가능한 계정 입니다.' },
+    },
+  })
+  async googleAppLink(
+    @CurrentUser() user: CurrentUserType,
+    @Req() req: Request,
+    @Res() res: Response,
+    @Body() body: AppLinkRequestDto,
+  ) {
+    const userId = user.id;
+
+    const command = new KakaoAppLinkCommand(userId, body.oauthAccessToken);
+
+    const result = await this.commandBus.execute(command);
+
+    // 이미 회원가입 되어있는 계정
+    if (result.type === 'existed') {
+      res.status(409).json({ message: '연동 불가능한 계정 입니다.' });
+    }
+
+    // 연동됨
+    if (result.type === 'link') {
+      res.status(200).json({
+        message: '구글 계정이 연동 되었습니다.',
+      });
+    }
+  }
 }
