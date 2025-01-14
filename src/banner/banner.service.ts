@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BannerRepository } from './repository/banner.repository';
+import { BannerRepository } from './repository/banner_web.repository';
 
 @Injectable()
 export class BannerService {

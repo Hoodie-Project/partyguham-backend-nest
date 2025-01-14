@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { BannerController } from './banner.controller';
 import { BannerService } from './banner.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BannerEntity } from './entity/banner.entity';
+import { BannerEntity } from './entity/banner_web.entity';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
-import { BannerRepository } from './repository/banner.repository';
+import { BannerRepository } from './repository/banner_web.repository';
 
 const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
 const uploadDir = 'images/banner';

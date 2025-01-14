@@ -2,7 +2,7 @@ import { BaseEntity } from 'src/common/entity/baseEntity';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('banner')
-export class BannerEntity extends BaseEntity {
+export class BannerWebEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -11,4 +11,7 @@ export class BannerEntity extends BaseEntity {
 
   @Column('varchar', { nullable: false })
   image: string;
+
+  @Column('text', { nullable: true, default: null })
+  link: string;
 }
