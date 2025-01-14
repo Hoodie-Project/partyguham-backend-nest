@@ -2,19 +2,22 @@ import { Module } from '@nestjs/common';
 import { BannerController } from './banner.controller';
 import { BannerService } from './banner.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BannerEntity } from './entity/banner.entity';
+
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
-import { BannerRepository } from './repository/banner.repository';
+import { BannerWebRepository } from './repository/banner_web.repository';
+import { BannerAppRepository } from './repository/banner_app.repository';
+import { BannerWebEntity } from './entity/banner_web.entity';
+import { BannerAppEntity } from './entity/banner_app.entity';
 
 const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
 const uploadDir = 'images/banner';
 
 @Module({
   controllers: [BannerController],
-  providers: [BannerService, BannerRepository],
+  providers: [BannerService, BannerWebRepository, BannerAppRepository],
   imports: [
     ServeStaticModule.forRoot({
       rootPath: uploadDir, // 정적 파일이 저장된 디렉토리
@@ -44,7 +47,7 @@ const uploadDir = 'images/banner';
         },
       }),
     }),
-    TypeOrmModule.forFeature([BannerEntity]),
+    TypeOrmModule.forFeature([BannerWebEntity, BannerAppEntity]),
   ],
 })
 export class BannerModule {}

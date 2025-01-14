@@ -1,14 +1,14 @@
 import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { BannerEntity } from '../entity/banner.entity';
+import { BannerWebEntity } from '../entity/banner_web.entity';
 
 @Injectable()
-export class BannerRepository {
+export class BannerWebRepository {
   constructor(
     readonly dataSource: DataSource,
-    @InjectRepository(BannerEntity)
-    private positionRepository: Repository<BannerEntity>,
+    @InjectRepository(BannerWebEntity)
+    private positionRepository: Repository<BannerWebEntity>,
   ) {}
 
   async create(title: string, image: string) {

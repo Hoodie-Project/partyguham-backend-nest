@@ -29,7 +29,6 @@ import { PartyUserParamRequestDto } from './dto/request/partyUser.param.request.
 
 import { PartyRequestDto } from './dto/request/party.param.request.dto';
 import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
-import { PartyResponseDto } from './dto/response/party.response.dto';
 import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
 import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
 import { DeletePartyUsersBodyRequestDto } from './dto/request/delete-partyUsers.body.request.dto';
@@ -45,11 +44,12 @@ import { DeletePartyUsersCommand } from '../application/command/delete-partyUser
 import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
 import { PartyApplicationSwagger } from './partyApplication.swagger';
 import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
-import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
-import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
 import { UpdatePartyResponseDto } from './dto/response/update-party.response.dto';
+import { ApproveAdminPartyApplicationCommand } from '../application/command/approve-adminPartyApplication.comand';
+import { RejectionAdminPartyApplicationCommand } from '../application/command/rejection-adminPartyApplication.comand';
 
 @ApiBearerAuth('AccessJwt')
+@UseGuards(AccessJwtAuthGuard)
 @ApiTags('party admin (파티 관리자)')
 @Controller('parties')
 export class PartyAdminController {
@@ -58,7 +58,6 @@ export class PartyAdminController {
     private queryBus: QueryBus,
   ) {}
 
-  @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/admin/users')
   @PartySwagger.getAdminPartyUsers()
   async getAdminPartyUsers(@Param() param: PartyRequestDto, @Query() query: PartyUserQueryRequestDto) {
@@ -70,7 +69,6 @@ export class PartyAdminController {
     return plainToInstance(GetAdminPartyUsersResponseDto, result);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
   @Patch(':partyId/admin')
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.updateParty()
@@ -93,7 +91,6 @@ export class PartyAdminController {
     return plainToInstance(UpdatePartyResponseDto, result);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @Delete(':partyId/admin/image')
   @PartySwagger.deletePartyImage()
@@ -103,7 +100,6 @@ export class PartyAdminController {
     this.commandBus.execute(command);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.deleteParty()
   @Delete(':partyId/admin')
@@ -113,7 +109,6 @@ export class PartyAdminController {
     this.commandBus.execute(command);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.updatePartyUser()
   @Patch(':partyId/admin/users/:partyUserId')
   async updatePartyUser(
@@ -126,7 +121,6 @@ export class PartyAdminController {
     return this.commandBus.execute(command);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
   @HttpCode(204)
   @PartySwagger.kickUserFromParty()
   @Delete(':partyId/admin/users/:partyUserId')
@@ -139,7 +133,6 @@ export class PartyAdminController {
     this.commandBus.execute(command);
   }
 
-  @UseGuards(AccessJwtAuthGuard)
   @PartySwagger.kickUsersFromParty()
   @Post(':partyId/admin/users/batch-delete')
   async kickUsersFromParty(
@@ -163,7 +156,7 @@ export class PartyAdminController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new ApprovePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new ApproveAdminPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
 
     return this.commandBus.execute(command);
   }
@@ -174,13 +167,12 @@ export class PartyAdminController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new RejectionPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new RejectionAdminPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
 
     return this.commandBus.execute(command);
   }
 
   @HttpCode(200)
-  @UseGuards(AccessJwtAuthGuard)
   @Patch(':partyId/admin/delegation')
   @PartySwagger.transferPartyLeadership()
   async transferPartyLeadership(
