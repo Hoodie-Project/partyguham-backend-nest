@@ -1,10 +1,18 @@
 import { BaseEntity } from 'src/common/entity/baseEntity';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
+export enum BannerPlatformEnum {
+  Web = 'web',
+  App = 'app',
+}
+
 @Entity('banner')
-export class BannerWebEntity extends BaseEntity {
+export class BannerEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column('enum', { enum: BannerPlatformEnum })
+  platform: BannerPlatformEnum;
 
   @Column({ nullable: false })
   title: string;
