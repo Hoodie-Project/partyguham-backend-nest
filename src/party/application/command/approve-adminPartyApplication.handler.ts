@@ -51,7 +51,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     }
 
     // 수락하기
-    await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
+    await this.partyApplicationRepository.updateStatusProcessing(partyApplicationId);
 
     return { message: '지원자를 수락 하였습니다.' };
   }

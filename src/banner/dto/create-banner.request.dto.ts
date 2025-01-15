@@ -25,4 +25,12 @@ export class CreateBannerRequestDto {
   @IsString()
   @IsNotEmpty()
   readonly title: string;
+
+  @ApiProperty({
+    example: 'https://partyguham.com',
+    description: '이미지와 연결되는 이미지 링크',
+  })
+  @IsString()
+  @IsNotEmpty()
+  readonly link: string;
 }
