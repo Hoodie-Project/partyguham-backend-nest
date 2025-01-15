@@ -65,17 +65,19 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       partyApplication.partyRecruitment.positionId,
     );
 
-    // 파티 모집 완료시
-    if (partyApplication.partyRecruitment.recruitingCount + 1 === partyApplication.partyRecruitment.recruitedCount) {
-      // 모집 완료 상태 넣기
-      await this.partyRecruitmentRepository.updateStatusCompleted(partyApplication.partyRecruitment.id);
-    } else {
-      // 모집 카운트 + 1
-      await this.partyRecruitmentRepository.updateRecruitedCount(
-        partyApplication.partyRecruitment.id,
-        partyApplication.partyRecruitment.recruitingCount + 1,
-      );
+    const recruiting = partyApplication.partyRecruitment.recruitingCount;
+    const recruited = partyApplication.partyRecruitment.recruitedCount + 1;
+
+    if (recruiting < recruited) {
+      throw new ConflictException('모집 인원이 초과 하였습니다.', 'CONFLICT');
     }
+
+    // 파티 모집 완료시
+    if (recruiting === recruited) {
+      await this.partyRecruitmentRepository.updateStatusCompleted(partyApplication.partyRecruitment.id);
+    }
+
+    await this.partyRecruitmentRepository.updateRecruitedCount(partyApplication.partyRecruitment.id, recruited);
 
     // 지원에 대한 삭제 보관 2주 (다른 로직에서 처리)
     // await this.partyApplicationRepository.delete(partyApplicationId);
