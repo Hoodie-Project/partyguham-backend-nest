@@ -72,6 +72,17 @@ export class partyRecruitmentDto {
 
   @Expose()
   @ApiProperty({
+    example: 'completed',
+    description: `모집공고 상태  
+
+    active - 모집중  
+    completed - 모집완료 
+    `,
+  })
+  readonly status: string;
+
+  @Expose()
+  @ApiProperty({
     type: MyPartiesPositionDto,
     description: '파티에 속한 나의 포지션',
   })
