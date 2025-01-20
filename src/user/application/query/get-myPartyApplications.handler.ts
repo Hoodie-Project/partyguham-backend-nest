@@ -31,6 +31,7 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
         'position.main',
         'position.sub',
         'partyRecruitment.id',
+        'partyRecruitment.status',
         'party.id',
         'party.title',
         'party.image',
