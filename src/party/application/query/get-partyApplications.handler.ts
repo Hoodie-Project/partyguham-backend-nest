@@ -11,7 +11,6 @@ import { PartyAuthority, PartyUserEntity } from 'src/party/infra/db/entity/party
 @QueryHandler(GetPartyApplicationsQuery)
 export class GetPartyApplicationsHandler implements IQueryHandler<GetPartyApplicationsQuery> {
   constructor(
-    @InjectRepository(PartyEntity) private partyRepository: Repository<PartyEntity>,
     @InjectRepository(PartyUserEntity) private partyUserRepository: Repository<PartyUserEntity>,
     @InjectRepository(PartyApplicationEntity) private partyApplicationRepository: Repository<PartyApplicationEntity>,
   ) {}
