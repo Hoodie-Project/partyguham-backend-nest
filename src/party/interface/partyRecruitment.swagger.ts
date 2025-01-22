@@ -5,9 +5,13 @@ import { PartyResponseDto } from './dto/response/party.response.dto';
 import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
 import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-recruitment.response.dto';
 import { GetPartyRecruitmentsResponseDto } from './dto/response/recruitment/get-partyRecruitments.response.dto';
-import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
+import {
+  PartyApplicationDto,
+  PartyApplicationsResponseDto,
+} from './dto/response/application/get-application.response.dto';
 import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
 import { CreatePartyRecruitmentsResponseDto } from './dto/response/recruitment/create-partyRecruitments.response.dto';
+import { PartyApplicationMeResponseDto } from './dto/response/application/get-applicationMe.response.dto';
 
 export class PartyRecruitmentSwagger {
   static getRecruitments() {
@@ -259,6 +263,36 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 404,
         description: '파티에 속한 유저를 찾을 수 없습니다.',
+      }),
+    );
+  }
+
+  static getPartyApplicationMe() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '모집공고에 대하여 본인 지원 확인',
+        description: `**모집공고에 대하여 본인 지원 여부에 대한 조회하는 API 입니다.**  
+        
+          `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 지원자 조회',
+        type: PartyApplicationMeResponseDto,
+      }),
+      ApiResponse({
+        status: 403,
+        description: '잘못된 요청입니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '지원한 데이터를 찾을 수 없습니다.',
       }),
     );
   }

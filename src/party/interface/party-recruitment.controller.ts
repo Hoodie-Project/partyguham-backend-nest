@@ -29,6 +29,8 @@ import { PartyApplicationQueryRequestDto } from './dto/request/application/party
 import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
 import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
 import { CreatePartyRecruitmentsResponseDto } from './dto/response/recruitment/create-partyRecruitments.response.dto';
+import { GetPartyApplicationMeQuery } from '../application/query/get-partyApplicationMe.query';
+import { PartyApplicationMeResponseDto } from './dto/response/application/get-applicationMe.response.dto';
 
 @ApiTags('party recruitment (파티 모집 공고)')
 @Controller('parties')
@@ -171,5 +173,20 @@ export class PartyRecruitmentController {
     const result = this.queryBus.execute(application);
 
     return plainToInstance(PartyApplicationsResponseDto, result);
+  }
+
+  // 모집공고 지원자 조회
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Get(':partyId/recruitments/:partyRecruitmentId/applications/me')
+  @PartyRecruitmentSwagger.getPartyApplicationMe()
+  async getPartyApplicationMe(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentsParamRequestDto) {
+    const { partyId, partyRecruitmentId } = param;
+
+    const application = new GetPartyApplicationMeQuery(user.id, partyId, partyRecruitmentId);
+
+    const result = this.queryBus.execute(application);
+
+    return plainToInstance(PartyApplicationMeResponseDto, result);
   }
 }
