@@ -17,13 +17,13 @@ export class OauthEntity {
   @Column({ nullable: false })
   externalId: string;
 
-  @Column('enum', { enum: ProviderEnum, default: ProviderEnum.KAKAO })
+  @Column('enum', { enum: ProviderEnum, nullable: false })
   provider: ProviderEnum;
 
   @Column({ nullable: true })
   accessToken: string;
 
-  @Column('varchar', { nullable: false, default: 'example@email.com' })
+  @Column('varchar', { nullable: false })
   email: string;
 
   @Column('text', { nullable: true })
