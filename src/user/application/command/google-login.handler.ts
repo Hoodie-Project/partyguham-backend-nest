@@ -62,7 +62,7 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
 
     if (oauth && !oauth.userId) {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -76,7 +76,7 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
         image,
       );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }

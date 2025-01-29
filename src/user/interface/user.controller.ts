@@ -131,7 +131,10 @@ export class UserController {
     const { nickname, gender, birth } = dto;
 
     const oauthId = user.oauthId;
-    const command = new CreateUserCommand(oauthId, nickname, gender, birth);
+    const email = user.email;
+    const image = user.image;
+
+    const command = new CreateUserCommand(oauthId, email, image, nickname, gender, birth);
 
     const result = await this.commandBus.execute(command);
 

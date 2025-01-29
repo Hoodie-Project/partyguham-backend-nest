@@ -4,7 +4,7 @@ import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/co
 import { Request } from 'express';
 import { OauthService } from '../oauth.service';
 import { AuthService } from '../auth.service';
-import { PayloadType } from '../jwt.payload';
+import { PayloadType, SignupPayloadType } from '../jwt.payload';
 
 @Injectable()
 export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
@@ -40,17 +40,18 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
     });
   }
 
-  async validate(payload: PayloadType) {
+  async validate(payload: SignupPayloadType) {
     if (payload.id) {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(decryptUserId);
       const oauthId = oauth.id;
-
+      const email = payload.email;
+      const image = payload.email;
       if (oauth.userId) {
         throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
       }
 
-      return { oauthId };
+      return { oauthId, email, image };
     } else {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }

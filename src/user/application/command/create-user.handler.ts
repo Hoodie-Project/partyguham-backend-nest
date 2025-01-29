@@ -17,14 +17,14 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   ) {}
 
   async execute(command: CreateUserCommand) {
-    const { oauthId, nickname, gender, birth } = command;
+    const { oauthId, email, image, nickname, gender, birth } = command;
 
     const checkNickname = await this.userRepository.findByNickname(nickname);
     if (checkNickname) {
       throw new ConflictException('이미 존재하는 닉네임 입니다.');
     }
 
-    const user = await this.userRepository.createUser(nickname, gender, birth);
+    const user = await this.userRepository.createUser(email, image, nickname, gender, birth);
     const userId = user.getId();
     await this.oauthService.updateUserIdById(oauthId, userId);
 
