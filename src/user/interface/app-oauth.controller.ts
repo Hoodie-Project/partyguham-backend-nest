@@ -9,6 +9,7 @@ import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AppLinkRequestDto } from './dto/request/app-link.request.dto';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { KakaoAppLinkCommand } from '../application/command/kakao-app-link.command';
+import { GoogleAppLinkCommand } from '../application/command/google-app-link.command';
 
 @ApiTags('app-oauth (앱 오픈 인증)')
 @Controller('users')
@@ -170,7 +171,7 @@ export class AppOauthController {
   ) {
     const userId = user.id;
 
-    const command = new KakaoAppLinkCommand(userId, body.oauthAccessToken);
+    const command = new GoogleAppLinkCommand(userId, body.oauthAccessToken);
 
     const result = await this.commandBus.execute(command);
 

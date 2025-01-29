@@ -63,6 +63,7 @@ import { UpdateUserHandler } from './application/command/update-user.handler';
 import { GoogleLinkCodeHandler } from './application/command/googleLink-code.handler';
 import { GoogleLinkLoginHandler } from './application/command/googleLink-login.handler';
 import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handler';
+import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -81,6 +82,7 @@ const commandHandlers = [
   GoogleLinkCodeHandler,
   GoogleLinkLoginHandler,
   GoogleAppLoginHandler,
+  GoogleAppLinkHandler,
 
   LinkOauthHandler,
 
