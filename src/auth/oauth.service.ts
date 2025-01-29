@@ -30,7 +30,7 @@ export class OauthService {
     eamil: string,
     image: string,
   ) {
-    return this.oauthRepository.createWithoutUserId(externalId, provider, accessToken, eamil, image);
+    return this.oauthRepository.createWithoutUserId(externalId, provider, accessToken);
   }
 
   async updateUserIdById(id: number, userId: number) {

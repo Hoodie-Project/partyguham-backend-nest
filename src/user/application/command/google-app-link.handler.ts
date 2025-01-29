@@ -10,7 +10,7 @@ import { GoogleAppLinkCommand } from './google-app-link.command';
 
 @Injectable()
 @CommandHandler(GoogleAppLinkCommand)
-export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLinkCommand> {
+export class GoogleAppLinkHandler implements ICommandHandler<GoogleAppLinkCommand> {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,

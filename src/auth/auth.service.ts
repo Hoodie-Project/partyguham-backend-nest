@@ -18,8 +18,8 @@ export class AuthService {
     private authRepository: AuthRepository,
   ) {}
 
-  async signupAccessToken(id: string) {
-    const createPayload = { id };
+  async signupAccessToken(id: string, email: string, image: string) {
+    const createPayload = { id, email, image };
     return this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_SIGNUP_SECRET,
       expiresIn: '1h',

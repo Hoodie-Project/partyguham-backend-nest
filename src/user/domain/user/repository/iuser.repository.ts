@@ -4,7 +4,7 @@ import { User } from '../user';
 export interface IUserRepository {
   findByNickname: (nickname: string) => Promise<User | null>;
   prepare: () => Promise<number>;
-  createUser: (nickname: string, gender: string, birth: string) => Promise<User>;
+  createUser: (email: string, image: string, nickname: string, gender: string, birth: string) => Promise<User>;
   updateUser: (
     userId: number,
     gender: string,

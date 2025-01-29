@@ -41,7 +41,7 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
 
     if (oauth && !oauth.userId) {
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -55,7 +55,7 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
         image,
       );
       const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId);
+      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }

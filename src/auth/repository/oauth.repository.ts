@@ -39,7 +39,7 @@ export class OauthRepository {
   async findByUserId(userId: number) {
     const oauthEntity = await this.oauthRepository.find({
       where: { userId },
-      select: ['provider', 'email', 'image'],
+      select: ['provider'],
     });
 
     return oauthEntity;
@@ -57,14 +57,8 @@ export class OauthRepository {
     return oauthEntity;
   }
 
-  async createWithoutUserId(
-    externalId: string,
-    provider: ProviderEnum,
-    accessToken: string,
-    eamil: string,
-    image: string,
-  ) {
-    const oauthEntity = await this.oauthRepository.save({ externalId, provider, accessToken, eamil, image });
+  async createWithoutUserId(externalId: string, provider: ProviderEnum, accessToken: string) {
+    const oauthEntity = await this.oauthRepository.save({ externalId, provider, accessToken });
 
     return oauthEntity;
   }

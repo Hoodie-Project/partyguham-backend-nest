@@ -35,7 +35,7 @@ export class AuthController {
     if (process.env.MODE_ENV !== 'prod') {
       const id = await this.authService.encrypt(String(1));
       const accessToken = await this.authService.createAccessToken(id);
-      const singupToken = await this.authService.signupAccessToken(id);
+      const singupToken = await this.authService.signupAccessToken(id, 'email', 'image');
 
       return { accessToken, singupToken };
     } else {

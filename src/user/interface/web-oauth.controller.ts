@@ -8,7 +8,7 @@ import { KakaoCodeCommand } from '../application/command/kakao-code.command';
 import { KakaoLoginCommand } from '../application/command/kakao-login.command';
 import { GoogleCodeCommand } from '../application/command/google-code.command';
 import { GoogleLoginCommand } from '../application/command/google-login.command';
-import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { LinkOauthCommand } from '../application/command/link-oauth.command';
 import { KakaoLinkCodeCommand } from '../application/command/kakaoLink-code.command';
 import { KakaoLinkLoginCommand } from '../application/command/kakaoLink-login.command';
@@ -85,9 +85,6 @@ export class WebOauthController {
     }
 
     if (result.type === 'signup') {
-      req.session.email = result.email;
-      // req.session.image = result.image;
-
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
@@ -259,9 +256,9 @@ export class WebOauthController {
     description: '이메일, oauth 이미지 URL 데이터',
     schema: { example: { email: 'email@partyguam.net', image: 'image URL' } },
   })
-  async getData(@Req() req: Request) {
-    const email = req.session.email || null;
-    const image = req.session.image || null;
+  async getData(@CurrentUser() user: CurrentSignupType, @Req() req: Request) {
+    const email = user.email;
+    const image = user.image;
 
     return { email, image };
   }
