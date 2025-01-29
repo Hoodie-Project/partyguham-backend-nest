@@ -19,7 +19,7 @@ export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('varchar', { nullable: false })
+  @Column('varchar', { default: null })
   email: string;
 
   @Column('varchar', { length: 15, nullable: false, unique: true })
