@@ -450,13 +450,9 @@ export class UserController {
       example: [
         {
           provider: 'google',
-          email: 'example@gmail.com',
-          image: '/image',
         },
         {
           provider: 'kakao',
-          email: 'example@kakao.com',
-          image: null,
         },
       ],
     },

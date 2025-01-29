@@ -39,7 +39,7 @@ export class OauthRepository {
   async findByUserId(userId: number) {
     const oauthEntity = await this.oauthRepository.find({
       where: { userId },
-      select: ['provider', 'email', 'image'],
+      select: ['provider'],
     });
 
     return oauthEntity;
