@@ -10,6 +10,7 @@ import { AppLinkRequestDto } from './dto/request/app-link.request.dto';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { KakaoAppLinkCommand } from '../application/command/kakao-app-link.command';
 import { GoogleAppLinkCommand } from '../application/command/google-app-link.command';
+import { AppGoogleLoginRequestDto } from './dto/request/app-google-login.request.dto';
 
 @ApiTags('app-oauth (앱 오픈 인증)')
 @Controller('users')
@@ -118,10 +119,8 @@ export class AppOauthController {
       example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요', signupAccessToken: 'signupAccessToken' },
     },
   })
-  async googleAppLogin(@Req() req: Request, @Res() res: Response, @Headers('authorization') authorization: string) {
-    const googleAccessToken = authorization.split(' ')[1]; // "Bearer"를 제거하고 토큰만 가져옴
-
-    const command = new GoogleAppLoginCommand(googleAccessToken);
+  async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() body: AppGoogleLoginRequestDto) {
+    const command = new GoogleAppLoginCommand(body.idToken);
 
     const result = await this.commandBus.execute(command);
 

@@ -1,5 +1,5 @@
 import { ICommand } from '@nestjs/cqrs';
 
 export class GoogleAppLoginCommand implements ICommand {
-  constructor(readonly googleAccessToken: string) {}
+  constructor(readonly idToken: string) {}
 }
