@@ -16,27 +16,37 @@ export class GoogleAppLinkHandler implements ICommandHandler<GoogleAppLinkComman
     private authService: AuthService,
   ) {}
 
-  async execute({ userId, googleAccessToken }: GoogleAppLinkCommand) {
-    const googleUserInfo = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo`, {
+  async execute({ userId, idToken }: GoogleAppLinkCommand) {
+    const googleIdTokenCheck = await axios.post(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`, {
       headers: {
-        Authorization: `Bearer ${googleAccessToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
 
+    const googleUserInfo = googleIdTokenCheck.data;
+
     // google
-    // data: {
-    //   id: '108484888597910532761',
-    //   email: 'hoodiev.team@gmail.com',
-    //   verified_email: true,
-    //   name: 'hoodiev',
-    //   given_name: 'hoodiev',
-    //   picture: 'https://lh3.googleusercontent.com/a/ACg8ocK8VSpiTLRV-NfpHBPGkR4acApVopYk9JRfygfhutNKb6i9h2I=s96-c',
-    //   locale: 'ko'
+    // {
+    //   "iss": "https://accounts.google.com",
+    //   "azp": "클라이언트 아이디",
+    //   "aud": "클라이언트 아이디",
+    //   "sub": "고유 아이디",
+    //   "email": "tmfrl1590@gmail.com",
+    //   "email_verified": "true",
+    //   "name": "김슬기",
+    //   "picture": "https://lh3.googleusercontent.com/a/ACg8ocIi95E21XKSRvqOLtIWnzF1u4bzhorVD4sTClvT4LjPsK_3Nw=s96-c",
+    //   "given_name": "슬기",
+    //   "family_name": "김",
+    //   "iat": "1738326489",
+    //   "exp": "1738330089",
+    //   "alg": "RS256",
+    //   "kid": "fa072f75784642615087c7182c101341e18f7a3a",
+    //   "typ": "JWT"
     // }
 
-    const externalId: string = googleUserInfo.data.id;
-    const email = googleUserInfo.data.email;
-    const image = googleUserInfo.data.picture ? googleUserInfo.data.picture : null;
+    const externalId: string = googleUserInfo.sub;
+    const email = googleUserInfo.email;
+    const image = googleUserInfo.picture ? googleUserInfo.picture : null;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
@@ -49,7 +59,7 @@ export class GoogleAppLinkHandler implements ICommandHandler<GoogleAppLinkComman
 
     // oauth가 없음 (해당 계정으로 연결이 된적 없음)
     if (!oauth) {
-      await this.oauthService.createWithoutUserId(externalId, ProviderEnum.GOOGLE, googleAccessToken, email, image);
+      await this.oauthService.createWithoutUserId(externalId, ProviderEnum.GOOGLE, idToken, email, image);
 
       return { type: 'link', email };
     }

@@ -1,7 +1,7 @@
 import { CommandBus } from '@nestjs/cqrs';
 import { Body, Controller, Headers, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
 import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
@@ -107,6 +107,9 @@ export class AppOauthController {
   @ApiOperation({
     summary: 'App Google 로그인',
   })
+  @ApiBody({
+    type: AppGoogleLoginRequestDto,
+  })
   @ApiResponse({
     status: 200,
     description: '로그인 완료',
@@ -144,11 +147,8 @@ export class AppOauthController {
   @ApiOperation({
     summary: 'App Google 연동',
   })
-  @ApiHeader({
-    name: 'Authorization',
-    description: `Bearer {access token}
-    `,
-    required: true,
+  @ApiBody({
+    type: AppGoogleLoginRequestDto,
   })
   @ApiResponse({
     status: 200,
@@ -166,11 +166,11 @@ export class AppOauthController {
     @CurrentUser() user: CurrentUserType,
     @Req() req: Request,
     @Res() res: Response,
-    @Body() body: AppLinkRequestDto,
+    @Body() body: AppGoogleLoginRequestDto,
   ) {
     const userId = user.id;
 
-    const command = new GoogleAppLinkCommand(userId, body.oauthAccessToken);
+    const command = new GoogleAppLinkCommand(userId, body.idToken);
 
     const result = await this.commandBus.execute(command);
 
