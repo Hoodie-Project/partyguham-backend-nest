@@ -233,9 +233,6 @@ export class WebOauthController {
     }
 
     if (result.type === 'signup') {
-      req.session.email = result.email;
-      // req.session.image = result.image;
-
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,

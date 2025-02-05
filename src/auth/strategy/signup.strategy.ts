@@ -44,9 +44,11 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
     if (payload.id) {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(decryptUserId);
+
       const oauthId = oauth.id;
       const email = payload.email;
-      const image = payload.email;
+      const image = payload.image;
+
       if (oauth.userId) {
         throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
       }
