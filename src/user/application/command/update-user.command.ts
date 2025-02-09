@@ -2,12 +2,13 @@ import { ICommand } from '@nestjs/cqrs';
 
 export class UpdateUserCommand implements ICommand {
   constructor(
-    readonly id: number,
-    readonly is_party: boolean,
-    readonly meeting_type: string,
-    readonly meeting_week: string,
-    readonly meeting_time: string,
-    readonly mbti: string,
-    readonly skills: number[],
+    readonly userId: number,
+    readonly gender: string,
+    readonly genderVisible: boolean,
+    readonly birth: string,
+    readonly birthVisible: boolean,
+    readonly portfolioTitle: string,
+    readonly portfolio: string,
+    readonly image: string,
   ) {}
 }

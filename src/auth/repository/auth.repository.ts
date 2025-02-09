@@ -12,7 +12,7 @@ export class AuthRepository {
     private authRepository: Repository<AuthEntity>,
   ) {}
 
-  async findByAccount(userId: number) {
+  async findByUserId(userId: number) {
     const result = await this.authRepository.findOne({
       where: { userId },
     });

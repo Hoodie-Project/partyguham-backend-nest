@@ -1,27 +1,74 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Payload } from './jwt.payload';
 import * as crypto from 'crypto';
 import { AuthRepository } from './repository/auth.repository';
+import { OauthService } from './oauth.service';
 
 @Injectable()
 export class AuthService {
-  private readonly algorithm: string = 'aes-192-cbc';
-  private key = process.env.CIPHERIV_KEY_SECRET;
-  private iv = process.env.CIPHERIV_IV_SECRET;
+  private readonly algorithm: string = 'aes-256-cbc';
+  private readonly key = process.env.CIPHERIV_KEY_SECRET;
+  private readonly iv = process.env.CIPHERIV_IV_SECRET;
+
+  private readonly appKey = process.env.APP_CIPHERIV_KEY_SECRET;
+  private readonly appIv = process.env.APP_CIPHERIV_IV_SECRET;
   constructor(
     private jwtService: JwtService,
+    private oauthService: OauthService,
     private authRepository: AuthRepository,
   ) {}
 
+  async signupAccessToken(id: string, email: string, image: string) {
+    const createPayload = { id, email, image };
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_SIGNUP_SECRET,
+      expiresIn: '1h',
+      algorithm: 'HS256',
+    });
+  }
+
+  async validateSignupAccessToken(token: string): Promise<any> {
+    // try {
+    // 토큰 검증
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SIGNUP_SECRET,
+      algorithms: ['HS256'],
+    });
+
+    // 추가적인 검증 로직 (예: 유저 확인, 특정 조건 등)
+    if (!payload || !payload.id) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+    const decryptUserId = Number(this.decrypt(payload.id));
+    const oauth = await this.oauthService.findById(decryptUserId);
+    const oauthId = oauth.id;
+
+    if (oauth.userId) {
+      throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
+    }
+
+    return oauthId;
+    // } catch (error) {
+    //   throw new UnauthorizedException('Invalid or expired token');
+    // }
+  }
+
   async createAccessToken(id: string) {
-    const payload: Payload = { id };
-    return this.jwtService.signAsync(payload, { secret: process.env.JWT_ACCESS_SECRET, expiresIn: '15m' });
+    const createPayload = { id };
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: process.env.MODE === 'prod' ? '15m' : '1y',
+      algorithm: 'HS512',
+    });
   }
 
   async createRefreshToken(id: string) {
-    const payload: Payload = { id };
-    return this.jwtService.signAsync(payload, { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '30d' });
+    const createPayload = { id };
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '30d',
+      algorithm: 'HS512',
+    });
   }
 
   async findRefreshToken(userId: number, refreshToken: string) {
@@ -41,10 +88,24 @@ export class AuthService {
     return result;
   }
 
-  public decrypt(encryptedData: string) {
+  public decrypt(data: string) {
     const decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
-    let decryptedData = decipher.update(encryptedData, 'base64', 'utf-8');
-    decryptedData += decipher.final('utf-8');
-    return decryptedData;
+    let result = decipher.update(data, 'base64', 'utf-8');
+    result += decipher.final('utf-8');
+    return result;
+  }
+
+  async appEncrypt(data: string) {
+    const cipher = crypto.createCipheriv(this.algorithm, this.appKey, this.appIv);
+    let result = cipher.update(data, 'utf-8', 'base64');
+    result += cipher.final('base64');
+    return result;
+  }
+
+  public appDecrypt(data: string) {
+    const decipher = crypto.createDecipheriv(this.algorithm, this.appKey, this.appIv);
+    let result = decipher.update(data, 'base64', 'utf-8');
+    result += decipher.final('utf-8');
+    return result;
   }
 }

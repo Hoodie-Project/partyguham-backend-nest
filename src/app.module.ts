@@ -1,22 +1,33 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { PartyModule } from './party/party.module';
-import { LoggerMiddleware } from './common/middleware/logger.middleware';
-import { UserModule } from './user/user.module';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+
+import { LoggerMiddleware } from './common/middleware/logger.middleware';
+
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseInterceptor } from './common/interceptor/response';
+
+import { AppController } from './app.controller';
+import { UserModule } from './user/user.module';
+import { AppService } from './app.service';
+import { PartyModule } from './party/party.module';
 import { SkillModule } from './skill/skill.module';
 import { PositionModule } from './position/position.module';
+import { LocationModule } from './location/location.module';
+import { PersonalityModule } from './personality/personality.module';
+import { GuildModule } from './guild/guild.module';
+import { NotFoundExceptionFilter } from './common/exception/error-NotFound.filter';
+import { CustomErrorExceptionFilter } from './common/exception/error.filter';
+import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthorized.filter';
+import { ReportModule } from './report/report.module';
+import { AuthModule } from './auth/auth.module';
+import { BannerModule } from './banner/banner.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'mysql',
+      type: 'postgres',
       host: process.env.DB_HOST,
       port: +process.env.DB_PORT,
       username: process.env.DB_USERNAME,
@@ -28,21 +39,30 @@ import { PositionModule } from './position/position.module';
       extra: {
         decimalNumbers: true, //decimal number type
       },
-      bigNumberStrings: false, // bigint number type
+      // bigNumberStrings: false, // bigint number type
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.MODE_ENV !== 'prod',
     }),
+    AuthModule,
     UserModule,
-    PartyModule,
-    SkillModule,
-    PositionModule,
+    ReportModule,
+    BannerModule,
+    // GuildModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
-      provide: APP_INTERCEPTOR,
-      useClass: ResponseInterceptor,
+      provide: APP_FILTER,
+      useClass: CustomErrorExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: UnauthorizedExceptionFilter,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: NotFoundExceptionFilter,
     },
   ],
 })

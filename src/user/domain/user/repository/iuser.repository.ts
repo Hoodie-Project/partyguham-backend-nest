@@ -2,8 +2,19 @@ import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { User } from '../user';
 
 export interface IUserRepository {
-  findByAccount: (account: string) => Promise<User>;
   findByNickname: (nickname: string) => Promise<User | null>;
-  create: (account: string, nickname: string, email: string) => Promise<UserEntity>;
-  update: (is_party: boolean, meeting_type, meeting_week, meeting_time, mbti) => Promise<void>;
+  prepare: () => Promise<number>;
+  createUser: (email: string, image: string, nickname: string, gender: string, birth: string) => Promise<User>;
+  updateUser: (
+    userId: number,
+    gender: string,
+    genderVisible: boolean,
+    birth: string,
+    birthVisible: boolean,
+    portfolioTitle: string,
+    portfolio: string,
+    image: string,
+  ) => Promise<UserEntity>;
+  deleteUserById: (userId: number) => Promise<void>;
+  softDeleteUserById: (userId: number) => Promise<void>;
 }

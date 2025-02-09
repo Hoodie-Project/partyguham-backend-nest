@@ -1,7 +1,13 @@
-export type Payload = {
+export type PayloadType = {
   id: string;
+  iat: number;
+  exp: number;
 };
 
-export type DecodedPayload = {
-  id: number;
+export type SignupPayloadType = {
+  id: string;
+  email: string;
+  image: string;
+  iat: number;
+  exp: number;
 };

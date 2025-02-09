@@ -1,40 +1,36 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { PartyUserEntity } from './party-user.entity';
-import { PartyCommentEntity } from './party-comment.entity';
-import { PartyLikeEntity } from './party-like.entity';
-import { PartyInviteEntity } from '../apply/party-invite.entity';
-import { PartyRequestEntity } from '../apply/party-request.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { PartyUserEntity } from './party_user.entity';
 import { BaseEntity } from 'src/common/entity/baseEntity';
+import { PartyTypeEntity } from './party_type.entity';
+import { PartyRecruitmentEntity } from '../apply/party_recruitment.entity';
 
 @Entity('party')
 export class PartyEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
-  partyStatus: string;
-
-  @Column({ nullable: true })
-  projectStatus: string;
+  @Column()
+  partyTypeId: number;
 
   @Column({ nullable: true })
   title: string;
 
-  @Column({ nullable: true })
+  @Column('text', { nullable: true })
   content: string;
+
+  @Column({ default: null })
+  image: string;
+
+  @ManyToOne(() => PartyTypeEntity, (partyType) => partyType.parties, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'party_type_id', referencedColumnName: 'id' })
+  partyType: PartyTypeEntity;
 
   @OneToMany(() => PartyUserEntity, (partyUser) => partyUser.party)
   partyUser: PartyUserEntity[];
 
-  @OneToMany(() => PartyLikeEntity, (partyLike) => partyLike.party)
-  partyLikes: PartyLikeEntity[];
-
-  @OneToMany(() => PartyCommentEntity, (comment) => comment.party)
-  comments: PartyCommentEntity[];
-
-  @OneToMany(() => PartyRequestEntity, (partyRequests) => partyRequests.party)
-  partyRequests: PartyRequestEntity[];
-
-  @OneToMany(() => PartyInviteEntity, (partyInvites) => partyInvites.party)
-  partyInvites: PartyInviteEntity[];
+  @OneToMany(() => PartyRecruitmentEntity, (partyRecruitment) => partyRecruitment.party)
+  partyRecruitments: PartyRecruitmentEntity[];
 }

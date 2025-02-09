@@ -1,82 +1,69 @@
+import { BadRequestException } from '@nestjs/common';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
-import { MeetingTimeType, MeetingType, MeetingWeekType } from 'src/user/infra/db/entity/user.entity';
+import { Transform, Type } from 'class-transformer';
+import { IsBoolean, IsISO8601, IsIn, IsOptional, IsString, Length } from 'class-validator';
 
-export class UpdateUserRequestDto {
+export class UapdateUserRequestDto {
   @ApiPropertyOptional({
-    example: true,
-    description: '모임참석여부',
+    description: 'M: 남성, F: 여성',
+    example: 'M',
+  })
+  @Length(1, 1)
+  @IsIn(['M', 'F'])
+  @IsString()
+  @IsOptional()
+  public gender: string;
+
+  @ApiPropertyOptional({
+    description: '성별 공개 여부 : true / false',
+    example: 'false',
+  })
+  @Transform((value) => {
+    const genderVisible = value.obj.genderVisible;
+    if (genderVisible === 'true' || genderVisible === true) return true;
+    if (genderVisible === 'false' || genderVisible === false) return false;
+    throw new BadRequestException('genderVisible must be a boolean');
   })
   @IsBoolean()
   @IsOptional()
-  readonly isParty: boolean;
+  public genderVisible: boolean;
 
   @ApiPropertyOptional({
-    example: MeetingType.OFFLINE,
-    description: '모임참석형태',
-    enum: MeetingType,
+    description: '생년월일',
+    example: '2024-01-01',
+  })
+  @Length(10)
+  @IsISO8601()
+  @IsOptional()
+  public birth: string;
+
+  @ApiPropertyOptional({
+    description: '성별 공개 여부 : true / false',
+    example: 'true',
+  })
+  @Transform((value) => {
+    const birthVisible = value.obj.birthVisible;
+    if (birthVisible === 'true' || birthVisible === true) return true;
+    if (birthVisible === 'false' || birthVisible === false) return false;
+    throw new BadRequestException('birthVisible must be a boolean');
+  })
+  @IsBoolean()
+  @IsOptional()
+  birthVisible: boolean;
+
+  @ApiPropertyOptional({
+    description: '포트폴리오 제목',
+    example: '포트폴리오 제목',
   })
   @IsString()
   @IsOptional()
-  readonly meetingType: string;
+  public portfolioTitle: string;
 
   @ApiPropertyOptional({
-    example: MeetingWeekType.WEEKDAY,
-    description: '모임참석 주중, 주말',
-    enum: MeetingWeekType,
+    description: '포트폴리오 링크',
+    example: 'https://example.com/..',
   })
   @IsString()
   @IsOptional()
-  readonly meetingWeek: string;
-
-  @ApiPropertyOptional({
-    example: MeetingTimeType.AM,
-    description: '모임참석 시간',
-    enum: MeetingTimeType,
-  })
-  @IsString()
-  @IsOptional()
-  readonly meetingTime: string;
-
-  @ApiPropertyOptional({
-    example: 'intp',
-    description: 'mbti',
-    enum: [
-      'entp',
-      'enfp',
-      'entj',
-      'enfj',
-      'estp',
-      'esfp',
-      'estj',
-      'esfj',
-      'intp',
-      'infp',
-      'intj',
-      'infj',
-      'istp',
-      'isfp',
-      'istj',
-      'isfj',
-    ],
-  })
-  @IsString()
-  @IsOptional()
-  readonly mbti: string;
-
-  @ApiPropertyOptional({
-    example: [1, 2],
-    description: 'skill id(pk)',
-  })
-  @IsInt()
-  @IsOptional()
-  readonly skillIds: number[];
-
-  @ApiPropertyOptional({
-    example: 1,
-    description: 'position id(pk)',
-  })
-  @IsInt()
-  @IsOptional()
-  readonly positionId: number[];
+  public portfolio: string;
 }

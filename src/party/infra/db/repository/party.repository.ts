@@ -1,12 +1,12 @@
 import { DataSource, Repository } from 'typeorm';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { PartyEntity } from '../entity/party/party.entity';
-import { PartyFactory } from 'src/party/domain/party/party.factory';
+
 import { Party } from 'src/party/domain/party/party';
-import { StatusType } from 'src/common/entity/baseEntity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 export class PartyRepository implements IPartyRepository {
@@ -14,37 +14,38 @@ export class PartyRepository implements IPartyRepository {
     readonly dataSource: DataSource,
     @InjectRepository(PartyEntity)
     private partyRepository: Repository<PartyEntity>,
-    private partyFactory: PartyFactory,
   ) {}
 
-  async create(title: string, content: string): Promise<Party> {
-    const party = await this.partyRepository.save({ title, content });
-
-    return this.partyFactory.reconstitute(party.id, title, content);
+  async create(partyTypeId: number, title: string, content: string, image: string) {
+    return await this.partyRepository.save({ partyTypeId, title, content, image });
   }
 
-  async findOne(partyId: number) {
-    const party = await this.partyRepository.findOne({
-      where: { id: partyId },
+  async findOneById(id: number) {
+    return await this.partyRepository.findOne({
+      where: { id },
     });
-
-    if (!party) {
-      throw new NotFoundException('파티가 존재하지 않습니다');
-    }
-
-    return this.partyFactory.reconstitute(party.id, party.title, party.content);
   }
 
-  async update(partyId: number, title: string, content: string) {
-    const party = await this.findOne(partyId);
-
-    await this.partyRepository.save({ ...party, title, content });
+  async updateById(id: number, partyTypeId: number, title: string, content: string, image: string, status: StatusEnum) {
+    await this.partyRepository.update(id, { partyTypeId, title, content, image, status });
   }
 
-  async delete(partyId: number) {
-    const party = await this.findOne(partyId);
-    const status = StatusType.DELETED;
+  async update(party: Party) {
+    return await this.partyRepository.save({ ...party });
+  }
 
-    await this.partyRepository.save({ ...party, status });
+  async deleteById(id: number) {
+    const status = StatusEnum.DELETED;
+    await this.partyRepository.save({ id, status });
+  }
+
+  async archivedById(id: number) {
+    const status = StatusEnum.ARCHIVED;
+    await this.partyRepository.save({ id, status });
+  }
+
+  async activeById(id: number) {
+    const status = StatusEnum.ACTIVE;
+    await this.partyRepository.save({ id, status });
   }
 }

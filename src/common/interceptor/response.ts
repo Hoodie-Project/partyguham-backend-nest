@@ -10,10 +10,9 @@ export class ResponseInterceptor implements NestInterceptor {
       map((result) => {
         // 만약 응답 데이터가 배열 형태인 경우
         if (Array.isArray(result)) {
-          const [data, count] = result; // 데이터와 총 갯수를 분리합니다.
           return {
-            data, // 데이터
-            count, // 총 갯수
+            count: result.length, // 총 갯수
+            data: result, // 데이터
           };
         }
         // 기타 형태의 응답 데이터는 그대로 반환합니다.

@@ -3,8 +3,8 @@ import { IsInt, IsNotEmpty } from 'class-validator';
 
 export class PartyRequestDto {
   @ApiProperty({
-    example: '파티 고유 ID',
-    description: '파티고유ID',
+    example: 1,
+    description: 'party ID (PK - 파티)',
   })
   @IsInt()
   @IsNotEmpty()

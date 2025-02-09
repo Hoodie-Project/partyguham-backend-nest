@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventBus } from '@nestjs/cqrs';
 
-import { User } from './user';
+import { User, UserProperties } from './user';
 
 // 팩토리 패턴을 사용하지 않고도 객체를 생성할 수 있지만,
 // 팩토리 패턴은 복잡한 도메인 로직을 처리하고,
@@ -13,15 +13,15 @@ import { User } from './user';
 export class UserFactory {
   constructor(private eventBus: EventBus) {}
 
-  create(id: number, account: string, nickname: string, email: string): User {
-    const user = new User(id, account, nickname, email);
+  create(options: UserProperties): User {
+    const user = new User(options);
 
     // this.eventBus.publish(new UserCreatedEvent(email, signupVerifyToken));
 
     return user;
   }
 
-  reconstitute(id: number, account: string, nickname: string, email: string): User {
-    return new User(id, account, nickname, email);
+  reconstitute(options: UserProperties): User {
+    return new User(options);
   }
 }
