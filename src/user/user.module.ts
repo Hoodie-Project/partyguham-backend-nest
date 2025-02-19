@@ -64,6 +64,7 @@ import { GoogleLinkCodeHandler } from './application/command/googleLink-code.han
 import { GoogleLinkLoginHandler } from './application/command/googleLink-login.handler';
 import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handler';
 import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
+import { UpdateUserCareerHandler } from './application/command/update-userCareer.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -95,6 +96,7 @@ const commandHandlers = [
   DeleteUserPersonalityByQuestionHandler,
 
   CreateUserCareerHandler,
+  UpdateUserCareerHandler,
   DeleteUserCareerHandler,
   DeleteUserCareersHandler,
 ];

@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   Query,
   Req,
   Res,
@@ -59,6 +60,8 @@ import { DeleteUserCommand } from '../application/command/delete-user.command';
 import { DeleteUserLocationsCommand } from '../application/command/delete-userLocations.command';
 import { DeleteUserPersonalityByQuestionCommand } from '../application/command/delete-userPersonalityByQuestion.command';
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
+import { UpdateUserCareerCommand } from '../application/command/update-userCareer.command';
+import { UpdateUserCareerRequestDto } from './dto/request/update-userCareer.request.dto';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -334,6 +337,25 @@ export class UserController {
     const { career } = body;
 
     const command = new CreateUserCareerCommand(user.id, career);
+
+    const result = await this.commandBus.execute(command);
+
+    return plainToInstance(UserCareerResponseDto, result);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch('me/careers')
+  @ApiOperation({ summary: '유저 경력(커리어) 수정', description: 'careerType 변경 불가' })
+  @ApiResponse({
+    status: 201,
+    description: '유저 경력 수정',
+    type: [UserCareerResponseDto],
+  })
+  async putUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
+    const { career } = body;
+
+    const command = new UpdateUserCareerCommand(user.id, career);
 
     const result = await this.commandBus.execute(command);
 

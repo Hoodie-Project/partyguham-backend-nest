@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsNotEmpty } from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, ArrayUnique, IsArray, IsNotEmpty, ValidateNested } from 'class-validator';
 
 import { CareerDto } from '../career.dto';
 
@@ -10,6 +10,7 @@ export class UserCareerCreateRequestDto {
     type: [CareerDto],
   })
   @Type(() => CareerDto)
+  @ValidateNested({ each: true })
   @ArrayUnique()
   @ArrayMaxSize(2)
   @ArrayMinSize(1)
