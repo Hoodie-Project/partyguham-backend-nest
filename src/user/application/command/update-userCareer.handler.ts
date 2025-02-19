@@ -17,6 +17,14 @@ export class UpdateUserCareerHandler implements ICommandHandler<UpdateUserCareer
   async execute(command: UpdateUserCareerCommand) {
     const { userId, career } = command;
 
+    const find = await this.userCareerRepository.findByUserId(userId);
+
+    find.map((value) => {
+      if (value.userId !== userId) {
+        throw new ForbiddenException('변경 권한이 없습니다.');
+      }
+    });
+
     // 저장되어있는 유저 커리어 조회
 
     await this.userCareerRepository.updateCareers(career);

@@ -352,6 +352,10 @@ export class UserController {
     description: '유저 경력 수정',
     type: [UserCareerResponseDto],
   })
+  @ApiResponse({
+    status: 403,
+    description: '변경 권한이 없습니다.',
+  })
   async putUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
     const { career } = body;
 
