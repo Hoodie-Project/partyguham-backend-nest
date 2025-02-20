@@ -25,7 +25,7 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
     }
 
     // 유저 삭제 상태로 변경
-    await this.userRepository.deleteStatusUserById(userId);
+    await this.userRepository.setUserInactiveById(userId);
 
     return;
   }
