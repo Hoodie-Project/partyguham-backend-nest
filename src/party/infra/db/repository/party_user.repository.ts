@@ -62,6 +62,10 @@ export class PartyUserRepository implements IPartyUserRepository {
     return await this.partyUserRepository.findOne({ where: { id } });
   }
 
+  async findMasterByUserId(userId: number) {
+    return await this.partyUserRepository.find({ where: { userId, authority: PartyAuthority.MASTER } });
+  }
+
   async findByIds(ids: number[]) {
     return await this.partyUserRepository.find({
       where: { id: In(ids) },

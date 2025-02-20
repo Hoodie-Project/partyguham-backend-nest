@@ -16,5 +16,6 @@ export interface IUserRepository {
     image: string,
   ) => Promise<UserEntity>;
   deleteUserById: (userId: number) => Promise<void>;
+  deleteStatusUserById: (userId: number) => Promise<void>;
   softDeleteUserById: (userId: number) => Promise<void>;
 }
