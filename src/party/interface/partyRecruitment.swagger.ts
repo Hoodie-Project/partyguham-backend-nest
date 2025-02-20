@@ -296,4 +296,34 @@ export class PartyRecruitmentSwagger {
       }),
     );
   }
+
+  static completedPartyRecruitment() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 모집 공고 완료 처리',
+        description: `**파티 모집공고 완료하는 API 입니다.**  
+        
+          `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 모집공고 완료 처리',
+        schema: { example: { message: '파티모집 공고를 완료 하였습니다.' } },
+      }),
+      ApiResponse({
+        status: 400,
+        description: '요청한 파티가 존재하지 않습니다.',
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 모집공고에 대한 완료 권한이 없습니다.',
+      }),
+    );
+  }
 }
