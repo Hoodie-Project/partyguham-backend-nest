@@ -21,7 +21,6 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 
   async validate(payload: PayloadType) {
     if (!payload) {
-      // If no payload is provided, throw an UnauthorizedException
       throw new UnauthorizedException('Unauthorized: Invalid or missing token', 'UNAUTHORIZED');
     }
 

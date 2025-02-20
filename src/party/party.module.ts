@@ -64,6 +64,7 @@ import { RejectionAdminPartyApplicationHandler } from './application/command/rej
 import { DelegatePartyApplicationHandler } from './application/command/delegate-party.handler';
 import { DeletePartyApplicationHandler } from './application/command/delete-partyApplication.handler';
 import { GetPartyApplicationMeHandler } from './application/query/get-partyApplicationMe.handler';
+import { PartyUserService } from './application/party-user.service';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -102,7 +103,7 @@ const queryHandlers = [
   GetPartyApplicationsHandler,
   GetPartyApplicationMeHandler,
 ];
-const services = [PartyService, PartyApplicationService];
+const services = [PartyService, PartyUserService, PartyApplicationService];
 const eventHandlers = [];
 const factories = [PartyFactory];
 
