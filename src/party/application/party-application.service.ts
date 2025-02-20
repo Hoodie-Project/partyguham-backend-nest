@@ -3,7 +3,10 @@ import { PartyApplicationRepository } from '../infra/db/repository/party_applica
 
 @Injectable()
 export class PartyApplicationService {
-  constructor(@Inject('PartyApplicationRepository') private partyApplicationRepository: PartyApplicationRepository) {}
+  constructor(
+    @Inject('PartyApplicationRepository')
+    private partyApplicationRepository: PartyApplicationRepository,
+  ) {}
 
   async deletePartyApplicationByUserId(userId: number) {
     this.partyApplicationRepository.deleteByUserId(userId);

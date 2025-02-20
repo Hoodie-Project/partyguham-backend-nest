@@ -15,8 +15,9 @@
 
 ## Description
 
-Nest (TypeScript, TypeORM)
-Postgres
+NestJS (TypeScript, TypeORM), Postgres  
+DDD, CQRS
 
-DDD
-CQRS
+- [API 문서](https://partyguham.com/api/docs)
+- [API Sequence diagram](https://www.figma.com/design/w54D4YkjhEeuVJpu9Hqpa0/API?node-id=0-1&t=kW7bYkkFYUTD91w1-1)
+- [ERD](https://www.erdcloud.com/d/PgCpHFhMniMgYLG97)

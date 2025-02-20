@@ -47,6 +47,9 @@ import { PartyApplicationParamRequestDto } from './dto/request/application/party
 import { UpdatePartyResponseDto } from './dto/response/update-party.response.dto';
 import { ApproveAdminPartyApplicationCommand } from '../application/command/approve-adminPartyApplication.comand';
 import { RejectionAdminPartyApplicationCommand } from '../application/command/rejection-adminPartyApplication.comand';
+import { CompletedAdminPartyRecruitmentCommand } from '../application/command/completed-adminPartyApplication.comand';
+import { PartyRecruitmentsParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto';
+import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
 
 @ApiBearerAuth('AccessJwt')
 @UseGuards(AccessJwtAuthGuard)
@@ -148,6 +151,17 @@ export class PartyAdminController {
     this.commandBus.execute(command);
 
     res.status(204);
+  }
+
+  @Patch(':partyId/admin/recruitment/:partyRecruitmentId/completed')
+  @PartyRecruitmentSwagger.completedPartyRecruitment()
+  async completedPartyRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyRecruitmentsParamRequestDto,
+  ): Promise<void> {
+    const command = new CompletedAdminPartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
+
+    return this.commandBus.execute(command);
   }
 
   @Post(':partyId/admin/applications/:partyApplicationId/approval')

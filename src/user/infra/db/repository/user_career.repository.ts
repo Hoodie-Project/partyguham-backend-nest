@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IUserCareerRepository } from 'src/user/domain/user/repository/iuserCareer.repository';
 import { CareerTypeEnum, UserCareerEntity } from '../entity/user_career.entity';
 import { CareerDto } from 'src/user/interface/dto/career.dto';
+import { UpdateCareerDto } from 'src/user/interface/dto/request/update-userCareer.request.dto';
 
 @Injectable()
 export class UserCareerRepository implements IUserCareerRepository {
@@ -52,6 +53,10 @@ export class UserCareerRepository implements IUserCareerRepository {
 
     const result = await this.userCareerRepository.insert(userLocations);
     return result;
+  }
+
+  async updateCareers(updateCareer: UpdateCareerDto[]) {
+    return await this.userCareerRepository.save(updateCareer);
   }
 
   async deleteById(id: number) {

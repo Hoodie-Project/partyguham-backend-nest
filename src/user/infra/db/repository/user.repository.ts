@@ -17,6 +17,12 @@ export class UserRepository implements IUserRepository {
     private userFactory: UserFactory,
   ) {}
 
+  async findById(id: number) {
+    return await this.userRepository.findOne({
+      where: { id },
+    });
+  }
+
   async findByNickname(nickname: string): Promise<User | null> {
     const userEntity = await this.userRepository.findOne({
       where: { nickname },
@@ -27,12 +33,6 @@ export class UserRepository implements IUserRepository {
     }
 
     return this.userFactory.reconstitute(userEntity);
-  }
-
-  async findById(id: number) {
-    return await this.userRepository.findOne({
-      where: { id },
-    });
   }
 
   async prepare() {
@@ -72,6 +72,15 @@ export class UserRepository implements IUserRepository {
 
   async deleteUserById(userId: number): Promise<void> {
     await this.userRepository.delete({ id: userId });
+  }
+
+  async setUserInactiveById(userId: number) {
+    await this.userRepository.update(
+      { id: userId }, // 조건
+      {
+        status: StatusEnum.INACTIVE,
+      },
+    );
   }
 
   async softDeleteUserById(userId: number) {
