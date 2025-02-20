@@ -16,7 +16,8 @@
 ## Description
 
 Nest (TypeScript, TypeORM)
-Postgres
+
+Postgres [ERD](https://www.erdcloud.com/d/PgCpHFhMniMgYLG97)
 
 DDD
 CQRS
