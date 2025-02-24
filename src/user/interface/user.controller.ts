@@ -62,6 +62,7 @@ import { DeleteUserPersonalityByQuestionCommand } from '../application/command/d
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 import { UpdateUserCareerCommand } from '../application/command/update-userCareer.command';
 import { UpdateUserCareerRequestDto } from './dto/request/update-userCareer.request.dto';
+import { GetUserCarrerQuery } from '../application/query/get-userCarrer.query';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -317,6 +318,27 @@ export class UserController {
     const command = new DeleteUserPersonalityCommand(user.id, userPersonalityId);
 
     await this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/careers')
+  @ApiOperation({ summary: '유저 경력(커리어) 조회' })
+  @ApiResponse({
+    status: 200,
+    description: '유저 경력 조회',
+    type: [UserCareerResponseDto],
+  })
+  @ApiResponse({
+    status: 404,
+    description: '경력 데이터가 존재하지 않습니다.',
+  })
+  async getUserCarrer(@CurrentUser() user: CurrentUserType) {
+    const command = new GetUserCarrerQuery(user.id);
+
+    const result = await this.queryBus.execute(command);
+
+    return plainToInstance(UserCareerResponseDto, result);
   }
 
   @ApiBearerAuth('accessToken')
