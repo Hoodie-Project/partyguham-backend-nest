@@ -56,6 +56,7 @@ export class UserResponseDto {
   @ApiProperty({
     description: '포트폴리오 링크',
     example: 'https://example.com/..',
+    anyOf: [{ type: 'string' }, { type: 'null' }],
   })
   public portfolio: string;
 
@@ -63,6 +64,7 @@ export class UserResponseDto {
   @ApiProperty({
     example: '/image/..',
     description: '이미지 경로',
+    anyOf: [{ type: 'string' }, { type: 'null' }],
   })
   image: string;
 

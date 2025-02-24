@@ -81,7 +81,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${path}/docs`, app, document, {
-    swaggerOptions: { defaultModelsExpandDepth: -1 }, // 하단 DTO 삭제
+    swaggerOptions: { defaultModelsExpandDepth: -1, defaultModelExpandDepth: 3 }, // 하단 DTO 삭제
   });
 
   await app.listen(process.env.PORT);
