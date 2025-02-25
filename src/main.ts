@@ -32,7 +32,7 @@ async function bootstrap() {
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',
-    origin: ['https://localhost:3000', 'https://partyguam.net', 'http://partyguam.net'],
+    origin: ['https://localhost:3000', 'https://partyguham.com', 'http://partyguham.com'],
     credentials: true,
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   });
@@ -70,10 +70,9 @@ async function bootstrap() {
   //docs
   const config = new DocumentBuilder()
     // .setBasePath(`${path}`) // 전역 접두사를 Swagger 문서에 반영
-    .addServer(`https://partyguam.net`, '파티괌 도메인 주소')
-    // .addServer(`https://partyguam.net/dev`, '개발 서버')
-    .setTitle('party-guam API')
-    .setDescription('파티괌 API 문서 입니다.')
+    .addServer(`https://partyguham.com`, '파티괌 도메인 주소')
+    .setTitle('party-guham API')
+    .setDescription('파티구함 API 문서 입니다.')
     .setVersion('1.0')
     .addBearerAuth({ type: 'http' }, 'accessToken')
     .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
@@ -81,7 +80,11 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${path}/docs`, app, document, {
-    swaggerOptions: { defaultModelsExpandDepth: -1, defaultModelExpandDepth: 7 },
+    swaggerOptions: {
+      docExpansion: 'none',
+      defaultModelsExpandDepth: -1,
+      defaultModelExpandDepth: 7,
+    },
   });
 
   await app.listen(process.env.PORT);
