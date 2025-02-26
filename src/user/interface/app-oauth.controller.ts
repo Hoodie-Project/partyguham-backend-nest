@@ -35,11 +35,13 @@ export class AppOauthController {
   })
   @ApiResponse({
     status: 403,
-    description: 'message 종류\t\n1. 회원탈퇴하여 30일 보관중인 계정입니다.\t\n2. 로그인 불가 계정입니다.',
+    description: `- list\t\n
+      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
     schema: {
       example: {
         message: '회원탈퇴하여 30일 보관중인 계정입니다.',
-        error: 'ACCESS_DENIED',
+        error: 'USER_DELETED_30D',
         statusCode: 403,
         path: '/dev/api/auth/admin/token',
         timestamp: '2025-02-26T14:22:32.569Z',
@@ -137,11 +139,13 @@ export class AppOauthController {
   })
   @ApiResponse({
     status: 403,
-    description: 'message 종류\t\n1. 회원탈퇴하여 30일 보관중인 계정입니다.\t\n2. 로그인 불가 계정입니다.',
+    description: `- list\t\n
+      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
     schema: {
       example: {
         message: '회원탈퇴하여 30일 보관중인 계정입니다.',
-        error: 'ACCESS_DENIED',
+        error: 'USER_DELETED_30D',
         statusCode: 403,
         path: '/dev/api/auth/admin/token',
         timestamp: '2025-02-26T14:22:32.569Z',

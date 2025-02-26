@@ -4,6 +4,7 @@ import { UserLocationRepository } from '../infra/db/repository/user_location.rep
 import { UserPersonalityRepository } from '../infra/db/repository/user_personality.repository';
 import { UserRepository } from '../infra/db/repository/user.repository';
 import { StatusEnum } from 'src/common/entity/baseEntity';
+import { USER_ERROR } from 'src/common/error/user-error.message';
 
 @Injectable()
 export class UserService {
@@ -18,11 +19,11 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
 
     if (user.status === StatusEnum.INACTIVE) {
-      throw new ForbiddenException('회원탈퇴하여 30일 보관중인 계정입니다.', 'ACCESS_DENIED');
+      throw new ForbiddenException(USER_ERROR.USER_DELETED_30D);
     }
 
     if (user.status !== StatusEnum.ACTIVE) {
-      throw new ForbiddenException('로그인 불가 계정입니다.', 'ACCESS_DENIED');
+      throw new ForbiddenException(USER_ERROR.USER_FORBIDDEN_DISABLED);
     }
   }
 

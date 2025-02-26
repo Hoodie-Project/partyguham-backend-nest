@@ -3,6 +3,7 @@ import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorat
 import { RefreshJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AuthService } from './auth.service';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { USER_ERROR } from 'src/common/error/user-error.message';
 
 @ApiTags('auth (인증)')
 @Controller('auth')
@@ -34,7 +35,7 @@ export class AuthController {
   async adminToken() {
     if (process.env.MODE_ENV !== 'prod') {
       const id = await this.authService.encrypt(String(1));
-      throw new ForbiddenException('회원탈퇴하여 30일 보관중인 계정입니다.', 'ACCESS_DENIED');
+      throw new ForbiddenException(USER_ERROR.USER_DELETED_30D);
       const accessToken = await this.authService.createAccessToken(id);
       const singupToken = await this.authService.signupAccessToken(id, 'email', 'image');
 
