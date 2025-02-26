@@ -12,7 +12,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       jwtFromRequest: (request: Request) => {
         if (request && request.cookies) {
           const refreshToken = request.cookies['refreshToken'];
-          if (!refreshToken) throw new UnauthorizedException('refreshToken이 cookies에 없습니다.', 'UNAUTHORIZED');
+          if (!refreshToken) throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
           return refreshToken;
         }
       },
@@ -24,11 +24,11 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   async validate(payload: { id: string; iat: number; exp: number }): Promise<{
     id: number;
   }> {
-    if (payload.id) {
+    try {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
 
       return { id: decryptUserId };
-    } else {
+    } catch {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
   }

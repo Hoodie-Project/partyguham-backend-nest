@@ -41,20 +41,20 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
   }
 
   async validate(payload: SignupPayloadType) {
-    if (payload.id) {
+    try {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(decryptUserId);
 
-      const oauthId = oauth.id;
-      const email = payload.email;
-      const image = payload.image;
+      if (!oauth || oauth.userId == null) {
+        throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+      }
 
       if (oauth.userId) {
         throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
       }
 
-      return { oauthId, email, image };
-    } else {
+      return { oauthId: oauth.id, email: payload.email, image: payload.image };
+    } catch {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
   }

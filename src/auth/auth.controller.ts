@@ -4,7 +4,7 @@ import { RefreshJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AuthService } from './auth.service';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('auth')
+@ApiTags('auth (인증)')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
