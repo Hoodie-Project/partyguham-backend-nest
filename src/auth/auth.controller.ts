@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { RefreshJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AuthService } from './auth.service';
@@ -34,6 +34,7 @@ export class AuthController {
   async adminToken() {
     if (process.env.MODE_ENV !== 'prod') {
       const id = await this.authService.encrypt(String(1));
+      throw new ForbiddenException('회원탈퇴하여 30일 보관중인 계정입니다.', 'ACCESS_DENIED');
       const accessToken = await this.authService.createAccessToken(id);
       const singupToken = await this.authService.signupAccessToken(id, 'email', 'image');
 

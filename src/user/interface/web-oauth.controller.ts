@@ -60,6 +60,19 @@ export class WebOauthController {
       },
     },
   })
+  @ApiResponse({
+    status: 403,
+    description: 'message 종류\t\n1. 회원탈퇴하여 30일 보관중인 계정입니다.\t\n2. 로그인 불가 계정입니다.',
+    schema: {
+      example: {
+        message: '회원탈퇴하여 30일 보관중인 계정입니다.',
+        error: 'ACCESS_DENIED',
+        statusCode: 403,
+        path: '/dev/api/auth/admin/token',
+        timestamp: '2025-02-26T14:22:32.569Z',
+      },
+    },
+  })
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
@@ -200,6 +213,19 @@ export class WebOauthController {
           type: 'string',
           example: 'signupToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
         },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'message 종류\t\n1. 회원탈퇴하여 30일 보관중인 계정입니다.\t\n2. 로그인 불가 계정입니다.',
+    schema: {
+      example: {
+        message: '회원탈퇴하여 30일 보관중인 계정입니다.',
+        error: 'ACCESS_DENIED',
+        statusCode: 403,
+        path: '/dev/api/auth/admin/token',
+        timestamp: '2025-02-26T14:22:32.569Z',
       },
     },
   })
