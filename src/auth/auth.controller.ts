@@ -35,7 +35,7 @@ export class AuthController {
   async adminToken() {
     if (process.env.MODE_ENV !== 'prod') {
       const id = await this.authService.encrypt(String(1));
-      throw new ForbiddenException(USER_ERROR.USER_DELETED_30D);
+
       const accessToken = await this.authService.createAccessToken(id);
       const singupToken = await this.authService.signupAccessToken(id, 'email', 'image');
 

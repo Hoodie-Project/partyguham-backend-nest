@@ -136,6 +136,7 @@ export class PartyAdminController {
     this.commandBus.execute(command);
   }
 
+  @HttpCode(204)
   @PartySwagger.kickUsersFromParty()
   @Post(':partyId/admin/users/batch-delete')
   async kickUsersFromParty(
@@ -148,9 +149,7 @@ export class PartyAdminController {
 
     const command = new DeletePartyUsersCommand(user.id, param.partyId, partyUserIds);
 
-    this.commandBus.execute(command);
-
-    res.status(204);
+    return this.commandBus.execute(command);
   }
 
   @Patch(':partyId/admin/recruitment/:partyRecruitmentId/completed')

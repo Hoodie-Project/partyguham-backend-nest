@@ -56,5 +56,7 @@ export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsers
     });
 
     await this.partyUserRepository.batchDelete(partyUserIds);
+
+    return;
   }
 }
