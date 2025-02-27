@@ -45,7 +45,7 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(decryptUserId);
 
-      if (!oauth || oauth.userId == null) {
+      if (!oauth) {
         throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
       }
 
