@@ -1,8 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { UserCareerRepository } from '../infra/db/repository/user_career.repository';
 import { UserLocationRepository } from '../infra/db/repository/user_location.repository';
 import { UserPersonalityRepository } from '../infra/db/repository/user_personality.repository';
 import { UserRepository } from '../infra/db/repository/user.repository';
+import { StatusEnum } from 'src/common/entity/baseEntity';
+import { USER_ERROR } from 'src/common/error/user-error.message';
 
 @Injectable()
 export class UserService {
@@ -13,10 +15,16 @@ export class UserService {
     @Inject('UserPersonalityRepository') private userPersonalityRepository: UserPersonalityRepository,
   ) {}
 
-  async findUserStatusById(userId: number) {
+  async validateLogin(userId: number) {
     const user = await this.userRepository.findById(userId);
 
-    return user.status;
+    if (user.status === StatusEnum.INACTIVE) {
+      throw new ForbiddenException(USER_ERROR.USER_DELETED_30D);
+    }
+
+    if (user.status !== StatusEnum.ACTIVE) {
+      throw new ForbiddenException(USER_ERROR.USER_FORBIDDEN_DISABLED);
+    }
   }
 
   async findUserCarerrPrimaryByUserId(userId: number) {

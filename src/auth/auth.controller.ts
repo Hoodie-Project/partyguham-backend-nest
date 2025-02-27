@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Headers, Post, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { RefreshJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AuthService } from './auth.service';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { USER_ERROR } from 'src/common/error/user-error.message';
 
 @ApiTags('auth (인증)')
 @Controller('auth')
@@ -34,6 +35,7 @@ export class AuthController {
   async adminToken() {
     if (process.env.MODE_ENV !== 'prod') {
       const id = await this.authService.encrypt(String(1));
+      throw new ForbiddenException(USER_ERROR.USER_DELETED_30D);
       const accessToken = await this.authService.createAccessToken(id);
       const singupToken = await this.authService.signupAccessToken(id, 'email', 'image');
 

@@ -33,6 +33,21 @@ export class AppOauthController {
       example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요', signupAccessToken: 'signupAccessToken' },
     },
   })
+  @ApiResponse({
+    status: 403,
+    description: `- list\t\n
+      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
+    schema: {
+      example: {
+        message: '회원탈퇴하여 30일 보관중인 계정입니다.',
+        error: 'USER_DELETED_30D',
+        statusCode: 403,
+        path: '/dev/api/auth/admin/token',
+        timestamp: '2025-02-26T14:22:32.569Z',
+      },
+    },
+  })
   async kakaoAppLogin(@Req() req: Request, @Res() res: Response, @Headers('authorization') authorization: string) {
     const kakaoAccessToken = authorization.split(' ')[1]; // "Bearer"를 제거하고 토큰만 가져옴
 
@@ -120,6 +135,21 @@ export class AppOauthController {
     description: '회원가입이 되어있지 않아 로그인 권한이 없음 - 회원가입으로 이동',
     schema: {
       example: { message: '로그인이 불가능 하여, 회원가입을 시도 해주세요', signupAccessToken: 'signupAccessToken' },
+    },
+  })
+  @ApiResponse({
+    status: 403,
+    description: `- list\t\n
+      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
+    schema: {
+      example: {
+        message: '회원탈퇴하여 30일 보관중인 계정입니다.',
+        error: 'USER_DELETED_30D',
+        statusCode: 403,
+        path: '/dev/api/auth/admin/token',
+        timestamp: '2025-02-26T14:22:32.569Z',
+      },
     },
   })
   async googleAppLogin(@Req() req: Request, @Res() res: Response, @Body() body: AppGoogleLoginRequestDto) {

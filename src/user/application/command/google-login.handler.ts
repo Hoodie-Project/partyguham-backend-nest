@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AuthService } from 'src/auth/auth.service';
-
+import { GoogleLoginCommand } from './google-login.command';
 import axios from 'axios';
 
-import { ProviderEnum } from 'src/auth/entity/oauth.entity';
+import { AuthService } from 'src/auth/auth.service';
 import { OauthService } from 'src/auth/oauth.service';
-import { GoogleLoginCommand } from './google-login.command';
+import { UserService } from '../user.service';
+
+import { ProviderEnum } from 'src/auth/entity/oauth.entity';
 
 @Injectable()
 @CommandHandler(GoogleLoginCommand)
 export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
   constructor(
+    private userService: UserService,
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
@@ -82,8 +84,9 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
     }
 
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      await this.userService.validateLogin(oauth.userId);
 
+      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
       const accessToken = await this.authService.createAccessToken(encryptOauthId);
       const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
 

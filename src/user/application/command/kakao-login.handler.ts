@@ -92,14 +92,9 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     }
 
     if (oauth.userId) {
+      await this.userService.validateLogin(oauth.userId);
+
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-
-      const userStatus = await this.userService.findUserStatusById(oauth.userId);
-
-      if (userStatus === 'inactive') {
-        throw new ForbiddenException('탈퇴하여 30일동안 보관중인 계정입니다.', 'ACCESS_DENIED');
-      }
-
       const accessToken = await this.authService.createAccessToken(encryptOauthId);
       const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
 
