@@ -1,7 +1,16 @@
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { Body, Controller, Get, Post, Query, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ApiBearerAuth, ApiCookieAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCookieAuth,
+  ApiExcludeEndpoint,
+  ApiHeader,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
 import { KakaoCodeCommand } from '../application/command/kakao-code.command';
@@ -21,22 +30,10 @@ export class WebOauthController {
   constructor(private commandBus: CommandBus) {}
 
   @Get('kakao/login')
-  @ApiOperation({ summary: '카카오 로그인 (응답은 /kakao/callback API 확인)' })
-  async signinByKakao(@Res() res: Response) {
-    const command = new KakaoCodeCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-  }
-
-  @Get('kakao/callback')
-  @ApiOperation({
-    summary: ' 로그인 시도에 대한 카카오 서버에 대한 응답 (/kakao/login 리다이렉트 API)',
-  })
+  @ApiOperation({ summary: '카카오 로그인' })
   @ApiResponse({
     status: 200,
-    description: `로그인 완료    
+    description: `302 - 로그인 완료    
     redirect - https://partyguham.com`,
     headers: {
       'Set-Cookie': {
@@ -80,6 +77,16 @@ export class WebOauthController {
       },
     },
   })
+  async signinByKakao(@Res() res: Response) {
+    const command = new KakaoCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('kakao/callback')
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
@@ -119,22 +126,10 @@ export class WebOauthController {
   // google //
 
   @Get('google/login')
-  @ApiOperation({ summary: '구글 로그인 (응답은 /google/callback API 확인)' })
-  async signinByGoogle(@Res() res: Response) {
-    const command = new GoogleCodeCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-  }
-
-  @Get('google/callback')
-  @ApiOperation({
-    summary: '사용 X // 로그인 시도에 대한 구글 서버에 대한 응답 (/google/login 리다이렉트 API)',
-  })
+  @ApiOperation({ summary: '구글 로그인' })
   @ApiResponse({
     status: 200,
-    description: `로그인 완료    
+    description: `302 - 로그인 완료    
     redirect - https://partyguham.com`,
     headers: {
       'Set-Cookie': {
@@ -178,6 +173,16 @@ export class WebOauthController {
       },
     },
   })
+  async signinByGoogle(@Res() res: Response) {
+    const command = new GoogleCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('google/callback')
   async googleCallback(
     @Req() req: Request,
     @Res() res: Response,
@@ -238,36 +243,14 @@ export class WebOauthController {
   /// Link
 
   @Get('kakao/link')
-  @ApiOperation({ summary: '카카오 연동 (응답은 /kakao/link/callback API 확인)' })
-  async linkByKakao(@Res() res: Response) {
-    const command = new KakaoLinkCodeCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-  }
-
-  @Get('kakao/link/callback')
   @ApiOperation({
-    summary: '연동 시도에 대한 카카오 서버에 대한 응답 (/kakao/link 리다이렉트 API)',
+    summary: '카카오 계정 연동',
     description: `존재하는 계정 - refreshToken, 연동 가능 계정 - linkToken`,
   })
   @ApiResponse({
-    status: 200,
-    description: '로그인되어 홈으로 리다이렉트',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-  })
-  @ApiResponse({
     status: 201,
-    description: '회원가입이 되어있지 않아 연동가능, linkToken 발급',
+    description: `302 - 회원가입이 되어있지 않아 연동가능, linkToken 발급
+    redirect - /my/account`,
     headers: {
       'Set-Cookie': {
         description: 'Cookie header',
@@ -278,6 +261,21 @@ export class WebOauthController {
       },
     },
   })
+  @ApiResponse({
+    status: 302,
+    description: `연동 불가  
+    redirect - /my/account?error=existed`,
+  })
+  async linkByKakao(@Res() res: Response) {
+    const command = new KakaoLinkCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('kakao/link/callback')
   async linkCallbackByKakao(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLinkLoginCommand(code);
 
@@ -303,36 +301,14 @@ export class WebOauthController {
   }
 
   @Get('google/link')
-  @ApiOperation({ summary: '구글 연동 (응답은 /google/link/callback API 확인)' })
-  async linkByGoogle(@Res() res: Response) {
-    const command = new GoogleLinkCodeCommand();
-
-    const result = await this.commandBus.execute(command);
-
-    res.redirect(result);
-  }
-
-  @Get('google/link/callback')
   @ApiOperation({
-    summary: '연동 시도에 대한 카카오 서버에 대한 응답 (/google/link 리다이렉트 API)',
+    summary: '구글 계정 연동 linkToken 발급',
     description: `존재하는 계정 - refreshToken, 연동 가능 계정 - linkToken`,
   })
   @ApiResponse({
-    status: 200,
-    description: '로그인되어 홈으로 리다이렉트',
-    headers: {
-      'Set-Cookie': {
-        description: 'Cookie header',
-        schema: {
-          type: 'string',
-          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
-        },
-      },
-    },
-  })
-  @ApiResponse({
     status: 201,
-    description: '회원가입이 되어있지 않아 연동가능, linkToken 발급',
+    description: `302 - 회원가입이 되어있지 않아 연동가능, linkToken 발급
+    redirect - /my/account`,
     headers: {
       'Set-Cookie': {
         description: 'Cookie header',
@@ -343,6 +319,21 @@ export class WebOauthController {
       },
     },
   })
+  @ApiResponse({
+    status: 302,
+    description: `연동 불가  
+    redirect - /my/account?error=existed`,
+  })
+  async linkByGoogle(@Res() res: Response) {
+    const command = new GoogleLinkCodeCommand();
+
+    const result = await this.commandBus.execute(command);
+
+    res.redirect(result);
+  }
+
+  @ApiExcludeEndpoint()
+  @Get('google/link/callback')
   async linkCallbackByGoogle(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new GoogleLinkLoginCommand(code);
 
