@@ -56,8 +56,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+      const signupAccessToken = await this.authService.signupAccessToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -70,18 +69,17 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
         email,
         image,
       );
-      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+
+      const signupAccessToken = await this.authService.signupAccessToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (oauth.userId) {
-      await this.userService.validateLogin(oauth.userId);
+      await this.userService.validateLogin(oauth.userId, oauth.id);
 
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const accessToken = await this.authService.createAccessToken(encryptOauthId);
-      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+      const accessToken = await this.authService.createAccessToken(oauth.id);
+      const refreshToken = await this.authService.createRefreshToken(oauth.id);
 
       this.authService.saveRefreshToken(oauth.userId, refreshToken);
 

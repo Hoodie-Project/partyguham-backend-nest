@@ -37,14 +37,17 @@ export class AppOauthController {
     status: 403,
     description: `- list\t\n
       1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+        - response body : recoverAccessToken  
+
       2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
     schema: {
       example: {
-        message: '회원탈퇴하여 30일 보관중인 계정입니다.',
+        message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
         error: 'USER_DELETED_30D',
         statusCode: 403,
+        recoverAccessToken: 'recoverAccessToken',
         path: '/dev/api/auth/admin/token',
-        timestamp: '2025-02-26T14:22:32.569Z',
+        timestamp: '2025-02-28T08:26:27.395Z',
       },
     },
   })
@@ -141,14 +144,17 @@ export class AppOauthController {
     status: 403,
     description: `- list\t\n
       1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+        - response body : recoverAccessToken  
+
       2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
     schema: {
       example: {
-        message: '회원탈퇴하여 30일 보관중인 계정입니다.',
+        message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
         error: 'USER_DELETED_30D',
         statusCode: 403,
+        recoverAccessToken: 'recoverAccessToken',
         path: '/dev/api/auth/admin/token',
-        timestamp: '2025-02-26T14:22:32.569Z',
+        timestamp: '2025-02-28T08:26:27.395Z',
       },
     },
   })

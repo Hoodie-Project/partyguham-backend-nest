@@ -7,7 +7,7 @@ import { AuthService } from '../auth.service';
 import { PayloadType } from '../jwt.payload';
 
 @Injectable()
-export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
+export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
   constructor(
     private oauthService: OauthService,
     private authService: AuthService,
@@ -21,13 +21,13 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
 
   async validate(payload: PayloadType) {
     try {
-      const decryptOauthId = Number(this.authService.decrypt(payload.id));
-      const oauth = await this.oauthService.findById(decryptOauthId);
+      const oauthId = Number(this.authService.decrypt(payload.id));
+      const oauth = await this.oauthService.findById(oauthId);
 
       if (!oauth || oauth.userId == null) {
         throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
       }
-      return { id: oauth.userId };
+      return { userId: oauth.userId, oauthId };
     } catch {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }

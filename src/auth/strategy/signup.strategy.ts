@@ -1,10 +1,10 @@
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { OauthService } from '../oauth.service';
 import { AuthService } from '../auth.service';
-import { PayloadType, SignupPayloadType } from '../jwt.payload';
+import { SignupPayloadType } from '../jwt.payload';
 
 @Injectable()
 export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
@@ -42,8 +42,8 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
 
   async validate(payload: SignupPayloadType) {
     try {
-      const decryptUserId = Number(this.authService.decrypt(payload.id));
-      const oauth = await this.oauthService.findById(decryptUserId);
+      const decryptOauthId = Number(this.authService.decrypt(payload.id));
+      const oauth = await this.oauthService.findById(decryptOauthId);
 
       if (!oauth) {
         throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');

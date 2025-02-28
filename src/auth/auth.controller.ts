@@ -1,9 +1,8 @@
-import { Body, Controller, ForbiddenException, Post, UseGuards } from '@nestjs/common';
-import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { CurrentRefreshType, CurrentUser } from 'src/common/decorators/auth.decorator';
 import { RefreshJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { AuthService } from './auth.service';
 import { ApiCookieAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { USER_ERROR } from 'src/common/error/user-error.message';
 
 @ApiTags('auth (인증)')
 @Controller('auth')
@@ -14,9 +13,8 @@ export class AuthController {
   @UseGuards(RefreshJwtAuthGuard)
   @ApiOperation({ summary: 'accessToken 재발급' })
   @Post('access-token')
-  async refreshTokens(@CurrentUser() user: CurrentUserType) {
-    const id = await this.authService.encrypt(String(user.id));
-    const accessToken = await this.authService.createAccessToken(id);
+  async refreshTokens(@CurrentUser() refresh: CurrentRefreshType) {
+    const accessToken = await this.authService.createAccessToken(refresh.oauthId);
 
     return { accessToken };
   }
@@ -34,10 +32,8 @@ export class AuthController {
   @Post('admin/token')
   async adminToken() {
     if (process.env.MODE_ENV !== 'prod') {
-      const id = await this.authService.encrypt(String(1));
-
-      const accessToken = await this.authService.createAccessToken(id);
-      const singupToken = await this.authService.signupAccessToken(id, 'email', 'image');
+      const accessToken = await this.authService.createAccessToken(1);
+      const singupToken = await this.authService.signupAccessToken(1, 'email', 'image');
 
       return { accessToken, singupToken };
     } else {
