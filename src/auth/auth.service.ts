@@ -27,9 +27,18 @@ export class AuthService {
     });
   }
 
+  async createRecoverAccessToken(oauthId: string | number) {
+    const encryptOauthId = await this.encrypt(String(oauthId));
+    const createPayload = { id: encryptOauthId };
+
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_RECOVER_SECRET,
+      expiresIn: '5m',
+      algorithm: 'HS256',
+    });
+  }
+
   async validateSignupAccessToken(token: string): Promise<any> {
-    // try {
-    // 토큰 검증
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.JWT_SIGNUP_SECRET,
       algorithms: ['HS256'],
@@ -48,9 +57,6 @@ export class AuthService {
     }
 
     return oauthId;
-    // } catch (error) {
-    //   throw new UnauthorizedException('Invalid or expired token');
-    // }
   }
 
   async createAccessToken(id: string) {

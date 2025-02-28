@@ -74,6 +74,15 @@ export class UserRepository implements IUserRepository {
     await this.userRepository.delete({ id: userId });
   }
 
+  async setUserActiveById(userId: number) {
+    await this.userRepository.update(
+      { id: userId }, // 조건
+      {
+        status: StatusEnum.ACTIVE,
+      },
+    );
+  }
+
   async setUserInactiveById(userId: number) {
     await this.userRepository.update(
       { id: userId }, // 조건

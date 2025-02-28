@@ -12,6 +12,7 @@ import { OauthEntity } from './entity/oauth.entity';
 import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
 import { SignupStrategy } from './strategy/signup.strategy';
+import { RecoverStrategy } from './strategy/recover.strategy';
 
 @Module({
   controllers: [AuthController],
@@ -19,6 +20,7 @@ import { SignupStrategy } from './strategy/signup.strategy';
     AccessStrategy,
     RefreshStrategy,
     SignupStrategy,
+    RecoverStrategy,
     AuthRepository,
     OauthRepository,
     AuthService,

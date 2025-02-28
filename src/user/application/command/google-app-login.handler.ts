@@ -75,7 +75,7 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     }
 
     if (oauth.userId) {
-      await this.userService.validateLogin(oauth.userId);
+      await this.userService.validateLogin(oauth.userId, oauth.id);
 
       const encryptOauthId = await this.authService.encrypt(String(oauth.id));
       const accessToken = await this.authService.createAccessToken(encryptOauthId);

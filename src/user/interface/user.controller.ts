@@ -19,8 +19,13 @@ import {
 import { Request, Response } from 'express';
 import { plainToInstance } from 'class-transformer';
 import { ApiBearerAuth, ApiHeader, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
+import {
+  CurrentRecoverType,
+  CurrentSignupType,
+  CurrentUser,
+  CurrentUserType,
+} from 'src/common/decorators/auth.decorator';
+import { AccessJwtAuthGuard, RecoverJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { CreateUserRequestDto } from './dto/request/create-user.request.dto';
@@ -63,6 +68,7 @@ import { DeleteUserCareersCommand } from '../application/command/delete-userCare
 import { UpdateUserCareerCommand } from '../application/command/update-userCareer.command';
 import { UpdateUserCareerRequestDto } from './dto/request/update-userCareer.request.dto';
 import { GetUserCarrerQuery } from '../application/query/get-userCarrer.query';
+import { RecoverUserCommand } from '../application/command/recover-user.command';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -627,5 +633,61 @@ export class UserController {
     const command = new DeleteUserCommand(userId);
 
     await this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(RecoverJwtAuthGuard)
+  @Post('recover/web')
+  @ApiOperation({
+    summary: '계정 복구',
+    description: `**탈퇴한 계정을 웹에서 복구 가능한 API 입니다.**  
+    로그인을 시도하여 성공하지만 계정이 잠겨 있는 경우 RecoverAccessToken를 받아 복구 해야합니다.  
+    복구가 완료되면 리턴 되는 값은 로그인 성공과 동일합니다.  
+    redirect - https://partyguham.com
+    `,
+  })
+  async userWebRecover(
+    @CurrentUser() recover: CurrentRecoverType,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    const command = new RecoverUserCommand(recover.userId, recover.oauthId);
+
+    const result = await this.commandBus.execute(command);
+
+    res.cookie('refreshToken', result.refreshToken, {
+      secure: true, // HTTPS 연결에서만 쿠키 전송
+      httpOnly: true, // JavaScript에서 쿠키 접근 불가능
+      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+    });
+
+    let redirectURL = process.env.BASE_URL;
+    if (process.env.MODE_ENV === 'dev') {
+      redirectURL = redirectURL + `?token=` + result.refreshToken;
+    }
+
+    res.redirect(`${redirectURL}`);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(RecoverJwtAuthGuard)
+  @Post('recover/app')
+  @ApiOperation({
+    summary: '계정 복구',
+    description: `**탈퇴한 계정을 앱에서 복구 가능한 API 입니다.**  
+    로그인을 시도하여 성공하지만 계정이 잠겨 있는 경우 RecoverAccessToken를 받아 복구 해야합니다.  
+    복구가 완료되면 리턴 되는 값은 로그인 성공과 동일합니다.  
+    `,
+  })
+  async userAppRecover(
+    @CurrentUser() recover: CurrentRecoverType,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
+    const command = new RecoverUserCommand(recover.userId, recover.oauthId);
+
+    const result = await this.commandBus.execute(command);
+
+    res.status(200).json({ refreshToken: result.refreshToken, accessToken: result.accessToken });
   }
 }

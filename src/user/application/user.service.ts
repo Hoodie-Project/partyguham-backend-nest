@@ -5,6 +5,7 @@ import { UserPersonalityRepository } from '../infra/db/repository/user_personali
 import { UserRepository } from '../infra/db/repository/user.repository';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { USER_ERROR } from 'src/common/error/user-error.message';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 export class UserService {
@@ -13,13 +14,15 @@ export class UserService {
     @Inject('UserCareerRepository') private userCareerRepository: UserCareerRepository,
     @Inject('UserLocationRepository') private userLocationRepository: UserLocationRepository,
     @Inject('UserPersonalityRepository') private userPersonalityRepository: UserPersonalityRepository,
+    private authService: AuthService,
   ) {}
 
-  async validateLogin(userId: number) {
+  async validateLogin(userId: number, oauthId: number) {
     const user = await this.userRepository.findById(userId);
 
     if (user.status === StatusEnum.INACTIVE) {
-      throw new ForbiddenException(USER_ERROR.USER_DELETED_30D);
+      const recoverAccessToken = await this.authService.createRecoverAccessToken(oauthId);
+      throw new ForbiddenException({ ...USER_ERROR.USER_DELETED_30D, recoverAccessToken });
     }
 
     if (user.status !== StatusEnum.ACTIVE) {
