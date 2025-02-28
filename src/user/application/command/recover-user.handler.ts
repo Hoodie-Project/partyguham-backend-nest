@@ -21,9 +21,8 @@ export class RecoverUserHandler implements ICommandHandler<RecoverUserCommand> {
 
     await this.userRepository.setUserActiveById(userId);
 
-    const encryptOauthId = await this.authService.encrypt(String(oauthId));
-    const accessToken = await this.authService.createAccessToken(encryptOauthId);
-    const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+    const accessToken = await this.authService.createAccessToken(oauthId);
+    const refreshToken = await this.authService.createRefreshToken(oauthId);
     this.authService.saveRefreshToken(userId, refreshToken);
 
     return { accessToken, refreshToken };
