@@ -67,7 +67,7 @@ import { DeleteUserPersonalityByQuestionCommand } from '../application/command/d
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 import { UpdateUserCareerCommand } from '../application/command/update-userCareer.command';
 import { UpdateUserCareerRequestDto } from './dto/request/update-userCareer.request.dto';
-import { GetUserCarrerQuery } from '../application/query/get-userCarrer.query';
+import { GetUserCareerQuery } from '../application/query/get-userCareer.query';
 import { RecoverUserCommand } from '../application/command/recover-user.command';
 
 @ApiTags('user (회원/유저)')
@@ -339,8 +339,8 @@ export class UserController {
     status: 404,
     description: '경력 데이터가 존재하지 않습니다.',
   })
-  async getUserCarrer(@CurrentUser() user: CurrentUserType) {
-    const command = new GetUserCarrerQuery(user.id);
+  async getUserCareer(@CurrentUser() user: CurrentUserType) {
+    const command = new GetUserCareerQuery(user.id);
 
     const result = await this.queryBus.execute(command);
 
@@ -361,7 +361,7 @@ export class UserController {
     description:
       '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
-  async createUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
+  async createUserCareer(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
     const { career } = body;
 
     const command = new CreateUserCareerCommand(user.id, career);
@@ -384,7 +384,7 @@ export class UserController {
     status: 403,
     description: '변경 권한이 없습니다.',
   })
-  async putUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
+  async putUserCareer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
     const { career } = body;
 
     const command = new UpdateUserCareerCommand(user.id, career);
