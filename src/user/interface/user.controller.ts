@@ -639,12 +639,25 @@ export class UserController {
   @UseGuards(RecoverJwtAuthGuard)
   @Post('recover/web')
   @ApiOperation({
-    summary: '계정 복구',
-    description: `**탈퇴한 계정을 웹에서 복구 가능한 API 입니다.**  
+    summary: '회원탈퇴 유저 복구',
+    description: `**회원탈퇴 유저를 웹에서 복구 가능한 API 입니다.**  
     로그인을 시도하여 성공하지만 계정이 잠겨 있는 경우 RecoverAccessToken를 받아 복구 해야합니다.  
     복구가 완료되면 리턴 되는 값은 로그인 성공과 동일합니다.  
     redirect - https://partyguham.com
     `,
+  })
+  @ApiResponse({
+    status: 302,
+    description: '회원탈퇴 유저 복구 완료 redirect - https://partyguham.com',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
   })
   async userWebRecover(
     @CurrentUser() recover: CurrentRecoverType,
@@ -673,11 +686,16 @@ export class UserController {
   @UseGuards(RecoverJwtAuthGuard)
   @Post('recover/app')
   @ApiOperation({
-    summary: '계정 복구',
-    description: `**탈퇴한 계정을 앱에서 복구 가능한 API 입니다.**  
+    summary: '회원탈퇴 유저 복구',
+    description: `**회원탈퇴 유저를 앱에서 복구 가능한 API 입니다.**  
     로그인을 시도하여 성공하지만 계정이 잠겨 있는 경우 RecoverAccessToken를 받아 복구 해야합니다.  
     복구가 완료되면 리턴 되는 값은 로그인 성공과 동일합니다.  
     `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원탈퇴 유저 복구 완료',
+    schema: { example: { accessToken: 'accessToken', refreshToken: 'refreshToken' } },
   })
   async userAppRecover(
     @CurrentUser() recover: CurrentRecoverType,
