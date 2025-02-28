@@ -1,5 +1,5 @@
 import { IQuery } from '@nestjs/cqrs';
 
-export class GetUserCarrerQuery implements IQuery {
+export class GetUserCareerQuery implements IQuery {
   constructor(readonly userId: number) {}
 }

@@ -65,7 +65,7 @@ import { GoogleLinkLoginHandler } from './application/command/googleLink-login.h
 import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handler';
 import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
 import { UpdateUserCareerHandler } from './application/command/update-userCareer.handler';
-import { GetUserCarrerHandler } from './application/query/get-userCarrer.handler';
+import { GetUserCareerHandler } from './application/query/get-userCareer.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -107,7 +107,7 @@ const queryHandlers = [
   UserByNicknameHandler,
   GetUserHandler,
   GetUsersHandler,
-  GetUserCarrerHandler,
+  GetUserCareerHandler,
   GetUserOauthHandler,
   GetMyPartiesHandler,
   GetMyPartyApplicationHandler,

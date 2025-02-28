@@ -67,7 +67,7 @@ import { DeleteUserPersonalityByQuestionCommand } from '../application/command/d
 import { DeleteUserCareersCommand } from '../application/command/delete-userCareers.command';
 import { UpdateUserCareerCommand } from '../application/command/update-userCareer.command';
 import { UpdateUserCareerRequestDto } from './dto/request/update-userCareer.request.dto';
-import { GetUserCarrerQuery } from '../application/query/get-userCarrer.query';
+import { GetUserCareerQuery } from '../application/query/get-userCareer.query';
 import { RecoverUserCommand } from '../application/command/recover-user.command';
 
 @ApiTags('user (회원/유저)')
@@ -339,8 +339,8 @@ export class UserController {
     status: 404,
     description: '경력 데이터가 존재하지 않습니다.',
   })
-  async getUserCarrer(@CurrentUser() user: CurrentUserType) {
-    const command = new GetUserCarrerQuery(user.id);
+  async getUserCareer(@CurrentUser() user: CurrentUserType) {
+    const command = new GetUserCareerQuery(user.id);
 
     const result = await this.queryBus.execute(command);
 
@@ -361,7 +361,7 @@ export class UserController {
     description:
       '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
-  async createUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
+  async createUserCareer(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
     const { career } = body;
 
     const command = new CreateUserCareerCommand(user.id, career);
@@ -384,7 +384,7 @@ export class UserController {
     status: 403,
     description: '변경 권한이 없습니다.',
   })
-  async putUserCarrer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
+  async putUserCareer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
     const { career } = body;
 
     const command = new UpdateUserCareerCommand(user.id, career);
@@ -639,12 +639,25 @@ export class UserController {
   @UseGuards(RecoverJwtAuthGuard)
   @Post('recover/web')
   @ApiOperation({
-    summary: '계정 복구',
-    description: `**탈퇴한 계정을 웹에서 복구 가능한 API 입니다.**  
+    summary: '회원탈퇴 유저 복구',
+    description: `**회원탈퇴 유저를 웹에서 복구 가능한 API 입니다.**  
     로그인을 시도하여 성공하지만 계정이 잠겨 있는 경우 RecoverAccessToken를 받아 복구 해야합니다.  
     복구가 완료되면 리턴 되는 값은 로그인 성공과 동일합니다.  
     redirect - https://partyguham.com
     `,
+  })
+  @ApiResponse({
+    status: 302,
+    description: '회원탈퇴 유저 복구 완료 redirect - https://partyguham.com',
+    headers: {
+      'Set-Cookie': {
+        description: 'Cookie header',
+        schema: {
+          type: 'string',
+          example: 'refreshToken=abc123; Path=/; HttpOnly; Secure; SameSite=Strict',
+        },
+      },
+    },
   })
   async userWebRecover(
     @CurrentUser() recover: CurrentRecoverType,
@@ -673,11 +686,16 @@ export class UserController {
   @UseGuards(RecoverJwtAuthGuard)
   @Post('recover/app')
   @ApiOperation({
-    summary: '계정 복구',
-    description: `**탈퇴한 계정을 앱에서 복구 가능한 API 입니다.**  
+    summary: '회원탈퇴 유저 복구',
+    description: `**회원탈퇴 유저를 앱에서 복구 가능한 API 입니다.**  
     로그인을 시도하여 성공하지만 계정이 잠겨 있는 경우 RecoverAccessToken를 받아 복구 해야합니다.  
     복구가 완료되면 리턴 되는 값은 로그인 성공과 동일합니다.  
     `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '회원탈퇴 유저 복구 완료',
+    schema: { example: { accessToken: 'accessToken', refreshToken: 'refreshToken' } },
   })
   async userAppRecover(
     @CurrentUser() recover: CurrentRecoverType,
