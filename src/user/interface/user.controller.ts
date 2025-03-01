@@ -69,6 +69,7 @@ import { UpdateUserCareerCommand } from '../application/command/update-userCaree
 import { UpdateUserCareerRequestDto } from './dto/request/update-userCareer.request.dto';
 import { GetUserCareerQuery } from '../application/query/get-userCareer.query';
 import { RecoverUserCommand } from '../application/command/recover-user.command';
+import { GetUserCareerResponseDto } from './dto/response/get-UserCareerResponseDto';
 
 @ApiTags('user (회원/유저)')
 @Controller('users')
@@ -333,7 +334,7 @@ export class UserController {
   @ApiResponse({
     status: 200,
     description: '유저 경력 조회',
-    type: [UserCareerResponseDto],
+    type: [GetUserCareerResponseDto],
   })
   @ApiResponse({
     status: 404,
@@ -344,7 +345,7 @@ export class UserController {
 
     const result = await this.queryBus.execute(command);
 
-    return plainToInstance(UserCareerResponseDto, result);
+    return plainToInstance(GetUserCareerResponseDto, result);
   }
 
   @ApiBearerAuth('accessToken')
