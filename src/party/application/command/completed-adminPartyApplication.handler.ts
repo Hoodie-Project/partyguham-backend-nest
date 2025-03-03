@@ -7,13 +7,12 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 
-import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { CompletedAdminPartyRecruitmentCommand } from './completed-adminPartyApplication.comand';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 
 @Injectable()
 @CommandHandler(CompletedAdminPartyRecruitmentCommand)
-export class RejectionAdminPartyApplicationHandler implements ICommandHandler<CompletedAdminPartyRecruitmentCommand> {
+export class CompletedAdminPartyApplicationHandler implements ICommandHandler<CompletedAdminPartyRecruitmentCommand> {
   constructor(
     private partyFactory: PartyFactory,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,

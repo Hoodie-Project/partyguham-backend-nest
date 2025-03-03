@@ -50,6 +50,12 @@ import { RejectionAdminPartyApplicationCommand } from '../application/command/re
 import { CompletedAdminPartyRecruitmentCommand } from '../application/command/completed-adminPartyApplication.comand';
 import { PartyRecruitmentsParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto';
 import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
+import { CreatePartyRecruitmentRequestDto } from './dto/request/recruitment/create-partyRecruitment.request.dto';
+import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
+import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
+import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/recruitment/delete-partyRecruitments.body.request.dto';
+import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
+import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
 
 @ApiBearerAuth('AccessJwt')
 @UseGuards(AccessJwtAuthGuard)
@@ -161,6 +167,59 @@ export class PartyAdminController {
     const command = new CompletedAdminPartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
 
     return this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Patch(':partyId/admin/recruitments/:partyRecruitmentId')
+  @PartyRecruitmentSwagger.updateRecruitment()
+  async updateRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyRecruitmentsParamRequestDto,
+    @Body() body: CreatePartyRecruitmentRequestDto,
+  ) {
+    const { positionId, content, recruiting_count } = body;
+
+    const command = new UpdatePartyRecruitmentCommand(
+      user.id,
+      param.partyId,
+      param.partyRecruitmentId,
+      positionId,
+      content,
+      recruiting_count,
+    );
+
+    const result = this.commandBus.execute(command);
+
+    return plainToInstance(PartyRecruitmentsResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Post(':partyId/admin/recruitments/batch-delete')
+  @PartyRecruitmentSwagger.batchDeleteRecruitment()
+  @HttpCode(204)
+  async batchDeleteRecruitment(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: DeletePartyRecruitmentBodyRequestDto,
+    @Param() param: PartyRequestDto,
+  ) {
+    const { partyRecruitmentIds } = body;
+
+    const command = new BatchDeletePartyRecruitmentCommand(user.id, param.partyId, partyRecruitmentIds);
+
+    return this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete(':partyId/admin/recruitments/:partyRecruitmentId')
+  @PartyRecruitmentSwagger.deleteRecruitment()
+  @HttpCode(204)
+  async deleteRecruitment(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentsParamRequestDto) {
+    const command = new DeletePartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
+
+    this.commandBus.execute(command);
   }
 
   @Post(':partyId/admin/applications/:partyApplicationId/approval')
