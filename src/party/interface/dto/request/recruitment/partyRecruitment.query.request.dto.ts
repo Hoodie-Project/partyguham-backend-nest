@@ -28,11 +28,13 @@ export class PartyRecruitmentQueryRequestDto {
     enum: ['active', 'completed'],
     description: `파티모집 공고 상태   
     active - 모집중  
-    completed - 모집완료  `,
+    completed - 모집완료  
+    값을 넣지 않으면 모든 조건 값에 대해 조회
+    `,
   })
   @IsIn(['active', 'completed'])
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   readonly status: 'active' | 'completed';
 
   @ApiPropertyOptional({

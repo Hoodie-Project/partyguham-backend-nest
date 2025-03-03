@@ -7,6 +7,7 @@ import { GetPartyRecruitmentsQuery } from './get-partyRecruitments.query';
 
 import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetPartyRecruitmentsQuery)
 export class GetPartyRecruitmentsHandler implements IQueryHandler<GetPartyRecruitmentsQuery> {
@@ -42,11 +43,18 @@ export class GetPartyRecruitmentsHandler implements IQueryHandler<GetPartyRecrui
       ])
       .loadRelationCountAndMap('partyRecruitments.applicationCount', 'partyRecruitments.partyApplications')
       .where('partyRecruitments.partyId = :partyId', { partyId })
-      .andWhere('partyRecruitments.status = :status', { status })
+
       .orderBy(`partyRecruitments.${sort}`, order);
 
     if (main !== undefined && main !== null) {
       partyRecruitmentQuery.andWhere('position.main = :main', { main });
+    }
+
+    if (status) {
+      partyRecruitmentQuery.andWhere('partyRecruitments.status = :status', { status });
+    } else {
+      const statuses = [StatusEnum.ACTIVE, StatusEnum.COMPLETED];
+      partyRecruitmentQuery.andWhere('partyRecruitments.status IN (:...statuses)', { statuses });
     }
 
     const partyRecruitments = await partyRecruitmentQuery.getMany();
