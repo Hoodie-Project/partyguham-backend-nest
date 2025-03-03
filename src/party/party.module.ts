@@ -65,6 +65,7 @@ import { DelegatePartyApplicationHandler } from './application/command/delegate-
 import { DeletePartyApplicationHandler } from './application/command/delete-partyApplication.handler';
 import { GetPartyApplicationMeHandler } from './application/query/get-partyApplicationMe.handler';
 import { PartyUserService } from './application/party-user.service';
+import { CompletedAdminPartyApplicationHandler } from './application/command/completed-adminPartyApplication.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -80,8 +81,10 @@ const commandHandlers = [
   BatchDeletePartyRecruitmentHandler,
   CreatePartyApplicationHandler,
   LeavePartyHandler,
+
   ApproveAdminPartyApplicationHandler,
   RejectionAdminPartyApplicationHandler,
+  CompletedAdminPartyApplicationHandler,
   ApprovePartyApplicationHandler,
   RejectionPartyApplicationHandler,
   DeletePartyApplicationHandler,
