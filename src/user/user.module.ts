@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { forwardRef, Module } from '@nestjs/common';
-import { UserController } from './interface/user.controller';
+import { UserController } from './interface/controller/user.controller';
 import { UserService } from './application/user.service';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -47,8 +47,8 @@ import { GoogleAppLoginHandler } from './application/command/google-app-login.ha
 import { DeleteUserLocationsHandler } from './application/command/delete-userLocations.handler';
 import { DeleteUserPersonalityByQuestionHandler } from './application/command/delete-userPersonalityByQuestion.handler';
 import { DeleteUserCareersHandler } from './application/command/delete-userCareers.handler';
-import { WebOauthController } from './interface/web-oauth.controller';
-import { AppOauthController } from './interface/app-oauth.controller';
+import { WebOauthController } from './interface/controller/web-oauth.controller';
+import { AppOauthController } from './interface/controller/app-oauth.controller';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -66,6 +66,8 @@ import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handle
 import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
 import { UpdateUserCareerHandler } from './application/command/update-userCareer.handler';
 import { GetUserCareerHandler } from './application/query/get-userCareer.handler';
+import { UserStatusController } from './interface/controller/user-status.controller';
+import { UserDetailsController } from './interface/controller/user-details.controller';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -131,7 +133,7 @@ const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
 const uploadDir = 'images/user';
 
 @Module({
-  controllers: [WebOauthController, AppOauthController, UserController],
+  controllers: [WebOauthController, AppOauthController, UserStatusController, UserController, UserDetailsController],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   exports: [UserService, ...repositories],
   imports: [
