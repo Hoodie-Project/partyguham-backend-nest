@@ -3,14 +3,14 @@ import { Body, Controller, Headers, Post, Req, Res, UseGuards } from '@nestjs/co
 import { Request, Response } from 'express';
 import { ApiBearerAuth, ApiBody, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-import { KakaoAppLoginCommand } from '../application/command/kakao-app-login.command';
-import { GoogleAppLoginCommand } from '../application/command/google-app-login.command';
+import { KakaoAppLoginCommand } from '../../application/command/kakao-app-login.command';
+import { GoogleAppLoginCommand } from '../../application/command/google-app-login.command';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { AppLinkRequestDto } from './dto/request/app-link.request.dto';
+import { AppLinkRequestDto } from '../dto/request/app-link.request.dto';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { KakaoAppLinkCommand } from '../application/command/kakao-app-link.command';
-import { GoogleAppLinkCommand } from '../application/command/google-app-link.command';
-import { AppGoogleLoginRequestDto } from './dto/request/app-google-login.request.dto';
+import { KakaoAppLinkCommand } from '../../application/command/kakao-app-link.command';
+import { GoogleAppLinkCommand } from '../../application/command/google-app-link.command';
+import { AppGoogleLoginRequestDto } from '../dto/request/app-google-login.request.dto';
 
 @ApiTags('app-oauth (앱 오픈 인증)')
 @Controller('users')

@@ -12,17 +12,17 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AccessJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
-
-import { KakaoCodeCommand } from '../application/command/kakao-code.command';
-import { KakaoLoginCommand } from '../application/command/kakao-login.command';
-import { GoogleCodeCommand } from '../application/command/google-code.command';
-import { GoogleLoginCommand } from '../application/command/google-login.command';
 import { CurrentSignupType, CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
-import { LinkOauthCommand } from '../application/command/link-oauth.command';
-import { KakaoLinkCodeCommand } from '../application/command/kakaoLink-code.command';
-import { KakaoLinkLoginCommand } from '../application/command/kakaoLink-login.command';
-import { GoogleLinkLoginCommand } from '../application/command/googleLink-login.command';
-import { GoogleLinkCodeCommand } from '../application/command/googleLink-code.command';
+
+import { KakaoCodeCommand } from '../../application/command/kakao-code.command';
+import { KakaoLoginCommand } from '../../application/command/kakao-login.command';
+import { GoogleCodeCommand } from '../../application/command/google-code.command';
+import { GoogleLoginCommand } from '../../application/command/google-login.command';
+import { LinkOauthCommand } from '../../application/command/link-oauth.command';
+import { KakaoLinkCodeCommand } from '../../application/command/kakaoLink-code.command';
+import { KakaoLinkLoginCommand } from '../../application/command/kakaoLink-login.command';
+import { GoogleLinkLoginCommand } from '../../application/command/googleLink-login.command';
+import { GoogleLinkCodeCommand } from '../../application/command/googleLink-code.command';
 
 @ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
