@@ -163,8 +163,8 @@ export class PartyRecruitmentSwagger {
   static batchDeleteRecruitment() {
     return applyDecorators(
       ApiOperation({
-        summary: '여러 개의 특정 파티 모집 삭제',
-        description: `**파티모집을 삭제하는 API 입니다.**  
+        summary: '파티 모집 다수 삭제',
+        description: `**파티모집을 다수 삭제하는 API 입니다.**  
         삭제할 레코드의 ID를 배열 형태로 요청 본문에 포함하여 전송합니다.
         사용자가 지정한 ID 배열을 기반으로 해당 레코드를 일괄적으로 삭제합니다.
         `,
