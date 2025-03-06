@@ -18,25 +18,25 @@ import { plainToInstance } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { PartySwagger } from './party.swagger';
+import { PartySwagger } from '../party.swagger';
 
-import { GetPartyResponseDto } from './dto/response/get-party.response.dto';
-import { PartyRequestDto } from './dto/request/party.param.request.dto';
-import { CreatePartyRequestDto } from './dto/request/create-party.request.dto';
-import { PartyTypeResponseDto } from './dto/response/partyType.response.dto';
-import { GetPartyUserResponseDto } from './dto/response/get-partyUser.response.dto';
-import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
+import { GetPartyResponseDto } from '../dto/response/get-party.response.dto';
+import { PartyRequestDto } from '../dto/request/party.param.request.dto';
+import { CreatePartyRequestDto } from '../dto/request/create-party.request.dto';
+import { PartyTypeResponseDto } from '../dto/response/partyType.response.dto';
+import { GetPartyUserResponseDto } from '../dto/response/get-partyUser.response.dto';
+import { PartyUserQueryRequestDto } from '../dto/request/partyUser.query.request.dto';
 
-import { CreatePartyCommand } from '../application/command/create-party.comand';
-import { LeavePartyCommand } from '../application/command/leave-party.comand';
+import { CreatePartyCommand } from '../../application/command/create-party.comand';
+import { LeavePartyCommand } from '../../application/command/leave-party.comand';
 
-import { GetPartyQuery } from '../application/query/get-party.query';
-import { GetPartyTypesQuery } from '../application/query/get-partyTypes.query';
-import { GetPartyUserQuery } from '../application/query/get-partyUser.query';
-import { GetPartyUserAuthorityQuery } from '../application/query/get-partyUserAuthority.query';
+import { GetPartyQuery } from '../../application/query/get-party.query';
+import { GetPartyTypesQuery } from '../../application/query/get-partyTypes.query';
+import { GetPartyUserQuery } from '../../application/query/get-partyUser.query';
+import { GetPartyUserAuthorityQuery } from '../../application/query/get-partyUserAuthority.query';
 
 @ApiBearerAuth('AccessJwt')
-@ApiTags('party (파티 - 프로젝트 모집 단위)')
+@ApiTags('party - 파티')
 @Controller('parties')
 export class PartyController {
   constructor(

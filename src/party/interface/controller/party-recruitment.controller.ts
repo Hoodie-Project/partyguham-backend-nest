@@ -4,35 +4,35 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
+import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 
-import { PartyRequestDto } from './dto/request/party.param.request.dto';
-import { CreatePartyRecruitmentRequestDto } from './dto/request/recruitment/create-partyRecruitment.request.dto';
-import { CreatePartyApplicationRequestDto } from './dto/request/application/create-application.request.dto';
-import { PartyRecruitmentsParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto';
-import { PartyRecruitmentsResponseDto } from './dto/response/recruitment/party-recruitments.response.dto';
-import { PartyRecruitmentParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto copy';
-import { PartyRecruitmentQueryRequestDto } from './dto/request/recruitment/partyRecruitment.query.request.dto';
-import { PartyRecruitmentResponseDto } from './dto/response/recruitment/party-recruitment.response.dto';
+import { PartyRequestDto } from '../dto/request/party.param.request.dto';
+import { CreatePartyRecruitmentRequestDto } from '../dto/request/recruitment/create-partyRecruitment.request.dto';
+import { CreatePartyApplicationRequestDto } from '../dto/request/application/create-application.request.dto';
+import { PartyRecruitmentsParamRequestDto } from '../dto/request/recruitment/partyRecruitment.param.request.dto';
+import { PartyRecruitmentsResponseDto } from '../dto/response/recruitment/party-recruitments.response.dto';
+import { PartyRecruitmentParamRequestDto } from '../dto/request/recruitment/partyRecruitment.param.request.dto copy';
+import { PartyRecruitmentQueryRequestDto } from '../dto/request/recruitment/partyRecruitment.query.request.dto';
+import { PartyRecruitmentResponseDto } from '../dto/response/recruitment/party-recruitment.response.dto';
 
-import { CreatePartyApplicationCommand } from '../application/command/create-partyApplication.comand';
-import { CreatePartyRecruitmentCommand } from '../application/command/create-partyRecruitment.comand';
-import { UpdatePartyRecruitmentCommand } from '../application/command/update-partyRecruitment.comand';
-import { DeletePartyRecruitmentCommand } from '../application/command/delete-partyRecruitment.comand';
+import { CreatePartyApplicationCommand } from '../../application/command/create-partyApplication.comand';
+import { CreatePartyRecruitmentCommand } from '../../application/command/create-partyRecruitment.comand';
+import { UpdatePartyRecruitmentCommand } from '../../application/command/update-partyRecruitment.comand';
+import { DeletePartyRecruitmentCommand } from '../../application/command/delete-partyRecruitment.comand';
 
-import { GetPartyApplicationsQuery } from '../application/query/get-partyApplications.query';
-import { GetPartyRecruitmentsQuery } from '../application/query/get-partyRecruitments.query';
-import { GetPartyRecruitmentQuery } from '../application/query/get-partyRecruitment.query';
-import { DeletePartyRecruitmentBodyRequestDto } from './dto/request/recruitment/delete-partyRecruitments.body.request.dto';
-import { BatchDeletePartyRecruitmentCommand } from '../application/command/batchDelete-partyRecruitment.comand';
-import { PartyApplicationQueryRequestDto } from './dto/request/application/partyApplication.query.request.dto';
-import { PartyApplicationsResponseDto } from './dto/response/application/get-application.response.dto';
-import { CreatePartyApplicationResponseDto } from './dto/response/application/create-application.response.dto';
-import { CreatePartyRecruitmentsResponseDto } from './dto/response/recruitment/create-partyRecruitments.response.dto';
-import { GetPartyApplicationMeQuery } from '../application/query/get-partyApplicationMe.query';
-import { PartyApplicationMeResponseDto } from './dto/response/application/get-applicationMe.response.dto';
+import { GetPartyApplicationsQuery } from '../../application/query/get-partyApplications.query';
+import { GetPartyRecruitmentsQuery } from '../../application/query/get-partyRecruitments.query';
+import { GetPartyRecruitmentQuery } from '../../application/query/get-partyRecruitment.query';
+import { DeletePartyRecruitmentBodyRequestDto } from '../dto/request/recruitment/delete-partyRecruitments.body.request.dto';
+import { BatchDeletePartyRecruitmentCommand } from '../../application/command/batchDelete-partyRecruitment.comand';
+import { PartyApplicationQueryRequestDto } from '../dto/request/application/partyApplication.query.request.dto';
+import { PartyApplicationsResponseDto } from '../dto/response/application/get-application.response.dto';
+import { CreatePartyApplicationResponseDto } from '../dto/response/application/create-application.response.dto';
+import { CreatePartyRecruitmentsResponseDto } from '../dto/response/recruitment/create-partyRecruitments.response.dto';
+import { GetPartyApplicationMeQuery } from '../../application/query/get-partyApplicationMe.query';
+import { PartyApplicationMeResponseDto } from '../dto/response/application/get-applicationMe.response.dto';
 
-@ApiTags('party recruitment (파티 모집 공고)')
+@ApiTags('party recruitment - 파티 모집 공고')
 @Controller('parties')
 export class PartyRecruitmentController {
   constructor(

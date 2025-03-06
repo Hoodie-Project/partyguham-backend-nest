@@ -33,7 +33,7 @@ import { GetCheckNicknameQuery } from '../../application/query/get-check-nicknam
 import { CreateUserRequestDto } from '../dto/request/create-user.request.dto';
 import { CreateUserCommand } from '../../application/command/create-user.command';
 
-@ApiTags('user status - 회원 상태, 계정 관리)')
+@ApiTags('user status - 회원 상태, 계정 관리')
 @Controller('users')
 export class UserStatusController {
   constructor(

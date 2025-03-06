@@ -21,39 +21,39 @@ import { plainToInstance } from 'class-transformer';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { PartySwagger } from './party.swagger';
+import { PartySwagger } from '../party.swagger';
 
-import { PartyDelegationRequestDto } from './dto/request/delegate-party.request.dto';
-import { UpdatePartyUserRequestDto } from './dto/request/update-partyUser.request.dto';
-import { PartyUserParamRequestDto } from './dto/request/partyUser.param.request.dto';
+import { PartyDelegationRequestDto } from '../dto/request/delegate-party.request.dto';
+import { UpdatePartyUserRequestDto } from '../dto/request/update-partyUser.request.dto';
+import { PartyUserParamRequestDto } from '../dto/request/partyUser.param.request.dto';
 
-import { PartyRequestDto } from './dto/request/party.param.request.dto';
-import { UpdatePartyRequestDto } from './dto/request/update-party.request.dto';
-import { PartyUserQueryRequestDto } from './dto/request/partyUser.query.request.dto';
-import { GetAdminPartyUsersResponseDto } from './dto/response/get-admin-partyUser.response.dto';
-import { DeletePartyUsersBodyRequestDto } from './dto/request/delete-partyUsers.body.request.dto';
+import { PartyRequestDto } from '../dto/request/party.param.request.dto';
+import { UpdatePartyRequestDto } from '../dto/request/update-party.request.dto';
+import { PartyUserQueryRequestDto } from '../dto/request/partyUser.query.request.dto';
+import { GetAdminPartyUsersResponseDto } from '../dto/response/get-admin-partyUser.response.dto';
+import { DeletePartyUsersBodyRequestDto } from '../dto/request/delete-partyUsers.body.request.dto';
 
-import { UpdatePartyCommand } from '../application/command/update-party.comand';
-import { DeletePartyCommand } from '../application/command/delete-party.comand';
-import { DeletePartyImageCommand } from '../application/command/delete-partyImage.comand';
-import { DeletePartyUserCommand } from '../application/command/delete-partyUser.comand';
-import { DelegatePartyCommand } from '../application/command/delegate-party.comand';
-import { UpdatePartyUserCommand } from '../application/command/update-partyUser.comand';
-import { DeletePartyUsersCommand } from '../application/command/delete-partyUsers.comand';
+import { UpdatePartyCommand } from '../../application/command/update-party.comand';
+import { DeletePartyCommand } from '../../application/command/delete-party.comand';
+import { DeletePartyImageCommand } from '../../application/command/delete-partyImage.comand';
+import { DeletePartyUserCommand } from '../../application/command/delete-partyUser.comand';
+import { DelegatePartyCommand } from '../../application/command/delegate-party.comand';
+import { UpdatePartyUserCommand } from '../../application/command/update-partyUser.comand';
+import { DeletePartyUsersCommand } from '../../application/command/delete-partyUsers.comand';
 
-import { GetAdminPartyUserQuery } from '../application/query/get-admin-partyUser.query';
-import { PartyApplicationSwagger } from './partyApplication.swagger';
-import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
-import { UpdatePartyResponseDto } from './dto/response/update-party.response.dto';
-import { ApproveAdminPartyApplicationCommand } from '../application/command/approve-adminPartyApplication.comand';
-import { RejectionAdminPartyApplicationCommand } from '../application/command/rejection-adminPartyApplication.comand';
-import { CompletedAdminPartyRecruitmentCommand } from '../application/command/completed-adminPartyApplication.comand';
-import { PartyRecruitmentsParamRequestDto } from './dto/request/recruitment/partyRecruitment.param.request.dto';
-import { PartyRecruitmentSwagger } from './partyRecruitment.swagger';
+import { GetAdminPartyUserQuery } from '../../application/query/get-admin-partyUser.query';
+import { PartyApplicationSwagger } from '../partyApplication.swagger';
+import { PartyApplicationParamRequestDto } from '../dto/request/application/partyApplication.param.request.dto';
+import { UpdatePartyResponseDto } from '../dto/response/update-party.response.dto';
+import { ApproveAdminPartyApplicationCommand } from '../../application/command/approve-adminPartyApplication.comand';
+import { RejectionAdminPartyApplicationCommand } from '../../application/command/rejection-adminPartyApplication.comand';
+import { CompletedAdminPartyRecruitmentCommand } from '../../application/command/completed-adminPartyApplication.comand';
+import { PartyRecruitmentsParamRequestDto } from '../dto/request/recruitment/partyRecruitment.param.request.dto';
+import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 
 @ApiBearerAuth('AccessJwt')
 @UseGuards(AccessJwtAuthGuard)
-@ApiTags('party admin (파티 관리자)')
+@ApiTags('party admin - 파티 관리자')
 @Controller('parties')
 export class PartyAdminController {
   constructor(

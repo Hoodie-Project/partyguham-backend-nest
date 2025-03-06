@@ -5,7 +5,7 @@ import { PositionResponseDto } from './dto/response/position.response.dto';
 import { plainToInstance } from 'class-transformer';
 import { PositionQueryRequestDto } from './dto/request/location.query.request.dto';
 
-@ApiTags('position (포지션 - 직군/직무)')
+@ApiTags('position - 포지션 (직군/직무)')
 @Controller('positions')
 export class PositionController {
   constructor(private positionService: PositionService) {}

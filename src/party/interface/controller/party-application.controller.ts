@@ -4,16 +4,16 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
-import { PartyApplicationSwagger } from './partyApplication.swagger';
+import { PartyApplicationSwagger } from '../partyApplication.swagger';
 
-import { PartyApplicationParamRequestDto } from './dto/request/application/partyApplication.param.request.dto';
+import { PartyApplicationParamRequestDto } from '../dto/request/application/partyApplication.param.request.dto';
 
-import { ApprovePartyApplicationCommand } from '../application/command/approve-partyApplication.comand';
-import { RejectionPartyApplicationCommand } from '../application/command/rejection-partyApplication.comand';
-import { DeletePartyApplicationCommand } from '../application/command/delete-partyApplication.comand';
+import { ApprovePartyApplicationCommand } from '../../application/command/approve-partyApplication.comand';
+import { RejectionPartyApplicationCommand } from '../../application/command/rejection-partyApplication.comand';
+import { DeletePartyApplicationCommand } from '../../application/command/delete-partyApplication.comand';
 
 @ApiBearerAuth('AccessJwt')
-@ApiTags('party application (파티 지원)')
+@ApiTags('party application - 파티 지원')
 @UseGuards(AccessJwtAuthGuard)
 @Controller('parties')
 export class PartyApplicationController {
