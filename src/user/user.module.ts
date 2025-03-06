@@ -66,6 +66,7 @@ import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handle
 import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
 import { UpdateUserCareerHandler } from './application/command/update-userCareer.handler';
 import { GetUserCareerHandler } from './application/query/get-userCareer.handler';
+import { UserStatusController } from './interface/user-status.controller';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -131,7 +132,7 @@ const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
 const uploadDir = 'images/user';
 
 @Module({
-  controllers: [WebOauthController, AppOauthController, UserController],
+  controllers: [WebOauthController, AppOauthController, UserStatusController, UserController],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   exports: [UserService, ...repositories],
   imports: [
