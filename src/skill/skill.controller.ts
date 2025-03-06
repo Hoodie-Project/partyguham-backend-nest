@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('skill (직무별 스킬/스텍)')
+@ApiTags('skill - 스킬/스텍')
 @Controller('skills')
 export class SkillController {
   @Get('')

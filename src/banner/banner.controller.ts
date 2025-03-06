@@ -18,7 +18,7 @@ import { CreateBannerRequestDto } from './dto/create-banner.request.dto';
 import { DeleteBannerRequestDto } from './dto/delete-banner.request.dto';
 import { BannerService } from './banner.service';
 
-@ApiTags('banner (배너)')
+@ApiTags('banner - 배너')
 @Controller('banner')
 export class BannerController {
   constructor(private bannerService: BannerService) {}

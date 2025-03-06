@@ -10,10 +10,10 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { PartyFactory } from './domain/party/party.factory';
 
-import { PartyController } from './interface/party.controller';
-import { PartyApplicationController } from './interface/party-application.controller';
-import { PartyLandingController } from './interface/party-landing.controller';
-import { PartyRecruitmentController } from './interface/party-recruitment.controller';
+import { PartyController } from './interface/controller/party.controller';
+import { PartyApplicationController } from './interface/controller/party-application.controller';
+import { PartyLandingController } from './interface/controller/party-landing.controller';
+import { PartyRecruitmentController } from './interface/controller/party-recruitment.controller';
 
 import { PartyEntity } from './infra/db/entity/party/party.entity';
 import { PartyUserEntity } from './infra/db/entity/party/party_user.entity';
@@ -58,7 +58,7 @@ import { GetPartyUserAuthorityHandler } from './application/query/get-partyUserA
 import { PartyService } from './application/party.service';
 import { PartyApplicationService } from './application/party-application.service';
 import { GetSearchHandler } from './application/query/get-search.handler';
-import { PartyAdminController } from './interface/party-admin.controller';
+import { PartyAdminController } from './interface/controller/party-admin.controller';
 import { ApproveAdminPartyApplicationHandler } from './application/command/approve-adminPartyApplication.handler';
 import { RejectionAdminPartyApplicationHandler } from './application/command/rejection-adminPartyApplication.handler';
 import { DelegatePartyApplicationHandler } from './application/command/delegate-party.handler';
