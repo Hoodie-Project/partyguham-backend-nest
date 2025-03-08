@@ -23,6 +23,7 @@ import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthoriz
 import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
 import { BannerModule } from './banner/banner.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { BannerModule } from './banner/banner.module';
     UserModule,
     ReportModule,
     BannerModule,
+    NotificationModule,
     // GuildModule,
   ],
   controllers: [AppController],
