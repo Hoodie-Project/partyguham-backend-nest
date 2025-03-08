@@ -66,12 +66,29 @@ export class UserDetailsController {
     status: 409,
     description: '이미 저장된 데이터가 있습니다.',
   })
-  async userLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
+  async createUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
     const { locations } = body;
 
     const command = new CreateUserLocationCommand(user.id, locations);
 
     const result = await this.commandBus.execute(command);
+
+    return plainToInstance(UserLocationResponseDto, result);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/locations')
+  @ApiOperation({ summary: '관심지역 조회' })
+  @ApiResponse({
+    status: 201,
+    description: '유저 관심지역 저장',
+    type: [UserLocationResponseDto],
+  })
+  async getUserLocation(@CurrentUser() user: CurrentUserType) {
+    const command = new GetUserCareerQuery(user.id);
+
+    const result = await this.queryBus.execute(command);
 
     return plainToInstance(UserLocationResponseDto, result);
   }
@@ -143,11 +160,28 @@ export class UserDetailsController {
     description:
       '이미 설문조사를 한 항목이 있습니다. \t\n 질문에 대한 응답 개수 조건이 맞지 않는 항목이 있습니다. \t\n 질문에 맞지 않는 선택지가 있습니다.',
   })
-  async userPersonality(@CurrentUser() user: CurrentUserType, @Body() body: UserPersonalityCreateRequestDto) {
+  async createUserPersonality(@CurrentUser() user: CurrentUserType, @Body() body: UserPersonalityCreateRequestDto) {
     const { personality } = body;
     const command = new CreateUserPersonalityCommand(user.id, personality);
 
     const result = await this.commandBus.execute(command);
+
+    return plainToInstance(UserPersonalityResponseDto, result);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('me/personalities')
+  @ApiOperation({ summary: '성향 조회' })
+  @ApiResponse({
+    status: 201,
+    description: '유저 성향 조회',
+    type: [UserPersonalityResponseDto],
+  })
+  async getUserPersonality(@CurrentUser() user: CurrentUserType) {
+    const command = new GetUserCareerQuery(user.id);
+
+    const result = await this.queryBus.execute(command);
 
     return plainToInstance(UserPersonalityResponseDto, result);
   }
