@@ -10,8 +10,6 @@ import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { UserCareerEntity } from './user_career.entity';
 import { OauthEntity } from '../../../../auth/entity/oauth.entity';
 import { UserLocationEntity } from './user_location.entity';
-import { GuildApplicationEntity } from 'src/guild/infra/db/entity/apply/guild_application.entity';
-import { GuildInvitationEntity } from 'src/guild/infra/db/entity/apply/guild_invitation.entity';
 import { UserPersonalityEntity } from './user_personality.entity';
 
 @Entity('user')
@@ -78,10 +76,4 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => PartyInvitationEntity, (partyInvite) => partyInvite.user)
   partyInvitations: PartyInvitationEntity[];
-
-  @OneToMany(() => GuildApplicationEntity, (guildApplication) => guildApplication.user)
-  guildApplications: GuildApplicationEntity[];
-
-  @OneToMany(() => GuildInvitationEntity, (userExperience) => userExperience.user)
-  guildInvitations: GuildInvitationEntity[];
 }
