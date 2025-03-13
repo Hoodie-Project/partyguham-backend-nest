@@ -49,7 +49,6 @@ import { NotificationModule } from './notification/notification.module';
     BannerModule,
     NotificationModule,
     ReportModule,
-    // GuildModule,
   ],
   controllers: [AppController],
   providers: [
