@@ -34,6 +34,21 @@ export class NotificationRepository {
     return await this.notificationRepository.update({ id: notificationId, userId }, { isRead: true });
   }
 
+  async create(userId: number, type: string, message: string, link: string) {
+    return this.notificationRepository.create({ userId, type, message, link });
+  }
+
+  async createBulk(userIds: number[], type: string, message: string, link: string) {
+    const notifications = userIds.map((userId) => ({
+      userId,
+      type,
+      message,
+      link,
+    }));
+
+    return this.notificationRepository.insert(notifications);
+  }
+
   /**
    * 사용자의 모든 알람을 읽음 처리
    */
