@@ -26,4 +26,8 @@ export class NotificationService {
   async createNotification(userId: number, type: string, message: string, link: string) {
     return await this.notificationRepository.create(userId, type, message, link);
   }
+
+  async createNotifications(userIds: number[], type: string, message: string, link: string) {
+    return await this.notificationRepository.createBulk(userIds, type, message, link);
+  }
 }
