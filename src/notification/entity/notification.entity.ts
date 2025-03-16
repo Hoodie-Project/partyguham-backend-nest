@@ -11,8 +11,11 @@ export class Notification {
   @Column({ length: 50 })
   type: string;
 
-  @Column({ type: 'text' })
-  content: string;
+  @Column('varchar', { nullable: false })
+  message: string;
+
+  @Column('varchar', { nullable: false })
+  link: string;
 
   @Column({ default: false })
   isRead: boolean;

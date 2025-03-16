@@ -66,6 +66,7 @@ import { DeletePartyApplicationHandler } from './application/command/delete-part
 import { GetPartyApplicationMeHandler } from './application/query/get-partyApplicationMe.handler';
 import { PartyUserService } from './application/party-user.service';
 import { CompletedAdminPartyApplicationHandler } from './application/command/completed-adminPartyApplication.handler';
+import { NotificationModule } from 'src/notification/notification.module';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -171,6 +172,7 @@ const uploadDir = 'images/party';
       PartyInvitationEntity,
     ]),
     CqrsModule,
+    NotificationModule,
     forwardRef(() => UserModule), // 유저 <-> 파티 순환참조 사용
   ],
 })

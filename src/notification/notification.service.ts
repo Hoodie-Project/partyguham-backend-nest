@@ -4,7 +4,6 @@ import { NotificationRepository } from './repository/notification.repository';
 @Injectable()
 export class NotificationService {
   constructor(private notificationRepository: NotificationRepository) {}
-  async createNotification() {}
 
   async getNotifications(userId: number, limit: number, cursor?: number) {
     return await this.notificationRepository.getNotifications(userId, limit, cursor);
@@ -22,5 +21,9 @@ export class NotificationService {
     }
 
     await this.notificationRepository.markAsRead(notificationId, userId);
+  }
+
+  async createNotification(userId: number, type: string, message: string, link: string) {
+    return await this.notificationRepository.create(userId, type, message, link);
   }
 }
