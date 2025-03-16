@@ -62,8 +62,18 @@ export class PartyUserRepository implements IPartyUserRepository {
     return await this.partyUserRepository.findOne({ where: { id } });
   }
 
+  async findAllbByPartyId(partyId: number) {
+    return await this.partyUserRepository.find({ where: { partyId } });
+  }
+
   async findMasterByUserId(userId: number) {
-    return await this.partyUserRepository.find({ where: { userId, authority: PartyAuthority.MASTER } });
+    return await this.partyUserRepository
+      .createQueryBuilder('partyUser')
+      .leftJoinAndSelect('partyUser.party', 'party')
+      .where('partyUser.userId = :userId', { userId })
+      .andWhere('partyUser.authority = :authority', { authority: PartyAuthority.MASTER })
+      .andWhere('party.status = :status', { status: StatusEnum.ACTIVE })
+      .getMany(); // 하나의 결과만 반환
   }
 
   async findByIds(ids: number[]) {

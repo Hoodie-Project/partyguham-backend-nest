@@ -10,6 +10,8 @@ export interface IPartyUserRepository {
   updateDeputy: (id: number) => Promise<void>;
   updateByPositionId: (id: number, positionId: number) => Promise<PartyUserEntity>;
   findOneById: (id: number) => Promise<PartyUserEntity>;
+  findAllbByPartyId: (partyId: number) => Promise<PartyUserEntity[]>;
+  findMasterByUserId: (userId: number) => Promise<PartyUserEntity[]>;
   findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
   findOne: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   deleteById: (id: number) => Promise<void>;

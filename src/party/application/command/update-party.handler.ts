@@ -13,12 +13,15 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { UpdatePartyCommand } from './update-party.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 @CommandHandler(UpdatePartyCommand)
 export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
@@ -46,6 +49,30 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     }
 
     await this.partyRepository.updateById(partyId, partyTypeId, title, content, image, status);
+
+    // 알람
+    if (status) {
+      const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
+      const partyUserIds = partyUserList.map((list) => list.userId);
+      const type = '파티활동';
+      const link = `party/${partyId}`;
+      if (status === StatusEnum.ACTIVE) {
+        this.notificationService.createNotifications(
+          partyUserIds,
+          type,
+          '파티가 다시 활성화되었어요. 다시 새로운 도전을 시작해 보세요.',
+          link,
+        );
+      }
+      if (status === StatusEnum.ARCHIVED) {
+        this.notificationService.createNotifications(
+          partyUserIds,
+          type,
+          '파티가 성공적으로 종료되었어요. 참여해 주셔서 감사합니다.',
+          link,
+        );
+      }
+    }
 
     const result = await this.partyRepository.findOneById(partyId);
 
