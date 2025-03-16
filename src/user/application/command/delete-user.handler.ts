@@ -20,7 +20,7 @@ export class DeleteUserHandler implements ICommandHandler<DeleteUserCommand> {
     // 파티장인 파티가 있는지 확인 -> 없으면 탈퇴 막음
     const partyUser = await this.partyUserService.findMasterByUserId(userId);
 
-    if (partyUser) {
+    if (partyUser.length > 0) {
       throw new ForbiddenException('파티장의 권한이 있어 탈퇴가 불가능 합니다.', 'ACCESS_DENIED');
     }
 
