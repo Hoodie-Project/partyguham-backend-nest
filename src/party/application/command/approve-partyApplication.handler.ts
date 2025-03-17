@@ -16,12 +16,14 @@ import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/i
 import { ApprovePartyApplicationCommand } from './approve-partyApplication.comand';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { StatusEnum } from 'src/common/entity/baseEntity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 @CommandHandler(ApprovePartyApplicationCommand)
 export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePartyApplicationCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -63,6 +65,13 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       partyApplication.userId,
       partyId,
       partyApplication.partyRecruitment.positionId,
+    );
+
+    this.notificationService.createNotification(
+      userId,
+      '지원소식',
+      `${party.title} 파티에 합류했어요. 함께 파티를 시작해 보세요!`,
+      `party/${partyId}`,
     );
 
     const recruiting = partyApplication.partyRecruitment.recruitingCount;
