@@ -22,12 +22,12 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
   }
 
   async validate(payload: { id: string; iat: number; exp: number }): Promise<{
-    id: number;
+    oauthId: number;
   }> {
     try {
       const decryptUserId = Number(this.authService.decrypt(payload.id));
 
-      return { id: decryptUserId };
+      return { oauthId: decryptUserId };
     } catch {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
