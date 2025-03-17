@@ -33,9 +33,10 @@ export class AuthController {
   async adminToken() {
     if (process.env.MODE_ENV !== 'prod') {
       const accessToken = await this.authService.createAccessToken(1);
+      const refreshToken = await this.authService.createRefreshToken(1);
       const singupToken = await this.authService.signupAccessToken(1, 'email', 'image');
 
-      return { accessToken, singupToken };
+      return { accessToken, refreshToken, singupToken };
     } else {
       return null;
     }
