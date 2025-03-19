@@ -22,7 +22,12 @@ export class UserService {
 
     if (user.status === StatusEnum.INACTIVE) {
       const recoverAccessToken = await this.authService.createRecoverAccessToken(oauthId);
-      throw new ForbiddenException({ ...USER_ERROR.USER_DELETED_30D, recoverAccessToken });
+      throw new ForbiddenException({
+        ...USER_ERROR.USER_DELETED_30D,
+        recoverAccessToken,
+        email: user.email,
+        deletedAt: user.updatedAt,
+      });
     }
 
     if (user.status !== StatusEnum.ACTIVE) {

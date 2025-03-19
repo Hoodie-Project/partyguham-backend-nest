@@ -67,6 +67,7 @@ import { GetPartyApplicationMeHandler } from './application/query/get-partyAppli
 import { PartyUserService } from './application/party-user.service';
 import { CompletedAdminPartyApplicationHandler } from './application/command/completed-adminPartyApplication.handler';
 import { NotificationModule } from 'src/notification/notification.module';
+import { UpdatePartyRecruitmentBatchStatusHandler } from './application/command/update-partyRecruitmentBatchStatus.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -80,6 +81,7 @@ const commandHandlers = [
   UpdatePartyRecruitmentHandler,
   DeletePartyRecruitmentHandler,
   BatchDeletePartyRecruitmentHandler,
+  UpdatePartyRecruitmentBatchStatusHandler,
   CreatePartyApplicationHandler,
   LeavePartyHandler,
 
