@@ -326,4 +326,27 @@ export class PartyRecruitmentSwagger {
       }),
     );
   }
+
+  static updateRecruitmentStatusBatch() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 모집 다수 데이터 (완료)상태 변경',
+        description: `**파티모집 다수 데이터를 (완료)상태 변경하는 API 입니다.**  
+        상태변경할 파티모집 ID를 배열 형태로 요청 본문에 포함하여 전송합니다.
+        상태 변경 확장성을 고려햐여 completed는 URL에 표기하지 않습니다.
+        -> 확장시 status 상태는 body에 상태를 받을 예정
+        `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 204,
+        description: '상태 변경 완료',
+      }),
+    );
+  }
 }

@@ -53,7 +53,7 @@ import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 import { CreatePartyRecruitmentRequestDto } from '../dto/request/recruitment/create-partyRecruitment.request.dto';
 import { UpdatePartyRecruitmentCommand } from '../../application/command/update-partyRecruitment.comand';
 import { PartyRecruitmentsResponseDto } from '../dto/response/recruitment/party-recruitments.response.dto';
-import { DeletePartyRecruitmentBodyRequestDto } from '../dto/request/recruitment/delete-partyRecruitments.body.request.dto';
+import { PartyRecruitmentIdsBodyRequestDto } from '../dto/request/recruitment/partyRecruitmentIds.body.request.dto';
 import { BatchDeletePartyRecruitmentCommand } from '../../application/command/batchDelete-partyRecruitment.comand';
 import { DeletePartyRecruitmentCommand } from '../../application/command/delete-partyRecruitment.comand';
 
@@ -171,6 +171,23 @@ export class PartyAdminController {
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
+  @Post(':partyId/admin/recruitment/batch-status')
+  @PartyRecruitmentSwagger.updateRecruitmentStatusBatch()
+  @HttpCode(200)
+  async updateRecruitmentStatusBatch(
+    @CurrentUser() user: CurrentUserType,
+    @Body() body: PartyRecruitmentIdsBodyRequestDto,
+    @Param() param: PartyRequestDto,
+  ) {
+    const { partyRecruitmentIds } = body;
+
+    const command = new BatchDeletePartyRecruitmentCommand(user.id, param.partyId, partyRecruitmentIds);
+
+    return this.commandBus.execute(command);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
   @Patch(':partyId/admin/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.updateRecruitment()
   async updateRecruitment(
@@ -201,7 +218,7 @@ export class PartyAdminController {
   @HttpCode(204)
   async batchDeleteRecruitment(
     @CurrentUser() user: CurrentUserType,
-    @Body() body: DeletePartyRecruitmentBodyRequestDto,
+    @Body() body: PartyRecruitmentIdsBodyRequestDto,
     @Param() param: PartyRequestDto,
   ) {
     const { partyRecruitmentIds } = body;

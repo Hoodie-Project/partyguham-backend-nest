@@ -1,3 +1,4 @@
+import { StatusEnum } from 'src/common/entity/baseEntity';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
 
 import { UpdateResult } from 'typeorm';
@@ -17,6 +18,7 @@ export interface IPartyRecruitmentRepository {
   updateRecruitedCount: (id: number, recruitedCount: number) => Promise<PartyRecruitmentEntity>;
   delete: (id: number) => Promise<void>;
   softDelete: (id: number) => Promise<void>;
-  batchDelete: (id: number[]) => Promise<void>;
+  batchDelete: (ids: number[]) => Promise<void>;
+  updateRecruitmentStatusBatch: (ids: number[], status: StatusEnum) => Promise<void>;
   deleteAll: (id: number) => Promise<void>;
 }

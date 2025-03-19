@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -81,6 +81,10 @@ export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {
 
   async batchDelete(recruitmentIds: number[]) {
     await this.partyRecruitmentRepository.delete(recruitmentIds);
+  }
+
+  async updateRecruitmentStatusBatch(recruitmentIds: number[], status: StatusEnum) {
+    await this.partyRecruitmentRepository.update({ id: In(recruitmentIds) }, { status });
   }
 
   async deleteAll(partyId: number) {
