@@ -65,7 +65,7 @@ import { DelegatePartyApplicationHandler } from './application/command/delegate-
 import { DeletePartyApplicationHandler } from './application/command/delete-partyApplication.handler';
 import { GetPartyApplicationMeHandler } from './application/query/get-partyApplicationMe.handler';
 import { PartyUserService } from './application/party-user.service';
-import { CompletedAdminPartyApplicationHandler } from './application/command/completed-adminPartyApplication.handler';
+import { CompletedAdminPartyRecruitmentHandler } from './application/command/completed-adminPartyRecruitment.handler';
 import { NotificationModule } from 'src/notification/notification.module';
 import { UpdatePartyRecruitmentBatchStatusHandler } from './application/command/update-partyRecruitmentBatchStatus.handler';
 
@@ -87,7 +87,7 @@ const commandHandlers = [
 
   ApproveAdminPartyApplicationHandler,
   RejectionAdminPartyApplicationHandler,
-  CompletedAdminPartyApplicationHandler,
+  CompletedAdminPartyRecruitmentHandler,
   ApprovePartyApplicationHandler,
   RejectionPartyApplicationHandler,
   DeletePartyApplicationHandler,

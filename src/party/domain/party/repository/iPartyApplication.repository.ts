@@ -5,6 +5,7 @@ export interface IPartyApplicationRepository {
   findOne: (partyApplicationId: number) => Promise<PartyApplicationEntity>;
   findOneByIdWithUserData: (partyApplicationId: number) => Promise<PartyApplicationEntity>;
   findAll: (id: number) => Promise<PartyApplicationEntity[]>;
+  findAllByPartyRecruitmentId: (RecruitmentId: number) => Promise<PartyApplicationEntity[]>;
   findOneWithRecruitment: (partyApplicationId: number) => Promise<PartyApplicationEntity>;
   findOneByUserIdAndPartyRecruitmentId: (userId: number, partyRecruitmentId: number) => Promise<PartyApplicationEntity>;
   update: (id: number, title: string, content: string) => Promise<void>;

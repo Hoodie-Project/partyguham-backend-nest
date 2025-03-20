@@ -7,21 +7,25 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 
-import { CompletedAdminPartyRecruitmentCommand } from './completed-adminPartyApplication.comand';
+import { CompletedAdminPartyRecruitmentCommand } from './completed-adminPartyRecruitment.comand';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
+import { NotificationService } from 'src/notification/notification.service';
+import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 
 @Injectable()
 @CommandHandler(CompletedAdminPartyRecruitmentCommand)
-export class CompletedAdminPartyApplicationHandler implements ICommandHandler<CompletedAdminPartyRecruitmentCommand> {
+export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<CompletedAdminPartyRecruitmentCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
+    @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
   ) {}
 
   async execute(command: CompletedAdminPartyRecruitmentCommand) {
-    const { userId, partyId, partyRecuritmentId } = command;
+    const { userId, partyId, partyRecruitmentId } = command;
 
     const party = await this.partyRepository.findOneById(partyId);
 
@@ -35,7 +39,14 @@ export class CompletedAdminPartyApplicationHandler implements ICommandHandler<Co
       throw new ForbiddenException('파티 모집공고에 대한 완료 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    await this.partyRecruitmentRepository.updateStatusCompleted(partyRecuritmentId);
+    await this.partyRecruitmentRepository.updateStatusCompleted(partyRecruitmentId);
+
+    const partyUserList = await this.partyApplicationRepository.findAllByPartyRecruitmentId(partyId);
+    const partyUserIds = partyUserList.map((list) => list.userId);
+    const type = '지원소식';
+    const link = `/my/apply`;
+
+    this.notificationService.createNotifications(partyUserIds, type, `지원하신 파티 모집공고가 마감되었습니다. `, link);
 
     return { message: '파티모집 공고를 완료 하였습니다.' };
   }

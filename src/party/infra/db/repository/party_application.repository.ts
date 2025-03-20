@@ -26,9 +26,17 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     return partyApplication;
   }
 
-  async findAll(partyRecruitmentId: number) {
+  async findAll(id: number) {
     const partyApplication = await this.partyApplicationRepository.find({
-      where: { id: partyRecruitmentId },
+      where: { id },
+    });
+
+    return partyApplication;
+  }
+
+  async findAllByPartyRecruitmentId(partyRecruitmentId: number) {
+    const partyApplication = await this.partyApplicationRepository.find({
+      where: { partyRecruitmentId },
     });
 
     return partyApplication;
