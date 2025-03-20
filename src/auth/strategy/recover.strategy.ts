@@ -23,7 +23,7 @@ export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
     try {
       const oauthId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(oauthId);
-      console.log(oauth);
+
       if (!oauth || oauth.userId == null) {
         throw new UnauthorizedException('복구가 불가능한 계정입니다.', 'UNAUTHORIZED');
       }

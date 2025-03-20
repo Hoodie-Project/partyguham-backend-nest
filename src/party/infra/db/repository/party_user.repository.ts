@@ -66,6 +66,14 @@ export class PartyUserRepository implements IPartyUserRepository {
     return await this.partyUserRepository.find({ where: { partyId } });
   }
 
+  async findOneMasterByPartyId(partyId: number) {
+    return await this.partyUserRepository
+      .createQueryBuilder('partyUser')
+      .where('partyUser.partyId = :partyId', { partyId })
+      .andWhere('partyUser.authority = :authority', { authority: PartyAuthority.MASTER })
+      .getOne();
+  }
+
   async findMasterByUserId(userId: number) {
     return await this.partyUserRepository
       .createQueryBuilder('partyUser')

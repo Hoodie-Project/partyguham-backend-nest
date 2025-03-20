@@ -17,12 +17,16 @@ import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entit
 import { RejectionPartyApplicationCommand } from './rejection-partyApplication.comand';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { StatusEnum } from 'src/common/entity/baseEntity';
+import { UserService } from 'src/user/application/user.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 @CommandHandler(RejectionPartyApplicationCommand)
 export class RejectionPartyApplicationHandler implements ICommandHandler<RejectionPartyApplicationCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private userService: UserService,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -56,6 +60,18 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     }
 
     await this.partyApplicationRepository.updateStatusRejected(partyApplicationId);
+
+    // 지원한 유저에게 알람 가기
+    const partyMaster = await this.partyUserRepository.findOneMasterByPartyId(partyId);
+    const nickname = (await this.userService.findUserData(userId)).nickname;
+    const type = '지원소식';
+    const link = `/party/setting/applicant/${partyId}`;
+    this.notificationService.createNotification(
+      partyMaster.userId,
+      type,
+      `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`,
+      link,
+    );
 
     return { message: '지원을 거절 하였습니다.' };
   }

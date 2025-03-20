@@ -11,11 +11,17 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreatePartyApplicationCommand } from './create-partyApplication.comand';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
+import { NotificationService } from 'src/notification/notification.service';
+import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
+import { UserService } from 'src/user/application/user.service';
 
 @Injectable()
 @CommandHandler(CreatePartyApplicationCommand)
 export class CreatePartyApplicationHandler implements ICommandHandler<CreatePartyApplicationCommand> {
   constructor(
+    private userService: UserService,
+    private notificationService: NotificationService,
+    @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
   ) {}
@@ -46,6 +52,18 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
       userId,
       partyRecruitmentId,
       message,
+    );
+
+    // 지원한 유저에게 알람 가기
+    const partyMaster = await this.partyUserRepository.findOneMasterByPartyId(partyId);
+    const nickname = (await this.userService.findUserData(userId)).nickname;
+    const type = '지원소식';
+    const link = `/party/setting/applicant/${partyId}`;
+    this.notificationService.createNotification(
+      partyMaster.userId,
+      type,
+      `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`,
+      link,
     );
 
     return partyApplication;

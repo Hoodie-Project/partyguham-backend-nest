@@ -35,6 +35,10 @@ export class UserService {
     }
   }
 
+  async findUserData(userId: number) {
+    return await this.userRepository.findById(userId);
+  }
+
   async findUserCarerrPrimaryByUserId(userId: number) {
     const userCarerr = await this.userCareerRepository.findByUserIdAndPrimary(userId);
 
