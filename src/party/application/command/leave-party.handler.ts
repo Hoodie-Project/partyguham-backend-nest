@@ -52,7 +52,7 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = '파티활동';
-    const link = `party/${partyId}`;
+    const link = `party/${partyId}#PartyPeopleTab`;
 
     this.notificationService.createNotifications(
       partyUserIds,

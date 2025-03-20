@@ -82,6 +82,13 @@ export class PartyUserRepository implements IPartyUserRepository {
     });
   }
 
+  async findByIdsWithUserData(ids: number[]) {
+    return this.partyUserRepository.find({
+      relations: ['user'],
+      where: { id: In(ids) },
+    });
+  }
+
   async findOne(userId: number, partyId: number) {
     return await this.partyUserRepository.findOne({ where: { userId, partyId } });
   }

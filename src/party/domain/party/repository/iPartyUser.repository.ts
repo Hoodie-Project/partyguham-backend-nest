@@ -13,6 +13,7 @@ export interface IPartyUserRepository {
   findAllbByPartyId: (partyId: number) => Promise<PartyUserEntity[]>;
   findMasterByUserId: (userId: number) => Promise<PartyUserEntity[]>;
   findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
+  findByIdsWithUserData: (id: number[]) => Promise<PartyUserEntity[]>;
   findOne: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   findOneWithUserData: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   deleteById: (id: number) => Promise<void>;
