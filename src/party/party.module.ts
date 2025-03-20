@@ -68,6 +68,7 @@ import { PartyUserService } from './application/party-user.service';
 import { CompletedAdminPartyRecruitmentHandler } from './application/command/completed-adminPartyRecruitment.handler';
 import { NotificationModule } from 'src/notification/notification.module';
 import { UpdatePartyRecruitmentBatchStatusHandler } from './application/command/update-partyRecruitmentBatchStatus.handler';
+import { PositionModule } from 'src/position/position.module';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -175,6 +176,7 @@ const uploadDir = 'images/party';
     ]),
     CqrsModule,
     NotificationModule,
+    PositionModule,
     forwardRef(() => UserModule), // 유저 <-> 파티 순환참조 사용
   ],
 })
