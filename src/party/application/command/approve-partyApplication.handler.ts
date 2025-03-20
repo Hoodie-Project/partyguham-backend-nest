@@ -52,27 +52,13 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       throw new ForbiddenException('본인이 지원 데이터만 수락 가능합니다.', 'ACCESS_DENIED');
     }
 
-    const partyUser = await this.partyUserRepository.findOne(userId, partyId);
+    const partyUser = await this.partyUserRepository.findOneWithUserData(userId, partyId);
     if (partyUser) {
       throw new ConflictException('이미 파티유저 입니다.', 'ALREADY_EXIST');
     }
 
     // 수락하기(지원자 응답 대기)
     await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
-
-    // 파티 소속 시키기
-    await this.partyUserRepository.createMember(
-      partyApplication.userId,
-      partyId,
-      partyApplication.partyRecruitment.positionId,
-    );
-
-    this.notificationService.createNotification(
-      userId,
-      '지원소식',
-      `${party.title} 파티에 합류했어요. 함께 파티를 시작해 보세요!`,
-      `party/${partyId}`,
-    );
 
     const recruiting = partyApplication.partyRecruitment.recruitingCount;
     const recruited = partyApplication.partyRecruitment.recruitedCount + 1;
@@ -87,6 +73,25 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     }
 
     await this.partyRecruitmentRepository.updateRecruitedCount(partyApplication.partyRecruitment.id, recruited);
+
+    // 파티 소속 시키기
+    await this.partyUserRepository.createMember(
+      partyApplication.userId,
+      partyId,
+      partyApplication.partyRecruitment.positionId,
+    );
+
+    const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
+    const partyUserIds = partyUserList.map((list) => list.userId);
+    const type = '파티활동';
+    const link = `party/${partyId}#home`;
+
+    this.notificationService.createNotifications(
+      partyUserIds,
+      type,
+      `${partyUser.user.nickname}님이 새롭게 파티에 합류했어요. 함께 파티를 시작해 보세요!`,
+      link,
+    );
 
     // 지원에 대한 삭제 보관 2주 (다른 로직에서 처리)
     // await this.partyApplicationRepository.delete(partyApplicationId);

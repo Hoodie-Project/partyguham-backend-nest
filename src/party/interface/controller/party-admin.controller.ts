@@ -47,7 +47,7 @@ import { PartyApplicationParamRequestDto } from '../dto/request/application/part
 import { UpdatePartyResponseDto } from '../dto/response/update-party.response.dto';
 import { ApproveAdminPartyApplicationCommand } from '../../application/command/approve-adminPartyApplication.comand';
 import { RejectionAdminPartyApplicationCommand } from '../../application/command/rejection-adminPartyApplication.comand';
-import { CompletedAdminPartyRecruitmentCommand } from '../../application/command/completed-adminPartyApplication.comand';
+import { CompletedAdminPartyRecruitmentCommand } from '../../application/command/completed-adminPartyRecruitment.comand';
 import { PartyRecruitmentsParamRequestDto } from '../dto/request/recruitment/partyRecruitment.param.request.dto';
 import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 import { CreatePartyRecruitmentRequestDto } from '../dto/request/recruitment/create-partyRecruitment.request.dto';

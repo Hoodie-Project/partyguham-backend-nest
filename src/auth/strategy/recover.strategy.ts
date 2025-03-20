@@ -14,12 +14,13 @@ export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_ACCESS_SECRET,
+      secretOrKey: process.env.JWT_RECOVER_SECRET,
       ignoreExpiration: false,
     });
   }
 
   async validate(payload: PayloadType) {
+    console.log(payload);
     try {
       const oauthId = Number(this.authService.decrypt(payload.id));
       const oauth = await this.oauthService.findById(oauthId);

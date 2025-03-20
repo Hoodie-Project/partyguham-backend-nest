@@ -12,12 +12,14 @@ import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { DeletePartyUsersCommand } from './delete-partyUsers.comand';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 @CommandHandler(DeletePartyUsersCommand)
 export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsersCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
@@ -43,7 +45,7 @@ export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsers
       throw new ForbiddenException('파티 유저를 내보낼 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    const deletedPartyUsers = await this.partyUserRepository.findByIds(partyUserIds);
+    const deletedPartyUsers = await this.partyUserRepository.findByIdsWithUserData(partyUserIds);
 
     if (deletedPartyUsers.length === 0) {
       throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
@@ -56,6 +58,20 @@ export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsers
     });
 
     await this.partyUserRepository.batchDelete(partyUserIds);
+
+    deletedPartyUsers.map(async (deletedPartyUser) => {
+      const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
+      const partyUserIds = partyUserList.map((list) => list.userId);
+      const type = '파티활동';
+      const link = `party/${partyId}#PartyPeopleTab`;
+
+      this.notificationService.createNotifications(
+        partyUserIds,
+        type,
+        `${deletedPartyUser.user.nickname}님이 파티에서 제외되었습니다.`,
+        link,
+      );
+    });
 
     return;
   }

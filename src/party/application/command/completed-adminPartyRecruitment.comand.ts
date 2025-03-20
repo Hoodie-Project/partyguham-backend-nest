@@ -4,6 +4,6 @@ export class CompletedAdminPartyRecruitmentCommand implements ICommand {
   constructor(
     readonly userId: number,
     readonly partyId: number,
-    readonly partyRecuritmentId: number,
+    readonly partyRecruitmentId: number,
   ) {}
 }

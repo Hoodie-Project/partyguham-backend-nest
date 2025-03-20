@@ -68,6 +68,7 @@ import { UpdateUserCareerHandler } from './application/command/update-userCareer
 import { GetUserCareerHandler } from './application/query/get-userCareer.handler';
 import { UserStatusController } from './interface/controller/user-status.controller';
 import { UserDetailsController } from './interface/controller/user-details.controller';
+import { RecoverUserHandler } from './application/command/recover-user.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -102,6 +103,7 @@ const commandHandlers = [
   UpdateUserCareerHandler,
   DeleteUserCareerHandler,
   DeleteUserCareersHandler,
+  RecoverUserHandler,
 ];
 
 const queryHandlers = [

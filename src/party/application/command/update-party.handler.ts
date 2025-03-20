@@ -51,11 +51,12 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     await this.partyRepository.updateById(partyId, partyTypeId, title, content, image, status);
 
     // 알람
+    const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
+    const partyUserIds = partyUserList.map((list) => list.userId);
+    const type = '파티활동';
+    const link = `party/${partyId}/#home`;
+
     if (status) {
-      const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
-      const partyUserIds = partyUserList.map((list) => list.userId);
-      const type = '파티활동';
-      const link = `party/${partyId}`;
       if (status === StatusEnum.ACTIVE) {
         this.notificationService.createNotifications(
           partyUserIds,
@@ -72,6 +73,13 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
           link,
         );
       }
+    } else {
+      this.notificationService.createNotifications(
+        partyUserIds,
+        type,
+        '파티 정보가 업데이트되었어요. 변경된 내용을 확인하세요.',
+        link,
+      );
     }
 
     const result = await this.partyRepository.findOneById(partyId);

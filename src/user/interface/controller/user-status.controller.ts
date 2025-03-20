@@ -154,7 +154,7 @@ export class UserStatusController {
     await this.commandBus.execute(command);
   }
 
-  @ApiBearerAuth('accessToken')
+  @ApiBearerAuth('recoverAccessToken')
   @UseGuards(RecoverJwtAuthGuard)
   @Post('recover/web')
   @ApiOperation({
@@ -201,7 +201,7 @@ export class UserStatusController {
     res.redirect(`${redirectURL}`);
   }
 
-  @ApiBearerAuth('accessToken')
+  @ApiBearerAuth('recoverAccessToken')
   @UseGuards(RecoverJwtAuthGuard)
   @Post('recover/app')
   @ApiOperation({
