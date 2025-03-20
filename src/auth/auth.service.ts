@@ -29,7 +29,7 @@ export class AuthService {
     });
   }
 
-  async createRecoverAccessToken(oauthId: string | number) {
+  async createRecoverAccessToken(oauthId: number) {
     const encryptOauthId = await this.encrypt(String(oauthId));
     const createPayload = { id: encryptOauthId };
 
