@@ -73,7 +73,7 @@ export class PartyUserRepository implements IPartyUserRepository {
       .where('partyUser.userId = :userId', { userId })
       .andWhere('partyUser.authority = :authority', { authority: PartyAuthority.MASTER })
       .andWhere('party.status = :status', { status: StatusEnum.ACTIVE })
-      .getMany(); // 하나의 결과만 반환
+      .getMany();
   }
 
   async findByIds(ids: number[]) {
@@ -84,6 +84,15 @@ export class PartyUserRepository implements IPartyUserRepository {
 
   async findOne(userId: number, partyId: number) {
     return await this.partyUserRepository.findOne({ where: { userId, partyId } });
+  }
+
+  async findOneWithUserData(userId: number, partyId: number) {
+    return await this.partyUserRepository
+      .createQueryBuilder('partyUser')
+      .leftJoinAndSelect('partyUser.user', 'user')
+      .where('partyUser.userId = :userId', { userId })
+      .andWhere('partyUser.partyId = :partyId', { partyId })
+      .getOne();
   }
 
   async deleteById(id: number) {
