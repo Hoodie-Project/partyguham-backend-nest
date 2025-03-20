@@ -42,6 +42,13 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     return partyApplication;
   }
 
+  async findOneByIdWithUserData(id: number) {
+    return this.partyApplicationRepository.findOne({
+      relations: ['user'],
+      where: { id },
+    });
+  }
+
   async findOneWithRecruitment(id: number) {
     const partyApplication = await this.partyApplicationRepository.findOne({
       where: { id },

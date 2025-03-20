@@ -9,12 +9,14 @@ import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entit
 
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { RejectionAdminPartyApplicationCommand } from './rejection-adminPartyApplication.comand';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 @CommandHandler(RejectionAdminPartyApplicationCommand)
 export class RejectionAdminPartyApplicationHandler implements ICommandHandler<RejectionAdminPartyApplicationCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -42,6 +44,17 @@ export class RejectionAdminPartyApplicationHandler implements ICommandHandler<Re
     }
 
     await this.partyApplicationRepository.updateStatusRejected(partyApplicationId);
+
+    // 지원한 유저에게 알람 가기
+    const applicationUser = await this.partyApplicationRepository.findOneByIdWithUserData(partyApplicationId);
+    const type = '지원소식';
+    const link = `/my/apply`;
+    this.notificationService.createNotification(
+      applicationUser.userId,
+      type,
+      `${applicationUser.user.nickname}님의 지원이 거절되었어요.`,
+      link,
+    );
 
     return { message: '지원자를 거절 하였습니다.' };
   }

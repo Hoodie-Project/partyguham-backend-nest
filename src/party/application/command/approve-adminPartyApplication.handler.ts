@@ -16,12 +16,14 @@ import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/i
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { ApproveAdminPartyApplicationCommand } from './approve-adminPartyApplication.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 @CommandHandler(ApproveAdminPartyApplicationCommand)
 export class ApproveAdminPartyApplicationHandler implements ICommandHandler<ApproveAdminPartyApplicationCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -52,6 +54,17 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
 
     // 수락하기
     await this.partyApplicationRepository.updateStatusProcessing(partyApplicationId);
+
+    // 지원한 유저에게 알람 가기
+    const applicationUser = await this.partyApplicationRepository.findOneByIdWithUserData(partyApplicationId);
+    const type = '지원소식';
+    const link = `/my/apply`;
+    this.notificationService.createNotification(
+      applicationUser.userId,
+      type,
+      `${applicationUser.user.nickname}님의 지원이 수락되었어요. 합류 여부를 결정해 주세요.`,
+      link,
+    );
 
     return { message: '지원자를 수락 하였습니다.' };
   }
