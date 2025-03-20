@@ -35,8 +35,9 @@ export class AuthController {
       const accessToken = await this.authService.createAccessToken(1);
       const refreshToken = await this.authService.createRefreshToken(1);
       const singupToken = await this.authService.signupAccessToken(1, 'email', 'image');
+      const recoverToken = await this.authService.createRecoverAccessToken(1);
 
-      return { accessToken, refreshToken, singupToken };
+      return { accessToken, refreshToken, singupToken, recoverToken };
     } else {
       return null;
     }
