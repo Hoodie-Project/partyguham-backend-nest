@@ -11,6 +11,7 @@ export interface IPartyUserRepository {
   updateByPositionId: (id: number, positionId: number) => Promise<PartyUserEntity>;
   findOneById: (id: number) => Promise<PartyUserEntity>;
   findAllbByPartyId: (partyId: number) => Promise<PartyUserEntity[]>;
+  findOneMasterByPartyId: (partyId: number) => Promise<PartyUserEntity>;
   findMasterByUserId: (userId: number) => Promise<PartyUserEntity[]>;
   findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
   findByIdsWithUserData: (id: number[]) => Promise<PartyUserEntity[]>;
