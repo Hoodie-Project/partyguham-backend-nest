@@ -344,7 +344,7 @@ export class PartyRecruitmentSwagger {
         required: true,
       }),
       ApiResponse({
-        status: 204,
+        status: 200,
         description: '상태 변경 완료',
       }),
     );

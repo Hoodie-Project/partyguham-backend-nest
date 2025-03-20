@@ -60,20 +60,6 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     // 수락하기(지원자 응답 대기)
     await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
 
-    // 파티 소속 시키기
-    await this.partyUserRepository.createMember(
-      partyApplication.userId,
-      partyId,
-      partyApplication.partyRecruitment.positionId,
-    );
-
-    this.notificationService.createNotification(
-      userId,
-      '지원소식',
-      `${party.title} 파티에 합류했어요. 함께 파티를 시작해 보세요!`,
-      `party/${partyId}`,
-    );
-
     const recruiting = partyApplication.partyRecruitment.recruitingCount;
     const recruited = partyApplication.partyRecruitment.recruitedCount + 1;
 
@@ -87,6 +73,13 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     }
 
     await this.partyRecruitmentRepository.updateRecruitedCount(partyApplication.partyRecruitment.id, recruited);
+
+    // 파티 소속 시키기
+    await this.partyUserRepository.createMember(
+      partyApplication.userId,
+      partyId,
+      partyApplication.partyRecruitment.positionId,
+    );
 
     // 지원에 대한 삭제 보관 2주 (다른 로직에서 처리)
     // await this.partyApplicationRepository.delete(partyApplicationId);
