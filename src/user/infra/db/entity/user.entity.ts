@@ -3,7 +3,6 @@ import { BaseEntity } from 'src/common/entity/baseEntity';
 
 import { UserSkillEntity } from './user_skill.entity';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
-import { FollowEntity } from 'src/user/infra/db/entity/follow.entity';
 import { PartyApplicationEntity } from 'src/party/infra/db/entity/apply/party_application.entity';
 import { PartyInvitationEntity } from 'src/party/infra/db/entity/apply/party_invitation.entity';
 import { AuthEntity } from 'src/auth/entity/auth.entity';
@@ -61,12 +60,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
   userSkills: UserSkillEntity[];
-
-  @OneToMany(() => FollowEntity, (follow) => follow.follower)
-  followers: FollowEntity[];
-
-  @OneToMany(() => FollowEntity, (follow) => follow.following)
-  followings: FollowEntity[];
 
   @OneToMany(() => PartyUserEntity, (party) => party.user)
   partyUsers: PartyUserEntity[];

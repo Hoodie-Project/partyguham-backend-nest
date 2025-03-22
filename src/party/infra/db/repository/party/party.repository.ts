@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
-import { PartyEntity } from '../entity/party/party.entity';
+import { PartyEntity } from '../../entity/party/party.entity';
 
 import { Party } from 'src/party/domain/party/party';
 import { StatusEnum } from 'src/common/entity/baseEntity';

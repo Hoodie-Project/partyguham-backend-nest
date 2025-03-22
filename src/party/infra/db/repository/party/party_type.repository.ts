@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyTypeRepository } from 'src/party/domain/party/repository/iPartyType.repository';
-import { PartyTypeEntity } from '../entity/party/party_type.entity';
+import { PartyTypeEntity } from '../../entity/party/party_type.entity';
 
 @Injectable()
 export class PartyTypeRepository implements IPartyTypeRepository {

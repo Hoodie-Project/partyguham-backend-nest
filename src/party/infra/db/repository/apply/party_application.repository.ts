@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { StatusEnum } from 'src/common/entity/baseEntity';
 
-import { PartyApplicationEntity } from '../entity/apply/party_application.entity';
+import { PartyApplicationEntity } from '../../entity/apply/party_application.entity';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 
 @Injectable()

@@ -21,11 +21,11 @@ import { PartyApplicationEntity } from './infra/db/entity/apply/party_applicatio
 import { PartyInvitationEntity } from './infra/db/entity/apply/party_invitation.entity';
 import { PartyTypeEntity } from './infra/db/entity/party/party_type.entity';
 
-import { PartyRepository } from './infra/db/repository/party.repository';
-import { PartyRecruitmentRepository } from './infra/db/repository/party_recruitment.repository';
-import { PartyUserRepository } from './infra/db/repository/party_user.repository';
-import { PartyTypeRepository } from './infra/db/repository/party_type.repository';
-import { PartyApplicationRepository } from './infra/db/repository/party_application.repository';
+import { PartyRepository } from './infra/db/repository/party/party.repository';
+import { PartyRecruitmentRepository } from './infra/db/repository/apply/party_recruitment.repository';
+import { PartyUserRepository } from './infra/db/repository/party/party_user.repository';
+import { PartyTypeRepository } from './infra/db/repository/party/party_type.repository';
+import { PartyApplicationRepository } from './infra/db/repository/apply/party_application.repository';
 
 import { GetPartiesHandler } from './application/query/get-parties.handler';
 import { GetPartyHandler } from './application/query/get-party.handler';
