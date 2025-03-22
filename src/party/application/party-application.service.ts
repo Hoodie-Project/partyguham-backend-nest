@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { PartyApplicationRepository } from '../infra/db/repository/party_application.repository';
+import { PartyApplicationRepository } from '../infra/db/repository/apply/party_application.repository';
 
 @Injectable()
 export class PartyApplicationService {

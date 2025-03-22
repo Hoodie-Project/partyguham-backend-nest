@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
-import { PartyRecruitmentEntity } from '../entity/apply/party_recruitment.entity';
+import { PartyRecruitmentEntity } from '../../entity/apply/party_recruitment.entity';
 
 @Injectable()
 export class PartyRecruitmentRepository implements IPartyRecruitmentRepository {

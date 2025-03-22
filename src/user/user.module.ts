@@ -14,16 +14,12 @@ import { UserRepository } from './infra/db/repository/user.repository';
 import { AuthModule } from 'src/auth/auth.module';
 import { GetUsersHandler } from './application/query/get-users.handler';
 import { UserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
-import { FollowRepository } from './infra/db/repository/follow.repository';
-import { FollowEntity } from './infra/db/entity/follow.entity';
-import { FollowFactory } from './domain/follow/follow.factory';
-import { GetFollowHandler } from './application/query/get-follow.handler';
+
 import { UserSkillRepository } from './infra/db/repository/user_skill.repository';
 import { UserSkillEntity } from './infra/db/entity/user_skill.entity';
 import { KakaoLoginHandler } from './application/command/kakao-login.handler';
 import { LocationModule } from 'src/location/location.module';
 import { PositionModule } from 'src/position/position.module';
-import { SkillModule } from 'src/skill/skill.module';
 import { PersonalityModule } from 'src/personality/personality.module';
 import { CreateUserLocationHandler } from './application/command/create.userLocation.handler';
 import { CreateUserPersonalityHandler } from './application/command/create.userPersonality.handler';
@@ -115,16 +111,14 @@ const queryHandlers = [
   GetUserOauthHandler,
   GetMyPartiesHandler,
   GetMyPartyApplicationHandler,
-  GetFollowHandler,
 ];
 
 const eventHandlers = [];
 
-const factories = [UserFactory, FollowFactory];
+const factories = [UserFactory];
 
 const repositories = [
   { provide: 'UserRepository', useClass: UserRepository },
-  { provide: 'FollowRepository', useClass: FollowRepository },
   { provide: 'UserSkillRepository', useClass: UserSkillRepository },
   { provide: 'UserLocationRepository', useClass: UserLocationRepository },
   { provide: 'UserPersonalityRepository', useClass: UserPersonalityRepository },
@@ -172,7 +166,6 @@ const uploadDir = 'images/user';
 
     TypeOrmModule.forFeature([
       UserEntity,
-      FollowEntity,
       UserLocationEntity,
       UserCareerEntity,
       UserSkillEntity,
@@ -183,7 +176,6 @@ const uploadDir = 'images/user';
     PositionModule,
     LocationModule,
     PersonalityModule,
-    SkillModule,
     forwardRef(() => PartyModule), // 유저 <-> 파티 순환참조 사용
   ],
 })

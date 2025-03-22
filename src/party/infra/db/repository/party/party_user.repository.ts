@@ -2,7 +2,7 @@ import { DataSource, In, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { PartyUserEntity, PartyAuthority } from '../entity/party/party_user.entity';
+import { PartyUserEntity, PartyAuthority } from '../../entity/party/party_user.entity';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 
