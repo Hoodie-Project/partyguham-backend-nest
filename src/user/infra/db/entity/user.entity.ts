@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from 'src/common/entity/baseEntity';
 
-import { UserSkillEntity } from './user_skill.entity';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 import { PartyApplicationEntity } from 'src/party/infra/db/entity/apply/party_application.entity';
 import { PartyInvitationEntity } from 'src/party/infra/db/entity/apply/party_invitation.entity';
@@ -57,9 +56,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => UserPersonalityEntity, (UserPersonality) => UserPersonality.user)
   userPersonalities: UserPersonalityEntity[];
-
-  @OneToMany(() => UserSkillEntity, (userSkill) => userSkill.user)
-  userSkills: UserSkillEntity[];
 
   @OneToMany(() => PartyUserEntity, (party) => party.user)
   partyUsers: PartyUserEntity[];

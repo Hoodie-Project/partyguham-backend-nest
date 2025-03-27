@@ -22,8 +22,8 @@ export class NotificationController {
     type: NotificationPaginationResponseDto,
   })
   async getNotification(@CurrentUser() user: CurrentUserType, @Query() query: NotificationPaginationQueryDto) {
-    const { limit, cursor } = query;
-    const result = await this.notificationService.getNotifications(user.id, limit, cursor);
+    const { limit, cursor, type } = query;
+    const result = await this.notificationService.getNotifications(user.id, limit, cursor, type);
 
     return plainToInstance(NotificationPaginationResponseDto, result);
   }

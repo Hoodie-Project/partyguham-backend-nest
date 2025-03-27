@@ -64,7 +64,7 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     // 지원한 유저에게 알람 가기
     const partyMaster = await this.partyUserRepository.findOneMasterByPartyId(partyId);
     const nickname = (await this.userService.findUserData(userId)).nickname;
-    const type = '지원소식';
+    const type = 'recruit';
     const link = `/party/setting/applicant/${partyId}`;
     this.notificationService.createNotification(
       partyMaster.userId,

@@ -1,21 +1,24 @@
-import { DataSource, In, LessThan, Repository } from 'typeorm';
+import { DataSource, LessThan, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notification } from '../entity/notification.entity';
+import { NotificationEntity } from '../entity/notification.entity';
 
 @Injectable()
 export class NotificationRepository {
   constructor(
     readonly dataSource: DataSource,
-    @InjectRepository(Notification)
-    private notificationRepository: Repository<Notification>,
+    @InjectRepository(NotificationEntity)
+    private notificationRepository: Repository<NotificationEntity>,
   ) {}
 
-  async getNotifications(userId: number, limit: number, cursor?: number) {
-    const whereCondition = cursor ? { userId, id: LessThan(cursor) } : { userId };
+  async getNotifications(userId: number, limit: number, cursor?: number, notificationTypeId?: number) {
+    const whereCondition = cursor
+      ? { userId, notificationTypeId, id: LessThan(cursor) }
+      : { userId, notificationTypeId };
 
     const notifications = await this.notificationRepository.find({
-      where: whereCondition,
+      where: [whereCondition],
+      relations: ['notificationType'],
       order: { id: 'DESC' },
       take: limit,
     });
@@ -34,14 +37,14 @@ export class NotificationRepository {
     return await this.notificationRepository.update({ id: notificationId, userId }, { isRead: true });
   }
 
-  async create(userId: number, type: string, message: string, link: string) {
-    return this.notificationRepository.create({ userId, type, message, link });
+  async create(userId: number, notificationTypeId: number, message: string, link: string) {
+    return this.notificationRepository.create({ userId, notificationTypeId, message, link });
   }
 
-  async createBulk(userIds: number[], type: string, message: string, link: string) {
+  async createBulk(userIds: number[], notificationId: number, message: string, link: string) {
     const notifications = userIds.map((userId) => ({
       userId,
-      type,
+      notificationId,
       message,
       link,
     }));
