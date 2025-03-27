@@ -29,10 +29,7 @@ class NotificationResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: {
-      type: 'party',
-      description: '파티활동',
-    },
+    type: NotificationTypeDto,
     description: '알림 ID',
   })
   @Type(() => NotificationTypeDto)
