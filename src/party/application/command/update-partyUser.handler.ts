@@ -29,15 +29,15 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
   async execute(command: UpdatePartyUserCommand) {
     const { userId, partyId, partyUserId, positionId } = command;
 
-    const findParty = await this.partyRepository.findOneById(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
-    if (!findParty) {
+    if (!party) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
-    if (findParty.status === 'deleted') {
+    if (party.status === 'deleted') {
       throw new GoneException('삭제된 파티 입니다.', 'DELETED');
     }
-    if (findParty.status === 'archived') {
+    if (party.status === 'archived') {
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
@@ -65,6 +65,7 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
     this.notificationService.createNotifications(
       partyUserIds,
       type,
+      party.title,
       `${partyUser.user.nickname}님의 포지션이 ${position.main} ${position.sub}으로 변경되었어요.`,
       link,
     );

@@ -12,7 +12,10 @@ export class NotificationEntity {
   @Column()
   notificationTypeId: number;
 
-  @Column('varchar', { nullable: false })
+  @Column('varchar', { nullable: false, default: '제목' })
+  title: string;
+
+  @Column('varchar', { nullable: false, default: '메세지' })
   message: string;
 
   @Column('varchar', { nullable: false })

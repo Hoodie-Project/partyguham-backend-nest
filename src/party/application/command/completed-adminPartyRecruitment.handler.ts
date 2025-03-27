@@ -46,7 +46,13 @@ export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<Co
     const type = 'recruit';
     const link = `/my/apply`;
 
-    this.notificationService.createNotifications(partyUserIds, type, `지원하신 파티 모집공고가 마감되었습니다. `, link);
+    this.notificationService.createNotifications(
+      partyUserIds,
+      type,
+      party.title,
+      `지원하신 파티 모집공고가 마감되었습니다. `,
+      link,
+    );
 
     return { message: '파티모집 공고를 완료 하였습니다.' };
   }

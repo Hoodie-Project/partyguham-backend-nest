@@ -27,15 +27,15 @@ export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsers
   async execute(command: DeletePartyUsersCommand) {
     const { userId, partyId, partyUserIds } = command;
 
-    const findParty = await this.partyRepository.findOneById(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
-    if (!findParty) {
+    if (!party) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
-    if (findParty.status === 'deleted') {
+    if (party.status === 'deleted') {
       throw new GoneException('삭제된 파티 입니다.', 'DELETED');
     }
-    if (findParty.status === 'archived') {
+    if (party.status === 'archived') {
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
@@ -68,6 +68,7 @@ export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsers
       this.notificationService.createNotifications(
         partyUserIds,
         type,
+        party.title,
         `${deletedPartyUser.user.nickname}님이 파티에서 제외되었습니다.`,
         link,
       );

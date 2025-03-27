@@ -32,15 +32,15 @@ export class NotificationService {
     await this.notificationRepository.markAsRead(notificationId, userId);
   }
 
-  async createNotification(userId: number, type: string, message: string, link: string) {
+  async createNotification(userId: number, type: string, title: string, message: string, link: string) {
     const notificationType = await this.notificationTypeRepository.findOne(type);
 
-    return await this.notificationRepository.create(userId, notificationType.id, message, link);
+    return await this.notificationRepository.create(userId, notificationType.id, title, message, link);
   }
 
-  async createNotifications(userIds: number[], type: string, message: string, link: string) {
+  async createNotifications(userIds: number[], type: string, title: string, message: string, link: string) {
     const notificationType = await this.notificationTypeRepository.findOne(type);
 
-    return await this.notificationRepository.createBulk(userIds, notificationType.id, message, link);
+    return await this.notificationRepository.createBulk(userIds, notificationType.id, title, message, link);
   }
 }
