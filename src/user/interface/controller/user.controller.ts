@@ -7,8 +7,6 @@ import {
   HttpCode,
   Param,
   Patch,
-  Post,
-  Put,
   Query,
   Req,
   Res,

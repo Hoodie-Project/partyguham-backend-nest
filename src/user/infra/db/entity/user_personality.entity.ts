@@ -13,7 +13,7 @@ export class UserPersonalityEntity {
   @Column()
   personalityOptionId: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.userSkills)
+  @ManyToOne(() => UserEntity, (user) => user.userPersonalities)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

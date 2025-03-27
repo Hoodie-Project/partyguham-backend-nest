@@ -15,8 +15,6 @@ import { AuthModule } from 'src/auth/auth.module';
 import { GetUsersHandler } from './application/query/get-users.handler';
 import { UserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
 
-import { UserSkillRepository } from './infra/db/repository/user_skill.repository';
-import { UserSkillEntity } from './infra/db/entity/user_skill.entity';
 import { KakaoLoginHandler } from './application/command/kakao-login.handler';
 import { LocationModule } from 'src/location/location.module';
 import { PositionModule } from 'src/position/position.module';
@@ -119,7 +117,6 @@ const factories = [UserFactory];
 
 const repositories = [
   { provide: 'UserRepository', useClass: UserRepository },
-  { provide: 'UserSkillRepository', useClass: UserSkillRepository },
   { provide: 'UserLocationRepository', useClass: UserLocationRepository },
   { provide: 'UserPersonalityRepository', useClass: UserPersonalityRepository },
   { provide: 'UserCareerRepository', useClass: UserCareerRepository },
@@ -164,13 +161,7 @@ const uploadDir = 'images/user';
       }),
     }),
 
-    TypeOrmModule.forFeature([
-      UserEntity,
-      UserLocationEntity,
-      UserCareerEntity,
-      UserSkillEntity,
-      UserPersonalityEntity,
-    ]),
+    TypeOrmModule.forFeature([UserEntity, UserLocationEntity, UserCareerEntity, UserPersonalityEntity]),
     CqrsModule,
     AuthModule,
     PositionModule,
