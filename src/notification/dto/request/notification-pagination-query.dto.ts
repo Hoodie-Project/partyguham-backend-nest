@@ -14,7 +14,7 @@ export class NotificationPaginationQueryDto {
 
   @ApiPropertyOptional({
     example: 100,
-    description: 'cursor, 마지막 알람 ID',
+    description: 'cursor, 커서를 포함하지 않고 데이터 리턴',
   })
   @IsInt()
   @IsPositive()

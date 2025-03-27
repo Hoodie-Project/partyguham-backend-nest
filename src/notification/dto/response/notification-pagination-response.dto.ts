@@ -37,10 +37,10 @@ class NotificationResponseDto {
 
   @Expose()
   @ApiProperty({
-    example: 1,
-    description: '사용자 ID',
+    example: '파티명',
+    description: '파티 제목',
   })
-  userId: number;
+  title: string;
 
   @Expose()
   @ApiProperty({
