@@ -62,6 +62,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     this.notificationService.createNotification(
       applicationUser.userId,
       type,
+      party.title,
       `${applicationUser.user.nickname}님의 지원이 수락되었어요. 합류 여부를 결정해 주세요.`,
       link,
     );

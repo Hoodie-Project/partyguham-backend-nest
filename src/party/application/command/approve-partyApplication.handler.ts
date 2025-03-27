@@ -89,6 +89,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     this.notificationService.createNotifications(
       partyUserIds,
       type,
+      party.title,
       `${partyUser.user.nickname}님이 새롭게 파티에 합류했어요. 함께 파티를 시작해 보세요!`,
       link,
     );

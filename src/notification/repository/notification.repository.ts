@@ -37,14 +37,15 @@ export class NotificationRepository {
     return await this.notificationRepository.update({ id: notificationId, userId }, { isRead: true });
   }
 
-  async create(userId: number, notificationTypeId: number, message: string, link: string) {
-    return this.notificationRepository.create({ userId, notificationTypeId, message, link });
+  async create(userId: number, notificationTypeId: number, title: string, message: string, link: string) {
+    return this.notificationRepository.create({ userId, notificationTypeId, title, message, link });
   }
 
-  async createBulk(userIds: number[], notificationId: number, message: string, link: string) {
+  async createBulk(userIds: number[], notificationId: number, title: string, message: string, link: string) {
     const notifications = userIds.map((userId) => ({
       userId,
       notificationId,
+      title,
       message,
       link,
     }));

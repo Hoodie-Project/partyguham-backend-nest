@@ -14,6 +14,7 @@ import { IPartyApplicationRepository } from 'src/party/domain/party/repository/i
 import { NotificationService } from 'src/notification/notification.service';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { UserService } from 'src/user/application/user.service';
+import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 
 @Injectable()
 @CommandHandler(CreatePartyApplicationCommand)
@@ -21,6 +22,7 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
   constructor(
     private userService: UserService,
     private notificationService: NotificationService,
+    @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
@@ -28,6 +30,12 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
 
   async execute(command: CreatePartyApplicationCommand) {
     const { userId, partyId, partyRecruitmentId, message } = command;
+
+    const party = await this.partyRepository.findOneById(partyId);
+
+    if (!party) {
+      throw new BadRequestException('요청한 파티가 존재하지 않습니다.', 'PARTY_NOT_EXIST');
+    }
 
     const partyRecruitment = await this.partyRecruitmentRepository.findOne(partyRecruitmentId);
 
@@ -62,6 +70,7 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
     this.notificationService.createNotification(
       partyMaster.userId,
       type,
+      party.title,
       `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`,
       link,
     );

@@ -25,15 +25,15 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
   async execute(command: LeavePartyCommand) {
     const { userId, partyId } = command;
 
-    const findParty = await this.partyRepository.findOneById(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
-    if (!findParty) {
+    if (!party) {
       throw new NotFoundException('파티를 찾을 수 없습니다.', 'PARTY_NOT_EXIST');
     }
-    if (findParty.status === 'deleted') {
+    if (party.status === 'deleted') {
       throw new GoneException('삭제된 파티 입니다.', 'DELETED');
     }
-    if (findParty.status === 'archived') {
+    if (party.status === 'archived') {
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
@@ -57,6 +57,7 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
     this.notificationService.createNotifications(
       partyUserIds,
       type,
+      party.title,
       `${partyUser.user.nickname}님이 파티에서 탈퇴했어요.`,
       link,
     );

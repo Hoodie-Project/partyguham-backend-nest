@@ -52,6 +52,7 @@ export class RejectionAdminPartyApplicationHandler implements ICommandHandler<Re
     this.notificationService.createNotification(
       applicationUser.userId,
       type,
+      party.title,
       `${applicationUser.user.nickname}님의 지원이 거절되었어요.`,
       link,
     );

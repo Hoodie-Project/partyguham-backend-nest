@@ -31,15 +31,15 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
   async execute(command: DelegatePartyCommand) {
     const { userId, partyId, partyUserId } = command;
 
-    const findParty = await this.partyRepository.findOneById(partyId);
+    const party = await this.partyRepository.findOneById(partyId);
 
-    if (!findParty) {
+    if (!party) {
       throw new BadRequestException('요청한 파티가 유효하지 않습니다.', 'PARTY_NOT_EXIST');
     }
-    if (findParty.status === 'deleted') {
+    if (party.status === 'deleted') {
       throw new GoneException('삭제된 파티 입니다.', 'DELETED');
     }
-    if (findParty.status === 'archived') {
+    if (party.status === 'archived') {
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
@@ -72,6 +72,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
     this.notificationService.createNotifications(
       partyUserIds,
       type,
+      party.title,
       `파티장이 ${partyUserMember.user.nickname}님으로 변경되었어요.`,
       link,
     );
