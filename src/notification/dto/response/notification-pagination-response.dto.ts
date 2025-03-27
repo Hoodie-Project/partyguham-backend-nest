@@ -69,6 +69,7 @@ export class NotificationPaginationResponseDto {
   @ApiProperty({
     type: [NotificationResponseDto],
     description: '알림 목록',
+    minItems: 0,
   })
   @Type(() => NotificationResponseDto)
   notifications: NotificationResponseDto[];
@@ -76,6 +77,7 @@ export class NotificationPaginationResponseDto {
   @ApiProperty({
     example: 50,
     description: '다음 페이지 조회를 위한 cursor ID',
+    nullable: true,
   })
   nextCursor: number;
 }
