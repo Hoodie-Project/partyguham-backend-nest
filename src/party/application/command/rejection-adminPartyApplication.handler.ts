@@ -47,7 +47,7 @@ export class RejectionAdminPartyApplicationHandler implements ICommandHandler<Re
 
     // 지원한 유저에게 알람 가기
     const applicationUser = await this.partyApplicationRepository.findOneByIdWithUserData(partyApplicationId);
-    const type = '지원소식';
+    const type = 'recruit';
     const link = `/my/apply`;
     this.notificationService.createNotification(
       applicationUser.userId,

@@ -43,7 +43,7 @@ export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<Co
 
     const partyUserList = await this.partyApplicationRepository.findAllByPartyRecruitmentId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
-    const type = '지원소식';
+    const type = 'recruit';
     const link = `/my/apply`;
 
     this.notificationService.createNotifications(partyUserIds, type, `지원하신 파티 모집공고가 마감되었습니다. `, link);

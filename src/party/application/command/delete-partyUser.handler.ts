@@ -59,7 +59,7 @@ export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUserCo
 
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
-    const type = '파티활동';
+    const type = 'party';
     const link = `party/${partyId}#PartyPeopleTab`;
 
     this.notificationService.createNotifications(

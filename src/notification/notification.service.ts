@@ -1,12 +1,21 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { NotificationRepository } from './repository/notification.repository';
+import { NotificationTypeRepository } from './repository/notification_type.repository';
 
 @Injectable()
 export class NotificationService {
-  constructor(private notificationRepository: NotificationRepository) {}
+  constructor(
+    private notificationRepository: NotificationRepository,
+    private notificationTypeRepository: NotificationTypeRepository,
+  ) {}
 
-  async getNotifications(userId: number, limit: number, cursor?: number) {
-    return await this.notificationRepository.getNotifications(userId, limit, cursor);
+  async getNotifications(userId: number, limit: number, cursor?: number, type?: string) {
+    let notificationTypeId: number;
+    if (type) {
+      notificationTypeId = (await this.notificationTypeRepository.findOne(type)).id;
+    }
+
+    return await this.notificationRepository.getNotifications(userId, limit, cursor, notificationTypeId);
   }
 
   async markAsRead(userId: number, notificationId: number): Promise<void> {
@@ -24,10 +33,14 @@ export class NotificationService {
   }
 
   async createNotification(userId: number, type: string, message: string, link: string) {
-    return await this.notificationRepository.create(userId, type, message, link);
+    const notificationType = await this.notificationTypeRepository.findOne(type);
+
+    return await this.notificationRepository.create(userId, notificationType.id, message, link);
   }
 
   async createNotifications(userIds: number[], type: string, message: string, link: string) {
-    return await this.notificationRepository.createBulk(userIds, type, message, link);
+    const notificationType = await this.notificationTypeRepository.findOne(type);
+
+    return await this.notificationRepository.createBulk(userIds, notificationType.id, message, link);
   }
 }

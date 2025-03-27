@@ -83,7 +83,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
 
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
-    const type = '파티활동';
+    const type = 'party';
     const link = `party/${partyId}#home`;
 
     this.notificationService.createNotifications(

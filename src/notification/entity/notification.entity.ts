@@ -1,15 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, JoinColumn } from 'typeorm';
+import { NotificationTypeEntity } from './notification_type.entity';
 
 @Entity('notification')
-export class Notification {
+export class NotificationEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   userId: number;
 
-  @Column({ length: 50 })
-  type: string;
+  @Column()
+  notificationTypeId: number;
 
   @Column('varchar', { nullable: false })
   message: string;
@@ -22,4 +23,11 @@ export class Notification {
 
   @CreateDateColumn()
   createdAt: Date;
+
+  @ManyToOne(() => NotificationTypeEntity, (partyType) => partyType.parties, {
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'notification_type_id', referencedColumnName: 'id' })
+  notificationType: NotificationTypeEntity;
 }
