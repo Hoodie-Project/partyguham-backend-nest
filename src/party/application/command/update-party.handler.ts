@@ -54,7 +54,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
-    const link = `party/${partyId}/#home`;
+    const link = `/party/${partyId}/#home`;
 
     if (status) {
       if (status === StatusEnum.ACTIVE) {

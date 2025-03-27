@@ -51,6 +51,13 @@ class NotificationResponseDto {
 
   @Expose()
   @ApiProperty({
+    example: '/party/321#home',
+    description: '알림 내용',
+  })
+  link: string;
+
+  @Expose()
+  @ApiProperty({
     example: false,
     description: '알림 읽음 여부',
   })
