@@ -51,6 +51,7 @@ export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<Co
       type,
       party.title,
       `지원하신 파티 모집공고가 마감되었습니다. `,
+      party.image,
       link,
     );
 

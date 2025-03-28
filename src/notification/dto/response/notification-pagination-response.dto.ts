@@ -47,7 +47,14 @@ class NotificationResponseDto {
     example: '새 알림',
     description: '알림 내용',
   })
-  content: string;
+  message: string;
+
+  @Expose()
+  @ApiProperty({
+    example: 'image url',
+    nullable: true,
+  })
+  image: string;
 
   @Expose()
   @ApiProperty({

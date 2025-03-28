@@ -70,6 +70,7 @@ export class DeletePartyUsersHandler implements ICommandHandler<DeletePartyUsers
         type,
         party.title,
         `${deletedPartyUser.user.nickname}님이 파티에서 제외되었습니다.`,
+        party.image,
         link,
       );
     });

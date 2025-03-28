@@ -71,6 +71,7 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
       type,
       party.title,
       `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`,
+      party.image,
       link,
     );
 

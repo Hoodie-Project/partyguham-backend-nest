@@ -18,6 +18,9 @@ export class NotificationEntity {
   @Column('varchar', { nullable: false, default: '메세지' })
   message: string;
 
+  @Column('text', { nullable: true, default: null })
+  image: string;
+
   @Column('varchar', { nullable: false })
   link: string;
 
