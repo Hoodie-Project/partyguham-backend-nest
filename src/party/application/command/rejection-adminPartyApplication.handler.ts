@@ -54,6 +54,7 @@ export class RejectionAdminPartyApplicationHandler implements ICommandHandler<Re
       type,
       party.title,
       `${applicationUser.user.nickname}님의 지원이 거절되었어요.`,
+      party.image,
       link,
     );
 

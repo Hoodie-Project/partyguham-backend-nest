@@ -59,6 +59,7 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
       type,
       party.title,
       `${partyUser.user.nickname}님이 파티에서 탈퇴했어요.`,
+      party.image,
       link,
     );
   }

@@ -63,6 +63,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
           type,
           party.title,
           '파티가 다시 활성화되었어요. 다시 새로운 도전을 시작해 보세요.',
+          party.image,
           link,
         );
       }
@@ -72,6 +73,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
           type,
           party.title,
           '파티가 성공적으로 종료되었어요. 참여해 주셔서 감사합니다.',
+          party.image,
           link,
         );
       }
@@ -81,6 +83,7 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
         type,
         party.title,
         '파티 정보가 업데이트되었어요. 변경된 내용을 확인하세요.',
+        party.image,
         link,
       );
     }

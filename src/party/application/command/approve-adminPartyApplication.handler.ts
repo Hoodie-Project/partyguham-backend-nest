@@ -64,6 +64,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
       type,
       party.title,
       `${applicationUser.user.nickname}님의 지원이 수락되었어요. 합류 여부를 결정해 주세요.`,
+      party.image,
       link,
     );
 

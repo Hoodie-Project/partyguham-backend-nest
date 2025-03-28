@@ -74,6 +74,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
       type,
       party.title,
       `파티장이 ${partyUserMember.user.nickname}님으로 변경되었어요.`,
+      party.image,
       link,
     );
 

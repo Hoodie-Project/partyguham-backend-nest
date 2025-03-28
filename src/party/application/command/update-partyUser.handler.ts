@@ -67,6 +67,7 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
       type,
       party.title,
       `${partyUser.user.nickname}님의 포지션이 ${position.main} ${position.sub}으로 변경되었어요.`,
+      party.image,
       link,
     );
   }
