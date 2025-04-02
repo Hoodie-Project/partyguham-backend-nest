@@ -68,6 +68,11 @@ export class NotificationRepository {
     return this.notificationRepository.insert(notifications);
   }
 
+  async deleteById(notificationId: number, userId: number): Promise<boolean> {
+    const result = await this.notificationRepository.delete({ id: notificationId, userId });
+    return result.affected > 0; // 삭제 성공 여부 반환
+  }
+
   /**
    * 사용자의 모든 알람을 읽음 처리
    */

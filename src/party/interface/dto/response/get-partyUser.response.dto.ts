@@ -67,6 +67,7 @@ export class GetPartyUserResponseDto {
       },
     ],
     type: [PartyUser],
+    minItems: 0,
     description: `파티에 해당하는 유저 리스트
 
     < partyAdmin - authority >

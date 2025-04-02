@@ -46,6 +46,7 @@ export class GetPartyResponseDto {
   @ApiProperty({
     example: '/uploads/...',
     description: '이미지 서버 경로',
+    nullable: true,
   })
   @IsNotEmpty()
   @IsString()
