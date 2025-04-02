@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Get, HttpCode, Param, Patch, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { plainToInstance } from 'class-transformer';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
@@ -37,10 +37,24 @@ export class NotificationController {
     description: '알람 읽음 처리',
     schema: { example: { message: '알림이 읽음 처리되었습니다.' } },
   })
-  async getLocations(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
+  async readNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
     const { notificationId } = param;
     await this.notificationService.markAsRead(user.id, notificationId);
 
     return { message: '알림이 읽음 처리되었습니다.' };
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @HttpCode(204)
+  @UseGuards(AccessJwtAuthGuard)
+  @Delete(':notificationId')
+  @ApiOperation({ summary: '삭제 처리' })
+  @ApiResponse({
+    status: 204,
+    description: '알림 삭제 성공',
+  })
+  async deleteNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
+    const { notificationId } = param;
+    await this.notificationService.markAsRead(user.id, notificationId);
   }
 }
