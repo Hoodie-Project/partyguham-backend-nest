@@ -50,4 +50,22 @@ export class NotificationService {
 
     return await this.notificationRepository.createBulk(userIds, notificationType.id, title, message, image, link);
   }
+
+  async deleteNotification(userId: number, notificationId: number): Promise<void> {
+    const notification = await this.notificationRepository.findOne(notificationId);
+
+    if (!notification) {
+      throw new NotFoundException('알람이 없습니다');
+    }
+
+    if (notification.userId !== userId) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+
+    const result = await this.notificationRepository.deleteById(notificationId, userId);
+
+    if (!result) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+  }
 }
