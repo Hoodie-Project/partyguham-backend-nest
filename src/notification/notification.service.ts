@@ -65,7 +65,7 @@ export class NotificationService {
     const result = await this.notificationRepository.deleteById(notificationId, userId);
 
     if (!result) {
-      throw new ForbiddenException('권한이 없습니다.');
+      throw new InternalServerErrorException('삭제 실패');
     }
   }
 }
