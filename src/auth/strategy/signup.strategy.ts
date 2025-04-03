@@ -46,7 +46,7 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
       const oauth = await this.oauthService.findById(decryptOauthId);
 
       if (!oauth) {
-        throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+        throw new UnauthorizedException('OAuth 정보가 유효하지 않습니다.', 'UNAUTHORIZED');
       }
 
       if (oauth.userId) {

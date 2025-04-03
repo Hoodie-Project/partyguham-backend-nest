@@ -12,7 +12,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       jwtFromRequest: (request: Request) => {
         if (request && request.cookies) {
           const refreshToken = request.cookies['refreshToken'];
-          if (!refreshToken) throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+          if (!refreshToken) throw new UnauthorizedException('리프레시 토큰이 없습니다.', 'UNAUTHORIZED');
           return refreshToken;
         }
       },

@@ -82,7 +82,7 @@ export class UserDetailsController {
   @ApiOperation({ summary: '관심지역 조회' })
   @ApiResponse({
     status: 201,
-    description: '유저 관심지역 저장',
+    description: '유저 관심지역 조회',
     type: [UserLocationResponseDto],
   })
   async getUserLocation(@CurrentUser() user: CurrentUserType) {
@@ -172,7 +172,7 @@ export class UserDetailsController {
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Get('me/personalities')
-  @ApiOperation({ summary: '성향 조회' })
+  @ApiOperation({ summary: '유저 성향 조회' })
   @ApiResponse({
     status: 201,
     description: '유저 성향 조회',
