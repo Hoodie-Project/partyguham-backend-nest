@@ -55,6 +55,6 @@ export class NotificationController {
   })
   async deleteNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
     const { notificationId } = param;
-    await this.notificationService.markAsRead(user.id, notificationId);
+    await this.notificationService.deleteNotification(user.id, notificationId);
   }
 }
