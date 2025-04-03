@@ -25,7 +25,7 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
       const oauth = await this.oauthService.findById(decryptOauthId);
 
       if (!oauth || oauth.userId == null) {
-        throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+        throw new UnauthorizedException('OAuth 정보가 유효하지 않습니다.', 'UNAUTHORIZED');
       }
       return { id: oauth.userId };
     } catch {
