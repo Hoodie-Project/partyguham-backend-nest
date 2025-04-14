@@ -8,6 +8,8 @@ import { OauthService } from 'src/auth/oauth.service';
 import { UserService } from '../user.service';
 
 import { ProviderEnum } from 'src/auth/entity/oauth.entity';
+import { USER_ERROR } from 'src/common/error/user-error.message';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 @CommandHandler(GoogleLoginCommand)
@@ -83,7 +85,17 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
     }
 
     if (oauth.userId) {
-      await this.userService.validateLogin(oauth.userId, oauth.id);
+      const user = await this.userService.findUserById(oauth.userId);
+
+      if (user.status === StatusEnum.INACTIVE) {
+        const recoverAccessToken = await this.authService.createRecoverAccessToken(oauth.id);
+
+        return { type: USER_ERROR.USER_DELETED_30D, recoverAccessToken, email: user.email, deletedAt: user.updatedAt };
+      }
+
+      if (user.status !== StatusEnum.ACTIVE) {
+        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED };
+      }
 
       const accessToken = await this.authService.createAccessToken(oauth.id);
       const refreshToken = await this.authService.createRefreshToken(oauth.id);

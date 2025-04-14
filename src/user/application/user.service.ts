@@ -35,7 +35,7 @@ export class UserService {
     }
   }
 
-  async findUserData(userId: number) {
+  async findUserById(userId: number) {
     return await this.userRepository.findById(userId);
   }
 

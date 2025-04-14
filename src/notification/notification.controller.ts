@@ -57,4 +57,5 @@ export class NotificationController {
     const { notificationId } = param;
     await this.notificationService.deleteNotification(user.id, notificationId);
   }
+  ç;
 }

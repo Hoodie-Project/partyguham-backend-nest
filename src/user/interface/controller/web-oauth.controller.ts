@@ -24,6 +24,12 @@ import { KakaoLinkLoginCommand } from '../../application/command/kakaoLink-login
 import { GoogleLinkLoginCommand } from '../../application/command/googleLink-login.command';
 import { GoogleLinkCodeCommand } from '../../application/command/googleLink-code.command';
 
+type UserAction =
+  | { type: 'signup'; signupAccessToken: string; email: string }
+  | { type: 'login'; accessToken: string; refreshToken: string }
+  | { type: 'USER_DELETED_30D'; recoverAccessToken: string; email: string; deletedAt: string }
+  | { type: 'USER_FORBIDDEN_DISABLED' };
+
 @ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
 export class WebOauthController {
@@ -63,9 +69,10 @@ export class WebOauthController {
     status: 403,
     description: `- list\t\n
       1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
-        - response body : recoverAccessToken  
+        redirect - https://partyguham.com/home?error=USER_DELETED_30D&recoverAccessToken="recoverAccessToken"&email="email"&deletedAt="deletedAt"}  
 
-      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)  
+      redirect - https://partyguham.com/home?error=USER_FORBIDDEN_DISABLED`,
     schema: {
       example: {
         message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
@@ -90,11 +97,7 @@ export class WebOauthController {
   async kakaoCallback(@Req() req: Request, @Res() res: Response, @Query('code') code: string) {
     const command = new KakaoLoginCommand(code);
 
-    let result:
-      | { type: 'signup'; signupAccessToken: string; email: string }
-      | { type: 'login'; accessToken: string; refreshToken: string };
-
-    result = await this.commandBus.execute(command);
+    const result: UserAction = await this.commandBus.execute(command);
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
@@ -111,15 +114,14 @@ export class WebOauthController {
       res.redirect(`${redirectURL}`);
     }
 
-    if (result.type === 'signup') {
-      res.cookie('signupToken', result.signupAccessToken, {
-        secure: true,
-        httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
-        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
-      });
+    if (result.type === 'USER_DELETED_30D') {
+      res.redirect(
+        `${process.env.BASE_URL}/home?error=USER_DELETED_30D&recoverAccessToken=${result.recoverAccessToken}&email=${result.email}&deletedAt=${result.deletedAt}`,
+      );
+    }
 
-      res.redirect(`${process.env.BASE_URL}/join`);
+    if (result.type === 'USER_FORBIDDEN_DISABLED') {
+      res.redirect(`${process.env.BASE_URL}/home?error=USER_FORBIDDEN_DISABLED`);
     }
   }
 
@@ -159,9 +161,10 @@ export class WebOauthController {
     status: 403,
     description: `- list\t\n
       1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
-        - response body : recoverAccessToken  
+        redirect - https://partyguham.com/home?error=USER_DELETED_30D&recoverAccessToken="recoverAccessToken"&email="email"&deletedAt="deletedAt"}  
 
-      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)  
+      redirect - https://partyguham.com/home?error=USER_FORBIDDEN_DISABLED`,
     schema: {
       example: {
         message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
@@ -191,11 +194,7 @@ export class WebOauthController {
   ) {
     const command = new GoogleLoginCommand(code);
 
-    let result:
-      | { type: 'signup'; signupAccessToken: string; email: string }
-      | { type: 'login'; accessToken: string; refreshToken: string };
-
-    result = await this.commandBus.execute(command);
+    const result: UserAction = await this.commandBus.execute(command);
 
     if (result.type === 'login') {
       res.cookie('refreshToken', result.refreshToken, {
@@ -221,6 +220,16 @@ export class WebOauthController {
       });
 
       res.redirect(`${process.env.BASE_URL}/join`);
+    }
+
+    if (result.type === 'USER_DELETED_30D') {
+      res.redirect(
+        `${process.env.BASE_URL}/home?error=USER_DELETED_30D&recoverAccessToken=${result.recoverAccessToken}&email=${result.email}&deletedAt=${result.deletedAt}`,
+      );
+    }
+
+    if (result.type === 'USER_FORBIDDEN_DISABLED') {
+      res.redirect(`${process.env.BASE_URL}/home?error=USER_FORBIDDEN_DISABLED`);
     }
   }
 
