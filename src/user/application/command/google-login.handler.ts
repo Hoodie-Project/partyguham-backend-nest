@@ -60,7 +60,7 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
 
     const externalId: string = googleUserInfo.data.id;
     const email = googleUserInfo.data.email;
-    const image = googleUserInfo.data.picture;
+    const image = googleUserInfo.data.picture || null;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
@@ -90,11 +90,16 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
       if (user.status === StatusEnum.INACTIVE) {
         const recoverAccessToken = await this.authService.createRecoverAccessToken(oauth.id);
 
-        return { type: USER_ERROR.USER_DELETED_30D, recoverAccessToken, email: user.email, deletedAt: user.updatedAt };
+        return {
+          type: USER_ERROR.USER_DELETED_30D.error,
+          recoverAccessToken,
+          email: user.email,
+          deletedAt: user.updatedAt,
+        };
       }
 
       if (user.status !== StatusEnum.ACTIVE) {
-        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED };
+        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED.error };
       }
 
       const accessToken = await this.authService.createAccessToken(oauth.id);

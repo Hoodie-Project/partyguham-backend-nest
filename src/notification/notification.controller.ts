@@ -7,11 +7,35 @@ import { NotificationPaginationQueryDto } from './dto/request/notification-pagin
 import { NotificationPaginationResponseDto } from './dto/response/notification-pagination-response.dto';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { NotificationReadQueryDto } from './dto/request/notification-read-query.dto';
+import axios from 'axios';
 
 @ApiTags('notification - 알람')
 @Controller('notifications')
 export class NotificationController {
   constructor(private notificationService: NotificationService) {}
+
+  @Delete('test')
+  @ApiOperation({ summary: '테스트' })
+  async test() {
+    const serverKey = process.env.FCM_SERVER_KEY;
+
+    const message = {
+      to: 'divice token',
+      data: {
+        title: 'title',
+        body: 'body',
+      },
+    };
+
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `key=${serverKey}`,
+    };
+
+    const response = await axios.post('https://fcm.googleapis.com/fcm/send', message, { headers });
+    return response.data;
+  }
+
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Get('')
@@ -57,5 +81,4 @@ export class NotificationController {
     const { notificationId } = param;
     await this.notificationService.deleteNotification(user.id, notificationId);
   }
-  ç;
 }
