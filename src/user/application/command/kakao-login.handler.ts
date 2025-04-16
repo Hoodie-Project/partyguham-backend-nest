@@ -62,10 +62,10 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
 
     const externalId: string = kakaoUserInfo.data.id;
     const email = kakaoUserInfo.data.kakao_account.email;
+    let image = kakaoUserInfo?.data?.properties?.profile_image || null;
 
-    let image = null;
-    if (kakaoUserInfo.data.kakao_account.profile_image_needs_agreement) {
-      image = kakaoUserInfo.data.properties.profile_image;
+    if (!kakaoUserInfo?.data?.kakao_account?.profile_image_needs_agreement) {
+      image = null;
     }
 
     const oauth = await this.oauthService.findByExternalId(externalId);
@@ -96,11 +96,16 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
       if (user.status === StatusEnum.INACTIVE) {
         const recoverAccessToken = await this.authService.createRecoverAccessToken(oauth.id);
 
-        return { type: USER_ERROR.USER_DELETED_30D, recoverAccessToken, email: user.email, deletedAt: user.updatedAt };
+        return {
+          type: USER_ERROR.USER_DELETED_30D.error,
+          recoverAccessToken,
+          email: user.email,
+          deletedAt: user.updatedAt,
+        };
       }
 
       if (user.status !== StatusEnum.ACTIVE) {
-        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED };
+        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED.error };
       }
 
       const accessToken = await this.authService.createAccessToken(oauth.id);
