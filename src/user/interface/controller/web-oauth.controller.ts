@@ -114,6 +114,17 @@ export class WebOauthController {
       res.redirect(`${redirectURL}`);
     }
 
+    if (result.type === 'signup') {
+      res.cookie('signupToken', result.signupAccessToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
+      });
+
+      res.redirect(`${process.env.BASE_URL}/join`);
+    }
+
     if (result.type === 'USER_DELETED_30D') {
       res.redirect(
         `${process.env.BASE_URL}/home?error=USER_DELETED_30D&recoverAccessToken=${result.recoverAccessToken}&email=${result.email}&deletedAt=${result.deletedAt}`,
