@@ -88,11 +88,11 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
       const user = await this.userService.findUserById(oauth.userId);
 
       if (user.status === StatusEnum.INACTIVE) {
-        const recoverAccessToken = await this.authService.createRecoverAccessToken(oauth.id);
+        const recoverToken = await this.authService.createRecoverAccessToken(oauth.id);
 
         return {
           type: USER_ERROR.USER_DELETED_30D.error,
-          recoverAccessToken,
+          recoverToken,
           email: user.email,
           deletedAt: user.updatedAt,
         };

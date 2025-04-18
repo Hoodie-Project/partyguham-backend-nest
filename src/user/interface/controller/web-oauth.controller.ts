@@ -27,7 +27,7 @@ import { GoogleLinkCodeCommand } from '../../application/command/googleLink-code
 type UserAction =
   | { type: 'signup'; signupAccessToken: string; email: string }
   | { type: 'login'; accessToken: string; refreshToken: string }
-  | { type: 'USER_DELETED_30D'; recoverAccessToken: string; email: string; deletedAt: string }
+  | { type: 'USER_DELETED_30D'; recoverToken: string; email: string; deletedAt: string }
   | { type: 'USER_FORBIDDEN_DISABLED' };
 
 @ApiTags('web-oauth (웹 오픈 인증)')
@@ -126,8 +126,15 @@ export class WebOauthController {
     }
 
     if (result.type === 'USER_DELETED_30D') {
+      res.cookie('recoverToken', result.recoverToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        expires: new Date(Date.now() + 300000), // 현재시간 + 5분
+      });
+
       res.redirect(
-        `${process.env.BASE_URL}/home?error=USER_DELETED_30D&recoverAccessToken=${result.recoverAccessToken}&email=${result.email}&deletedAt=${result.deletedAt}`,
+        `${process.env.BASE_URL}/home?error=USER_DELETED_30D&email=${result.email}&deletedAt=${result.deletedAt}`,
       );
     }
 
@@ -234,8 +241,15 @@ export class WebOauthController {
     }
 
     if (result.type === 'USER_DELETED_30D') {
+      res.cookie('recoverToken', result.recoverToken, {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        expires: new Date(Date.now() + 300000), // 현재시간 + 5분
+      });
+
       res.redirect(
-        `${process.env.BASE_URL}/home?error=USER_DELETED_30D&recoverAccessToken=${result.recoverAccessToken}&email=${result.email}&deletedAt=${result.deletedAt}`,
+        `${process.env.BASE_URL}/home?error=USER_DELETED_30D&email=${result.email}&deletedAt=${result.deletedAt}`,
       );
     }
 
@@ -309,6 +323,7 @@ export class WebOauthController {
     }
 
     if (result.type === 'link') {
+      // linkToken == accessToken
       res.cookie('linkToken', result.linkToken, {
         secure: true,
         httpOnly: true,
@@ -367,6 +382,7 @@ export class WebOauthController {
     }
 
     if (result.type === 'link') {
+      // linkToken == accessToken
       res.cookie('linkToken', result.linkToken, {
         secure: true,
         httpOnly: true,
