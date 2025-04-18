@@ -56,7 +56,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const signupAccessToken = await this.authService.signupAccessToken(oauth.id, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -70,7 +70,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
         image,
       );
 
-      const signupAccessToken = await this.authService.signupAccessToken(createOauth.id, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }

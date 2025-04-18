@@ -62,7 +62,7 @@ export class GoogleLinkLoginHandler implements ICommandHandler<GoogleLinkLoginCo
 
     // oauth가 있으나 user가 없음
     if (oauth && !oauth.userId) {
-      const linkToken = await this.authService.signupAccessToken(oauth.id, email, image);
+      const linkToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'link', linkToken, email };
     }
@@ -77,7 +77,7 @@ export class GoogleLinkLoginHandler implements ICommandHandler<GoogleLinkLoginCo
         image,
       );
 
-      const linkToken = await this.authService.signupAccessToken(createOauth.id, email, image);
+      const linkToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'link', linkToken, email };
     }

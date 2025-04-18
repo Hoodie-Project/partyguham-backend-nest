@@ -18,7 +18,7 @@ export class AuthService {
     private authRepository: AuthRepository,
   ) {}
 
-  async signupAccessToken(oauthId: number, email: string, image: string) {
+  async createSignupToken(oauthId: number, email: string, image: string) {
     const encryptOauthId = await this.encrypt(String(oauthId));
 
     const createPayload = { id: encryptOauthId, email, image };
@@ -29,7 +29,7 @@ export class AuthService {
     });
   }
 
-  async createRecoverAccessToken(oauthId: number) {
+  async createRecoverToken(oauthId: number) {
     const encryptOauthId = await this.encrypt(String(oauthId));
     const createPayload = { id: encryptOauthId };
 
@@ -38,27 +38,6 @@ export class AuthService {
       expiresIn: '5m',
       algorithm: 'HS256',
     });
-  }
-
-  async validateSignupAccessToken(token: string): Promise<any> {
-    const payload = await this.jwtService.verifyAsync(token, {
-      secret: process.env.JWT_SIGNUP_SECRET,
-      algorithms: ['HS256'],
-    });
-
-    // 추가적인 검증 로직 (예: 유저 확인, 특정 조건 등)
-    if (!payload || !payload.id) {
-      throw new UnauthorizedException('Invalid token payload');
-    }
-    const decryptUserId = Number(this.decrypt(payload.id));
-    const oauth = await this.oauthService.findById(decryptUserId);
-    const oauthId = oauth.id;
-
-    if (oauth.userId) {
-      throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
-    }
-
-    return oauthId;
   }
 
   async createAccessToken(oauthId: number) {
@@ -81,6 +60,27 @@ export class AuthService {
       expiresIn: '30d',
       algorithm: 'HS512',
     });
+  }
+
+  async validateSignupAccessToken(token: string): Promise<any> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.JWT_SIGNUP_SECRET,
+      algorithms: ['HS256'],
+    });
+
+    // 추가적인 검증 로직 (예: 유저 확인, 특정 조건 등)
+    if (!payload || !payload.id) {
+      throw new UnauthorizedException('Invalid token payload');
+    }
+    const decryptUserId = Number(this.decrypt(payload.id));
+    const oauth = await this.oauthService.findById(decryptUserId);
+    const oauthId = oauth.id;
+
+    if (oauth.userId) {
+      throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
+    }
+
+    return oauthId;
   }
 
   async findRefreshToken(userId: number, refreshToken: string) {

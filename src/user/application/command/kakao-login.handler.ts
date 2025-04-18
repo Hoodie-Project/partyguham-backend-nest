@@ -71,7 +71,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const signupAccessToken = await this.authService.signupAccessToken(oauth.id, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email };
     }
@@ -85,7 +85,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
         image,
       );
 
-      const signupAccessToken = await this.authService.signupAccessToken(createOauth.id, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email };
     }
@@ -94,7 +94,7 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
       const user = await this.userService.findUserById(oauth.userId);
 
       if (user.status === StatusEnum.INACTIVE) {
-        const recoverToken = await this.authService.createRecoverAccessToken(oauth.id);
+        const recoverToken = await this.authService.createRecoverToken(oauth.id);
 
         return {
           type: USER_ERROR.USER_DELETED_30D.error,

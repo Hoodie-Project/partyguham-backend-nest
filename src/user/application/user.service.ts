@@ -21,7 +21,7 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
 
     if (user.status === StatusEnum.INACTIVE) {
-      const recoverAccessToken = await this.authService.createRecoverAccessToken(oauthId);
+      const recoverAccessToken = await this.authService.createRecoverToken(oauthId);
       throw new ForbiddenException({
         ...USER_ERROR.USER_DELETED_30D,
         recoverAccessToken,
