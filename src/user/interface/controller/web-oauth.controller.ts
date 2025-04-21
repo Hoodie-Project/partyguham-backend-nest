@@ -323,7 +323,6 @@ export class WebOauthController {
     }
 
     if (result.type === 'link') {
-      // linkToken == accessToken
       res.cookie('linkToken', result.linkToken, {
         secure: true,
         httpOnly: true,
@@ -382,7 +381,6 @@ export class WebOauthController {
     }
 
     if (result.type === 'link') {
-      // linkToken == accessToken
       res.cookie('linkToken', result.linkToken, {
         secure: true,
         httpOnly: true,

@@ -66,7 +66,7 @@ export class KakaoLinkLoginHandler implements ICommandHandler<KakaoLinkLoginComm
 
     // oauth가 있으나 user가 없음
     if (oauth && !oauth.userId) {
-      const linkToken = await this.authService.signupAccessToken(oauth.id, email, image);
+      const linkToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'link', linkToken, email };
     }
@@ -81,7 +81,7 @@ export class KakaoLinkLoginHandler implements ICommandHandler<KakaoLinkLoginComm
         image,
       );
 
-      const linkToken = await this.authService.signupAccessToken(createOauth.id, email, image);
+      const linkToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'link', linkToken, email };
     }
