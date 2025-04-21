@@ -1,39 +1,29 @@
-import { Controller, Delete, Get, HttpCode, Param, Patch, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { plainToInstance } from 'class-transformer';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
+
+import { FirebaseService } from 'src/common/firebase/firebase.service';
 import { NotificationService } from './notification.service';
+
 import { NotificationPaginationQueryDto } from './dto/request/notification-pagination-query.dto';
 import { NotificationPaginationResponseDto } from './dto/response/notification-pagination-response.dto';
-import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { NotificationReadQueryDto } from './dto/request/notification-read-query.dto';
-import axios from 'axios';
 
 @ApiTags('notification - 알람')
 @Controller('notifications')
 export class NotificationController {
-  constructor(private notificationService: NotificationService) {}
+  constructor(
+    private notificationService: NotificationService,
+    private firebaseService: FirebaseService,
+  ) {}
 
-  @Delete('test')
-  @ApiOperation({ summary: '테스트' })
-  async test() {
-    const serverKey = process.env.FCM_SERVER_KEY;
-
-    const message = {
-      to: 'divice token',
-      data: {
-        title: 'title',
-        body: 'body',
-      },
-    };
-
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `key=${serverKey}`,
-    };
-
-    const response = await axios.post('https://fcm.googleapis.com/fcm/send', message, { headers });
-    return response.data;
+  @Post('test')
+  @ApiOperation({ summary: '테스트 푸시 알림 보내기' })
+  async test(@Body() body: { token: string; title: string; message: string }) {
+    const { token, title, message } = body;
+    return await this.firebaseService.sendPushNotification(token, title, message);
   }
 
   @ApiBearerAuth('AccessJwt')

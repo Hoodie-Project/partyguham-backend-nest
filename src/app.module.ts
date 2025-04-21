@@ -16,6 +16,7 @@ import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
 import { BannerModule } from './banner/banner.module';
 import { NotificationModule } from './notification/notification.module';
+import { FirebaseModule } from './common/firebase/firebase.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { NotificationModule } from './notification/notification.module';
     BannerModule,
     NotificationModule,
     ReportModule,
+    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [
