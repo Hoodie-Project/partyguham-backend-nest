@@ -193,6 +193,8 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
   ) {
+    console.log(file);
+
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
     const image = file ? file.path : undefined;
 
