@@ -4,7 +4,7 @@ import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorat
 import { plainToInstance } from 'class-transformer';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
-import { FirebaseService } from 'src/common/firebase/firebase.service';
+import { FirebaseService } from 'src/libs/firebase/firebase.service';
 import { NotificationService } from './notification.service';
 
 import { NotificationPaginationQueryDto } from './dto/request/notification-pagination-query.dto';

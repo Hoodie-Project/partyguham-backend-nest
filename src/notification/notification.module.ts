@@ -6,7 +6,7 @@ import { NotificationEntity } from './entity/notification.entity';
 import { NotificationRepository } from './repository/notification.repository';
 import { NotificationTypeRepository } from './repository/notification_type.repository';
 import { NotificationTypeEntity } from './entity/notification_type.entity';
-import { FirebaseModule } from 'src/common/firebase/firebase.module';
+import { FirebaseModule } from 'src/libs/firebase/firebase.module';
 
 @Module({
   controllers: [NotificationController],
