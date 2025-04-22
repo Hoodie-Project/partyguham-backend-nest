@@ -4,7 +4,7 @@ import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorat
 import { plainToInstance } from 'class-transformer';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 
-import { FirebaseService } from 'src/common/firebase/firebase.service';
+import { FirebaseService } from 'src/libs/firebase/firebase.service';
 import { NotificationService } from './notification.service';
 
 import { NotificationPaginationQueryDto } from './dto/request/notification-pagination-query.dto';
@@ -23,7 +23,7 @@ export class NotificationController {
   @ApiOperation({ summary: '테스트 푸시 알림 보내기' })
   async test(@Body() body: { token: string; title: string; message: string }) {
     const { token, title, message } = body;
-    return await this.firebaseService.sendPushNotification(token, title, message);
+    return await this.firebaseService.sendDataPushNotification(token, title, message);
   }
 
   @ApiBearerAuth('AccessJwt')

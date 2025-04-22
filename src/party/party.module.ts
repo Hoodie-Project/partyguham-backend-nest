@@ -1,25 +1,30 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { BadRequestException, forwardRef, Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MulterModule } from '@nestjs/platform-express';
+
 import { UserModule } from 'src/user/user.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { diskStorage } from 'multer';
-import { ServeStaticModule } from '@nestjs/serve-static';
+import { NotificationModule } from 'src/notification/notification.module';
+import { PositionModule } from 'src/position/position.module';
+import { ImageModule } from 'src/libs/image/image.module';
 
 import { PartyFactory } from './domain/party/party.factory';
 
 import { PartyController } from './interface/controller/party.controller';
+import { PartyAdminController } from './interface/controller/party-admin.controller';
 import { PartyApplicationController } from './interface/controller/party-application.controller';
 import { PartyLandingController } from './interface/controller/party-landing.controller';
 import { PartyRecruitmentController } from './interface/controller/party-recruitment.controller';
+
+import { PartyUserService } from './application/party-user.service';
+import { PartyService } from './application/party.service';
+import { PartyApplicationService } from './application/party-application.service';
 
 import { PartyEntity } from './infra/db/entity/party/party.entity';
 import { PartyUserEntity } from './infra/db/entity/party/party_user.entity';
 import { PartyApplicationEntity } from './infra/db/entity/apply/party_application.entity';
 import { PartyInvitationEntity } from './infra/db/entity/apply/party_invitation.entity';
 import { PartyTypeEntity } from './infra/db/entity/party/party_type.entity';
+import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
 
 import { PartyRepository } from './infra/db/repository/party/party.repository';
 import { PartyRecruitmentRepository } from './infra/db/repository/apply/party_recruitment.repository';
@@ -35,7 +40,6 @@ import { DeletePartyHandler } from './application/command/delete-party.handler';
 import { CreatePartyHandler } from './application/command/create-party.handler';
 import { CreatePartyApplicationHandler } from './application/command/create-partyApplication.handler';
 import { CreatePartyRecruitmentHandler } from './application/command/create-partyRecruitment.handler';
-import { PartyRecruitmentEntity } from './infra/db/entity/apply/party_recruitment.entity';
 import { DeletePartyImageHandler } from './application/command/delete-partyImage.handler';
 import { GetPartyRecruitmentsHandler } from './application/query/get-partyRecruitments.handler';
 import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
@@ -54,21 +58,14 @@ import { GetRecruitmentsPersonalizedHandler } from './application/query/get-recr
 import { BatchDeletePartyRecruitmentHandler } from './application/command/batchDelete-partyRecruitment.handler';
 import { DeletePartyUsersHandler } from './application/command/delete-partyUsers.handler';
 import { GetPartyUserAuthorityHandler } from './application/query/get-partyUserAuthority.handler';
-
-import { PartyService } from './application/party.service';
-import { PartyApplicationService } from './application/party-application.service';
 import { GetSearchHandler } from './application/query/get-search.handler';
-import { PartyAdminController } from './interface/controller/party-admin.controller';
 import { ApproveAdminPartyApplicationHandler } from './application/command/approve-adminPartyApplication.handler';
 import { RejectionAdminPartyApplicationHandler } from './application/command/rejection-adminPartyApplication.handler';
 import { DelegatePartyApplicationHandler } from './application/command/delegate-party.handler';
 import { DeletePartyApplicationHandler } from './application/command/delete-partyApplication.handler';
 import { GetPartyApplicationMeHandler } from './application/query/get-partyApplicationMe.handler';
-import { PartyUserService } from './application/party-user.service';
 import { CompletedAdminPartyRecruitmentHandler } from './application/command/completed-adminPartyRecruitment.handler';
-import { NotificationModule } from 'src/notification/notification.module';
 import { UpdatePartyRecruitmentBatchStatusHandler } from './application/command/update-partyRecruitmentBatchStatus.handler';
-import { PositionModule } from 'src/position/position.module';
 
 const commandHandlers = [
   CreatePartyHandler,
@@ -122,9 +119,6 @@ const repositories = [
   { provide: 'PartyApplicationRepository', useClass: PartyApplicationRepository },
 ];
 
-const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
-const uploadDir = 'images/party';
-
 @Module({
   controllers: [
     PartyLandingController,
@@ -136,36 +130,7 @@ const uploadDir = 'images/party';
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories, ...services],
   exports: [...services, TypeOrmModule],
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: uploadDir, // 정적 파일이 저장된 디렉토리
-      serveRoot: mainRoot + '/' + uploadDir, // 정적 파일에 접근할 경로 설정
-    }),
-    MulterModule.register({
-      // dest: '../upload',
-      fileFilter: (req, file, callback) => {
-        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-          return callback(new BadRequestException('Only JPG, JPEG, or PNG files are allowed!'), false);
-        }
-        callback(null, true);
-      },
-
-      storage: diskStorage({
-        destination: (req, file, callback) => {
-          // 디렉토리가 존재하지 않으면 생성
-          if (!fs.existsSync(uploadDir)) {
-            fs.mkdirSync(uploadDir, { recursive: true });
-          }
-          callback(null, uploadDir);
-        },
-        filename: (req, file, callback) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9); //이미지 파일 이름 랜덤
-          const ext = path.extname(file.originalname); // 파일의 확장자를 추출
-
-          const filename = `${uniqueSuffix}${ext}`;
-          callback(null, filename);
-        },
-      }),
-    }),
+    ImageModule.register('party'),
     TypeOrmModule.forFeature([
       PartyEntity,
       PartyTypeEntity,

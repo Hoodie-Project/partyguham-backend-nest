@@ -39,6 +39,7 @@ import { UserByNicknameQuery } from '../../application/query/get-user-by-nicknam
 import { GetMyPartiesQuery } from '../../application/query/get-myParties.query';
 import { GetMyPartyApplicationsQuery } from '../../application/query/get-myPartyApplications.query';
 import { GetUserOauthQuery } from '../../application/query/get-userOauth.query';
+import { ImageService } from 'src/libs/image/image.service';
 
 @ApiTags('user - 유저')
 @Controller('users')
@@ -46,6 +47,7 @@ export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
+    private imageService: ImageService,
   ) {}
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
@@ -194,7 +196,7 @@ export class UserController {
     @Body() body: UapdateUserRequestDto,
   ) {
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
-    const image = file ? file.path : undefined;
+    const imagePath = file ? file.path : undefined;
 
     const getUserInfoQuery = new UpdateUserCommand(
       user.id,
@@ -204,7 +206,7 @@ export class UserController {
       birthVisible,
       portfolioTitle,
       portfolio,
-      image,
+      imagePath,
     );
     const result = await this.commandBus.execute(getUserInfoQuery);
 
