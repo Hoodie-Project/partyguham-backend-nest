@@ -1,24 +1,29 @@
-import * as fs from 'fs';
-import * as path from 'path';
 import { forwardRef, Module } from '@nestjs/common';
-import { UserController } from './interface/controller/user.controller';
-import { UserService } from './application/user.service';
 import { CqrsModule } from '@nestjs/cqrs';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { UserController } from './interface/controller/user.controller';
+import { UserService } from './application/user.service';
+
 import { UserEntity } from './infra/db/entity/user.entity';
-import { CreateUserHandler } from './application/command/create-user.handler';
-import { KakaoCodeHandler } from './application/command/kakao-code.handler';
-import { GetUserHandler } from './application/query/get-user.handler';
 import { UserFactory } from './domain/user/user.factory';
 import { UserRepository } from './infra/db/repository/user.repository';
-import { AuthModule } from 'src/auth/auth.module';
-import { GetUsersHandler } from './application/query/get-users.handler';
-import { UserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
+import { UserPersonalityRepository } from './infra/db/repository/user_personality.repository';
+import { UserCareerRepository } from './infra/db/repository/user_career.repository';
 
+import { AuthModule } from 'src/auth/auth.module';
+import { ImageModule } from 'src/libs/image/image.module';
+import { PartyModule } from 'src/party/party.module';
 import { KakaoLoginHandler } from './application/command/kakao-login.handler';
 import { LocationModule } from 'src/location/location.module';
 import { PositionModule } from 'src/position/position.module';
 import { PersonalityModule } from 'src/personality/personality.module';
+
+import { CreateUserHandler } from './application/command/create-user.handler';
+import { KakaoCodeHandler } from './application/command/kakao-code.handler';
+import { GetUserHandler } from './application/query/get-user.handler';
+import { GetUsersHandler } from './application/query/get-users.handler';
+import { UserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
 import { CreateUserLocationHandler } from './application/command/create.userLocation.handler';
 import { CreateUserPersonalityHandler } from './application/command/create.userPersonality.handler';
 import { CreateUserCareerHandler } from './application/command/create-userCareer.handler';
@@ -26,8 +31,6 @@ import { UserLocationRepository } from './infra/db/repository/user_location.repo
 import { UserLocationEntity } from './infra/db/entity/user_location.entity';
 import { UserCareerEntity } from './infra/db/entity/user_career.entity';
 import { UserPersonalityEntity } from './infra/db/entity/user_personality.entity';
-import { UserPersonalityRepository } from './infra/db/repository/user_personality.repository';
-import { UserCareerRepository } from './infra/db/repository/user_career.repository';
 import { GetCheckNicknameHandler } from './application/query/get-check-nickname.handler';
 
 import { DeleteUserLocationHandler } from './application/command/delete-userLocation.handler';
@@ -41,13 +44,6 @@ import { GoogleAppLoginHandler } from './application/command/google-app-login.ha
 import { DeleteUserLocationsHandler } from './application/command/delete-userLocations.handler';
 import { DeleteUserPersonalityByQuestionHandler } from './application/command/delete-userPersonalityByQuestion.handler';
 import { DeleteUserCareersHandler } from './application/command/delete-userCareers.handler';
-import { WebOauthController } from './interface/controller/web-oauth.controller';
-import { AppOauthController } from './interface/controller/app-oauth.controller';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { PartyModule } from 'src/party/party.module';
-import { GetMyPartiesHandler } from './application/query/get-myParties.handler';
 import { GetMyPartyApplicationHandler } from './application/query/get-myPartyApplications.handler';
 import { LinkOauthHandler } from './application/command/link-oauth.handler';
 import { GetUserOauthHandler } from './application/query/get-userOauth.handler';
@@ -60,10 +56,13 @@ import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handle
 import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
 import { UpdateUserCareerHandler } from './application/command/update-userCareer.handler';
 import { GetUserCareerHandler } from './application/query/get-userCareer.handler';
+import { RecoverUserHandler } from './application/command/recover-user.handler';
+
+import { WebOauthController } from './interface/controller/web-oauth.controller';
+import { AppOauthController } from './interface/controller/app-oauth.controller';
+import { GetMyPartiesHandler } from './application/query/get-myParties.handler';
 import { UserStatusController } from './interface/controller/user-status.controller';
 import { UserDetailsController } from './interface/controller/user-details.controller';
-import { RecoverUserHandler } from './application/command/recover-user.handler';
-import { ImageModule } from 'src/libs/image/image.module';
 
 const commandHandlers = [
   CreateUserHandler,
