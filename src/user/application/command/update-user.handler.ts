@@ -16,12 +16,10 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   ) {}
 
   async execute(command: UpdateUserCommand) {
-    const { userId, gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio, image } = command;
+    const { userId, gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio, imagePath } = command;
+    const savedImagePath = this.imageService.getRelativePath(imagePath);
 
     const user = await this.userRepository.findById(userId);
-    console.log(user);
-
-    console.log('image path', this.imageService.getFullPath(user.image));
 
     const updateUser = await this.userRepository.updateUser(
       userId,
@@ -31,8 +29,10 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       birthVisible,
       portfolioTitle,
       portfolio,
-      image,
+      savedImagePath,
     );
+
+    this.imageService.deleteImage(user.image);
 
     return updateUser;
   }
