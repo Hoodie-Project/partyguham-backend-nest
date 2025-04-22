@@ -91,9 +91,9 @@ export class PartyAdminController {
       throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.', 'BAD_REQUEST');
     }
     const { partyTypeId, title, content, status } = dto;
-    const imageFilePath = file ? file.path : undefined;
+    const imagePath = file ? file.path : undefined;
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, partyTypeId, title, content, imageFilePath, status);
+    const command = new UpdatePartyCommand(user.id, param.partyId, partyTypeId, title, content, imagePath, status);
 
     const result = this.commandBus.execute(command);
 

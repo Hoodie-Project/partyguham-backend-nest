@@ -8,7 +8,7 @@ export class UpdatePartyCommand implements ICommand {
     readonly partyTypeId: number,
     readonly title: string,
     readonly content: string,
-    readonly image: string,
+    readonly imagePath: string,
     readonly status: StatusEnum,
   ) {}
 }

@@ -15,6 +15,7 @@ import { UpdatePartyCommand } from './update-party.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { NotificationService } from 'src/notification/notification.service';
+import { ImageService } from 'src/libs/image/image.service';
 
 @Injectable()
 @CommandHandler(UpdatePartyCommand)
@@ -22,13 +23,14 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
   constructor(
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
+    private imageService: ImageService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
 
   async execute(command: UpdatePartyCommand) {
-    const { userId, partyId, partyTypeId, title, content, image, status } = command;
-
+    const { userId, partyId, partyTypeId, title, content, imagePath, status } = command;
+    const savedImagePath = this.imageService.getRelativePath(imagePath);
     const party = await this.partyRepository.findOneById(partyId);
 
     if (!party) {
@@ -48,7 +50,8 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
       throw new ForbiddenException('파티 수정 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    await this.partyRepository.updateById(partyId, partyTypeId, title, content, image, status);
+    await this.partyRepository.updateById(partyId, partyTypeId, title, content, savedImagePath, status);
+    this.imageService.deleteImage(party.image);
 
     // 알람
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
