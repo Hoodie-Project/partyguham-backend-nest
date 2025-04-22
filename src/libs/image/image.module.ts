@@ -9,8 +9,9 @@ import { ImageService } from './image.service';
 @Module({})
 export class ImageModule {
   static register(moduleName: string): DynamicModule {
-    const uploadDir = path.join(process.cwd(), 'images', moduleName);
     const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
+    const uploadDir = path.join(process.cwd(), 'images', moduleName);
+    const serveRoot = `${mainRoot}/images/${moduleName}`;
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
@@ -21,27 +22,34 @@ export class ImageModule {
       imports: [
         ServeStaticModule.forRoot({
           rootPath: uploadDir,
-          serveRoot: `${mainRoot}/images/${moduleName}`,
+          serveRoot: serveRoot,
         }),
         MulterModule.register({
           storage: diskStorage({
-            destination: (_, __, cb) => cb(null, uploadDir),
-            filename: (_, file, cb) => {
+            destination: (_, __, callback) => callback(null, uploadDir),
+            filename: (_, file, callback) => {
               const ext = path.extname(file.originalname);
               const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-              cb(null, unique);
+              callback(null, unique);
             },
           }),
-          fileFilter: (_, file, cb) => {
+          fileFilter: (_, file, callback) => {
             if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-              return cb(new Error('Only JPG, JPEG, PNG files are allowed!'), false);
+              return callback(new Error('Only JPG, JPEG, PNG files are allowed!'), false);
             }
-            cb(null, true);
+            callback(null, true);
           },
         }),
       ],
-      providers: [ImageService],
-      exports: [ImageService, MulterModule],
+      providers: [
+        ImageService,
+        { provide: 'UPLOAD_DIR', useValue: uploadDir },
+        {
+          provide: 'SERVE_ROOT',
+          useValue: serveRoot,
+        },
+      ],
+      exports: [ImageService, MulterModule, 'UPLOAD_DIR', 'SERVE_ROOT'],
     };
   }
 }

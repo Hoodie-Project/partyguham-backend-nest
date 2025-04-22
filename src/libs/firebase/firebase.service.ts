@@ -5,14 +5,20 @@ import * as path from 'path';
 @Injectable()
 export class FirebaseService {
   constructor() {
-    const keyPath = process.env.FIREBASE_KEY_PATH || 'src/common/firebase/firebase-service-account.dev.json';
-    const serviceAccount = require(path.resolve(keyPath));
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-    });
+    try {
+      const keyPath = process.env.FIREBASE_KEY_PATH || 'src/common/firebase/firebase-service-account.prod.json';
+      const serviceAccount = require(path.resolve(keyPath));
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+      });
+
+      console.log('✅ Firebase Admin SDK 초기화 성공');
+    } catch (err) {
+      console.error('❌ Firebase 초기화 실패:', err);
+    }
   }
 
-  async sendPushNotification(token: string, title: string, body: string) {
+  async sendMessagePushNotification(token: string, title: string, body: string) {
     const message = {
       token,
       notification: {
@@ -33,6 +39,26 @@ export class FirebaseService {
         details: error.details,
         stack: error.stack,
       });
+      throw error;
+    }
+  }
+
+  async sendDataPushNotification(token: string, title: string, body: string) {
+    const message = {
+      token,
+      data: {
+        title,
+        body,
+        type: 'custom',
+      },
+    };
+
+    try {
+      const response = await admin.messaging().send(message);
+      console.log('✅ FCM 전송 성공:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ FCM 전송 실패:', error);
       throw error;
     }
   }

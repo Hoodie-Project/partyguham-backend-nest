@@ -39,6 +39,7 @@ import { UserByNicknameQuery } from '../../application/query/get-user-by-nicknam
 import { GetMyPartiesQuery } from '../../application/query/get-myParties.query';
 import { GetMyPartyApplicationsQuery } from '../../application/query/get-myPartyApplications.query';
 import { GetUserOauthQuery } from '../../application/query/get-userOauth.query';
+import { ImageService } from 'src/libs/image/image.service';
 
 @ApiTags('user - 유저')
 @Controller('users')
@@ -46,6 +47,7 @@ export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
+    private imageService: ImageService,
   ) {}
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
@@ -193,10 +195,10 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
   ) {
-    console.log(file);
-
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
     const image = file ? file.path : undefined;
+    console.log('file', file);
+    console.log('file', this.imageService.getRelativePath(file.path));
 
     const getUserInfoQuery = new UpdateUserCommand(
       user.id,

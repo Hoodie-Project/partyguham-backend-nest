@@ -4,18 +4,26 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { UserFactory } from '../../domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { UpdateUserCommand } from './update-user.command';
+import { ImageService } from 'src/libs/image/image.service';
 
 @Injectable()
 @CommandHandler(UpdateUserCommand)
 export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
   constructor(
     private userFactory: UserFactory,
+    private imageService: ImageService,
     @Inject('UserRepository') private userRepository: IUserRepository,
   ) {}
 
   async execute(command: UpdateUserCommand) {
     const { userId, gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio, image } = command;
-    const user = await this.userRepository.updateUser(
+
+    const user = await this.userRepository.findById(userId);
+    console.log(user);
+
+    console.log('image path', this.imageService.getFullPath(user.image));
+
+    const updateUser = await this.userRepository.updateUser(
       userId,
       gender,
       genderVisible,
@@ -26,6 +34,6 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
       image,
     );
 
-    return user;
+    return updateUser;
   }
 }
