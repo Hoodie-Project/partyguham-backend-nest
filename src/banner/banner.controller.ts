@@ -47,10 +47,11 @@ export class BannerController {
 
     if (password !== 'hoodiev') throw new BadRequestException('password error');
 
-    const image = file ? file.path : null;
-    if (!image) throw new BadRequestException('image should not be empty');
+    const imagePath = file ? file.path : undefined;
 
-    const result = await this.bannerService.createWeb(title, image, link);
+    if (!imagePath) throw new BadRequestException('image should not be empty');
+
+    const result = await this.bannerService.createWeb(title, imagePath, link);
     return result;
   }
 

@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { BannerRepository } from './repository/banner.repository';
+import { ImageService } from 'src/libs/image/image.service';
 
 @Injectable()
 export class BannerService {
-  constructor(private bannerRepository: BannerRepository) {}
+  constructor(
+    private bannerRepository: BannerRepository,
+    private imageService: ImageService,
+  ) {}
 
-  async createWeb(title: string, image: string, link: string) {
-    const result = await this.bannerRepository.createWeb(title, image, link);
+  async createWeb(title: string, imagePath: string, link: string) {
+    const savedImagePath = this.imageService.getRelativePath(imagePath);
+
+    const result = await this.bannerRepository.createWeb(title, savedImagePath, link);
 
     return result;
   }
