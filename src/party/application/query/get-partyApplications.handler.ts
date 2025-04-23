@@ -1,7 +1,6 @@
 import { ForbiddenException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 
 import { Repository } from 'typeorm';
 import { GetPartyApplicationsQuery } from './get-partyApplications.query';

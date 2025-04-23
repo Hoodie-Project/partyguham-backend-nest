@@ -1,8 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Repository } from 'typeorm';
 
 import { GetUserCareerQuery } from './get-userCareer.query';
