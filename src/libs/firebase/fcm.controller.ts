@@ -37,6 +37,11 @@ export class FcmController {
   @ApiOperation({ summary: '토큰 등록하기' })
   async registerToken(@CurrentUser() user: CurrentUserType, @Body() body: RegisterFcmTokenDto) {
     const userId = user.id;
-    return this.fcmService.registerFcmToken(userId, body.fcmToken, body.device);
+    await this.fcmService.registerFcmToken(userId, body.fcmToken, body.device);
+
+    return {
+      success: true,
+      message: 'FCM 토큰 저장 성공',
+    };
   }
 }

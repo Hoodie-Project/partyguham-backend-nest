@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import * as path from 'path';
 import { FcmTokenRepository } from './repository/fcm-token.repository';
 import { FcmTokenEntity } from './entity/fcm-token.entity';
@@ -17,8 +17,12 @@ export class FcmService {
   /**
    * 토큰 등록
    */
-  async registerFcmToken(userId: number, token: string, device: string): Promise<FcmTokenEntity> {
-    return this.fcmTokenRepository.createTokenWithUserId(token, userId, device);
+  async registerFcmToken(userId: number, token: string, device: string) {
+    try {
+      return await this.fcmTokenRepository.upsertToken(token, userId, device);
+    } catch (err) {
+      throw new InternalServerErrorException('FCM 토큰 저장 실패');
+    }
   }
 
   /**
