@@ -37,12 +37,14 @@ import { FirebaseModule } from './libs/firebase/firebase.module';
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.MODE_ENV !== 'prod',
     }),
+    //libs
+    FirebaseModule,
+
     AuthModule,
     UserModule,
     BannerModule,
     NotificationModule,
     ReportModule,
-    FirebaseModule,
   ],
   controllers: [AppController],
   providers: [

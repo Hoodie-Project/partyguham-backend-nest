@@ -9,6 +9,7 @@ import { UserCareerEntity } from './user_career.entity';
 import { OauthEntity } from '../../../../auth/entity/oauth.entity';
 import { UserLocationEntity } from './user_location.entity';
 import { UserPersonalityEntity } from './user_personality.entity';
+import { FcmTokenEntity } from 'src/libs/firebase/entity/fcm-token.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -41,6 +42,11 @@ export class UserEntity extends BaseEntity {
 
   @Column('text', { nullable: true })
   image: string;
+
+  // 관계형
+
+  @OneToMany(() => FcmTokenEntity, (fcmToken) => fcmToken.user)
+  fcmTokens: FcmTokenEntity[];
 
   @OneToOne(() => AuthEntity, (auth) => auth.user)
   auth: AuthEntity;
