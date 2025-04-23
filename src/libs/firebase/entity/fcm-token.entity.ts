@@ -1,7 +1,8 @@
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
-@Entity()
+@Index(['userId', 'device'], { unique: true })
+@Entity('fcm_token')
 export class FcmTokenEntity {
   @PrimaryGeneratedColumn()
   id: number;
