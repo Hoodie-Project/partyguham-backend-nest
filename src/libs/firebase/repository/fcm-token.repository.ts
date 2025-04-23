@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { FcmTokenEntity } from './fcm-token.entity';
+import { FcmTokenEntity } from '../entity/fcm-token.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

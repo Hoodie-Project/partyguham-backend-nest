@@ -1,8 +1,15 @@
-import { Module } from '@nestjs/common';
-import { FirebaseService } from './firebase.service';
+import { Global, Module } from '@nestjs/common';
+import { FcmService } from './fcm.service';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FcmTokenEntity } from './entity/fcm-token.entity';
+import { FcmTokenRepository } from './repository/fcm-token.repository';
+import { FcmController } from './fcm.controller';
 
+@Global()
 @Module({
-  providers: [FirebaseService],
-  exports: [FirebaseService],
+  controllers: [FcmController],
+  providers: [FcmService, FcmTokenRepository],
+  imports: [TypeOrmModule.forFeature([FcmTokenEntity])],
+  exports: [FcmService],
 })
 export class FirebaseModule {}
