@@ -30,7 +30,8 @@ export class UpdatePartyHandler implements ICommandHandler<UpdatePartyCommand> {
 
   async execute(command: UpdatePartyCommand) {
     const { userId, partyId, partyTypeId, title, content, imagePath, status } = command;
-    const savedImagePath = this.imageService.getRelativePath(imagePath);
+
+    const savedImagePath = imagePath ? this.imageService.getRelativePath(imagePath) : undefined;
     const party = await this.partyRepository.findOneById(partyId);
 
     if (!party) {

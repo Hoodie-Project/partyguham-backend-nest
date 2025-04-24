@@ -17,7 +17,7 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
 
   async execute(command: UpdateUserCommand) {
     const { userId, gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio, imagePath } = command;
-    const savedImagePath = this.imageService.getRelativePath(imagePath);
+    const savedImagePath = imagePath ? this.imageService.getRelativePath(imagePath) : undefined;
 
     const user = await this.userRepository.findById(userId);
 
