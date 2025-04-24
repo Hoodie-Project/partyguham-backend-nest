@@ -26,16 +26,19 @@ export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
   }
 
   async validate(payload: PayloadType) {
-    try {
-      const oauthId = Number(this.authService.decrypt(payload.id));
-      const oauth = await this.oauthService.findById(oauthId);
+    let oauth;
+    const oauthId = Number(this.authService.decrypt(payload.id));
 
-      if (!oauth || oauth.userId == null) {
-        throw new UnauthorizedException('복구가 불가능한 계정입니다.', 'UNAUTHORIZED');
-      }
-      return { userId: oauth.userId, oauthId };
+    try {
+      oauth = await this.oauthService.findById(oauthId);
     } catch {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
+
+    if (!oauth || oauth.userId == null) {
+      throw new UnauthorizedException('복구가 불가능한 계정입니다.', 'UNAUTHORIZED');
+    }
+
+    return { userId: oauth.userId, oauthId };
   }
 }

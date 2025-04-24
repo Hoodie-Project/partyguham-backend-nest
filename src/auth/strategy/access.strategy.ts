@@ -20,16 +20,18 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
   }
 
   async validate(payload: PayloadType) {
-    try {
-      const decryptOauthId = Number(this.authService.decrypt(payload.id));
-      const oauth = await this.oauthService.findById(decryptOauthId);
+    let oauth;
+    const decryptOauthId = Number(this.authService.decrypt(payload.id));
 
-      if (!oauth || oauth.userId == null) {
-        throw new UnauthorizedException('OAuth 정보가 유효하지 않습니다.', 'UNAUTHORIZED');
-      }
-      return { id: oauth.userId };
+    try {
+      oauth = await this.oauthService.findById(decryptOauthId);
     } catch {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
+
+    if (!oauth || oauth.userId == null) {
+      throw new UnauthorizedException('OAuth 정보가 유효하지 않습니다.', 'UNAUTHORIZED');
+    }
+    return { id: oauth.userId };
   }
 }
