@@ -27,7 +27,7 @@ export class CreatePartyHandler implements ICommandHandler<CreatePartyCommand> {
       throw new NotFoundException('Party Type이 존재하지 않습니다.', 'NOT_FOUND');
     }
 
-    const savedImagePath = this.imageService.getRelativePath(imagePath);
+    const savedImagePath = imagePath ? this.imageService.getRelativePath(imagePath) : undefined;
 
     const party = await this.partyRepository.create(partyTypeId, title, content, savedImagePath);
 

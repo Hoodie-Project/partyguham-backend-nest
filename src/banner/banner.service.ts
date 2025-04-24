@@ -10,7 +10,7 @@ export class BannerService {
   ) {}
 
   async createWeb(title: string, imagePath: string, link: string) {
-    const savedImagePath = this.imageService.getRelativePath(imagePath);
+    const savedImagePath = imagePath ? this.imageService.getRelativePath(imagePath) : undefined;
 
     const result = await this.bannerRepository.createWeb(title, savedImagePath, link);
 

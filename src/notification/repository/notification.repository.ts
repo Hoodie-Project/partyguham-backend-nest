@@ -45,12 +45,12 @@ export class NotificationRepository {
     image: string,
     link: string,
   ) {
-    return this.notificationRepository.create({ userId, notificationTypeId, title, message, image, link });
+    return this.notificationRepository.save({ userId, notificationTypeId, title, message, image, link });
   }
 
   async createBulk(
     userIds: number[],
-    notificationId: number,
+    notificationTypeId: number,
     title: string,
     message: string,
     image: string,
@@ -58,7 +58,7 @@ export class NotificationRepository {
   ) {
     const notifications = userIds.map((userId) => ({
       userId,
-      notificationId,
+      notificationTypeId,
       title,
       message,
       image,

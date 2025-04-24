@@ -87,6 +87,7 @@ export class PartyAdminController {
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
   ) {
+    console.log(dto);
     if (Object.keys(dto).length === 0 && !file) {
       throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.', 'BAD_REQUEST');
     }

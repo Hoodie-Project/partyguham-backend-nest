@@ -13,15 +13,9 @@ export class NotificationTypeRepository {
   ) {}
 
   async findOne(type: string) {
-    const result = await this.notificationTypeRepository.findOne({
+    return this.notificationTypeRepository.findOne({
       where: { type },
     });
-
-    if (!result) {
-      throw new InternalServerErrorException('데이터베이스에 타입이 없음');
-    }
-
-    return result;
   }
 
   async findAll() {
