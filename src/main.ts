@@ -4,9 +4,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 
 import * as fs from 'fs';
-import * as session from 'express-session';
+import session from 'express-session';
 
-import * as cookieParser from 'cookie-parser';
+import cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 
 declare module 'express-session' {
