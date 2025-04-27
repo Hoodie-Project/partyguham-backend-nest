@@ -107,10 +107,6 @@ export class WebOauthController {
       });
 
       let redirectURL = process.env.BASE_URL;
-      if (process.env.MODE_ENV === 'dev') {
-        redirectURL = redirectURL + `?token=` + result.refreshToken;
-      }
-
       res.redirect(`${redirectURL}`);
     }
 
@@ -222,9 +218,6 @@ export class WebOauthController {
       });
 
       let redirectURL = process.env.BASE_URL;
-      if (process.env.MODE_ENV === 'dev') {
-        redirectURL = redirectURL + `?token=` + result.refreshToken;
-      }
 
       res.redirect(`${redirectURL}`);
     }
