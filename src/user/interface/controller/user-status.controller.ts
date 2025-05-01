@@ -118,7 +118,11 @@ export class UserStatusController {
       }
     });
 
-    res.clearCookie('signupToken');
+    res.clearCookie('signupToken', {
+      secure: true,
+      httpOnly: true,
+      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+    });
     // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
 
@@ -137,7 +141,14 @@ export class UserStatusController {
     description: `'refreshToken' clearCookie`,
   })
   async logout(@Res() res: Response): Promise<void> {
-    res.status(200).clearCookie('refreshToken').send();
+    res
+      .clearCookie('refreshToken', {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+      })
+      .status(200)
+      .send();
   }
 
   @ApiBearerAuth('accessToken')

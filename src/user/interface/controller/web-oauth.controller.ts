@@ -414,7 +414,11 @@ export class WebOauthController {
     const command = new LinkOauthCommand(userId, linkToken);
     await this.commandBus.execute(command);
 
-    res.clearCookie('linkToken');
+    res.clearCookie('linkToken', {
+      secure: true,
+      httpOnly: true,
+      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+    });
     res.status(200).send({ message: '연동이 완료되었습니다.' });
   }
 }
