@@ -15,6 +15,7 @@ import { NotificationService } from 'src/notification/notification.service';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { UserService } from 'src/user/application/user.service';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(CreatePartyApplicationCommand)
@@ -22,6 +23,7 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
   constructor(
     private userService: UserService,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
@@ -62,19 +64,26 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
       message,
     );
 
-    // 지원한 유저에게 알람 가기
+    // 지원한 유저에게 알람 비동기 처리
     const partyMaster = await this.partyUserRepository.findOneMasterByPartyId(partyId);
     const nickname = (await this.userService.findUserById(userId)).nickname;
     const type = 'recruit';
     const link = `/party/setting/applicant/${partyId}`;
+    const title = party.title;
+    const notificationMessage = `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`;
+
+    // 알람
     this.notificationService.createNotification(
       partyMaster.userId,
       type,
-      party.title,
-      `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`,
+      title,
+      notificationMessage,
       party.image,
       link,
     );
+
+    // 푸쉬 알람
+    this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
 
     return partyApplication;
   }
