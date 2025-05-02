@@ -54,7 +54,7 @@ export class FcmService {
   }
 
   /**
-   * 메세지(notification) 형식 알림
+   * 메세지(notification) 형식 알림 보내기
    */
   async sendMessagePushNotification(token: string, title: string, body: string) {
     const message = {
@@ -82,8 +82,31 @@ export class FcmService {
   }
 
   /**
-   * data 형식 알림
+   * data 형식 알림 보내기
    */
+  async sendDataPushNotificationByUserId(userId: number, title: string, body: string, type: string) {
+    const userFcm = await this.fcmTokenRepository.findOneActiveTokenByUserId(userId);
+    const token = userFcm.token;
+
+    const message = {
+      token,
+      data: {
+        title,
+        body,
+        type,
+      },
+    };
+
+    try {
+      const response = await admin.messaging().send(message);
+      console.log('✅ FCM 전송 성공:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ FCM 전송 실패:', error);
+      throw error;
+    }
+  }
+
   async sendDataPushNotification(token: string, title: string, body: string, type: string) {
     const message = {
       token,

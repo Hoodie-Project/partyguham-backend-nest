@@ -40,6 +40,12 @@ export class FcmTokenRepository {
   }
 
   // 특정 유저의 활성 토큰 목록 조회
+  async findOneActiveTokenByUserId(userId: number): Promise<FcmTokenEntity> {
+    return this.fcmTokenRepository.findOne({
+      where: { user: { id: userId }, isActive: true },
+    });
+  }
+
   async findActiveTokensByUserId(userId: number): Promise<FcmTokenEntity[]> {
     return this.fcmTokenRepository.find({
       where: { user: { id: userId }, isActive: true },
