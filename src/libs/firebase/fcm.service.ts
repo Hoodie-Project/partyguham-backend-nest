@@ -86,24 +86,29 @@ export class FcmService {
    */
   async sendDataPushNotificationByUserId(userId: number, title: string, body: string, type: string) {
     const userFcm = await this.fcmTokenRepository.findOneActiveTokenByUserId(userId);
-    const token = userFcm.token;
 
-    const message = {
-      token,
-      data: {
-        title,
-        body,
-        type,
-      },
-    };
+    if (userFcm) {
+      const token = userFcm.token;
 
-    try {
-      const response = await admin.messaging().send(message);
-      console.log('✅ FCM 전송 성공:', response);
-      return response;
-    } catch (error) {
-      console.error('❌ FCM 전송 실패:', error);
-      throw error;
+      try {
+        const message = {
+          token,
+          data: {
+            title,
+            body,
+            type,
+          },
+        };
+
+        const response = await admin.messaging().send(message);
+        console.log('✅ FCM 전송 성공:', response);
+        return response;
+      } catch (error) {
+        console.error('❌ FCM 전송 실패:', error);
+        throw error;
+      }
+    } else {
+      console.error('❌ FCM 토큰 조회 되지 않음');
     }
   }
 
