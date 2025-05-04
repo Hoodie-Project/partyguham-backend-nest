@@ -17,6 +17,7 @@ import { IPartyApplicationRepository } from 'src/party/domain/party/repository/i
 import { ApproveAdminPartyApplicationCommand } from './approve-adminPartyApplication.comand';
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(ApproveAdminPartyApplicationCommand)
@@ -24,6 +25,7 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
   constructor(
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -59,14 +61,20 @@ export class ApproveAdminPartyApplicationHandler implements ICommandHandler<Appr
     const applicationUser = await this.partyApplicationRepository.findOneByIdWithUserData(partyApplicationId);
     const type = 'recruit';
     const link = `/my/apply`;
+    const title = party.title;
+    const notificationMessage = `${applicationUser.user.nickname}님의 지원이 수락되었어요. 합류 여부를 결정해 주세요.`;
+
     this.notificationService.createNotification(
       applicationUser.userId,
       type,
-      party.title,
-      `${applicationUser.user.nickname}님의 지원이 수락되었어요. 합류 여부를 결정해 주세요.`,
+      title,
+      notificationMessage,
       party.image,
       link,
     );
+
+    // 푸쉬 알람
+    this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
 
     return { message: '지원자를 수락 하였습니다.' };
   }

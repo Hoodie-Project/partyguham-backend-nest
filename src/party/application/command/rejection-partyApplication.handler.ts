@@ -19,6 +19,7 @@ import { IPartyApplicationRepository } from 'src/party/domain/party/repository/i
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { UserService } from 'src/user/application/user.service';
 import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(RejectionPartyApplicationCommand)
@@ -27,6 +28,7 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     private partyFactory: PartyFactory,
     private userService: UserService,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -66,14 +68,19 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     const nickname = (await this.userService.findUserById(userId)).nickname;
     const type = 'recruit';
     const link = `/party/setting/applicant/${partyId}`;
+    const title = party.title;
+    const notificationMessage = `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`;
+
     this.notificationService.createNotification(
       partyMaster.userId,
       type,
-      party.title,
-      `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`,
+      title,
+      notificationMessage,
       party.image,
       link,
     );
+
+    this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
 
     return { message: '지원을 거절 하였습니다.' };
   }
