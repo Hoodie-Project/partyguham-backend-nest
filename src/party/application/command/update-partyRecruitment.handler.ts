@@ -11,7 +11,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PartyFactory } from 'src/party/domain/party/party.factory';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
-import { IPartyTypeRepository } from 'src/party/domain/party/repository/iPartyType.repository';
 
 import { PartyAuthority } from 'src/party/infra/db/entity/party/party_user.entity';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
