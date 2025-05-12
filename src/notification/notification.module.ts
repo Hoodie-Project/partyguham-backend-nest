@@ -6,11 +6,13 @@ import { NotificationEntity } from './entity/notification.entity';
 import { NotificationRepository } from './repository/notification.repository';
 import { NotificationTypeRepository } from './repository/notification_type.repository';
 import { NotificationTypeEntity } from './entity/notification_type.entity';
+import { EmailNotificationRepository } from './repository/email-notification.repository';
+import { EmailNotificationEntity } from './entity/email-notification.entity';
 
 @Module({
   controllers: [NotificationController],
-  providers: [NotificationService, NotificationRepository, NotificationTypeRepository],
-  imports: [TypeOrmModule.forFeature([NotificationEntity, NotificationTypeEntity])],
+  providers: [NotificationService, NotificationRepository, NotificationTypeRepository, EmailNotificationRepository],
+  imports: [TypeOrmModule.forFeature([NotificationEntity, NotificationTypeEntity, EmailNotificationEntity])],
   exports: [NotificationService],
 })
 export class NotificationModule {}
