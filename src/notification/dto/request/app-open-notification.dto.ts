@@ -3,8 +3,8 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class AppOpenNotificationDto {
   @ApiProperty({
-    example: 50,
-    description: 'notification Id (PK - 알람)',
+    example: 'partyguham@gmail.com',
+    description: '알람 받을 이메일',
   })
   @IsEmail()
   @IsNotEmpty()
