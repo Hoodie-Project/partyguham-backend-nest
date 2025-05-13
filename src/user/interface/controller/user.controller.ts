@@ -7,6 +7,7 @@ import {
   HttpCode,
   Param,
   Patch,
+  Post,
   Query,
   Req,
   Res,
@@ -39,7 +40,7 @@ import { UserByNicknameQuery } from '../../application/query/get-user-by-nicknam
 import { GetMyPartiesQuery } from '../../application/query/get-myParties.query';
 import { GetMyPartyApplicationsQuery } from '../../application/query/get-myPartyApplications.query';
 import { GetUserOauthQuery } from '../../application/query/get-userOauth.query';
-import { ImageService } from 'src/libs/image/image.service';
+import { UserService } from 'src/user/application/user.service';
 
 @ApiTags('user - 유저')
 @Controller('users')
@@ -47,7 +48,7 @@ export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
-    private imageService: ImageService,
+    private userService: UserService,
   ) {}
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
@@ -211,5 +212,23 @@ export class UserController {
     const result = await this.commandBus.execute(getUserInfoQuery);
 
     return plainToInstance(UpdateUserResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('app-open')
+  @ApiOperation({ summary: '앱 오픈 알람 받기' })
+  @ApiResponse({
+    status: 201,
+    description: '등록이 완료되었습니다.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: '이미 등록된 이메일입니다.',
+  })
+  async createAppNotification(@CurrentUser() user: CurrentUserType) {
+    await this.userService.createAppOpenNotifications(user.id);
+
+    return '등록이 완료되었습니다.';
   }
 }
