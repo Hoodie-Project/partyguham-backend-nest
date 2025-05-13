@@ -9,7 +9,6 @@ import { NotificationService } from './notification.service';
 import { NotificationPaginationQueryDto } from './dto/request/notification-pagination-query.dto';
 import { NotificationPaginationResponseDto } from './dto/response/notification-pagination-response.dto';
 import { NotificationReadQueryDto } from './dto/request/notification-read-query.dto';
-import { AppOpenNotificationDto } from './dto/request/app-open-notification.dto';
 
 @ApiTags('notification - 알람')
 @Controller('notifications')
@@ -60,23 +59,5 @@ export class NotificationController {
   async deleteNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
     const { notificationId } = param;
     await this.notificationService.deleteNotification(user.id, notificationId);
-  }
-
-  @Post('app-open')
-  @ApiOperation({ summary: '앱 오픈 알람 받기' })
-  @ApiBody({ type: AppOpenNotificationDto })
-  @ApiResponse({
-    status: 200,
-    description: '알람 리스트 조회',
-    type: '등록이 완료되었습니다.',
-  })
-  @ApiResponse({
-    status: 409,
-    description: '이메일이 이미 등록됨(중복)',
-  })
-  async createAppNotification(@Body() body: AppOpenNotificationDto) {
-    await this.notificationService.createAppOpenNotifications(body.email);
-
-    return '등록이 완료되었습니다.';
   }
 }

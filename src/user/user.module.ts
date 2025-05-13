@@ -63,6 +63,7 @@ import { AppOauthController } from './interface/controller/app-oauth.controller'
 import { GetMyPartiesHandler } from './application/query/get-myParties.handler';
 import { UserStatusController } from './interface/controller/user-status.controller';
 import { UserDetailsController } from './interface/controller/user-details.controller';
+import { NotificationModule } from 'src/notification/notification.module';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -134,6 +135,7 @@ const repositories = [
     PositionModule,
     LocationModule,
     PersonalityModule,
+    NotificationModule,
     forwardRef(() => PartyModule), // 유저 <-> 파티 순환참조 사용
   ],
 })

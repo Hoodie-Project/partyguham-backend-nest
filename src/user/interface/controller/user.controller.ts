@@ -7,6 +7,7 @@ import {
   HttpCode,
   Param,
   Patch,
+  Post,
   Query,
   Req,
   Res,
@@ -39,7 +40,7 @@ import { UserByNicknameQuery } from '../../application/query/get-user-by-nicknam
 import { GetMyPartiesQuery } from '../../application/query/get-myParties.query';
 import { GetMyPartyApplicationsQuery } from '../../application/query/get-myPartyApplications.query';
 import { GetUserOauthQuery } from '../../application/query/get-userOauth.query';
-import { ImageService } from 'src/libs/image/image.service';
+import { UserService } from 'src/user/application/user.service';
 
 @ApiTags('user - 유저')
 @Controller('users')
@@ -47,12 +48,18 @@ export class UserController {
   constructor(
     private commandBus: CommandBus,
     private queryBus: QueryBus,
-    private imageService: ImageService,
+    private userService: UserService,
   ) {}
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
   @Get('nickname/:nickname')
   @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 유저 정보를 가져왔습니다.',
@@ -77,6 +84,12 @@ export class UserController {
     summary: '내정보 조회',
     description: `**내 정보를 조회하는 API 입니다.**   
     Query에 sort/order는 partyUsers(파티원)에 참여 여부에 대해 적용되는 내용입니다.`,
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
   })
   @ApiResponse({
     status: 200,
@@ -158,6 +171,12 @@ export class UserController {
     description: `**내가 지원한 모집공고를 조회하는 API 입니다.**   
     `,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 목록을 가져왔습니다.',
@@ -185,6 +204,12 @@ export class UserController {
         \`\`\`(key)image : (value) 파티에 대한 이미지 파일을 업로드합니다. - jpg, png, jpeg 파일 첨부   \`\`\`  
         `,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 내정보를 변경 하였습니다.',
@@ -211,5 +236,29 @@ export class UserController {
     const result = await this.commandBus.execute(getUserInfoQuery);
 
     return plainToInstance(UpdateUserResponseDto, result);
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Post('app-open')
+  @ApiOperation({ summary: '앱 오픈 알람 받기' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
+  @ApiResponse({
+    status: 201,
+    description: '등록이 완료되었습니다.',
+  })
+  @ApiResponse({
+    status: 409,
+    description: '이미 등록된 이메일입니다.',
+  })
+  async createAppNotification(@CurrentUser() user: CurrentUserType) {
+    await this.userService.createAppOpenNotifications(user.id);
+
+    return '등록이 완료되었습니다.';
   }
 }

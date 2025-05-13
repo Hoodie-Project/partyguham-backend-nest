@@ -21,7 +21,7 @@ import { SearchRequestDto } from '../dto/request/search.request.dto';
 import { GetSearchQuery } from '../../application/query/get-search.query';
 import { GetSearchResponseDto } from '../dto/response/get-partySearch.response.dto';
 
-@ApiTags('party landing page - 파티 렌딩 페이지 API')
+@ApiTags('party home(lounge) page - 파티 홈(라운지) 페이지 API')
 @Controller('parties')
 export class PartyLandingController {
   constructor(

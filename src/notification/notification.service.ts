@@ -1,10 +1,4 @@
-import {
-  ConflictException,
-  ForbiddenException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { NotificationRepository } from './repository/notification.repository';
 import { NotificationTypeRepository } from './repository/notification_type.repository';
 import { EmailNotificationRepository } from './repository/email-notification.repository';
@@ -59,16 +53,6 @@ export class NotificationService {
     return await this.notificationRepository.createBulk(userIds, notificationType.id, title, message, image, link);
   }
 
-  async createAppOpenNotifications(email: string) {
-    const existing = await this.emailNotificationRepository.findByEmail(email);
-
-    if (existing) {
-      throw new ConflictException('이미 등록된 이메일입니다.');
-    }
-
-    return await this.emailNotificationRepository.saveEmail(email);
-  }
-
   async deleteNotification(userId: number, notificationId: number): Promise<void> {
     const notification = await this.notificationRepository.findOne(notificationId);
 
@@ -85,5 +69,13 @@ export class NotificationService {
     if (!result) {
       throw new InternalServerErrorException('삭제 실패');
     }
+  }
+
+  async saveEmail(email: string) {
+    return await this.emailNotificationRepository.saveEmail(email);
+  }
+
+  async findByEmail(email: string) {
+    return await this.emailNotificationRepository.findByEmail(email);
   }
 }
