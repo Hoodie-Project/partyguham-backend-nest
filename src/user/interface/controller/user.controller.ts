@@ -54,6 +54,12 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Get('nickname/:nickname')
   @ApiOperation({ summary: '닉네임으로 유저 조회' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 유저 정보를 가져왔습니다.',
@@ -78,6 +84,12 @@ export class UserController {
     summary: '내정보 조회',
     description: `**내 정보를 조회하는 API 입니다.**   
     Query에 sort/order는 partyUsers(파티원)에 참여 여부에 대해 적용되는 내용입니다.`,
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
   })
   @ApiResponse({
     status: 200,
@@ -159,6 +171,12 @@ export class UserController {
     description: `**내가 지원한 모집공고를 조회하는 API 입니다.**   
     `,
   })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
   @ApiResponse({
     status: 200,
     description: '성공적으로 목록을 가져왔습니다.',
@@ -185,6 +203,12 @@ export class UserController {
         2. 이미지를 저장하는 key는 image 이며, 선택사항 (optional) 입니다.  
         \`\`\`(key)image : (value) 파티에 대한 이미지 파일을 업로드합니다. - jpg, png, jpeg 파일 첨부   \`\`\`  
         `,
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
   })
   @ApiResponse({
     status: 200,
@@ -218,6 +242,12 @@ export class UserController {
   @UseGuards(AccessJwtAuthGuard)
   @Post('app-open')
   @ApiOperation({ summary: '앱 오픈 알람 받기' })
+  @ApiHeader({
+    name: 'Authorization',
+    description: `Bearer {access token}
+    `,
+    required: true,
+  })
   @ApiResponse({
     status: 201,
     description: '등록이 완료되었습니다.',
