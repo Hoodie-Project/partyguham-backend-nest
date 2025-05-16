@@ -20,7 +20,7 @@ export class GetPartyUserAuthorityHandler implements IQueryHandler<GetPartyUserA
       .select(['partyUser.authority', 'partyUser.id', 'position'])
       .where('partyUser.userId = :userId', { userId })
       .andWhere('partyUser.partyId = :partyId', { partyId })
-      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
+      .andWhere('partyUser.status != :deleted', { deleted: StatusEnum.DELETED })
       .getOne();
 
     if (!partyUser) {
