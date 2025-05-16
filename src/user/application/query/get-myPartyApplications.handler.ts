@@ -41,7 +41,7 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
         'partyType.type',
       ])
       .where('partyApplication.userId = :userId', { userId })
-      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
+      .andWhere('party.status != :party', { party: StatusEnum.DELETED })
       .andWhere('partyApplication.status != :deleted', { deleted: StatusEnum.DELETED })
       .limit(limit)
       .offset(offset)

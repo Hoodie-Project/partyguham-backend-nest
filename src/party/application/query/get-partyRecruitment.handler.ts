@@ -41,8 +41,8 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
         'partyRecruitments.createdAt',
       ])
       .where('partyRecruitments.id = :id', { id: partyRecruitmentId })
-      .andWhere('partyRecruitments.status != :deleted', { deleted: StatusEnum.DELETED })
-      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED });
+      .andWhere('partyRecruitments.status != :status', { status: StatusEnum.DELETED })
+      .andWhere('party.status != :party', { party: StatusEnum.DELETED });
 
     const partyRecruitment = await partyQuery.getOne();
 
