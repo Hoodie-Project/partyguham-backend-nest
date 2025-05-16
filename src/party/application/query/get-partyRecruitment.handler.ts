@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { GetPartyRecruitmentQuery } from './get-partyRecruitment.query';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetPartyRecruitmentQuery)
 export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruitmentQuery> {
@@ -39,12 +40,13 @@ export class GetPartyRecruitmentHandler implements IQueryHandler<GetPartyRecruit
         'partyRecruitments.status',
         'partyRecruitments.createdAt',
       ])
-      .where('partyRecruitments.id = :id', { id: partyRecruitmentId });
+      .where('partyRecruitments.id = :id', { id: partyRecruitmentId })
+      .andWhere('partyRecruitments.status != :deleted', { deleted: StatusEnum.DELETED })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED });
 
     const partyRecruitment = await partyQuery.getOne();
-    const partyStatus = partyRecruitment.party.status;
 
-    if (!partyRecruitment || partyStatus === 'deleted') {
+    if (!partyRecruitment) {
       throw new NotFoundException('파티 모집이 존재하지 않습니다', 'PARTY_RECRUITMENT_NOT_EXIST');
     }
 

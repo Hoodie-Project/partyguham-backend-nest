@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { Repository } from 'typeorm';
 import { GetUsersQuery } from './get-users.query';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetUsersQuery)
 export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
@@ -16,6 +17,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
     const offset = (page - 1) * limit || 0;
     const user = await this.userRepository
       .createQueryBuilder('user')
+      .andWhere('user.status != :deleted', { deleted: StatusEnum.DELETED })
       .limit(limit)
       .offset(offset)
       .orderBy(`user.${sort}`, order)

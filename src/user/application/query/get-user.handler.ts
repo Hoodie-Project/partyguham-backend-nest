@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { GetUserQuery } from './get-user.query';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetUserQuery)
 export class GetUserHandler implements IQueryHandler<GetUserQuery> {
@@ -41,6 +42,7 @@ export class GetUserHandler implements IQueryHandler<GetUserQuery> {
         'location',
       ])
       .where('user.id = :id', { id: userId })
+      .andWhere('user.status != :deleted', { deleted: StatusEnum.DELETED })
       .getOne();
 
     if (!user) {

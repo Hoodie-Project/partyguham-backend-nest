@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetPartyUserAuthorityQuery } from './get-partyUserAuthority.query';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetPartyUserAuthorityQuery)
 export class GetPartyUserAuthorityHandler implements IQueryHandler<GetPartyUserAuthorityQuery> {
@@ -19,6 +20,7 @@ export class GetPartyUserAuthorityHandler implements IQueryHandler<GetPartyUserA
       .select(['partyUser.authority', 'partyUser.id', 'position'])
       .where('partyUser.userId = :userId', { userId })
       .andWhere('partyUser.partyId = :partyId', { partyId })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
       .getOne();
 
     if (!partyUser) {

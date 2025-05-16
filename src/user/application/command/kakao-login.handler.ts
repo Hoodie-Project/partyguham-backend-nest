@@ -91,7 +91,11 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
     }
 
     if (oauth.userId) {
-      const user = await this.userService.findUserById(oauth.userId);
+      const user = await this.userService.findById(oauth.userId);
+
+      if (user.status === StatusEnum.DELETED) {
+        return { type: USER_ERROR.USER_DELETED.error };
+      }
 
       if (user.status === StatusEnum.INACTIVE) {
         const recoverToken = await this.authService.createRecoverToken(oauth.id);

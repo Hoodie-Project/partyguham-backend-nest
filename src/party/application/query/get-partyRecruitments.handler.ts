@@ -22,6 +22,7 @@ export class GetPartyRecruitmentsHandler implements IQueryHandler<GetPartyRecrui
     const party = await this.partyRepository
       .createQueryBuilder('party')
       .where('party.id = :id', { id: partyId })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
       .getOne();
 
     if (!party) {

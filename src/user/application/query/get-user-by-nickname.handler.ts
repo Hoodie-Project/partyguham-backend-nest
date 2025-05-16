@@ -3,9 +3,10 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
 import { UserByNicknameQuery } from './get-user-by-nickname.query';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(UserByNicknameQuery)
 export class UserByNicknameHandler implements IQueryHandler<UserByNicknameQuery> {
@@ -15,7 +16,7 @@ export class UserByNicknameHandler implements IQueryHandler<UserByNicknameQuery>
     const { nickname } = query;
 
     const user = await this.userRepository.findOne({
-      where: { nickname },
+      where: { nickname, status: Not(StatusEnum.DELETED) },
     });
 
     if (!user) {

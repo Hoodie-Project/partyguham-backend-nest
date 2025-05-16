@@ -28,6 +28,7 @@ export class GetRecruitmentsHandler implements IQueryHandler<GetRecruitmentsQuer
       .offset(offset)
       .where('1=1')
       .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
       .orderBy(`partyRecruitments.${sort}`, order);
 
     if (positionIds !== undefined && positionIds.length !== 0) {

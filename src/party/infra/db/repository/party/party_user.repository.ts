@@ -1,4 +1,4 @@
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, In, Not, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -59,11 +59,11 @@ export class PartyUserRepository implements IPartyUserRepository {
   }
 
   async findOneById(id: number) {
-    return await this.partyUserRepository.findOne({ where: { id } });
+    return await this.partyUserRepository.findOne({ where: { id, status: Not(StatusEnum.DELETED) } });
   }
 
   async findAllbByPartyId(partyId: number) {
-    return await this.partyUserRepository.find({ where: { partyId } });
+    return await this.partyUserRepository.find({ where: { partyId, status: Not(StatusEnum.DELETED) } });
   }
 
   async findOneMasterByPartyId(partyId: number) {
@@ -71,6 +71,7 @@ export class PartyUserRepository implements IPartyUserRepository {
       .createQueryBuilder('partyUser')
       .where('partyUser.partyId = :partyId', { partyId })
       .andWhere('partyUser.authority = :authority', { authority: PartyAuthority.MASTER })
+      .andWhere('partyUser.status != :deleted', { deleted: StatusEnum.DELETED })
       .getOne();
   }
 
