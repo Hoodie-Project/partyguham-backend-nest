@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetPartyUserQuery } from './get-partyUser.query';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetPartyUserQuery)
 export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
@@ -33,6 +34,7 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
       ])
       .where('partyUser.authority IN (:...authorities)', { authorities: ['master', 'deputy'] })
       .andWhere('party.id = :id', { id: partyId })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
       .getMany();
 
     if (!partyAdmin) {
@@ -59,15 +61,6 @@ export class GetPartyUserHandler implements IQueryHandler<GetPartyUserQuery> {
       .where('partyUser.authority = :authority', { authority: 'member' }) // 멤버만
       .andWhere('party.id = :id', { id: partyId })
       .orderBy(`partyUser.${sort}`, order);
-    //   .addOrderBy(
-    //     `CASE
-    //     WHEN position.main = '기획자' THEN 1
-    //     WHEN position.main = '디자이너' THEN 2
-    //     WHEN position.main = '개발자' THEN 3
-    //     WHEN position.main = '마케터/광고' THEN 4
-    //     ELSE 5
-    // END`,
-    //   )
 
     // 직군 선택 옵션
     if (main !== undefined && main !== null) {

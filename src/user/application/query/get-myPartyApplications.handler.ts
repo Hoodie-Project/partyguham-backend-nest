@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { GetMyPartyApplicationsQuery } from './get-myPartyApplications.query';
 import { PartyApplicationEntity } from 'src/party/infra/db/entity/apply/party_application.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetMyPartyApplicationsQuery)
 export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApplicationsQuery> {
@@ -40,6 +41,8 @@ export class GetMyPartyApplicationHandler implements IQueryHandler<GetMyPartyApp
         'partyType.type',
       ])
       .where('partyApplication.userId = :userId', { userId })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
+      .andWhere('partyApplication.status != :deleted', { deleted: StatusEnum.DELETED })
       .limit(limit)
       .offset(offset)
       .orderBy(`partyApplication.${sort}`, order);

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { PartyApplicationEntity } from 'src/party/infra/db/entity/apply/party_application.entity';
 import { GetPartyApplicationMeQuery } from './get-partyApplicationMe.query';
 import { PartyRecruitmentEntity } from 'src/party/infra/db/entity/apply/party_recruitment.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetPartyApplicationMeQuery)
 export class GetPartyApplicationMeHandler implements IQueryHandler<GetPartyApplicationMeQuery> {
@@ -21,6 +22,7 @@ export class GetPartyApplicationMeHandler implements IQueryHandler<GetPartyAppli
       .createQueryBuilder('partyRecruitments')
       .where('partyRecruitments.id = :id', { id: partyRecruitmentId })
       .andWhere('partyRecruitments.partyId = :partyId', { partyId })
+      .andWhere('partyRecruitments.status != :deleted', { deleted: StatusEnum.DELETED })
       .getOne();
 
     if (!party) {
@@ -37,7 +39,8 @@ export class GetPartyApplicationMeHandler implements IQueryHandler<GetPartyAppli
         'partyApplication.createdAt',
       ])
       .where('partyApplication.partyRecruitmentId = :partyRecruitmentId', { partyRecruitmentId })
-      .andWhere('partyApplication.userId = :userId', { userId });
+      .andWhere('partyApplication.userId = :userId', { userId })
+      .andWhere('partyApplication.status != :deleted', { deleted: StatusEnum.DELETED });
 
     const application = await partyApplicationUserQuery.getOne();
 

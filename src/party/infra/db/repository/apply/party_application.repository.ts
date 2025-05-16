@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -28,7 +28,7 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
 
   async findAll(id: number) {
     const partyApplication = await this.partyApplicationRepository.find({
-      where: { id },
+      where: { id, status: Not(StatusEnum.DELETED) },
     });
 
     return partyApplication;
@@ -36,7 +36,7 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
 
   async findAllByPartyRecruitmentId(partyRecruitmentId: number) {
     const partyApplication = await this.partyApplicationRepository.find({
-      where: { partyRecruitmentId },
+      where: { partyRecruitmentId, status: Not(StatusEnum.DELETED) },
     });
 
     return partyApplication;
@@ -44,7 +44,7 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
 
   async findOne(id: number) {
     const partyApplication = await this.partyApplicationRepository.findOne({
-      where: { id },
+      where: { id, status: Not(StatusEnum.DELETED) },
     });
 
     return partyApplication;

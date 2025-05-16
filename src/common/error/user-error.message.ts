@@ -9,4 +9,9 @@ export const USER_ERROR = {
     error: 'USER_DELETED_30D',
     statusCode: 403,
   },
+  USER_DELETED: {
+    message: '삭제된 계정입니다.',
+    error: 'USER_DELETED',
+    statusCode: 403,
+  },
 };

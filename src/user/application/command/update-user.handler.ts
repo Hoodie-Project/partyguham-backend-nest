@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
 import { UserFactory } from '../../domain/user/user.factory';
@@ -19,7 +19,11 @@ export class UpdateUserHandler implements ICommandHandler<UpdateUserCommand> {
     const { userId, gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio, imagePath } = command;
     const savedImagePath = imagePath ? this.imageService.getRelativePath(imagePath) : undefined;
 
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findByIdWithoutDeleted(userId);
+
+    if (!user) {
+      throw new NotFoundException('유저가 존재하지 않습니다');
+    }
 
     const updateUser = await this.userRepository.updateUser(
       userId,

@@ -23,6 +23,12 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async findByIdWithoutDeleted(id: number) {
+    return await this.userRepository.findOne({
+      where: { id },
+    });
+  }
+
   async findByNickname(nickname: string): Promise<User | null> {
     const userEntity = await this.userRepository.findOne({
       where: { nickname },

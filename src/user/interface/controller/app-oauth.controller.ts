@@ -36,10 +36,13 @@ export class AppOauthController {
   @ApiResponse({
     status: 403,
     description: `- list\t\n
-      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      1. 회원탈퇴하여 30일 보관중인 계정입니다. (USER_DELETED_30D)  
         - response body : recoverAccessToken  
 
-      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
+      2. 로그인 불가 계정입니다. (USER_FORBIDDEN_DISABLED)
+      
+      3. 삭제 된 계정입니다. (USER_DELETED)  
+      `,
     schema: {
       example: {
         message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
@@ -146,7 +149,9 @@ export class AppOauthController {
       1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
         - response body : recoverAccessToken  
 
-      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)`,
+      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)
+      
+      3. 삭제 된 계정입니다. (USER_DELETED)  `,
     schema: {
       example: {
         message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',

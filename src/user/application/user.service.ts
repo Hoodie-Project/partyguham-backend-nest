@@ -20,7 +20,11 @@ export class UserService {
   ) {}
 
   async validateLogin(userId: number, oauthId: number) {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findByIdWithoutDeleted(userId);
+
+    if (user.status === StatusEnum.DELETED) {
+      throw new ForbiddenException(USER_ERROR.USER_DELETED);
+    }
 
     if (user.status === StatusEnum.INACTIVE) {
       const recoverAccessToken = await this.authService.createRecoverToken(oauthId);
@@ -37,8 +41,12 @@ export class UserService {
     }
   }
 
-  async findUserById(userId: number) {
+  async findById(userId: number) {
     return await this.userRepository.findById(userId);
+  }
+
+  async findByIdWithoutDeleted(userId: number) {
+    return await this.userRepository.findByIdWithoutDeleted(userId);
   }
 
   async findUserCarerrPrimaryByUserId(userId: number) {
@@ -60,7 +68,7 @@ export class UserService {
   }
 
   async createAppOpenNotifications(userId: number) {
-    const user = await this.findUserById(userId);
+    const user = await this.findById(userId);
     const email = user.email;
 
     const existing = await this.notificationService.findByEmail(email);

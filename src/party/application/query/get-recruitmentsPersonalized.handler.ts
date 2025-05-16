@@ -42,6 +42,7 @@ export class GetRecruitmentsPersonalizedHandler implements IQueryHandler<GetRecr
       .offset(offset)
       .where('partyRecruitments.positionId = :positionId', { positionId: userPrimaryPosition })
       .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
       .orderBy(`partyRecruitments.${sort}`, order);
 
     const [partyRecruitments, total] = await recruitmentsQuery.getManyAndCount();

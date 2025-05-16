@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -22,7 +22,7 @@ export class PartyRepository implements IPartyRepository {
 
   async findOneById(id: number) {
     return await this.partyRepository.findOne({
-      where: { id },
+      where: { id, status: Not(StatusEnum.DELETED) },
     });
   }
 

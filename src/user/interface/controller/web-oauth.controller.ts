@@ -28,7 +28,8 @@ type UserAction =
   | { type: 'signup'; signupAccessToken: string; email: string }
   | { type: 'login'; accessToken: string; refreshToken: string }
   | { type: 'USER_DELETED_30D'; recoverToken: string; email: string; deletedAt: string }
-  | { type: 'USER_FORBIDDEN_DISABLED' };
+  | { type: 'USER_FORBIDDEN_DISABLED' }
+  | { type: 'USER_DELETED' };
 
 @ApiTags('web-oauth (웹 오픈 인증)')
 @Controller('users')
@@ -68,11 +69,15 @@ export class WebOauthController {
   @ApiResponse({
     status: 403,
     description: `- list\t\n
-      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      1. 회원탈퇴하여 30일 보관중인 계정입니다. (USER_DELETED_30D)  
         redirect - https://partyguham.com/home?error=USER_DELETED_30D&recoverAccessToken="recoverAccessToken"&email="email"&deletedAt="deletedAt"}  
 
-      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)  
-      redirect - https://partyguham.com/home?error=USER_FORBIDDEN_DISABLED`,
+      2. 로그인 불가 계정입니다. (USER_FORBIDDEN_DISABLED)  
+      redirect - https://partyguham.com/home?error=USER_FORBIDDEN_DISABLED
+      
+      3. 삭제 된 계정입니다. (USER_DELETED)  
+      redirect - https://partyguham.com/home?error=USER_DELETED
+      `,
     schema: {
       example: {
         message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
@@ -134,6 +139,10 @@ export class WebOauthController {
       );
     }
 
+    if (result.type === 'USER_DELETED') {
+      res.redirect(`${process.env.BASE_URL}/home?error=USER_DELETED`);
+    }
+
     if (result.type === 'USER_FORBIDDEN_DISABLED') {
       res.redirect(`${process.env.BASE_URL}/home?error=USER_FORBIDDEN_DISABLED`);
     }
@@ -174,11 +183,14 @@ export class WebOauthController {
   @ApiResponse({
     status: 403,
     description: `- list\t\n
-      1. 회원탈퇴하여 30일 보관중인 계정입니다.(USER_DELETED_30D)  
+      1. 회원탈퇴하여 30일 보관중인 계정입니다. (USER_DELETED_30D)  
         redirect - https://partyguham.com/home?error=USER_DELETED_30D&recoverAccessToken="recoverAccessToken"&email="email"&deletedAt="deletedAt"}  
 
-      2. 로그인 불가 계정입니다.(USER_FORBIDDEN_DISABLED)  
-      redirect - https://partyguham.com/home?error=USER_FORBIDDEN_DISABLED`,
+      2. 로그인 불가 계정입니다. (USER_FORBIDDEN_DISABLED)  
+      redirect - https://partyguham.com/home?error=USER_FORBIDDEN_DISABLED
+      
+      3. 삭제 된 계정입니다. (USER_DELETED)  
+      redirect - https://partyguham.com/home?error=USER_DELETED`,
     schema: {
       example: {
         message: '회원 탈퇴 후 30일 보관 중인 계정입니다.',
@@ -244,6 +256,10 @@ export class WebOauthController {
       res.redirect(
         `${process.env.BASE_URL}/home?error=USER_DELETED_30D&email=${result.email}&deletedAt=${result.deletedAt}`,
       );
+    }
+
+    if (result.type === 'USER_DELETED') {
+      res.redirect(`${process.env.BASE_URL}/home?error=USER_DELETED`);
     }
 
     if (result.type === 'USER_FORBIDDEN_DISABLED') {

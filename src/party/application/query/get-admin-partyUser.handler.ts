@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { GetAdminPartyUserQuery } from './get-admin-partyUser.query';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetAdminPartyUserQuery)
 export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUserQuery> {
@@ -18,6 +19,7 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
     const totalPartyUserCount = await this.partyUserRepository
       .createQueryBuilder('partyUser')
       .where('partyUser.partyId = :partyId', { partyId: partyId })
+      .andWhere('partyUser.status != :deleted', { deleted: StatusEnum.DELETED })
       .getCount();
 
     if (!totalPartyUserCount) {
@@ -43,6 +45,7 @@ export class GetAdminPartyUserHandler implements IQueryHandler<GetAdminPartyUser
       .limit(limit)
       .offset(offset)
       .where('partyUser.partyId = :partyId', { partyId: partyId })
+      .andWhere('partyUser.status != :deleted', { deleted: StatusEnum.DELETED })
       .orderBy(`partyUser.${sort}`, order);
     // 직군 선택 옵션
     if (main !== undefined && main !== null) {

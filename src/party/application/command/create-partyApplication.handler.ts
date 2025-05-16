@@ -66,7 +66,7 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
 
     // 지원한 유저에게 알람 비동기 처리
     const partyMaster = await this.partyUserRepository.findOneMasterByPartyId(partyId);
-    const nickname = (await this.userService.findUserById(userId)).nickname;
+    const nickname = (await this.userService.findByIdWithoutDeleted(userId)).nickname;
     const type = 'recruit';
     const link = `/party/setting/applicant/${partyId}`;
     const title = party.title;
