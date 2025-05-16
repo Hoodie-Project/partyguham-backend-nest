@@ -34,7 +34,7 @@ export class GetMyPartiesHandler implements IQueryHandler<GetMyPartiesQuery> {
       ])
       .where('partyUser.userId = :userId', { userId })
       .andWhere('partyUser.status != :deleted', { deleted: StatusEnum.DELETED })
-      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED })
+      .andWhere('party.status != :party', { party: StatusEnum.DELETED })
       .limit(limit)
       .offset(offset)
       .orderBy(`partyUser.${sort}`, order);
