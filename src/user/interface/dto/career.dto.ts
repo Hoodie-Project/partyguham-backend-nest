@@ -19,7 +19,6 @@ export class CareerDto {
   @Max(100)
   @Min(0)
   @IsInt()
-  @IsPositive()
   @IsNotEmpty()
   readonly years: number;
 
