@@ -64,6 +64,7 @@ import { GetMyPartiesHandler } from './application/query/get-myParties.handler';
 import { UserStatusController } from './interface/controller/user-status.controller';
 import { UserDetailsController } from './interface/controller/user-details.controller';
 import { NotificationModule } from 'src/notification/notification.module';
+import { GetUserLocationHandler } from './application/query/get-userLocation.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -107,6 +108,7 @@ const queryHandlers = [
   GetUserHandler,
   GetUsersHandler,
   GetUserCareerHandler,
+  GetUserLocationHandler,
   GetUserOauthHandler,
   GetMyPartiesHandler,
   GetMyPartyApplicationHandler,

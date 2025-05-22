@@ -44,6 +44,7 @@ import { UpdateUserCareerCommand } from '../../application/command/update-userCa
 import { UpdateUserCareerRequestDto } from '../dto/request/update-userCareer.request.dto';
 import { GetUserCareerQuery } from '../../application/query/get-userCareer.query';
 import { GetUserCareerResponseDto } from '../dto/response/get-UserCareerResponseDto';
+import { GetUserLocationQuery } from 'src/user/application/query/get-userLocation.query';
 
 @ApiTags('user details - 유저 세부 프로필')
 @Controller('users')
@@ -86,7 +87,7 @@ export class UserDetailsController {
     type: [UserLocationResponseDto],
   })
   async getUserLocation(@CurrentUser() user: CurrentUserType) {
-    const command = new GetUserCareerQuery(user.id);
+    const command = new GetUserLocationQuery(user.id);
 
     const result = await this.queryBus.execute(command);
 
