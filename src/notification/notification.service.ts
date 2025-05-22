@@ -11,6 +11,10 @@ export class NotificationService {
     private emailNotificationRepository: EmailNotificationRepository,
   ) {}
 
+  async hasUncheckedNotifications(userId: number) {
+    return await this.notificationRepository.hasUncheckedNotifications(userId);
+  }
+
   async getNotifications(userId: number, limit: number, cursor?: number, type?: string) {
     let notificationTypeId: number;
     if (type) {

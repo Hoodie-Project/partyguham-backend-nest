@@ -17,19 +17,43 @@ export class NotificationController {
 
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
-  @Get('')
-  @ApiOperation({ summary: '알람 리스트 조회' })
+  @Get('check')
+  @ApiOperation({ summary: '사용자 알림 체크 상태 확인' })
   @ApiResponse({
     status: 200,
-    description: `알람 리스트 조회  
-  
-- 알림 도착  (안읽은 상태, 뱃지 표시됨)   
-isChecked =  false / isRead = false  
-- 알림 리스트 열었음  (읽지는 않음, 뱃지는 사라지지만, 읽지 않은 알림 표시 유지)  
-isChecke =  true  /   isRead = false
-- 알림 클릭하여 상세 확인  (읽음 처리 완료)          
-isChecked = true / isRead = true   
-    `,
+    description: `  
+    사용자의 미확인(체크되지 않은) 알림이 존재하면 true,  
+    모든 알림이 확인되었으면 false를 반환합니다.  
+`,
+    schema: {
+      example: {
+        hasUnchecked: true,
+      },
+    },
+  })
+  async getCheckNotification(@CurrentUser() user: CurrentUserType) {
+    const hasUnchecked = await this.notificationService.hasUncheckedNotifications(user.id);
+
+    return { hasUnchecked };
+  }
+
+  @ApiBearerAuth('AccessJwt')
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('')
+  @ApiOperation({ summary: '사용자 알람 리스트 조회' })
+  @ApiResponse({
+    status: 200,
+    description: `알림 리스트 조회
+
+    - 알림 도착 (읽지 않은 상태, 뱃지 표시됨)  
+      → isChecked = false / isRead = false
+
+    - 알림 리스트 열람 (읽지는 않았지만 뱃지는 사라짐)  
+      → isChecked = true / isRead = false
+
+    - 알림 클릭하여 상세 확인 (읽음 처리 완료)  
+      → isChecked = true / isRead = true
+  `,
     type: NotificationPaginationResponseDto,
   })
   async getNotification(@CurrentUser() user: CurrentUserType, @Query() query: NotificationPaginationQueryDto) {
@@ -42,7 +66,7 @@ isChecked = true / isRead = true
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)
   @Patch('check')
-  @ApiOperation({ summary: '알람 체크 처리' })
+  @ApiOperation({ summary: '사용자 알림 전체 체크 처리' })
   @ApiResponse({
     status: 200,
     description: '알람 체크 처리',

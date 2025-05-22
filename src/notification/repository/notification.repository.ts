@@ -11,6 +11,17 @@ export class NotificationRepository {
     private notificationRepository: Repository<NotificationEntity>,
   ) {}
 
+  async hasUncheckedNotifications(userId: number): Promise<boolean> {
+    const notification = await this.notificationRepository.findOne({
+      where: {
+        userId,
+        isChecked: false,
+      },
+    });
+
+    return !!notification;
+  }
+
   async getNotifications(userId: number, limit: number, cursor?: number, notificationTypeId?: number) {
     const whereCondition = cursor
       ? { userId, notificationTypeId, id: LessThan(cursor) }
