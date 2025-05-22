@@ -23,11 +23,11 @@ export class NotificationController {
     status: 200,
     description: `알람 리스트 조회  
   
-- 알림 도착 (안읽은 상태, 뱃지 표시됨)   
+- 알림 도착  (안읽은 상태, 뱃지 표시됨)   
 isChecked =  false / isRead = false  
-- 알림 리스트 열었음 (읽지는 않음, 뱃지는 사라지지만, 읽지 않은 알림 표시 유지)  
+- 알림 리스트 열었음  (읽지는 않음, 뱃지는 사라지지만, 읽지 않은 알림 표시 유지)  
 isChecke =  true  /   isRead = false
-- 알림 클릭하여 상세 확인 (읽음 처리 완료)          
+- 알림 클릭하여 상세 확인  (읽음 처리 완료)          
 isChecked = true / isRead = true   
     `,
     type: NotificationPaginationResponseDto,
@@ -46,13 +46,12 @@ isChecked = true / isRead = true
   @ApiResponse({
     status: 200,
     description: '알람 체크 처리',
-    schema: { example: { message: '알림이 체크 처리되었습니다.' } },
+    schema: { example: { message: '모든 알림이 체크 처리되었습니다.' } },
   })
-  async checkNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
-    const { notificationId } = param;
-    await this.notificationService.markAsRead(user.id, notificationId);
+  async checkNotification(@CurrentUser() user: CurrentUserType) {
+    await this.notificationService.markAsCheck(user.id);
 
-    return { message: '알림이 읽음 처리되었습니다.' };
+    return { message: '모든 알림이 체크 처리되었습니다.' };
   }
 
   @ApiBearerAuth('AccessJwt')
