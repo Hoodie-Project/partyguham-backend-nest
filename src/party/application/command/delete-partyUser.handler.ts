@@ -13,6 +13,7 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { DeletePartyUserCommand } from './delete-partyUser.comand';
 import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(DeletePartyUserCommand)
@@ -20,6 +21,7 @@ export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUserCo
   constructor(
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
@@ -61,14 +63,13 @@ export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUserCo
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#PartyPeopleTab`;
+    const title = party.title;
+    const notificationMessage = `${partyUser.user.nickname}님이 파티에서 제외되었습니다.`;
 
-    this.notificationService.createNotifications(
-      partyUserIds,
-      type,
-      party.title,
-      `${partyUser.user.nickname}님이 파티에서 제외되었습니다.`,
-      party.image,
-      link,
-    );
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
   }
 }

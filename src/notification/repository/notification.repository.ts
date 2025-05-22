@@ -33,6 +33,10 @@ export class NotificationRepository {
     return this.notificationRepository.findOne({ where: { id: notificationId } });
   }
 
+  async markAsCheck(userId: number) {
+    return await this.notificationRepository.update({ userId, isRead: false }, { isChecked: true });
+  }
+
   async markAsRead(notificationId: number, userId: number) {
     return await this.notificationRepository.update({ id: notificationId, userId }, { isRead: true });
   }

@@ -17,6 +17,7 @@ import { ApprovePartyApplicationCommand } from './approve-partyApplication.coman
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(ApprovePartyApplicationCommand)
@@ -24,6 +25,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
   constructor(
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyApplicationRepository') private partyApplicationRepository: IPartyApplicationRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
@@ -85,15 +87,14 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#home`;
+    const title = party.title;
+    const notificationMessage = `${partyUser.user.nickname}님이 새롭게 파티에 합류했어요. 함께 파티를 시작해 보세요!`;
 
-    this.notificationService.createNotifications(
-      partyUserIds,
-      type,
-      party.title,
-      `${partyUser.user.nickname}님이 새롭게 파티에 합류했어요. 함께 파티를 시작해 보세요!`,
-      party.image,
-      link,
-    );
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
 
     // 지원에 대한 삭제 보관 2주 (다른 로직에서 처리)
     // await this.partyApplicationRepository.delete(partyApplicationId);

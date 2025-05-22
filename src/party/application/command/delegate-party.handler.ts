@@ -17,6 +17,7 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 
 import { DelegatePartyCommand } from './delegate-party.comand';
 import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(DelegatePartyCommand)
@@ -24,6 +25,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
   constructor(
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
@@ -68,15 +70,14 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#home`;
+    const title = party.title;
+    const notificationMessage = `파티장이 ${partyUserMember.user.nickname}님으로 변경되었어요.`;
 
-    this.notificationService.createNotifications(
-      partyUserIds,
-      type,
-      party.title,
-      `파티장이 ${partyUserMember.user.nickname}님으로 변경되었어요.`,
-      party.image,
-      link,
-    );
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
 
     return { master, member };
   }

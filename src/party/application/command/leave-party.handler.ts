@@ -12,12 +12,14 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 import { LeavePartyCommand } from './leave-party.comand';
 import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repository';
 import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(LeavePartyCommand)
 export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
   constructor(
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
@@ -53,14 +55,20 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#PartyPeopleTab`;
+    const title = party.title;
+    const notificationMessage = `${partyUser.user.nickname}님이 파티에서 탈퇴했어요.`;
 
     this.notificationService.createNotifications(
       partyUserIds,
       type,
-      party.title,
+      title,
       `${partyUser.user.nickname}님이 파티에서 탈퇴했어요.`,
       party.image,
       link,
     );
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
   }
 }
