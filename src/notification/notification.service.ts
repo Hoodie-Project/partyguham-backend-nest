@@ -20,6 +20,10 @@ export class NotificationService {
     return await this.notificationRepository.getNotifications(userId, limit, cursor, notificationTypeId);
   }
 
+  async markAsCheck(userId: number): Promise<void> {
+    await this.notificationRepository.markAsCheck(userId);
+  }
+
   async markAsRead(userId: number, notificationId: number): Promise<void> {
     const notification = await this.notificationRepository.findOne(notificationId);
 

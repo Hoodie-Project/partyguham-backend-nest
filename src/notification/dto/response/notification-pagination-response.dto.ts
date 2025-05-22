@@ -66,9 +66,16 @@ class NotificationResponseDto {
   @Expose()
   @ApiProperty({
     example: false,
-    description: '알림 읽음 여부',
+    description: '알림 읽음 여부 (링크 접속)',
   })
   isRead: boolean;
+
+  @Expose()
+  @ApiProperty({
+    example: false,
+    description: '알림 체크 여부 (알람 버튼 확인)',
+  })
+  isChecked: boolean;
 
   @Expose()
   @ApiProperty({

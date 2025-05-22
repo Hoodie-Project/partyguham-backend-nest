@@ -25,7 +25,10 @@ export class NotificationEntity {
   link: string;
 
   @Column({ default: false })
-  isRead: boolean;
+  isRead: boolean; // 실제로 읽은 알림
+
+  @Column({ default: false })
+  isChecked: boolean; // 알림 리스트를 열어서 노출된 것
 
   @CreateDateColumn()
   createdAt: Date;
