@@ -8,7 +8,7 @@ export class CareerDto {
     description: '포지션 ID (position pk)',
   })
   @IsInt()
-  @Min(0)
+  @IsPositive()
   @IsNotEmpty()
   readonly positionId: number;
 
@@ -19,7 +19,6 @@ export class CareerDto {
   @Max(100)
   @Min(0)
   @IsInt()
-  @IsPositive()
   @IsNotEmpty()
   readonly years: number;
 

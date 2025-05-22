@@ -288,7 +288,7 @@ export class UserDetailsController {
     const command = new CreateUserCareerCommand(user.id, career);
 
     const result = await this.commandBus.execute(command);
-
+    console.log(result);
     return plainToInstance(UserCareerResponseDto, result);
   }
 
