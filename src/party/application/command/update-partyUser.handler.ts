@@ -14,6 +14,7 @@ import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUs
 import { UpdatePartyUserCommand } from './update-partyUser.comand';
 import { NotificationService } from 'src/notification/notification.service';
 import { PositionService } from 'src/position/position.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(UpdatePartyUserCommand)
@@ -22,6 +23,7 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
     private positionService: PositionService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
   ) {}
@@ -61,14 +63,13 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#PartyPeopleTab`;
+    const title = party.title;
+    const notificationMessage = `${partyUser.user.nickname}님의 포지션이 ${position.main} ${position.sub}으로 변경되었어요.`;
 
-    this.notificationService.createNotifications(
-      partyUserIds,
-      type,
-      party.title,
-      `${partyUser.user.nickname}님의 포지션이 ${position.main} ${position.sub}으로 변경되었어요.`,
-      party.image,
-      link,
-    );
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
   }
 }

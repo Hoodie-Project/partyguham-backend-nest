@@ -11,6 +11,7 @@ import { CompletedAdminPartyRecruitmentCommand } from './completed-adminPartyRec
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
 import { NotificationService } from 'src/notification/notification.service';
 import { IPartyApplicationRepository } from 'src/party/domain/party/repository/iPartyApplication.repository';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(CompletedAdminPartyRecruitmentCommand)
@@ -18,6 +19,7 @@ export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<Co
   constructor(
     private partyFactory: PartyFactory,
     private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
@@ -45,15 +47,14 @@ export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<Co
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'recruit';
     const link = `/my/apply`;
+    const title = party.title;
+    const notificationMessage = `지원하신 파티 모집공고가 마감되었습니다. `;
 
-    this.notificationService.createNotifications(
-      partyUserIds,
-      type,
-      party.title,
-      `지원하신 파티 모집공고가 마감되었습니다. `,
-      party.image,
-      link,
-    );
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
 
     return { message: '파티모집 공고를 완료 하였습니다.' };
   }
