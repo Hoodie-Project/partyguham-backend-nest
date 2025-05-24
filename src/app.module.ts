@@ -11,12 +11,15 @@ import { UnauthorizedExceptionFilter } from './common/exception/error-Unauthoriz
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { FirebaseModule } from './libs/firebase/firebase.module';
+
+import { BannerModule } from './features/banner/banner.module';
+import { VersionModule } from './features/version/version.module';
+
 import { UserModule } from './user/user.module';
 import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
-import { BannerModule } from './banner/banner.module';
 import { NotificationModule } from './notification/notification.module';
-import { FirebaseModule } from './libs/firebase/firebase.module';
 
 @Module({
   imports: [
@@ -41,9 +44,13 @@ import { FirebaseModule } from './libs/firebase/firebase.module';
     //libs
     FirebaseModule,
 
+    //features
+    BannerModule,
+    VersionModule,
+
+    //core
     AuthModule,
     UserModule,
-    BannerModule,
     NotificationModule,
     ReportModule,
   ],
