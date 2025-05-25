@@ -83,7 +83,7 @@ export class CreatePartyApplicationHandler implements ICommandHandler<CreatePart
     );
 
     // 푸쉬 알람
-    this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    this.fcmService.sendDataPushNotificationByUserId(partyMaster.userId, title, notificationMessage, type);
 
     return partyApplication;
   }

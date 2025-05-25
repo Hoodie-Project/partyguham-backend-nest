@@ -43,7 +43,7 @@ export class CompletedAdminPartyRecruitmentHandler implements ICommandHandler<Co
 
     await this.partyRecruitmentRepository.updateStatusCompleted(partyRecruitmentId);
 
-    const partyUserList = await this.partyApplicationRepository.findAllByPartyRecruitmentId(partyId);
+    const partyUserList = await this.partyApplicationRepository.findAllByPartyRecruitmentId(partyRecruitmentId);
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'recruit';
     const link = `/my/apply`;
