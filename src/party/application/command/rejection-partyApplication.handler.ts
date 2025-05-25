@@ -69,7 +69,7 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
     const type = 'recruit';
     const link = `/party/setting/applicant/${partyId}`;
     const title = party.title;
-    const notificationMessage = `${nickname}님이 지원했어요. 지원서를 검토해 보세요.`;
+    const notificationMessage = `${nickname}님이 파티 합류를 거절했어요. 다른 지원자를 확인해 보세요.`;
 
     this.notificationService.createNotification(
       partyMaster.userId,
