@@ -21,12 +21,12 @@ import { CreatePartyRecruitmentsResponseDto } from '../dto/response/recruitment/
 import { GetPartyApplicationMeQuery } from '../../application/query/get-partyApplicationMe.query';
 import { PartyApplicationMeResponseDto } from '../dto/response/application/get-applicationMe.response.dto';
 
-import { CreatePartyApplicationCommand } from '../../application/command/create-partyApplication.comand';
-import { CreatePartyRecruitmentCommand } from '../../application/command/create-partyRecruitment.comand';
+import { CreatePartyApplicationCommand } from '../../application/command/apply/create-partyApplication.comand';
 
 import { GetPartyApplicationsQuery } from '../../application/query/get-partyApplications.query';
 import { GetPartyRecruitmentsQuery } from '../../application/query/get-partyRecruitments.query';
 import { GetPartyRecruitmentQuery } from '../../application/query/get-partyRecruitment.query';
+import { CreatePartyRecruitmentCommand } from 'src/party/application/command/recruitment/create-partyRecruitment.comand';
 
 @ApiTags('party recruitment (파티 모집 공고)')
 @Controller('parties')
@@ -73,6 +73,7 @@ export class PartyRecruitmentController {
     return plainToInstance(CreatePartyRecruitmentsResponseDto, result);
   }
 
+  // application
   // 모집공고에 지원
   @ApiBearerAuth('AccessJwt')
   @UseGuards(AccessJwtAuthGuard)

@@ -20,8 +20,6 @@ export class GetUserLocationHandler implements IQueryHandler<GetUserLocationQuer
       .where('userLocation.userId = :userId', { userId })
       .getMany();
 
-    console.log('user', user);
-
     if (!user) {
       throw new NotFoundException('경력 데이터가 존재하지 않습니다.', 'USER_NOT_FOUND');
     }

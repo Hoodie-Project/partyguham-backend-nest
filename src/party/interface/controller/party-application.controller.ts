@@ -8,9 +8,9 @@ import { PartyApplicationSwagger } from '../partyApplication.swagger';
 
 import { PartyApplicationParamRequestDto } from '../dto/request/application/partyApplication.param.request.dto';
 
-import { ApprovePartyApplicationCommand } from '../../application/command/approve-partyApplication.comand';
-import { RejectionPartyApplicationCommand } from '../../application/command/rejection-partyApplication.comand';
-import { DeletePartyApplicationCommand } from '../../application/command/delete-partyApplication.comand';
+import { RejectionPartyApplicationCommand } from '../../application/command/apply/rejection-partyApplication.comand';
+import { DeletePartyApplicationCommand } from '../../application/command/apply/delete-partyApplication.comand';
+import { ApprovePartyApplicationCommand } from 'src/party/application/command/apply/approve-partyApplication.comand';
 
 @ApiBearerAuth('AccessJwt')
 @ApiTags('party application - 파티 지원')
