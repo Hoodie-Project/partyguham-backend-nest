@@ -80,8 +80,8 @@ export class RejectionPartyApplicationHandler implements ICommandHandler<Rejecti
       link,
     );
 
-    this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    this.fcmService.sendDataPushNotificationByUserId(partyMaster.userId, title, notificationMessage, type);
 
-    return { message: '지원을 거절 하였습니다.' };
+    return { message: '지원자가 파티 합류를 거절 하였습니다.' };
   }
 }

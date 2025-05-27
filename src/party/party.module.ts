@@ -35,37 +35,42 @@ import { PartyApplicationRepository } from './infra/db/repository/apply/party_ap
 import { GetPartiesHandler } from './application/query/get-parties.handler';
 import { GetPartyHandler } from './application/query/get-party.handler';
 import { GetPartyTypesHandler } from './application/query/get-partyTypes.handler';
-import { UpdatePartyHandler } from './application/command/update-party.handler';
-import { DeletePartyHandler } from './application/command/delete-party.handler';
+import { UpdatePartyHandler } from './application/command/admin/update-party.handler';
+import { DeletePartyHandler } from './application/command/admin/delete-party.handler';
 import { CreatePartyHandler } from './application/command/create-party.handler';
-import { CreatePartyApplicationHandler } from './application/command/create-partyApplication.handler';
-import { CreatePartyRecruitmentHandler } from './application/command/create-partyRecruitment.handler';
-import { DeletePartyImageHandler } from './application/command/delete-partyImage.handler';
+import { CreatePartyApplicationHandler } from './application/command/apply/create-partyApplication.handler';
+
 import { GetPartyRecruitmentsHandler } from './application/query/get-partyRecruitments.handler';
-import { UpdatePartyRecruitmentHandler } from './application/command/update-partyRecruitment.handler';
-import { DeletePartyRecruitmentHandler } from './application/command/delete-partyRecruitment.handler';
+import { UpdatePartyRecruitmentHandler } from './application/command/admin/update-partyRecruitment.handler';
+import { DeletePartyRecruitmentHandler } from './application/command/admin/delete-partyRecruitment.handler';
 import { GetPartyApplicationsHandler } from './application/query/get-partyApplications.handler';
-import { ApprovePartyApplicationHandler } from './application/command/approve-partyApplication.handler';
-import { RejectionPartyApplicationHandler } from './application/command/rejection-partyApplication.handler';
-import { DeletePartyUserHandler } from './application/command/delete-partyUser.handler';
+
+import { RejectionPartyApplicationHandler } from './application/command/apply/rejection-partyApplication.handler';
+
 import { LeavePartyHandler } from './application/command/leave-party.handler';
-import { UpdatePartyUserHandler } from './application/command/update-partyUser.handler';
+import { UpdatePartyUserHandler } from './application/command/admin/update-partyUser.handler';
 import { GetPartyUserHandler } from './application/query/get-partyUser.handler';
 import { GetPartyRecruitmentHandler } from './application/query/get-partyRecruitment.handler';
 import { GetAdminPartyUserHandler } from './application/query/get-admin-partyUser.handler';
 import { GetRecruitmentsHandler } from './application/query/get-recruitments.handler';
 import { GetRecruitmentsPersonalizedHandler } from './application/query/get-recruitmentsPersonalized.handler';
-import { BatchDeletePartyRecruitmentHandler } from './application/command/batchDelete-partyRecruitment.handler';
-import { DeletePartyUsersHandler } from './application/command/delete-partyUsers.handler';
+import { BatchDeletePartyRecruitmentHandler } from './application/command/admin/batchDelete-partyRecruitment.handler';
+
 import { GetPartyUserAuthorityHandler } from './application/query/get-partyUserAuthority.handler';
 import { GetSearchHandler } from './application/query/get-search.handler';
-import { ApproveAdminPartyApplicationHandler } from './application/command/approve-adminPartyApplication.handler';
-import { RejectionAdminPartyApplicationHandler } from './application/command/rejection-adminPartyApplication.handler';
-import { DelegatePartyApplicationHandler } from './application/command/delegate-party.handler';
-import { DeletePartyApplicationHandler } from './application/command/delete-partyApplication.handler';
+import { ApproveAdminPartyApplicationHandler } from './application/command/admin/approve-adminPartyApplication.handler';
+import { RejectionAdminPartyApplicationHandler } from './application/command/admin/rejection-adminPartyApplication.handler';
+import { DelegatePartyApplicationHandler } from './application/command/admin/delegate-party.handler';
+
 import { GetPartyApplicationMeHandler } from './application/query/get-partyApplicationMe.handler';
-import { CompletedAdminPartyRecruitmentHandler } from './application/command/completed-adminPartyRecruitment.handler';
+import { CompletedAdminPartyRecruitmentHandler } from './application/command/admin/completed-adminPartyRecruitment.handler';
 import { UpdatePartyRecruitmentBatchStatusHandler } from './application/command/update-partyRecruitmentBatchStatus.handler';
+import { DeletePartyUserHandler } from './application/command/admin/delete-partyUser.handler';
+import { DeletePartyUsersHandler } from './application/command/admin/delete-partyUsers.handler';
+import { DeletePartyImageHandler } from './application/command/admin/delete-partyImage.handler';
+import { CreatePartyRecruitmentHandler } from './application/command/recruitment/create-partyRecruitment.handler';
+import { ApprovePartyApplicationHandler } from './application/command/apply/approve-partyApplication.handler';
+import { DeletePartyApplicationHandler } from './application/command/apply/delete-partyApplication.handler';
 
 const commandHandlers = [
   CreatePartyHandler,

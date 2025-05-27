@@ -63,7 +63,7 @@ export class RejectionAdminPartyApplicationHandler implements ICommandHandler<Re
       link,
     );
 
-    this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    this.fcmService.sendDataPushNotificationByUserId(applicationUser.userId, title, notificationMessage, type);
 
     return { message: '지원자를 거절 하였습니다.' };
   }

@@ -34,6 +34,6 @@ export class DeletePartyRecruitmentHandler implements ICommandHandler<DeletePart
       throw new ForbiddenException('파티 모집 수정 권한이 없습니다.', 'ACCESS_DENIED');
     }
 
-    const partyRecruitment = await this.partyRecruitmentRepository.delete(partyRecruitmentId);
+    await this.partyRecruitmentRepository.delete(partyRecruitmentId);
   }
 }

@@ -22,6 +22,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser, CurrentUserType } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { PartySwagger } from '../party.swagger';
+import { PartyApplicationSwagger } from '../partyApplication.swagger';
+import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 
 import { PartyDelegationRequestDto } from '../dto/request/delegate-party.request.dto';
 import { UpdatePartyUserRequestDto } from '../dto/request/update-partyUser.request.dto';
@@ -32,30 +34,28 @@ import { UpdatePartyRequestDto } from '../dto/request/update-party.request.dto';
 import { PartyUserQueryRequestDto } from '../dto/request/partyUser.query.request.dto';
 import { GetAdminPartyUsersResponseDto } from '../dto/response/get-admin-partyUser.response.dto';
 import { DeletePartyUsersBodyRequestDto } from '../dto/request/delete-partyUsers.body.request.dto';
-
-import { UpdatePartyCommand } from '../../application/command/update-party.comand';
-import { DeletePartyCommand } from '../../application/command/delete-party.comand';
-import { DeletePartyImageCommand } from '../../application/command/delete-partyImage.comand';
-import { DeletePartyUserCommand } from '../../application/command/delete-partyUser.comand';
-import { DelegatePartyCommand } from '../../application/command/delegate-party.comand';
-import { UpdatePartyUserCommand } from '../../application/command/update-partyUser.comand';
-import { DeletePartyUsersCommand } from '../../application/command/delete-partyUsers.comand';
-
-import { GetAdminPartyUserQuery } from '../../application/query/get-admin-partyUser.query';
-import { PartyApplicationSwagger } from '../partyApplication.swagger';
 import { PartyApplicationParamRequestDto } from '../dto/request/application/partyApplication.param.request.dto';
 import { UpdatePartyResponseDto } from '../dto/response/update-party.response.dto';
-import { ApproveAdminPartyApplicationCommand } from '../../application/command/approve-adminPartyApplication.comand';
-import { RejectionAdminPartyApplicationCommand } from '../../application/command/rejection-adminPartyApplication.comand';
-import { CompletedAdminPartyRecruitmentCommand } from '../../application/command/completed-adminPartyRecruitment.comand';
 import { PartyRecruitmentsParamRequestDto } from '../dto/request/recruitment/partyRecruitment.param.request.dto';
-import { PartyRecruitmentSwagger } from '../partyRecruitment.swagger';
 import { CreatePartyRecruitmentRequestDto } from '../dto/request/recruitment/create-partyRecruitment.request.dto';
-import { UpdatePartyRecruitmentCommand } from '../../application/command/update-partyRecruitment.comand';
-import { PartyRecruitmentsResponseDto } from '../dto/response/recruitment/party-recruitments.response.dto';
 import { PartyRecruitmentIdsBodyRequestDto } from '../dto/request/recruitment/partyRecruitmentIds.body.request.dto';
-import { BatchDeletePartyRecruitmentCommand } from '../../application/command/batchDelete-partyRecruitment.comand';
-import { DeletePartyRecruitmentCommand } from '../../application/command/delete-partyRecruitment.comand';
+import { PartyRecruitmentsResponseDto } from '../dto/response/recruitment/party-recruitments.response.dto';
+
+import { GetAdminPartyUserQuery } from '../../application/query/get-admin-partyUser.query';
+
+import { UpdatePartyCommand } from '../../application/command/admin/update-party.comand';
+import { DeletePartyCommand } from '../../application/command/admin/delete-party.comand';
+import { DeletePartyImageCommand } from '../../application/command/admin/delete-partyImage.comand';
+import { DeletePartyUserCommand } from '../../application/command/admin/delete-partyUser.comand';
+import { DelegatePartyCommand } from '../../application/command/admin/delegate-party.comand';
+import { UpdatePartyUserCommand } from '../../application/command/admin/update-partyUser.comand';
+import { DeletePartyUsersCommand } from '../../application/command/admin/delete-partyUsers.comand';
+import { ApproveAdminPartyApplicationCommand } from '../../application/command/admin/approve-adminPartyApplication.comand';
+import { RejectionAdminPartyApplicationCommand } from '../../application/command/admin/rejection-adminPartyApplication.comand';
+import { BatchDeletePartyRecruitmentCommand } from '../../application/command/admin/batchDelete-partyRecruitment.comand';
+import { DeletePartyRecruitmentCommand } from '../../application/command/admin/delete-partyRecruitment.comand';
+import { CompletedAdminPartyRecruitmentCommand } from '../../application/command/admin/completed-adminPartyRecruitment.comand';
+import { UpdatePartyRecruitmentCommand } from '../../application/command/admin/update-partyRecruitment.comand';
 
 @ApiBearerAuth('AccessJwt')
 @UseGuards(AccessJwtAuthGuard)
