@@ -64,7 +64,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
 
     // 권한 변경
     const master = await this.partyUserRepository.updateMember(partyUserMaster.id);
-    const member = await this.partyUserRepository.updateMaster(partyUserId);
+    const member = await this.partyUserRepository.updateMaster(partyUserMember.id);
 
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);

@@ -17,14 +17,16 @@ export class BannerService {
     return result;
   }
 
-  async findAllWeb() {
-    const result = await this.bannerRepository.findAllWebAndCount();
+  async createApp(title: string, imagePath: string, link: string) {
+    const savedImagePath = imagePath ? this.imageService.getRelativePath(imagePath) : undefined;
+
+    const result = await this.bannerRepository.createApp(title, savedImagePath, link);
 
     return result;
   }
 
-  async createApp(title: string, image: string, link: string) {
-    const result = await this.bannerRepository.createApp(title, image, link);
+  async findAllWeb() {
+    const result = await this.bannerRepository.findAllWebAndCount();
 
     return result;
   }
