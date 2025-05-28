@@ -45,10 +45,9 @@ export class BannerController {
   async createWebBanner(@Body() body: CreateBannerRequestDto, @UploadedFile() file: Express.Multer.File) {
     const { title, link, password } = body;
 
-    if (password !== 'hoodiev') throw new BadRequestException('password error');
+    if (password !== 'hoodiev') throw new BadRequestException('error');
 
-    const imagePath = file ? file.path : undefined;
-
+    const imagePath = file ? file.path : null;
     if (!imagePath) throw new BadRequestException('image should not be empty');
 
     const result = await this.bannerService.createWeb(title, imagePath, link);

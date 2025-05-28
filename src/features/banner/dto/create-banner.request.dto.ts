@@ -31,6 +31,6 @@ export class CreateBannerRequestDto {
     description: '이미지와 연결되는 이미지 링크',
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   readonly link: string;
 }
