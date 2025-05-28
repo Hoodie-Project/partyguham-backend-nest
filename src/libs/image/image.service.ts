@@ -4,17 +4,10 @@ import * as path from 'path';
 
 @Injectable()
 export class ImageService {
-  constructor(
-    @Inject('UPLOAD_DIR') private readonly uploadDir: string,
-    @Inject('SERVE_ROOT') private readonly serveRoot: string,
-  ) {}
+  constructor(@Inject('UPLOAD_DIR') private readonly uploadDir: string) {}
 
   getUploadPath(): string {
     return this.uploadDir;
-  }
-
-  getServeUrl(filename: string): string {
-    return `${this.serveRoot}/${filename}`;
   }
 
   /**
