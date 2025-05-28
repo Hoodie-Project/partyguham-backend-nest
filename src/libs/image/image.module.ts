@@ -1,5 +1,6 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
 import { diskStorage } from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -8,7 +9,9 @@ import { ImageService } from './image.service';
 @Module({})
 export class ImageModule {
   static register(moduleName: string): DynamicModule {
+    const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
     const uploadDir = path.join(process.cwd(), 'images', moduleName);
+    const serveRoot = `${mainRoot}/images/${moduleName}`;
 
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
@@ -17,6 +20,10 @@ export class ImageModule {
     return {
       module: ImageModule,
       imports: [
+        ServeStaticModule.forRoot({
+          rootPath: uploadDir,
+          serveRoot: serveRoot,
+        }),
         MulterModule.register({
           storage: diskStorage({
             destination: (_, __, callback) => callback(null, uploadDir),
@@ -34,8 +41,15 @@ export class ImageModule {
           },
         }),
       ],
-      providers: [ImageService, { provide: 'UPLOAD_DIR', useValue: uploadDir }],
-      exports: [ImageService, MulterModule, 'UPLOAD_DIR'],
+      providers: [
+        ImageService,
+        { provide: 'UPLOAD_DIR', useValue: uploadDir },
+        {
+          provide: 'SERVE_ROOT',
+          useValue: serveRoot,
+        },
+      ],
+      exports: [ImageService, MulterModule, 'UPLOAD_DIR', 'SERVE_ROOT'],
     };
   }
 }
