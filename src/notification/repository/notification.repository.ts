@@ -45,7 +45,7 @@ export class NotificationRepository {
   }
 
   async markAsCheck(userId: number) {
-    return await this.notificationRepository.update({ userId, isRead: false }, { isChecked: true });
+    return await this.notificationRepository.update({ userId }, { isChecked: true });
   }
 
   async markAsRead(notificationId: number, userId: number) {
