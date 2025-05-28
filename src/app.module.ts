@@ -26,19 +26,6 @@ import path from 'path';
 @Module({
   // 이미지 파일 경로
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), 'images', 'banner'),
-      serveRoot: '/images/banner',
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), 'images', 'user'),
-      serveRoot: '/images/user',
-    }),
-    ServeStaticModule.forRoot({
-      rootPath: path.join(process.cwd(), 'images', 'party'),
-      serveRoot: '/images/party',
-    }),
-
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
