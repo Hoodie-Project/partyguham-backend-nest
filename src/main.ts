@@ -18,7 +18,7 @@ declare module 'express-session' {
 
 async function bootstrap() {
   const httpsOptions =
-    process.env.MODE_ENV === 'local'
+    process.env.NODE_ENV === 'local'
       ? null
       : {
           ca: fs.readFileSync(process.env.CA_REPO),
@@ -45,7 +45,7 @@ async function bootstrap() {
       cookie: {
         httpOnly: true,
         secure: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         maxAge: 3600000, // 1시간(밀리초 단위)
       },
     }),
@@ -64,7 +64,7 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new CustomErrorExceptionFilter());
 
-  const path = process.env.MODE_ENV === 'prod' ? 'api' : 'dev/api';
+  const path = process.env.NODE_ENV === 'prod' ? 'api' : 'dev/api';
   app.setGlobalPrefix(`${path}`); // 전체 endpoint
 
   //docs

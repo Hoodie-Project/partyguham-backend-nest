@@ -42,7 +42,7 @@ import { ConfigModule } from '@nestjs/config';
       },
       // bigNumberStrings: false, // bigint number type
       namingStrategy: new SnakeNamingStrategy(),
-      logging: process.env.MODE_ENV !== 'prod',
+      logging: process.env.NODE_ENV !== 'prod',
     }),
 
     //libs

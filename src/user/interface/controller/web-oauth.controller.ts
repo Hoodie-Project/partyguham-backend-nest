@@ -108,7 +108,7 @@ export class WebOauthController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
         httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       });
 
       let redirectURL = process.env.BASE_URL;
@@ -119,7 +119,7 @@ export class WebOauthController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -130,7 +130,7 @@ export class WebOauthController {
       res.cookie('recoverToken', result.recoverToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 300000), // 현재시간 + 5분
       });
 
@@ -226,7 +226,7 @@ export class WebOauthController {
       res.cookie('refreshToken', result.refreshToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       });
 
       let redirectURL = process.env.BASE_URL;
@@ -238,7 +238,7 @@ export class WebOauthController {
       res.cookie('signupToken', result.signupAccessToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -249,7 +249,7 @@ export class WebOauthController {
       res.cookie('recoverToken', result.recoverToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 300000), // 현재시간 + 5분
       });
 
@@ -335,7 +335,7 @@ export class WebOauthController {
       res.cookie('linkToken', result.linkToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -393,7 +393,7 @@ export class WebOauthController {
       res.cookie('linkToken', result.linkToken, {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         expires: new Date(Date.now() + 3600000), // 현재 시간 + 1시간
       });
 
@@ -433,7 +433,7 @@ export class WebOauthController {
     res.clearCookie('linkToken', {
       secure: true,
       httpOnly: true,
-      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
     });
     res.status(200).send({ message: '연동이 완료되었습니다.' });
   }
