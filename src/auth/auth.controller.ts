@@ -31,7 +31,7 @@ export class AuthController {
   @ApiOperation({ summary: 'admin access token' })
   @Post('admin/token')
   async adminToken() {
-    if (process.env.MODE_ENV !== 'prod') {
+    if (process.env.NODE_ENV !== 'prod') {
       const accessToken = await this.authService.createAccessToken(1);
       const refreshToken = await this.authService.createRefreshToken(1);
       const singupToken = await this.authService.createSignupToken(1, 'email', 'image');

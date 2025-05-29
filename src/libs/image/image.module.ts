@@ -9,8 +9,9 @@ import { ImageService } from './image.service';
 @Module({})
 export class ImageModule {
   static register(moduleName: string): DynamicModule {
-    const mainRoot = process.env.MODE_ENV === 'prod' ? '/api' : '/dev/api';
     const uploadDir = path.join(process.cwd(), 'images', moduleName);
+
+    const mainRoot = process.env.NODE_ENV === 'prod' ? '/api' : '/dev/api';
     const serveRoot = `${mainRoot}/images/${moduleName}`;
 
     // ✅ 로그 찍기

@@ -121,7 +121,7 @@ export class UserStatusController {
     res.clearCookie('signupToken', {
       secure: true,
       httpOnly: true,
-      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
     });
     // 로그아웃 후에도 클라이언트에게 새로운 응답을 제공하기 위해 캐시 제어 헤더 추가
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -129,7 +129,7 @@ export class UserStatusController {
     res.cookie('refreshToken', result.refreshToken, {
       secure: true,
       httpOnly: true,
-      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
     });
     res.status(201).send({ accessToken: result.accessToken });
   }
@@ -145,7 +145,7 @@ export class UserStatusController {
       .clearCookie('refreshToken', {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
       })
       .status(200)
       .send();
@@ -201,11 +201,11 @@ export class UserStatusController {
     res.cookie('refreshToken', result.refreshToken, {
       secure: true, // HTTPS 연결에서만 쿠키 전송
       httpOnly: true, // JavaScript에서 쿠키 접근 불가능
-      sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+      sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
     });
 
     let redirectURL = process.env.BASE_URL;
-    if (process.env.MODE_ENV === 'dev') {
+    if (process.env.NODE_ENV === 'dev') {
       redirectURL = redirectURL + `?token=` + result.refreshToken;
     }
 
