@@ -20,10 +20,12 @@ import { UserModule } from './user/user.module';
 import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
 import { NotificationModule } from './notification/notification.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   // 이미지 파일 경로
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.DB_HOST,
