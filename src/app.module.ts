@@ -20,8 +20,6 @@ import { UserModule } from './user/user.module';
 import { ReportModule } from './report/report.module';
 import { AuthModule } from './auth/auth.module';
 import { NotificationModule } from './notification/notification.module';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import path from 'path';
 
 @Module({
   // 이미지 파일 경로
