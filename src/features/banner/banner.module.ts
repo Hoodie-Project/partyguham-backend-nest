@@ -10,6 +10,6 @@ import { ImageModule } from 'src/libs/image/image.module';
 @Module({
   controllers: [BannerController],
   providers: [BannerService, BannerRepository],
-  imports: [ImageModule.register('banner'), TypeOrmModule.forFeature([BannerEntity])],
+  imports: [ImageModule.register('banners'), TypeOrmModule.forFeature([BannerEntity])],
 })
 export class BannerModule {}
