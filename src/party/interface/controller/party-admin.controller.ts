@@ -87,7 +87,6 @@ export class PartyAdminController {
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
   ) {
-    console.log(dto);
     if (Object.keys(dto).length === 0 && !file) {
       throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.', 'BAD_REQUEST');
     }
@@ -125,10 +124,12 @@ export class PartyAdminController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
     @Body() body: UpdatePartyUserRequestDto,
-  ): Promise<void> {
+  ) {
     const command = new UpdatePartyUserCommand(user.id, param.partyId, param.partyUserId, body.positionId);
 
-    return this.commandBus.execute(command);
+    this.commandBus.execute(command);
+
+    return { message: '파티 유저 포지션이 변경 되었습니다.' };
   }
 
   @HttpCode(204)

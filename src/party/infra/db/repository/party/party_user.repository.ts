@@ -54,8 +54,8 @@ export class PartyUserRepository implements IPartyUserRepository {
     await this.partyUserRepository.update({ id }, { authority });
   }
 
-  async updateByPositionId(id: number, positionId: number) {
-    return await this.partyUserRepository.save({ id, positionId });
+  async updatePositionById(id: number, positionId: number) {
+    return await this.partyUserRepository.update({ id }, { positionId });
   }
 
   async findOneById(id: number) {
