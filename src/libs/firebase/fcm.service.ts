@@ -105,7 +105,6 @@ export class FcmService {
         return response;
       } catch (error) {
         console.error('❌ FCM 전송 실패:', error);
-        throw error;
       }
     } else {
       console.error('❌ FCM 토큰 조회 되지 않음');
@@ -128,7 +127,6 @@ export class FcmService {
       return response;
     } catch (error) {
       console.error('❌ FCM 전송 실패:', error);
-      throw error;
     }
   }
 }
