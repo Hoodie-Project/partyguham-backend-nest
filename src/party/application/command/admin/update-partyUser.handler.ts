@@ -55,16 +55,16 @@ export class UpdatePartyUserHandler implements ICommandHandler<UpdatePartyUserCo
       throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');
     }
 
-    await this.partyUserRepository.updateByPositionId(partyUserId, positionId);
-
     const position = await this.positionService.findById(positionId);
+
+    await this.partyUserRepository.updatePositionById(findPartyUser.id, position.id);
 
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#PartyPeopleTab`;
     const title = party.title;
-    const notificationMessage = `${partyUser.user.nickname}님의 포지션이 ${position.main} ${position.sub}으로 변경되었어요.`;
+    const notificationMessage = `${findPartyUser.user.nickname}님의 포지션이 ${position.main} ${position.sub}으로 변경되었어요.`;
 
     this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
 

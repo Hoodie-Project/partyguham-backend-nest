@@ -366,6 +366,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '변경 완료',
+        schema: { example: { message: '파티 유저 포지션이 변경 되었습니다.' } },
       }),
       ApiResponse({
         status: 403,
@@ -480,6 +481,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '위임 완료',
+        schema: { example: { message: '파티장 권한이 변경 되었습니다.' } },
       }),
       ApiResponse({
         status: 403,
