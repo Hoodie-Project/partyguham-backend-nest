@@ -480,6 +480,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '위임 완료',
+        schema: { example: { message: '파티장 권한이 변경 되었습니다.' } },
       }),
       ApiResponse({
         status: 403,

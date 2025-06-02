@@ -269,9 +269,11 @@ export class PartyAdminController {
     @CurrentUser() user: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() dto: PartyDelegationRequestDto,
-  ): Promise<void> {
+  ) {
     const command = new DelegatePartyCommand(user.id, param.partyId, dto.partyUserId);
 
     this.commandBus.execute(command);
+
+    return { message: '파티장 권한이 변경 되었습니다.' };
   }
 }
