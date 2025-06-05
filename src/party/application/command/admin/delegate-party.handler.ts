@@ -53,7 +53,7 @@ export class DelegatePartyApplicationHandler implements ICommandHandler<Delegate
     }
 
     // 파티원 존재하는지에 대한 여부
-    const partyUserMember = await this.partyUserRepository.findOneWithUserData(partyUserId, partyId);
+    const partyUserMember = await this.partyUserRepository.findOneWithUserDataById(partyUserId, partyId);
 
     if (!partyUserMember) {
       throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER_NOT_EXIST');

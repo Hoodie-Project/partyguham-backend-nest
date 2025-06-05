@@ -39,7 +39,7 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
-    const partyUser = await this.partyUserRepository.findOneWithUserData(userId, partyId);
+    const partyUser = await this.partyUserRepository.findOneWithUserDataByUserId(userId, partyId);
 
     if (partyUser.authority === 'master') {
       throw new ForbiddenException('파티장은 파티를 나갈 수 없습니다.', 'FORBIDDEN');

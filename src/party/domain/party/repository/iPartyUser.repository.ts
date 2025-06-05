@@ -17,7 +17,8 @@ export interface IPartyUserRepository {
   findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
   findByIdsWithUserData: (id: number[]) => Promise<PartyUserEntity[]>;
   findOne: (userId: number, partyId: number) => Promise<PartyUserEntity>;
-  findOneWithUserData: (userId: number, partyId: number) => Promise<PartyUserEntity>;
+  findOneWithUserDataById: (id: number, partyId: number) => Promise<PartyUserEntity>;
+  findOneWithUserDataByUserId: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   deleteById: (id: number) => Promise<void>;
   softDeleteById: (id: number) => Promise<void>;
   batchDelete: (id: number[]) => Promise<void>;

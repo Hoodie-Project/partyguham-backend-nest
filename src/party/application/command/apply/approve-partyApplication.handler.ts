@@ -54,7 +54,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       throw new ForbiddenException('본인이 지원 데이터만 수락 가능합니다.', 'ACCESS_DENIED');
     }
 
-    const partyUser = await this.partyUserRepository.findOneWithUserData(userId, partyId);
+    const partyUser = await this.partyUserRepository.findOneWithUserDataByUserId(userId, partyId);
     if (partyUser) {
       throw new ConflictException('이미 파티유저 입니다.', 'ALREADY_EXIST');
     }
