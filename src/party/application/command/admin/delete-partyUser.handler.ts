@@ -41,7 +41,7 @@ export class DeletePartyUserHandler implements ICommandHandler<DeletePartyUserCo
       throw new ConflictException('완료된 파티 입니다.', 'CONFLICT');
     }
 
-    const partyUser = await this.partyUserRepository.findOneWithUserData(userId, partyId);
+    const partyUser = await this.partyUserRepository.findOneWithUserDataByUserId(userId, partyId);
 
     if (partyUser.authority !== 'master') {
       throw new ForbiddenException('파티 유저를 내보낼 권한이 없습니다.', 'ACCESS_DENIED');

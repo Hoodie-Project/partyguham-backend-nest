@@ -111,6 +111,15 @@ export class PartyUserRepository implements IPartyUserRepository {
       .getOne();
   }
 
+  async findOneWithUserDataByUserId(userId: number, partyId: number) {
+    return await this.partyUserRepository
+      .createQueryBuilder('partyUser')
+      .leftJoinAndSelect('partyUser.user', 'user')
+      .where('partyUser.id = :id', { id })
+      .andWhere('partyUser.partyId = :partyId', { partyId })
+      .getOne();
+  }
+
   async deleteById(id: number) {
     await this.partyUserRepository.delete({ id });
   }
