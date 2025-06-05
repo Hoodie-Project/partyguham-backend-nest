@@ -115,7 +115,7 @@ export class PartyUserRepository implements IPartyUserRepository {
     return await this.partyUserRepository
       .createQueryBuilder('partyUser')
       .leftJoinAndSelect('partyUser.user', 'user')
-      .where('partyUser.userId = :userId', { userId })
+      .where('partyUser.id = :id', { id })
       .andWhere('partyUser.partyId = :partyId', { partyId })
       .getOne();
   }
