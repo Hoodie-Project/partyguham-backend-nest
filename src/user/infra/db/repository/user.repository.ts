@@ -63,7 +63,7 @@ export class UserRepository implements IUserRepository {
     portfolio: string,
     image: string,
   ) {
-    const result = await this.userRepository.update(id, {
+    await this.userRepository.update(id, {
       gender,
       genderVisible,
       birth,

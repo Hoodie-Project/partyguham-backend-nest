@@ -8,7 +8,7 @@ export class UpdatePartyCommand implements ICommand {
     readonly partyTypeId: number,
     readonly title: string,
     readonly content: string,
-    readonly imagePath: string | undefined,
     readonly status: StatusEnum,
+    readonly image: Express.Multer.File | undefined,
   ) {}
 }

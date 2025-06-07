@@ -14,10 +14,6 @@ export class ImageModule {
     const mainRoot = process.env.NODE_ENV === 'prod' ? '/api' : '/dev/api';
     const serveRoot = `${mainRoot}/images/${moduleName}`;
 
-    // ✅ 로그 찍기
-    console.log('ServeStatic 등록 경로:', serveRoot);
-    console.log('실제 업로드 디렉토리:', uploadDir);
-
     if (!fs.existsSync(uploadDir)) {
       fs.mkdirSync(uploadDir, { recursive: true });
     }

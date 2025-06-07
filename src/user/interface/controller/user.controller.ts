@@ -221,7 +221,6 @@ export class UserController {
     @Body() body: UapdateUserRequestDto,
   ) {
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
-    const imagePath = file ? file.path : undefined;
 
     const getUserInfoQuery = new UpdateUserCommand(
       user.id,
@@ -231,7 +230,7 @@ export class UserController {
       birthVisible,
       portfolioTitle,
       portfolio,
-      imagePath,
+      file,
     );
     const result = await this.commandBus.execute(getUserInfoQuery);
 

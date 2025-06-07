@@ -130,7 +130,7 @@ const repositories = [
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   exports: [UserService, ...repositories],
   imports: [
-    ImageModule.register('user'),
+    // ImageModule.register('user'),
     TypeOrmModule.forFeature([UserEntity, UserLocationEntity, UserCareerEntity, UserPersonalityEntity]),
     CqrsModule,
     AuthModule,

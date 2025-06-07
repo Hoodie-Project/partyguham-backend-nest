@@ -9,6 +9,6 @@ export class UpdateUserCommand implements ICommand {
     readonly birthVisible: boolean,
     readonly portfolioTitle: string,
     readonly portfolio: string,
-    readonly imagePath: string,
+    readonly image: Express.Multer.File,
   ) {}
 }

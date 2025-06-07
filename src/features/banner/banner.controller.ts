@@ -42,15 +42,14 @@ export class BannerController {
       },
     },
   })
-  async createWebBanner(@Body() body: CreateBannerRequestDto, @UploadedFile() file: Express.Multer.File) {
+  async createWebBanner(@UploadedFile() file: Express.Multer.File, @Body() body: CreateBannerRequestDto) {
     const { title, link, password } = body;
 
     if (password !== 'hoodiev') throw new BadRequestException('error');
 
-    const imagePath = file ? file.path : null;
-    if (!imagePath) throw new BadRequestException('image should not be empty');
+    if (!file) throw new BadRequestException('image should not be empty');
 
-    const result = await this.bannerService.createWeb(title, imagePath, link);
+    const result = await this.bannerService.createWeb(title, link, file);
     return result;
   }
 
@@ -78,10 +77,9 @@ export class BannerController {
 
     if (password !== 'hoodiev') throw new BadRequestException('password error');
 
-    const image = file ? file.path : null;
-    if (!image) throw new BadRequestException('image should not be empty');
+    if (!file) throw new BadRequestException('image should not be empty');
 
-    const result = await this.bannerService.createApp(title, image, link);
+    const result = await this.bannerService.createApp(title, link, file);
     return result;
   }
 

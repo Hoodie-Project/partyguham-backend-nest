@@ -30,6 +30,10 @@ export class PartyRepository implements IPartyRepository {
     await this.partyRepository.update(id, { partyTypeId, title, content, image, status });
   }
 
+  async updateImageById(id: number, image: string) {
+    await this.partyRepository.update(id, { image });
+  }
+
   async update(party: Party) {
     return await this.partyRepository.save({ ...party });
   }

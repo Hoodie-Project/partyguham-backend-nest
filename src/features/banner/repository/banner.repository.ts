@@ -11,13 +11,13 @@ export class BannerRepository {
     private bannerRepository: Repository<BannerEntity>,
   ) {}
 
-  async createWeb(title: string, image: string, link: string) {
+  async createWeb(title: string, link: string, image: string) {
     const result = await this.bannerRepository.save({ platform: BannerPlatformEnum.Web, title, image, link });
 
     return result;
   }
 
-  async createApp(title: string, image: string, link: string) {
+  async createApp(title: string, link: string, image: string) {
     const result = await this.bannerRepository.save({ platform: BannerPlatformEnum.App, title, image, link });
 
     return result;
@@ -42,7 +42,7 @@ export class BannerRepository {
   }
 
   async findById(id: number) {
-    const result = await this.bannerRepository.find({ where: { id } });
+    const result = await this.bannerRepository.findOne({ where: { id } });
 
     return result;
   }
