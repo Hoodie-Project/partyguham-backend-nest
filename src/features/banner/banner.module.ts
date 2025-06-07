@@ -5,13 +5,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BannerService } from './banner.service';
 import { BannerRepository } from './repository/banner.repository';
 import { BannerEntity } from './entity/banner.entity';
-import { AwsModule } from 'src/libs/aws/s3/s3.module';
 
 @Module({
   controllers: [BannerController],
   providers: [BannerService, BannerRepository],
   imports: [
-    AwsModule,
     // ImageModule.register('banner'),
     TypeOrmModule.forFeature([BannerEntity]),
   ],
