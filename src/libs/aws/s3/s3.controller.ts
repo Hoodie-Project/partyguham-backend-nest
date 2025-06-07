@@ -13,6 +13,7 @@ export class UploadController {
     if (!file) {
       throw new BadRequestException('파일이 업로드되지 않았습니다.');
     }
+
     const url = await this.s3Service.uploadFile(file, 'test');
     return { url };
   }

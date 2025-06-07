@@ -42,7 +42,7 @@ export class BannerController {
       },
     },
   })
-  async createWebBanner(@Body() body: CreateBannerRequestDto, @UploadedFile() file: Express.Multer.File) {
+  async createWebBanner(@UploadedFile() file: Express.Multer.File, @Body() body: CreateBannerRequestDto) {
     const { title, link, password } = body;
 
     if (password !== 'hoodiev') throw new BadRequestException('error');
