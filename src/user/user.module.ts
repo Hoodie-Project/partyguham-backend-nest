@@ -65,6 +65,7 @@ import { UserStatusController } from './interface/controller/user-status.control
 import { UserDetailsController } from './interface/controller/user-details.controller';
 import { NotificationModule } from 'src/notification/notification.module';
 import { GetUserLocationHandler } from './application/query/get-userLocation.handler';
+import { AwsModule } from 'src/libs/aws/s3/s3.module';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -130,6 +131,7 @@ const repositories = [
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories],
   exports: [UserService, ...repositories],
   imports: [
+    AwsModule,
     ImageModule.register('user'),
     TypeOrmModule.forFeature([UserEntity, UserLocationEntity, UserCareerEntity, UserPersonalityEntity]),
     CqrsModule,
