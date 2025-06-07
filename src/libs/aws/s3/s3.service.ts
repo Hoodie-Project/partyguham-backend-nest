@@ -1,7 +1,5 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
-import { partyImageKey } from './key.util';
 
 @Injectable()
 export class S3Service {
@@ -30,5 +28,19 @@ export class S3Service {
       }),
     );
     return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  }
+
+  /**
+   * Deletes a file from AWS S3 using the provided key.
+   *
+   * @param key - The S3 key (path and filename) of the file to delete.
+   */
+  async deleteFile(key: string): Promise<void> {
+    await this.s3.send(
+      new DeleteObjectCommand({
+        Bucket: process.env.AWS_S3_BUCKET_NAME,
+        Key: key,
+      }),
+    );
   }
 }
