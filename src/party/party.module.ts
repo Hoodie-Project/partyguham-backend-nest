@@ -135,7 +135,7 @@ const repositories = [
   providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...factories, ...repositories, ...services],
   exports: [...services, TypeOrmModule],
   imports: [
-    ImageModule.register('party'),
+    // ImageModule.register('party'),
     TypeOrmModule.forFeature([
       PartyEntity,
       PartyTypeEntity,

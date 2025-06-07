@@ -63,9 +63,8 @@ export class PartyController {
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
-    const imagePath = file ? file.path : null;
 
-    const command = new CreatePartyCommand(user.id, title, content, imagePath, partyTypeId, positionId);
+    const command = new CreatePartyCommand(user.id, title, content, partyTypeId, positionId, file);
 
     return this.commandBus.execute(command);
   }
