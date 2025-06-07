@@ -9,7 +9,7 @@ export function userImageKey(userId: number, originalName: string): string {
 // party-image-key.util.ts
 export function partyImageKey(partyId: number, originalName: string): string {
   const date = new Date();
-  return `parties/${partyId}/${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}/${uuid()}-${originalName}`;
+  return `parties/${partyId}/main/${uuid()}-${originalName}`;
 }
 
 // banner-image-key.util.ts
