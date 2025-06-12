@@ -158,11 +158,20 @@ export class UserStatusController {
   @ApiOperation({ summary: '회원탈퇴' })
   @ApiResponse({ status: 204, description: '회원 탈퇴 성공' })
   @ApiResponse({ status: 403, description: '파티장 권한이 있어 탈퇴 불가' })
-  async signout(@CurrentUser() user: CurrentUserType): Promise<void> {
+  async signout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
     const userId = user.id;
     const command = new DeleteUserCommand(userId);
 
     await this.commandBus.execute(command);
+
+    res
+      .clearCookie('refreshToken', {
+        secure: true,
+        httpOnly: true,
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+      })
+      .status(200)
+      .send();
   }
 
   @ApiBearerAuth('recoverAccessToken')
