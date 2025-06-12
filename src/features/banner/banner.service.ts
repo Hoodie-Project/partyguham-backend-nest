@@ -18,7 +18,7 @@ export class BannerService {
       await this.s3Service.uploadFile(image, key);
     }
 
-    const result = await this.bannerRepository.createWeb(title, link, image.originalname);
+    const result = await this.bannerRepository.createWeb(title, link, key);
 
     return result;
   }
@@ -31,7 +31,7 @@ export class BannerService {
       await this.s3Service.uploadFile(image, key);
     }
 
-    const result = await this.bannerRepository.createApp(title, link, image.originalname);
+    const result = await this.bannerRepository.createApp(title, link, key);
 
     return result;
   }
