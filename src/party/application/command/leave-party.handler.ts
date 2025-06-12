@@ -45,7 +45,7 @@ export class LeavePartyHandler implements ICommandHandler<LeavePartyCommand> {
       throw new ForbiddenException('파티장은 파티를 나갈 수 없습니다.', 'FORBIDDEN');
     }
 
-    if (partyUser) {
+    if (!partyUser) {
       throw new NotFoundException('파티유저를 찾을 수 없습니다.', 'PARTY_USER__NOT_EXIST');
     }
 
