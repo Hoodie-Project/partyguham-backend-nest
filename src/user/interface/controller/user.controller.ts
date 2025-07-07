@@ -41,6 +41,7 @@ import { GetMyPartiesQuery } from '../../application/query/get-myParties.query';
 import { GetMyPartyApplicationsQuery } from '../../application/query/get-myPartyApplications.query';
 import { GetUserOauthQuery } from '../../application/query/get-userOauth.query';
 import { UserService } from 'src/user/application/user.service';
+import { GetPartiesByNicknameQuery } from 'src/user/application/query/get-PartiesByNickname.query';
 
 @ApiTags('user - 유저')
 @Controller('users')
@@ -52,7 +53,7 @@ export class UserController {
   ) {}
   @ApiBearerAuth('accessToken')
   @UseGuards(AccessJwtAuthGuard)
-  @Get('nickname/:nickname')
+  @Get('@:nickname')
   @ApiOperation({ summary: '닉네임으로 유저 조회' })
   @ApiHeader({
     name: 'Authorization',
@@ -75,6 +76,36 @@ export class UserController {
     const result = this.queryBus.execute(userInfoByNickname);
 
     return plainToInstance(UserResponseDto, result);
+  }
+
+  @ApiBearerAuth('accessToken')
+  @UseGuards(AccessJwtAuthGuard)
+  @Get('@:nickname/parties')
+  @ApiOperation({
+    summary: '닉네임으로 소속 파티 조회',
+    description: `**해당 유저가 속한 파티를 조회하는 API 입니다.**   
+    party.status ='active'(진행중)  
+    party.status = 'archived' (종료)  
+    
+    `,
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 목록을 가져왔습니다.',
+    type: GetMyPartiesResponseDto,
+  })
+  async getPartiesByNickname(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: UserParamRequestDto,
+    @Query() query: mePartyQueryDto,
+  ) {
+    const { page, limit, sort, order, status } = query;
+
+    const getUserInfoQuery = new GetPartiesByNicknameQuery(param.nickname, page, limit, sort, order, status);
+
+    const result = this.queryBus.execute(getUserInfoQuery);
+
+    return plainToInstance(GetMyPartiesResponseDto, result);
   }
 
   @ApiBearerAuth('accessToken')

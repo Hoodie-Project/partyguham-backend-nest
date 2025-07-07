@@ -23,7 +23,7 @@ import { CreateUserHandler } from './application/command/create-user.handler';
 import { KakaoCodeHandler } from './application/command/kakao-code.handler';
 import { GetUserHandler } from './application/query/get-user.handler';
 import { GetUsersHandler } from './application/query/get-users.handler';
-import { UserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
+import { GetUserByNicknameHandler } from './application/query/get-user-by-nickname.handler';
 import { CreateUserLocationHandler } from './application/command/create.userLocation.handler';
 import { CreateUserPersonalityHandler } from './application/command/create.userPersonality.handler';
 import { CreateUserCareerHandler } from './application/command/create-userCareer.handler';
@@ -65,6 +65,7 @@ import { UserStatusController } from './interface/controller/user-status.control
 import { UserDetailsController } from './interface/controller/user-details.controller';
 import { NotificationModule } from 'src/notification/notification.module';
 import { GetUserLocationHandler } from './application/query/get-userLocation.handler';
+import { GetPartiesByNicknameHandler } from './application/query/get-PartiesByNickname.handler';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -104,7 +105,8 @@ const commandHandlers = [
 
 const queryHandlers = [
   GetCheckNicknameHandler,
-  UserByNicknameHandler,
+  GetUserByNicknameHandler,
+  GetPartiesByNicknameHandler,
   GetUserHandler,
   GetUsersHandler,
   GetUserCareerHandler,

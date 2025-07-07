@@ -34,7 +34,7 @@ export class PartyUserEntity extends BaseEntity {
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: UserEntity;
 
-  @ManyToOne(() => PartyEntity, (party) => party.partyUser, {
+  @ManyToOne(() => PartyEntity, (party) => party.partyUsers, {
     onUpdate: 'CASCADE',
     onDelete: 'CASCADE',
   })

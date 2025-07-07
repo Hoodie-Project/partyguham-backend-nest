@@ -29,7 +29,7 @@ export class PartyEntity extends BaseEntity {
   partyType: PartyTypeEntity;
 
   @OneToMany(() => PartyUserEntity, (partyUser) => partyUser.party)
-  partyUser: PartyUserEntity[];
+  partyUsers: PartyUserEntity[];
 
   @OneToMany(() => PartyRecruitmentEntity, (partyRecruitment) => partyRecruitment.party)
   partyRecruitments: PartyRecruitmentEntity[];
