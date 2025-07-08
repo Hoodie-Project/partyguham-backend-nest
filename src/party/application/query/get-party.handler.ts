@@ -16,15 +16,8 @@ export class GetPartyHandler implements IQueryHandler<GetPartyQuery> {
 
     const partyQuery = this.partyRepository
       .createQueryBuilder('party')
-      .leftJoinAndSelect('party.partyType', 'partyType') // partyType을 전체 선택
-      .leftJoinAndSelect('party.partyUser', 'partyUser') // partyUser을 전체 선택
-      .leftJoinAndSelect('party.partyRecruitments', 'partyRecruitments') // partyRecruitments를 전체 선택
-      .select([
-        'party', // party 테이블의 모든 컬럼 선택
-        'partyUser',
-        'partyType', // partyType 테이블의 모든 컬럼 선택
-        'partyRecruitments', // partyRecruitments 테이블의 모든 컬럼 선택
-      ])
+      .leftJoinAndSelect('party.partyType', 'partyType')
+      .select(['party', 'partyType'])
       .where('party.id = :id', { id: partyId })
       .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED });
 
