@@ -71,10 +71,12 @@ import { DeletePartyImageHandler } from './application/command/admin/delete-part
 import { CreatePartyRecruitmentHandler } from './application/command/recruitment/create-partyRecruitment.handler';
 import { ApprovePartyApplicationHandler } from './application/command/apply/approve-partyApplication.handler';
 import { DeletePartyApplicationHandler } from './application/command/apply/delete-partyApplication.handler';
+import { UpdatePartyStatusHandler } from './application/command/admin/update-partyStatus.handler';
 
 const commandHandlers = [
   CreatePartyHandler,
   UpdatePartyHandler,
+  UpdatePartyStatusHandler,
   DeletePartyHandler,
   DeletePartyUserHandler,
   DeletePartyUsersHandler,

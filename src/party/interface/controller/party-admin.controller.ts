@@ -56,6 +56,8 @@ import { BatchDeletePartyRecruitmentCommand } from '../../application/command/ad
 import { DeletePartyRecruitmentCommand } from '../../application/command/admin/delete-partyRecruitment.comand';
 import { CompletedAdminPartyRecruitmentCommand } from '../../application/command/admin/completed-adminPartyRecruitment.comand';
 import { UpdatePartyRecruitmentCommand } from '../../application/command/admin/update-partyRecruitment.comand';
+import { UpdatePartyStatusRequestDto } from '../dto/request/update-partyStatus.request.dto';
+import { UpdatePartyStatusCommand } from 'src/party/application/command/admin/update-partyStatus.comand';
 
 @ApiBearerAuth('AccessJwt')
 @UseGuards(AccessJwtAuthGuard)
@@ -78,7 +80,7 @@ export class PartyAdminController {
     return plainToInstance(GetAdminPartyUsersResponseDto, result);
   }
 
-  @Patch(':partyId/admin')
+  @Patch(':partyId/admin/info')
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.updateParty()
   async updateParty(
@@ -90,9 +92,25 @@ export class PartyAdminController {
     if (Object.keys(dto).length === 0 && !file) {
       throw new BadRequestException('변경하려는 이미지 또는 정보가 없습니다.', 'BAD_REQUEST');
     }
-    const { partyTypeId, title, content, status } = dto;
+    const { partyTypeId, title, content } = dto;
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, partyTypeId, title, content, status, file);
+    const command = new UpdatePartyCommand(user.id, param.partyId, partyTypeId, title, content, file);
+
+    const result = this.commandBus.execute(command);
+
+    return plainToInstance(UpdatePartyResponseDto, result);
+  }
+
+  @Patch(':partyId/admin/status')
+  @PartySwagger.updatePartyStatus()
+  async updatePartyStatus(
+    @CurrentUser() user: CurrentUserType,
+    @Param() param: PartyRequestDto,
+    @Body() dto: UpdatePartyStatusRequestDto,
+  ) {
+    const { status } = dto;
+
+    const command = new UpdatePartyStatusCommand(user.id, param.partyId, status);
 
     const result = this.commandBus.execute(command);
 
