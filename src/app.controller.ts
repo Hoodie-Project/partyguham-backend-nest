@@ -12,6 +12,11 @@ export class AppController {
     return this.appService.notFound();
   }
 
+  @Get('home')
+  home(): string {
+    return 'hello partyguham';
+  }
+
   @Get('error')
   error(): string {
     throw new InternalServerErrorException('error test');
