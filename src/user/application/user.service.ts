@@ -1,8 +1,12 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { UserCareerRepository } from '../infra/db/repository/user_career.repository';
 import { UserLocationRepository } from '../infra/db/repository/user_location.repository';
 import { UserPersonalityRepository } from '../infra/db/repository/user_personality.repository';
 import { UserRepository } from '../infra/db/repository/user.repository';
+import { StatusEnum } from 'src/common/entity/baseEntity';
+import { USER_ERROR } from 'src/common/error/user-error.message';
+import { AuthService } from 'src/auth/auth.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @Injectable()
 export class UserService {
@@ -11,12 +15,38 @@ export class UserService {
     @Inject('UserCareerRepository') private userCareerRepository: UserCareerRepository,
     @Inject('UserLocationRepository') private userLocationRepository: UserLocationRepository,
     @Inject('UserPersonalityRepository') private userPersonalityRepository: UserPersonalityRepository,
+    private authService: AuthService,
+    private notificationService: NotificationService,
   ) {}
 
-  async findUserStatusById(userId: number) {
-    const user = await this.userRepository.findById(userId);
+  async validateLogin(userId: number, oauthId: number) {
+    const user = await this.userRepository.findByIdWithoutDeleted(userId);
 
-    return user.status;
+    if (user.status === StatusEnum.DELETED) {
+      throw new ForbiddenException(USER_ERROR.USER_DELETED);
+    }
+
+    if (user.status === StatusEnum.INACTIVE) {
+      const recoverAccessToken = await this.authService.createRecoverToken(oauthId);
+      throw new ForbiddenException({
+        ...USER_ERROR.USER_DELETED_30D,
+        recoverAccessToken,
+        email: user.email,
+        deletedAt: user.updatedAt,
+      });
+    }
+
+    if (user.status !== StatusEnum.ACTIVE) {
+      throw new ForbiddenException(USER_ERROR.USER_FORBIDDEN_DISABLED);
+    }
+  }
+
+  async findById(userId: number) {
+    return await this.userRepository.findById(userId);
+  }
+
+  async findByIdWithoutDeleted(userId: number) {
+    return await this.userRepository.findByIdWithoutDeleted(userId);
   }
 
   async findUserCarerrPrimaryByUserId(userId: number) {
@@ -35,5 +65,18 @@ export class UserService {
     const userCarerr = await this.userPersonalityRepository.findByUserId(userId);
 
     return userCarerr;
+  }
+
+  async createAppOpenNotifications(userId: number) {
+    const user = await this.findById(userId);
+    const email = user.email;
+
+    const existing = await this.notificationService.findByEmail(email);
+
+    if (existing) {
+      throw new ConflictException('이미 등록된 이메일입니다.', 'CONFLICT');
+    }
+
+    return await this.notificationService.saveEmail(email);
   }
 }

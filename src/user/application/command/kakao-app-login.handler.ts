@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AuthService } from 'src/auth/auth.service';
-
+import { KakaoAppLoginCommand } from './kakao-app-login.command';
 import axios from 'axios';
 
 import { ProviderEnum } from 'src/auth/entity/oauth.entity';
+
 import { OauthService } from 'src/auth/oauth.service';
-import { KakaoAppLoginCommand } from './kakao-app-login.command';
+import { UserService } from '../user.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Injectable()
 @CommandHandler(KakaoAppLoginCommand)
 export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginCommand> {
   constructor(
+    private userService: UserService,
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
@@ -26,7 +28,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
 
     //! kakaoUserInfo
     // data: {
-    //   id: 3405515435,
+    //   id: 1234,
     //   connected_at: '2024-03-24T14:18:43Z',
     //   properties: {
     //     profile_image: 'http://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640',
@@ -54,8 +56,7 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -68,17 +69,17 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
         email,
         image,
       );
-      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+
+      const signupAccessToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      await this.userService.validateLogin(oauth.userId, oauth.id);
 
-      const accessToken = await this.authService.createAccessToken(encryptOauthId);
-      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+      const accessToken = await this.authService.createAccessToken(oauth.id);
+      const refreshToken = await this.authService.createRefreshToken(oauth.id);
 
       this.authService.saveRefreshToken(oauth.userId, refreshToken);
 

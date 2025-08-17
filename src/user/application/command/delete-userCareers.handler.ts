@@ -26,9 +26,10 @@ export class DeleteUserCareersHandler implements ICommandHandler<DeleteUserCaree
 
     const result = await this.userCareerRepository.deleteByUserId(userId);
 
-    if (!result) {
-      throw new InternalServerErrorException('삭제 실패');
-    }
+    // if (!result) {
+    //   throw new InternalServerErrorException('삭제 실패');
+    // }
+    // -> 개선필요
 
     return result;
   }

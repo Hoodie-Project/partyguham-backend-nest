@@ -48,8 +48,9 @@ export class CreateUserCareerHandler implements ICommandHandler<CreateUserCareer
         throw new ConflictException('이미 저장된 포지션이 있습니다.');
     });
 
-    const result = await this.userCareerRepository.bulkInsert(userId, career);
+    await this.userCareerRepository.bulkInsert(userId, career);
+    const resultUserCareer = await this.userCareerRepository.findByUserId(userId);
 
-    return result;
+    return resultUserCareer;
   }
 }

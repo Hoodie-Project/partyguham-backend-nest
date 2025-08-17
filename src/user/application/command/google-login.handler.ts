@@ -1,17 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { AuthService } from 'src/auth/auth.service';
-
+import { GoogleLoginCommand } from './google-login.command';
 import axios from 'axios';
 
-import { ProviderEnum } from 'src/auth/entity/oauth.entity';
+import { AuthService } from 'src/auth/auth.service';
 import { OauthService } from 'src/auth/oauth.service';
-import { GoogleLoginCommand } from './google-login.command';
+import { UserService } from '../user.service';
+
+import { ProviderEnum } from 'src/auth/entity/oauth.entity';
+import { USER_ERROR } from 'src/common/error/user-error.message';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
 @CommandHandler(GoogleLoginCommand)
 export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
   constructor(
+    private userService: UserService,
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
@@ -56,13 +60,12 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
 
     const externalId: string = googleUserInfo.data.id;
     const email = googleUserInfo.data.email;
-    const image = googleUserInfo.data.picture;
+    const image = googleUserInfo.data.picture || null;
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -75,17 +78,36 @@ export class GoogleLoginHandler implements ICommandHandler<GoogleLoginCommand> {
         email,
         image,
       );
-      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+
+      const signupAccessToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      const user = await this.userService.findById(oauth.userId);
 
-      const accessToken = await this.authService.createAccessToken(encryptOauthId);
-      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+      if (user.status === StatusEnum.DELETED) {
+        return { type: USER_ERROR.USER_DELETED.error };
+      }
+
+      if (user.status === StatusEnum.INACTIVE) {
+        const recoverToken = await this.authService.createRecoverToken(oauth.id);
+
+        return {
+          type: USER_ERROR.USER_DELETED_30D.error,
+          recoverToken,
+          email: user.email,
+          deletedAt: user.updatedAt,
+        };
+      }
+
+      if (user.status !== StatusEnum.ACTIVE) {
+        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED.error };
+      }
+
+      const accessToken = await this.authService.createAccessToken(oauth.id);
+      const refreshToken = await this.authService.createRefreshToken(oauth.id);
 
       this.authService.saveRefreshToken(oauth.userId, refreshToken);
 

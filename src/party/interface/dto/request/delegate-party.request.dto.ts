@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { File } from 'buffer';
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 export class PartyDelegationRequestDto {
   @ApiProperty({

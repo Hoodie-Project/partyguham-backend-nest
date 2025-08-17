@@ -25,9 +25,8 @@ export class GetSearchHandler implements IQueryHandler<GetSearchQuery> {
       .limit(limit)
       .offset(offset)
       .orderBy(`party.createdAt`, 'DESC')
-      .where('party.title LIKE :title', { title: `%${titleSearch}%` });
-    // .andWhere('party.status = :status', { status: StatusEnum.ACTIVE })
-    // .andWhere('party.status = :status', { status: StatusEnum.ARCHIVED });
+      .where('party.title LIKE :title', { title: `%${titleSearch}%` })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED });
 
     const parties = await partiesQuery.getManyAndCount();
 
@@ -40,8 +39,8 @@ export class GetSearchHandler implements IQueryHandler<GetSearchQuery> {
       .limit(limit)
       .offset(offset)
       .orderBy(`partyRecruitments.createdAt`, 'DESC')
-      .where('party.title LIKE :title', { title: `%${titleSearch}%` });
-    // .andWhere('partyRecruitments.status = :status', { status: StatusEnum.ACTIVE });
+      .where('party.title LIKE :title', { title: `%${titleSearch}%` })
+      .andWhere('party.status != :deleted', { deleted: StatusEnum.DELETED });
 
     const partyRecruitments = await recruitmentsQuery.getManyAndCount();
 

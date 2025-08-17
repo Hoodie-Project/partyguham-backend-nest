@@ -1,5 +1,33 @@
 import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
 
+// (처리 상태 그룹)
+// [PENDING]
+//    |
+//    v
+// [APPROVED] --> [PROCESSING] --> [COMPLETED]
+//    |                                ↑
+//    v                                |
+// [REJECTED]                      [CANCELED]
+//                                     |
+//                                 [EXPIRED]
+
+// (활성화)
+// [ACTIVE]
+//    |
+//    v
+// [INACTIVE] <--> [SUSPENDED]
+//    |
+//    v
+// [ARCHIVED]
+//    |
+//    v
+// [DELETED]
+
+// # 상태와 무관하게 언제든 갈 수 있는 전이
+//   ┌─────────────────────────────┐
+//   ↓                             ↓
+// [DELETED]                   [ARCHIVED]
+
 export enum StatusEnum {
   ACTIVE = 'active', //* 데이터가 활성화되어 사용 가능한 상태
   INACTIVE = 'inactive', //* 데이터가 비활성화되어 사용 불가능한 상태

@@ -18,8 +18,10 @@ export class AuthService {
     private authRepository: AuthRepository,
   ) {}
 
-  async signupAccessToken(id: string, email: string, image: string) {
-    const createPayload = { id, email, image };
+  async createSignupToken(oauthId: number, email: string, image: string) {
+    const encryptOauthId = await this.encrypt(String(oauthId));
+
+    const createPayload = { id: encryptOauthId, email, image };
     return this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_SIGNUP_SECRET,
       expiresIn: '1h',
@@ -27,9 +29,40 @@ export class AuthService {
     });
   }
 
+  async createRecoverToken(oauthId: number) {
+    const encryptOauthId = await this.encrypt(String(oauthId));
+    const createPayload = { id: encryptOauthId };
+
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_RECOVER_SECRET,
+      expiresIn: '5m',
+      algorithm: 'HS256',
+    });
+  }
+
+  async createAccessToken(oauthId: number) {
+    const encryptOauthId = await this.encrypt(String(oauthId));
+    const createPayload = { id: encryptOauthId };
+
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_ACCESS_SECRET,
+      expiresIn: process.env.MODE === 'prod' ? '15m' : '1y',
+      algorithm: 'HS512',
+    });
+  }
+
+  async createRefreshToken(oauthId: number) {
+    const encryptOauthId = await this.encrypt(String(oauthId));
+    const createPayload = { id: encryptOauthId };
+
+    return this.jwtService.signAsync(createPayload, {
+      secret: process.env.JWT_REFRESH_SECRET,
+      expiresIn: '30d',
+      algorithm: 'HS512',
+    });
+  }
+
   async validateSignupAccessToken(token: string): Promise<any> {
-    // try {
-    // 토큰 검증
     const payload = await this.jwtService.verifyAsync(token, {
       secret: process.env.JWT_SIGNUP_SECRET,
       algorithms: ['HS256'],
@@ -48,27 +81,6 @@ export class AuthService {
     }
 
     return oauthId;
-    // } catch (error) {
-    //   throw new UnauthorizedException('Invalid or expired token');
-    // }
-  }
-
-  async createAccessToken(id: string) {
-    const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, {
-      secret: process.env.JWT_ACCESS_SECRET,
-      expiresIn: process.env.MODE === 'prod' ? '15m' : '1y',
-      algorithm: 'HS512',
-    });
-  }
-
-  async createRefreshToken(id: string) {
-    const createPayload = { id };
-    return this.jwtService.signAsync(createPayload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '30d',
-      algorithm: 'HS512',
-    });
   }
 
   async findRefreshToken(userId: number, refreshToken: string) {

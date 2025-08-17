@@ -23,6 +23,12 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async findByIdWithoutDeleted(id: number) {
+    return await this.userRepository.findOne({
+      where: { id },
+    });
+  }
+
   async findByNickname(nickname: string): Promise<User | null> {
     const userEntity = await this.userRepository.findOne({
       where: { nickname },
@@ -57,7 +63,7 @@ export class UserRepository implements IUserRepository {
     portfolio: string,
     image: string,
   ) {
-    const result = await this.userRepository.update(id, {
+    await this.userRepository.update(id, {
       gender,
       genderVisible,
       birth,
@@ -72,6 +78,15 @@ export class UserRepository implements IUserRepository {
 
   async deleteUserById(userId: number): Promise<void> {
     await this.userRepository.delete({ id: userId });
+  }
+
+  async setUserActiveById(userId: number) {
+    await this.userRepository.update(
+      { id: userId }, // 조건
+      {
+        status: StatusEnum.ACTIVE,
+      },
+    );
   }
 
   async setUserInactiveById(userId: number) {

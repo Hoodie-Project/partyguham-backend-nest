@@ -13,6 +13,7 @@ export interface IPartyRepository {
     image: string,
     status: StatusEnum,
   ) => Promise<void>;
+  updateImageById: (id: number, image: string) => Promise<void>;
   update: (party: Party) => Promise<PartyEntity>;
   deleteById: (id: number) => Promise<void>;
   archivedById: (id: number) => Promise<void>;

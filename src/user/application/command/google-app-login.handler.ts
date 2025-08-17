@@ -7,11 +7,13 @@ import axios from 'axios';
 import { ProviderEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
 import { GoogleAppLoginCommand } from './google-app-login.command';
+import { UserService } from '../user.service';
 
 @Injectable()
 @CommandHandler(GoogleAppLoginCommand)
 export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginCommand> {
   constructor(
+    private userService: UserService,
     private oauthService: OauthService,
     private authService: AuthService,
   ) {}
@@ -40,7 +42,7 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     //   "iat": "1738326489",
     //   "exp": "1738330089",
     //   "alg": "RS256",
-    //   "kid": "fa072f75784642615087c7182c101341e18f7a3a",
+    //   "kid": "asdf",
     //   "typ": "JWT"
     // }
 
@@ -51,8 +53,7 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
@@ -66,17 +67,16 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
         image,
       );
 
-      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email, image };
     }
 
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      await this.userService.validateLogin(oauth.userId, oauth.id);
 
-      const accessToken = await this.authService.createAccessToken(encryptOauthId);
-      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+      const accessToken = await this.authService.createAccessToken(oauth.id);
+      const refreshToken = await this.authService.createRefreshToken(oauth.id);
 
       this.authService.saveRefreshToken(oauth.userId, refreshToken);
 

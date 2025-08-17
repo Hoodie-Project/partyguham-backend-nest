@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
-import { CustomErrorExceptionFilter } from './common/exception/error.filter';
-import * as fs from 'fs';
-import * as session from 'express-session';
 
-import * as cookieParser from 'cookie-parser';
+import * as fs from 'fs';
+import session from 'express-session';
+
+import cookieParser from 'cookie-parser';
 import * as passport from 'passport';
 
 declare module 'express-session' {
@@ -18,7 +18,7 @@ declare module 'express-session' {
 
 async function bootstrap() {
   const httpsOptions =
-    process.env.MODE_ENV === 'local'
+    process.env.NODE_ENV === 'local'
       ? null
       : {
           ca: fs.readFileSync(process.env.CA_REPO),
@@ -32,7 +32,7 @@ async function bootstrap() {
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',
-    origin: ['https://localhost:3000', 'https://partyguam.net', 'http://partyguam.net'],
+    origin: ['https://localhost:3000', 'https://partyguham.com', 'http://partyguham.com'],
     credentials: true,
     allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
   });
@@ -45,7 +45,7 @@ async function bootstrap() {
       cookie: {
         httpOnly: true,
         secure: true,
-        sameSite: process.env.MODE_ENV === 'prod' ? 'strict' : 'none',
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
         maxAge: 3600000, // 1시간(밀리초 단위)
       },
     }),
@@ -64,16 +64,15 @@ async function bootstrap() {
   );
   // app.useGlobalFilters(new CustomErrorExceptionFilter());
 
-  const path = process.env.MODE_ENV === 'prod' ? 'api' : 'dev/api';
+  const path = process.env.NODE_ENV === 'prod' ? 'api' : 'dev/api';
   app.setGlobalPrefix(`${path}`); // 전체 endpoint
 
   //docs
   const config = new DocumentBuilder()
     // .setBasePath(`${path}`) // 전역 접두사를 Swagger 문서에 반영
-    .addServer(`https://partyguam.net`, '파티괌 도메인 주소')
-    // .addServer(`https://partyguam.net/dev`, '개발 서버')
-    .setTitle('party-guam API')
-    .setDescription('파티괌 API 문서 입니다.')
+    .addServer(`https://partyguham.com`, '파티괌 도메인 주소')
+    .setTitle('party-guham API')
+    .setDescription('파티구함 API 문서 입니다.')
     .setVersion('1.0')
     .addBearerAuth({ type: 'http' }, 'accessToken')
     .addCookieAuth('refreshToken', { type: 'apiKey' }, 'refreshToken')
@@ -81,7 +80,11 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup(`${path}/docs`, app, document, {
-    swaggerOptions: { defaultModelsExpandDepth: -1 }, // 하단 DTO 삭제
+    swaggerOptions: {
+      docExpansion: 'none',
+      defaultModelsExpandDepth: -1,
+      defaultModelExpandDepth: 7,
+    },
   });
 
   await app.listen(process.env.PORT);

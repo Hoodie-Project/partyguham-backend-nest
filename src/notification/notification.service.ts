@@ -1,0 +1,89 @@
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { NotificationRepository } from './repository/notification.repository';
+import { NotificationTypeRepository } from './repository/notification_type.repository';
+import { EmailNotificationRepository } from './repository/email-notification.repository';
+
+@Injectable()
+export class NotificationService {
+  constructor(
+    private notificationRepository: NotificationRepository,
+    private notificationTypeRepository: NotificationTypeRepository,
+    private emailNotificationRepository: EmailNotificationRepository,
+  ) {}
+
+  async hasUncheckedNotifications(userId: number) {
+    return await this.notificationRepository.hasUncheckedNotifications(userId);
+  }
+
+  async getNotifications(userId: number, limit: number, cursor?: number, type?: string) {
+    let notificationTypeId: number;
+    if (type) {
+      notificationTypeId = (await this.notificationTypeRepository.findOne(type)).id;
+    }
+
+    return await this.notificationRepository.getNotifications(userId, limit, cursor, notificationTypeId);
+  }
+
+  async markAsCheck(userId: number): Promise<void> {
+    await this.notificationRepository.markAsCheck(userId);
+  }
+
+  async markAsRead(userId: number, notificationId: number): Promise<void> {
+    const notification = await this.notificationRepository.findOne(notificationId);
+
+    if (!notification) {
+      throw new NotFoundException('알람이 없습니다');
+    }
+
+    if (notification.userId !== userId) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+
+    await this.notificationRepository.markAsRead(notificationId, userId);
+  }
+
+  async createNotification(userId: number, type: string, title: string, message: string, image: string, link: string) {
+    const notificationType = await this.notificationTypeRepository.findOne(type);
+
+    return await this.notificationRepository.create(userId, notificationType.id, title, message, image, link);
+  }
+
+  async createNotifications(
+    userIds: number[],
+    type: string,
+    title: string,
+    message: string,
+    image: string,
+    link: string,
+  ) {
+    const notificationType = await this.notificationTypeRepository.findOne(type);
+
+    return await this.notificationRepository.createBulk(userIds, notificationType.id, title, message, image, link);
+  }
+
+  async deleteNotification(userId: number, notificationId: number): Promise<void> {
+    const notification = await this.notificationRepository.findOne(notificationId);
+
+    if (!notification) {
+      throw new NotFoundException('알람이 없습니다');
+    }
+
+    if (notification.userId !== userId) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+
+    const result = await this.notificationRepository.deleteById(notificationId, userId);
+
+    if (!result) {
+      throw new InternalServerErrorException('삭제 실패');
+    }
+  }
+
+  async saveEmail(email: string) {
+    return await this.emailNotificationRepository.saveEmail(email);
+  }
+
+  async findByEmail(email: string) {
+    return await this.emailNotificationRepository.findByEmail(email);
+  }
+}

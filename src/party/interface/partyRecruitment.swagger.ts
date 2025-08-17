@@ -163,8 +163,8 @@ export class PartyRecruitmentSwagger {
   static batchDeleteRecruitment() {
     return applyDecorators(
       ApiOperation({
-        summary: '여러 개의 특정 파티 모집 삭제',
-        description: `**파티모집을 삭제하는 API 입니다.**  
+        summary: '파티 모집 다수 삭제',
+        description: `**파티모집을 다수 삭제하는 API 입니다.**  
         삭제할 레코드의 ID를 배열 형태로 요청 본문에 포함하여 전송합니다.
         사용자가 지정한 ID 배열을 기반으로 해당 레코드를 일괄적으로 삭제합니다.
         `,
@@ -323,6 +323,29 @@ export class PartyRecruitmentSwagger {
       ApiResponse({
         status: 403,
         description: '파티 모집공고에 대한 완료 권한이 없습니다.',
+      }),
+    );
+  }
+
+  static updateRecruitmentStatusBatch() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 모집 다수 데이터 (완료)상태 변경',
+        description: `**파티모집 다수 데이터를 (완료)상태 변경하는 API 입니다.**  
+        상태변경할 파티모집 ID를 배열 형태로 요청 본문에 포함하여 전송합니다.
+        상태 변경 확장성을 고려햐여 completed는 URL에 표기하지 않습니다.
+        -> 확장시 status 상태는 body에 상태를 받을 예정
+        `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '상태 변경 완료',
       }),
     );
   }

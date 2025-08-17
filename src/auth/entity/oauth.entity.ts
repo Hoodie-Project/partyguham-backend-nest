@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, Index } from 'typeorm';
 import { UserEntity } from '../../user/infra/db/entity/user.entity';
 
 export enum ProviderEnum {
@@ -13,6 +13,9 @@ export class OauthEntity {
 
   @Column({ nullable: true, default: null })
   userId: number;
+
+  @Column({ nullable: true, default: null })
+  userIdaasdf: number;
 
   @Column({ nullable: false })
   externalId: string;

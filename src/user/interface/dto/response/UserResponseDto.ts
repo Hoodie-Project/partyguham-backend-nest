@@ -49,22 +49,25 @@ export class UserResponseDto {
   @ApiProperty({
     description: '포트폴리오 제목',
     example: '포트폴리오 제목',
+    nullable: true,
   })
-  public portfolioTitle: string;
+  public portfolioTitle: string | null;
 
   @Expose()
   @ApiProperty({
     description: '포트폴리오 링크',
     example: 'https://example.com/..',
+    nullable: true,
   })
-  public portfolio: string;
+  public portfolio: string | null;
 
   @Expose()
   @ApiProperty({
     example: '/image/..',
     description: '이미지 경로',
+    nullable: true,
   })
-  image: string;
+  image: string | null;
 
   @Expose()
   @ApiProperty({

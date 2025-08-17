@@ -1,0 +1,44 @@
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Request } from 'express';
+
+import { OauthService } from '../oauth.service';
+import { AuthService } from '../auth.service';
+import { PayloadType } from '../jwt.payload';
+
+@Injectable()
+export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
+  constructor(
+    private oauthService: OauthService,
+    private authService: AuthService,
+  ) {
+    super({
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        ExtractJwt.fromAuthHeaderAsBearerToken(), // header bearer 확인
+        (req: Request) => {
+          return req.cookies['recoverToken'] || null; // 쿠키 확인
+        },
+      ]),
+      secretOrKey: process.env.JWT_RECOVER_SECRET,
+      ignoreExpiration: false,
+    });
+  }
+
+  async validate(payload: PayloadType) {
+    let oauth;
+    const oauthId = Number(this.authService.decrypt(payload.id));
+
+    try {
+      oauth = await this.oauthService.findById(oauthId);
+    } catch {
+      throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+    }
+
+    if (!oauth || oauth.userId == null) {
+      throw new UnauthorizedException('복구가 불가능한 계정입니다.', 'UNAUTHORIZED');
+    }
+
+    return { userId: oauth.userId, oauthId };
+  }
+}

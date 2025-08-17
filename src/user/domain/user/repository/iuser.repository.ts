@@ -3,6 +3,7 @@ import { User } from '../user';
 
 export interface IUserRepository {
   findById: (id: number) => Promise<UserEntity>;
+  findByIdWithoutDeleted: (id: number) => Promise<UserEntity>;
   findByNickname: (nickname: string) => Promise<User | null>;
   prepare: () => Promise<number>;
   createUser: (email: string, image: string, nickname: string, gender: string, birth: string) => Promise<User>;
@@ -17,6 +18,7 @@ export interface IUserRepository {
     image: string,
   ) => Promise<UserEntity>;
   deleteUserById: (userId: number) => Promise<void>;
+  setUserActiveById: (userId: number) => Promise<void>;
   setUserInactiveById: (userId: number) => Promise<void>;
   softDeleteUserById: (userId: number) => Promise<void>;
 }

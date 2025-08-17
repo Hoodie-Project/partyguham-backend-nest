@@ -289,6 +289,36 @@ export class PartySwagger {
     );
   }
 
+  static updatePartyStatus() {
+    return applyDecorators(
+      ApiOperation({
+        summary: '파티 상태 수정',
+        description: `**파티 상태를 수정하는 API 입니다.**  
+        
+        `,
+      }),
+      ApiHeader({
+        name: 'Authorization',
+        description: `Bearer {access token}
+        `,
+        required: true,
+      }),
+      ApiResponse({
+        status: 200,
+        description: '파티 수정 완료',
+        type: UpdatePartyResponseDto,
+      }),
+      ApiResponse({
+        status: 403,
+        description: '파티 수정 권한이 없습니다.',
+      }),
+      ApiResponse({
+        status: 404,
+        description: '파티를 찾을 수 없습니다.',
+      }),
+    );
+  }
+
   static deleteParty() {
     return applyDecorators(
       ApiOperation({
@@ -366,6 +396,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '변경 완료',
+        schema: { example: { message: '파티 유저 포지션이 변경 되었습니다.' } },
       }),
       ApiResponse({
         status: 403,
@@ -480,6 +511,7 @@ export class PartySwagger {
       ApiResponse({
         status: 200,
         description: '위임 완료',
+        schema: { example: { message: '파티장 권한이 변경 되었습니다.' } },
       }),
       ApiResponse({
         status: 403,

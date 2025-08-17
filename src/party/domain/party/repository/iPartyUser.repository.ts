@@ -1,4 +1,5 @@
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
+import { UpdateResult } from 'typeorm';
 
 export interface IPartyUserRepository {
   count: (partyId: number) => Promise<number>;
@@ -8,10 +9,16 @@ export interface IPartyUserRepository {
   updateMember: (id: number) => Promise<void>;
   updateMaster: (id: number) => Promise<void>;
   updateDeputy: (id: number) => Promise<void>;
-  updateByPositionId: (id: number, positionId: number) => Promise<PartyUserEntity>;
+  updatePositionById: (id: number, positionId: number) => Promise<UpdateResult>;
   findOneById: (id: number) => Promise<PartyUserEntity>;
+  findAllbByPartyId: (partyId: number) => Promise<PartyUserEntity[]>;
+  findOneMasterByPartyId: (partyId: number) => Promise<PartyUserEntity>;
+  findMasterByUserId: (userId: number) => Promise<PartyUserEntity[]>;
   findByIds: (id: number[]) => Promise<PartyUserEntity[]>;
+  findByIdsWithUserData: (id: number[]) => Promise<PartyUserEntity[]>;
   findOne: (userId: number, partyId: number) => Promise<PartyUserEntity>;
+  findOneWithUserDataById: (id: number, partyId: number) => Promise<PartyUserEntity>;
+  findOneWithUserDataByUserId: (userId: number, partyId: number) => Promise<PartyUserEntity>;
   deleteById: (id: number) => Promise<void>;
   softDeleteById: (id: number) => Promise<void>;
   batchDelete: (id: number[]) => Promise<void>;

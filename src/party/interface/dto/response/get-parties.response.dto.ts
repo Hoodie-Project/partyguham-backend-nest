@@ -46,6 +46,7 @@ class PartiesDto {
   @ApiProperty({
     example: '/uploads/...',
     description: '이미지 서버 경로',
+    nullable: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -94,7 +95,7 @@ export class GetPartiesResponseDto {
   total: number;
 
   @Expose()
-  @ApiProperty({ description: '파티 데이터 목록', type: [PartiesDto] })
+  @ApiProperty({ description: '파티 데이터 목록', type: [PartiesDto], minItems: 0 })
   @Type(() => PartiesDto)
   parties: PartiesDto[]; // UserResponseData는 UserResponseDto의 데이터 형태를 정의하는 클래스입니다.
 }

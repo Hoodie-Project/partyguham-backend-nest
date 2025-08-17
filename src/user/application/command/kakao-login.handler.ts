@@ -6,14 +6,14 @@ import axios from 'axios';
 import { KakaoLoginCommand } from './kakao-login.command';
 import { ProviderEnum } from 'src/auth/entity/oauth.entity';
 import { OauthService } from 'src/auth/oauth.service';
-import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { UserService } from '../user.service';
+import { StatusEnum } from 'src/common/entity/baseEntity';
+import { USER_ERROR } from 'src/common/error/user-error.message';
 
 @Injectable()
 @CommandHandler(KakaoLoginCommand)
 export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
   constructor(
-    @Inject('UserRepository') private userRepository: IUserRepository,
     private oauthService: OauthService,
     private authService: AuthService,
     private userService: UserService,
@@ -62,17 +62,16 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
 
     const externalId: string = kakaoUserInfo.data.id;
     const email = kakaoUserInfo.data.kakao_account.email;
+    let image = kakaoUserInfo?.data?.properties?.profile_image || null;
 
-    let image = null;
-    if (kakaoUserInfo.data.kakao_account.profile_image_needs_agreement) {
-      image = kakaoUserInfo.data.properties.profile_image;
+    if (!kakaoUserInfo?.data?.kakao_account?.profile_image_needs_agreement) {
+      image = null;
     }
 
     const oauth = await this.oauthService.findByExternalId(externalId);
 
     if (oauth && !oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+      const signupAccessToken = await this.authService.createSignupToken(oauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email };
     }
@@ -85,23 +84,36 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
         email,
         image,
       );
-      const encryptOauthId = await this.authService.encrypt(String(createOauth.id));
-      const signupAccessToken = await this.authService.signupAccessToken(encryptOauthId, email, image);
+
+      const signupAccessToken = await this.authService.createSignupToken(createOauth.id, email, image);
 
       return { type: 'signup', signupAccessToken, email };
     }
 
     if (oauth.userId) {
-      const encryptOauthId = await this.authService.encrypt(String(oauth.id));
+      const user = await this.userService.findById(oauth.userId);
 
-      const userStatus = await this.userService.findUserStatusById(oauth.userId);
-
-      if (userStatus === 'inactive') {
-        throw new ForbiddenException('탈퇴하여 30일동안 보관중인 계정입니다.', 'ACCESS_DENIED');
+      if (user.status === StatusEnum.DELETED) {
+        return { type: USER_ERROR.USER_DELETED.error };
       }
 
-      const accessToken = await this.authService.createAccessToken(encryptOauthId);
-      const refreshToken = await this.authService.createRefreshToken(encryptOauthId);
+      if (user.status === StatusEnum.INACTIVE) {
+        const recoverToken = await this.authService.createRecoverToken(oauth.id);
+
+        return {
+          type: USER_ERROR.USER_DELETED_30D.error,
+          recoverToken,
+          email: user.email,
+          deletedAt: user.updatedAt,
+        };
+      }
+
+      if (user.status !== StatusEnum.ACTIVE) {
+        return { type: USER_ERROR.USER_FORBIDDEN_DISABLED.error };
+      }
+
+      const accessToken = await this.authService.createAccessToken(oauth.id);
+      const refreshToken = await this.authService.createRefreshToken(oauth.id);
 
       this.authService.saveRefreshToken(oauth.userId, refreshToken);
 
