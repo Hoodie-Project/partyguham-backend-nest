@@ -1,0 +1,55 @@
+# .github/workflows/deploy.yml
+name: Dev Deploy (Nest + PM2)
+
+on:
+  push:
+    branches: [release]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: 'yarn'
+
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      # 서버로 빌드 파일 업로드
+      - name: Upload build
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          source: |
+            dist/**
+            package.json
+            yarn.lock
+          target: ${{ secrets.APP_DIR }}
+
+      # 서버에서 배포
+      - name: Remote deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ${{ secrets.APP_DIR }}
+            yarn install --production --frozen-lockfile
+            if pm2 describe ${{ secrets.PM2_DEV_NAME }} > /dev/null; then
+              pm2 restart ${{ secrets.PM2_DEV_NAME }} --update-env
+            else
+              pm2 start dist/main.js --name ${{ secrets.PM2_DEV_NAME }}
+            fi
+            pm2 save
