@@ -1,13 +1,13 @@
 # .github/workflows/deploy.yml
-name: Dev Deploy (Nest + PM2)
+name: DEV Build & Deploy (Nest + PM2)
 
 on:
   push:
-    branches: [release]
+    branches: [ release ]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -20,8 +20,27 @@ jobs:
       - run: yarn install --frozen-lockfile
       - run: yarn build
 
-      # 서버로 빌드 파일 업로드
-      - name: Upload build
+      # 배포에 필요한 파일만 아티팩트로 보관
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: |
+            dist/**
+            package.json
+            yarn.lock
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      # 아티팩트를 "현재 디렉토리(루트)"에 풀기
+      - uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: .
+
+      - name: Upload to server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -29,13 +48,12 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
+          target: /Users/macmini/partyguam/dev/partyguham-backend-nest
           source: |
             dist/**
             package.json
             yarn.lock
-          target: ${{ secrets.APP_DIR }}
 
-      # 서버에서 배포
       - name: Remote deploy
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -45,8 +63,9 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd ${{ secrets.APP_DIR }}
+            cd /Users/macmini/partyguam/dev/partyguham-backend-nest
             yarn install --production --frozen-lockfile
+
             if pm2 describe ${{ secrets.PM2_DEV_NAME }} > /dev/null; then
               pm2 restart ${{ secrets.PM2_DEV_NAME }} --update-env
             else
