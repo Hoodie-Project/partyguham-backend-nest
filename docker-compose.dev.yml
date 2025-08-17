@@ -1,0 +1,8 @@
+services:
+  app:
+    image: ghcr.io/iysh321/partyguham-backend-nest:dev-latest
+    container_name: nest-app-dev
+    restart: always
+    ports:
+      - '8080:8080'
+    env_file: ./app.env
