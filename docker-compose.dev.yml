@@ -1,4 +1,29 @@
 services:
+  db:
+    image: postgres:15-alpine
+    container_name: pg-dev
+    environment:
+      POSTGRES_DB: partyguham
+      POSTGRES_USER: devuser
+      POSTGRES_PASSWORD: devpass
+    volumes:
+      - /Users/macmini/partyguam/dbdata_dev:/var/lib/postgresql/data
+    ports:
+      - '127.0.0.1:5433:5432'
+    networks: [appnet-dev]
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis-dev
+    command: >
+      redis-server --appendonly yes --appendfsync everysec
+                   --save 900 1 --save 300 10 --save 60 10000
+    volumes:
+      - /Users/macmini/partyguam/redisdata_dev:/data
+    ports:
+      - '127.0.0.1:6380:6379'
+    networks: [appnet-dev]
+
   app:
     image: ghcr.io/iysh321/partyguham-backend-nest:dev-latest
     container_name: nest-app-dev
@@ -8,3 +33,11 @@ services:
     env_file: ./.env
     volumes:
       - /Users/macmini/partyguam/secrets/firebase-service-account.prod.json:/app/secrets/firebase.json:ro
+    networks: [appnet-dev]
+    depends_on:
+      - db
+      - redis
+
+networks:
+  appnet-dev:
+    external: true
