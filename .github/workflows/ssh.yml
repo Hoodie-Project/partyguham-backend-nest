@@ -1,0 +1,86 @@
+# .github/workflows/deploy-nest-pm2.yml
+name: PROD Build & Deploy (Nest + PM2)
+
+on:
+  push:
+    branches: [ main ]         # main 브랜치에 push될 때만 실행
+  workflow_dispatch:           # 수동 실행 가능
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # 1) 리포 체크아웃
+      - uses: actions/checkout@v4
+
+      # 2) Node 준비
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          cache: 'yarn'
+
+      # 3) 설치 & 빌드 (Nest)
+      - run: yarn install --frozen-lockfile
+      - run: yarn build
+
+      # (Prisma 사용 시 필요)
+      # - run: npx prisma generate
+
+      # 4) 배포 산출물 업로드
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nest-build
+          path: |
+            dist/**
+            package.json
+            yarn.lock
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      # 1) 아티팩트 다운로드
+      - uses: actions/download-artifact@v4
+        with:
+          name: nest-build
+          path: .
+
+      # 2) 서버로 업로드 (SCP)
+      - name: Upload to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          target: /Users/macmini/partyguam/dev/partyguham-backend-nest
+          source: "dist/**, package.json, yarn.lock"
+
+      # 3) 서버에서 PM2로 실행/재시작
+      - name: Remote deploy (PM2)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            set -euo pipefail
+            export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+            cd /Users/macmini/partyguam/dev/partyguham-backend-nest
+
+            # 프로덕션 의존성만 설치
+            yarn install --production --frozen-lockfile
+
+      # PM2 실행/재시작 (엔트리 경로 고정)
+      if pm2 describe ${{ secrets.PM2_NAME }} > /dev/null; then
+        pm2 restart ${{ secrets.PM2_NAME }} --update-env
+      else
+        pm2 start dist/src/main.js --name ${{ secrets.PM2_NAME }}
+      fi
+
+      pm2 save

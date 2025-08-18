@@ -54,6 +54,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
+          source: 'docker-compose.dev.yml'
           script: |
             set -euo pipefail
             export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
