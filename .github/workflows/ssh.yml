@@ -3,8 +3,8 @@ name: PROD Build & Deploy (Nest + PM2)
 
 on:
   push:
-    branches: [ main ]         # main 브랜치에 push될 때만 실행
-  workflow_dispatch:           # 수동 실행 가능
+    branches: [] # main 브랜치에 push될 때만 실행
+  workflow_dispatch: # 수동 실행 가능
 
 jobs:
   build:
@@ -56,7 +56,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           port: ${{ secrets.SSH_PORT }}
           target: /Users/macmini/partyguam/dev/partyguham-backend-nest
-          source: "dist/**, package.json, yarn.lock"
+          source: 'dist/**, package.json, yarn.lock'
 
       # 3) 서버에서 PM2로 실행/재시작
       - name: Remote deploy (PM2)
@@ -76,11 +76,11 @@ jobs:
             # 프로덕션 의존성만 설치
             yarn install --production --frozen-lockfile
 
-      # PM2 실행/재시작 (엔트리 경로 고정)
-      if pm2 describe ${{ secrets.PM2_NAME }} > /dev/null; then
-        pm2 restart ${{ secrets.PM2_NAME }} --update-env
-      else
-        pm2 start dist/src/main.js --name ${{ secrets.PM2_NAME }}
-      fi
+            # PM2 실행/재시작 (엔트리 경로 고정)
+            if pm2 describe ${{ secrets.PM2_NAME }} > /dev/null; then
+                pm2 restart ${{ secrets.PM2_NAME }} --update-env
+            else
+                pm2 start dist/src/main.js --name ${{ secrets.PM2_NAME }}
+            fi
 
-      pm2 save
+            pm2 save

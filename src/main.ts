@@ -17,18 +17,7 @@ declare module 'express-session' {
 }
 
 async function bootstrap() {
-  const httpsOptions =
-    process.env.NODE_ENV === 'local'
-      ? null
-      : {
-          ca: fs.readFileSync(process.env.CA_REPO),
-          key: fs.readFileSync(process.env.KEY_REPO),
-          cert: fs.readFileSync(process.env.CERT_REPO),
-        };
-
-  const app = await NestFactory.create(AppModule, {
-    httpsOptions,
-  });
+  const app = await NestFactory.create(AppModule);
 
   app.enableCors({
     methods: 'GET,PUT,PATCH,POST,DELETE',

@@ -46,6 +46,20 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Upload docker-compose.dev.yml
+        # ↓↓↓ scp-action에 source/target을 넣습니다
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          port: ${{ secrets.SSH_PORT }}
+          source: 'docker-compose.dev.yml'
+          target: '/Users/macmini/partyguam/dev/partyguham-backend-nest'
+
       - name: Remote deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -56,7 +70,6 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
           source: 'docker-compose.dev.yml'
           script: |
-            set -euo pipefail
             export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
 
             cd /Users/macmini/partyguam/dev/partyguham-backend-nest
@@ -66,10 +79,6 @@ jobs:
 
             # GHCR 로그인 (프라이빗이면 필수)
             echo ${{ secrets.TOKEN_GITHUB }} | docker login ghcr.io -u iysh321 --password-stdin
-
-            # ❗ docker-compose.dev.yml 내부에 다음 라인이 있어야 컨테이너로 주입됩니다:
-            #   env_file: .env
-            # .env 파일은 이 경로(/Users/macmini/partyguam/dev/partyguham-backend-nest/.env)에 미리 있어야 합니다.
 
             # 최신 이미지 풀 & 기동 (동일 파일 사용)
             docker-compose -f docker-compose.dev.yml pull
