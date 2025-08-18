@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: devuser
       POSTGRES_PASSWORD: devpass
     volumes:
-      - /Users/macmini/partyguam/dbdata_dev:/var/lib/postgresql/data
+      - /Users/macmini/partyguam/data/dbdata_dev:/var/lib/postgresql/data
     ports:
       - '127.0.0.1:5433:5432'
     networks: [appnet-dev]
@@ -19,7 +19,7 @@ services:
       redis-server --appendonly yes --appendfsync everysec
                    --save 900 1 --save 300 10 --save 60 10000
     volumes:
-      - /Users/macmini/partyguam/redisdata_dev:/data
+      - /Users/macmini/partyguam/data/redisdata_dev:/data
     ports:
       - '127.0.0.1:6380:6379'
     networks: [appnet-dev]
@@ -37,6 +37,45 @@ services:
     depends_on:
       - db
       - redis
+
+  postgres-exporter:
+    image: bitnami/postgres-exporter:latest
+    container_name: postgres-exporter-dev
+    environment:
+      DATA_SOURCE_URI: 'db:5432/partyguham?sslmode=disable'
+      DATA_SOURCE_USER: devuser
+      DATA_SOURCE_PASS: devpass
+    ports:
+      - '127.0.0.1:9188:9187'
+    networks: [appnet-dev]
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: redis-exporter-dev
+    command: ['--redis.addr=redis://redis:6379']
+    ports:
+      - '127.0.0.1:9122:9121'
+    networks: [appnet-dev]
+
+  prometheus-dev:
+    image: prom/prometheus
+    container_name: prometheus-dev
+    volumes:
+      - /Users/macmini/partyguam/monitoring/prometheus_dev.yml:/etc/prometheus/prometheus.yml:ro
+      - /Users/macmini/partyguam/monitoring/prom_data_dev:/prometheus
+    ports: ['127.0.0.1:9091:9090']
+    networks: [appnet-dev]
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana-dev
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - /Users/macmini/partyguam/monitoring/grafana_dev:/var/lib/grafana
+    ports: ['127.0.0.1:3101:3000']
+    networks: [appnet-dev]
 
 networks:
   appnet-dev:
