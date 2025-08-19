@@ -22,6 +22,7 @@ import { AuthModule } from './auth/auth.module';
 import { NotificationModule } from './notification/notification.module';
 import { ConfigModule } from '@nestjs/config';
 import { AwsModule } from './libs/aws/s3/s3.module';
+import { PrometheusModule } from '@willsoto/nestjs-prometheus';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { AwsModule } from './libs/aws/s3/s3.module';
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.NODE_ENV !== 'prod',
     }),
+    PrometheusModule.register(),
 
     //libs
     FirebaseModule,
