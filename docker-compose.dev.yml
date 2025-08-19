@@ -60,12 +60,6 @@ services:
   prometheus:
     image: prom/prometheus
     container_name: prometheus-dev
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.enable-lifecycle'
-      - '--web.external-url=/monitor/dev/prometheus'
-      - '--web.route-prefix=/monitor/dev/prometheus'
     volumes:
       - /Users/macmini/partyguam/monitoring/prometheus_dev.yml:/etc/prometheus/prometheus.yml:ro
       - /Users/macmini/partyguam/monitoring/prom_data_dev:/prometheus
@@ -78,8 +72,6 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: admin
       GF_SECURITY_ADMIN_PASSWORD: admin
-      GF_SERVER_ROOT_URL: '%(protocol)s://%(domain)s/monitor/dev/grafana'
-      GF_SERVER_SERVE_FROM_SUB_PATH: 'true'
     volumes:
       - /Users/macmini/partyguam/monitoring/grafana_dev:/var/lib/grafana
     ports: ['3101:3000']
