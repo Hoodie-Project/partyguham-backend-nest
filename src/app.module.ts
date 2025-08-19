@@ -45,7 +45,10 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.NODE_ENV !== 'prod',
     }),
-    PrometheusModule.register(),
+    PrometheusModule.register({
+      path: '/metrics',
+      defaultMetrics: { enabled: true },
+    }),
 
     //libs
     FirebaseModule,

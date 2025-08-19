@@ -54,7 +54,7 @@ async function bootstrap() {
   // app.useGlobalFilters(new CustomErrorExceptionFilter());
 
   const path = process.env.NODE_ENV === 'prod' ? 'api' : 'dev/api';
-  app.setGlobalPrefix(`${path}`); // 전체 endpoint
+  app.setGlobalPrefix(`${path}`, { exclude: ['metrics'] }); // 전체 endpoint
 
   //docs
   const config = new DocumentBuilder()
