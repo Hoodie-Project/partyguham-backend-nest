@@ -79,9 +79,9 @@ export class KakaoAppLoginHandler implements ICommandHandler<KakaoAppLoginComman
       await this.userService.validateLogin(oauth.userId, oauth.id);
 
       const accessToken = await this.authService.createAccessToken(oauth.id);
-      const refreshToken = await this.authService.createRefreshToken(oauth.id);
+      const refreshToken = await this.authService.createRefreshToken(oauth.userId);
 
-      this.authService.saveRefreshToken(oauth.userId, refreshToken);
+      // this.authService.saveRefreshToken(oauth.userId, refreshToken);
 
       return { type: 'login', accessToken, refreshToken };
     }

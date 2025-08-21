@@ -17,17 +17,34 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
       ]),
       secretOrKey: process.env.JWT_REFRESH_SECRET,
       ignoreExpiration: false,
+      passReqToCallback: true, // req를 콜백으로 전달
     });
   }
 
-  async validate(payload: { id: string; iat: number; exp: number }): Promise<{
-    oauthId: number;
+  async validate(
+    req: Request,
+    payload: { id: string; iat: number; exp: number },
+  ): Promise<{
+    userId: number;
   }> {
     try {
+      const refreshToken = req.cookies['refreshToken'] ?? req.headers['authorization']?.replace('Bearer ', '');
+
+      if (!refreshToken) {
+        throw new UnauthorizedException('Invalid refresh token');
+      }
+
       const decryptUserId = Number(this.authService.decrypt(payload.id));
 
-      return { oauthId: decryptUserId };
-    } catch {
+      const result = await this.authService.getRefreshToken(decryptUserId);
+      console.log('Refresh token from redis:', result);
+
+      if (result !== refreshToken) {
+        throw new UnauthorizedException('Refresh token not found');
+      }
+
+      return { userId: decryptUserId };
+    } catch (err) {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
   }

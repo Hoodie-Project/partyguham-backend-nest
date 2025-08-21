@@ -1,13 +1,16 @@
-import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 
 @Entity({ name: 'auth' })
 export class AuthEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @ApiProperty({
     description: 'user_id',
   })
-  @PrimaryColumn()
+  @Column()
   userId: number;
 
   @ApiProperty({})
@@ -17,10 +20,10 @@ export class AuthEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToOne(() => UserEntity, (user) => user.auth, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
-  user: UserEntity;
+  // @OneToOne(() => UserEntity, (user) => user.auth, {
+  //   onDelete: 'CASCADE',
+  //   onUpdate: 'CASCADE',
+  // })
+  // @JoinColumn([{ name: 'user_id', referencedColumnName: 'id' }])
+  // user: UserEntity;
 }

@@ -1,5 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { RedisModule } from '@nestjs-modules/ioredis';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 import { LoggerMiddleware } from './common/middleware/logger.middleware';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
@@ -44,6 +45,11 @@ import { PrometheusModule } from '@willsoto/nestjs-prometheus';
       // bigNumberStrings: false, // bigint number type
       namingStrategy: new SnakeNamingStrategy(),
       logging: process.env.NODE_ENV !== 'prod',
+    }),
+    RedisModule.forRoot({
+      type: 'single',
+      url: process.env.REDIS_URL,
+      options: { password: process.env.REDIS_PASSWORD },
     }),
     PrometheusModule.register({
       path: '/metrics',

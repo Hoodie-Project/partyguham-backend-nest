@@ -48,8 +48,8 @@ export class UserEntity extends BaseEntity {
   @OneToMany(() => FcmTokenEntity, (fcmToken) => fcmToken.user)
   fcmTokens: FcmTokenEntity[];
 
-  @OneToOne(() => AuthEntity, (auth) => auth.user)
-  auth: AuthEntity;
+  // @OneToOne(() => AuthEntity, (auth) => auth.user)
+  // auth: AuthEntity;
 
   @OneToMany(() => OauthEntity, (oauth) => oauth.user)
   oauths: OauthEntity[];

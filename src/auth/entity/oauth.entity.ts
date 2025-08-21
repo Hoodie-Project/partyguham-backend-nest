@@ -14,9 +14,6 @@ export class OauthEntity {
   @Column({ nullable: true, default: null })
   userId: number;
 
-  @Column({ nullable: true, default: null })
-  userIdaasdf: number;
-
   @Column({ nullable: false })
   externalId: string;
 
@@ -26,7 +23,7 @@ export class OauthEntity {
   @Column({ nullable: true })
   accessToken: string;
 
-  @ManyToOne(() => UserEntity, (user) => user.auth, {
+  @ManyToOne(() => UserEntity, (user) => user.oauths, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })

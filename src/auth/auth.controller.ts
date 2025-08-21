@@ -14,7 +14,7 @@ export class AuthController {
   @ApiOperation({ summary: 'accessToken 재발급' })
   @Post('access-token')
   async refreshTokens(@CurrentUser() refresh: CurrentRefreshType) {
-    const accessToken = await this.authService.createAccessToken(refresh.oauthId);
+    const accessToken = await this.authService.createAccessToken(refresh.userId);
 
     return { accessToken };
   }

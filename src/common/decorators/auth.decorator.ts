@@ -6,7 +6,7 @@ export const CurrentUser = createParamDecorator((data: unknown, ctx: ExecutionCo
   return request.user;
 });
 
-export type CurrentUserType = { id: number | null };
-export type CurrentRefreshType = { oauthId: number | null };
+export type CurrentUserType = { id: number | null }; // access token
+export type CurrentRefreshType = { userId: number | null };
 export type CurrentRecoverType = { userId: number; oauthId: number };
 export type CurrentSignupType = { oauthId: number; email: string; image: string };
