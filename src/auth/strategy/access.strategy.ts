@@ -2,16 +2,12 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { OauthService } from '../oauth.service';
-import { AuthService } from '../auth.service';
 import { PayloadType } from '../jwt.payload';
+import { CommonUserService } from 'src/user/application/common.user.service';
 
 @Injectable()
 export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
-  constructor(
-    private oauthService: OauthService,
-    private authService: AuthService,
-  ) {
+  constructor(private commonUserService: CommonUserService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       secretOrKey: process.env.JWT_ACCESS_SECRET,
@@ -20,18 +16,10 @@ export class AccessStrategy extends PassportStrategy(Strategy, 'access') {
   }
 
   async validate(payload: PayloadType) {
-    let oauth;
-    const decryptOauthId = Number(this.authService.decrypt(payload.id));
+    const userExternalId = payload.sub;
 
-    try {
-      oauth = await this.oauthService.findById(decryptOauthId);
-    } catch {
-      throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
-    }
+    const user = await this.commonUserService.findByExternalIdWithoutDeleted(userExternalId);
 
-    if (!oauth || oauth.userId == null) {
-      throw new UnauthorizedException('OAuth 정보가 유효하지 않습니다.', 'UNAUTHORIZED');
-    }
-    return { id: oauth.userId };
+    return { userId: user.id, userExternalId };
   }
 }

@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, Not, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entity/user.entity';
@@ -20,9 +20,21 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  async findByExternalId(externalId: string) {
+    return await this.userRepository.findOne({
+      where: { externalId },
+    });
+  }
+
   async findByIdWithoutDeleted(id: number) {
     return await this.userRepository.findOne({
       where: { id },
+    });
+  }
+
+  async findByExternalIdWithoutDeleted(externalId: string) {
+    return await this.userRepository.findOne({
+      where: { externalId, status: Not(StatusEnum.DELETED) },
     });
   }
 

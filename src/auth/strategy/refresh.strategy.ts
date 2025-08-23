@@ -1,13 +1,19 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 
 import { AuthService } from '../auth.service';
+import { OauthService } from '../oauth.service';
+import { CommonUserService } from 'src/user/application/common.user.service';
 
 @Injectable()
 export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
-  constructor(private authService: AuthService) {
+  constructor(
+    private oauthService: OauthService,
+    private authService: AuthService,
+    private commonUserService: CommonUserService,
+  ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(), // header bearer 확인
@@ -21,29 +27,38 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
     });
   }
 
-  async validate(
-    req: Request,
-    payload: { id: string; iat: number; exp: number },
-  ): Promise<{
-    userId: number;
-  }> {
+  async validate(req: Request, payload: { sub: string; iat: number; exp: number }) {
     try {
-      const refreshToken = req.cookies['refreshToken'] ?? req.headers['authorization']?.replace('Bearer ', '');
+      //web
+      const webRefreshToken = req.cookies['refreshToken'] ?? null;
 
-      if (!refreshToken) {
-        throw new UnauthorizedException('Invalid refresh token');
+      //mobile
+      const mobileRefreshToken = req.headers['authorization']?.replace('Bearer ', '') ?? null;
+
+      if (webRefreshToken && mobileRefreshToken) {
+        throw new BadRequestException('Bad Request', 'BAD_REQUEST');
       }
 
-      const decryptUserId = Number(this.authService.decrypt(payload.id));
+      const refreshToken = webRefreshToken || mobileRefreshToken;
+      const userExternalId = payload.sub;
 
-      const result = await this.authService.getRefreshToken(decryptUserId);
-      console.log('Refresh token from redis:', result);
-
-      if (result !== refreshToken) {
-        throw new UnauthorizedException('Refresh token not found');
+      // web
+      if (webRefreshToken) {
+        const result = await this.authService.validateRefreshToken(userExternalId, 'web', refreshToken);
+        if (!result) {
+          throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+        }
       }
 
-      return { userId: decryptUserId };
+      // mobile
+      if (mobileRefreshToken) {
+        const result = await this.authService.validateRefreshToken(userExternalId, 'app', refreshToken);
+        if (!result) {
+          throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+        }
+      }
+
+      return { userExternalId };
     } catch (err) {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }

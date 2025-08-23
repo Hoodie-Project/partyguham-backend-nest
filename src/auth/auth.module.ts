@@ -11,6 +11,7 @@ import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
 import { SignupStrategy } from './strategy/signup.strategy';
 import { RecoverStrategy } from './strategy/recover.strategy';
+import { CommonUserService } from 'src/user/application/common.user.service';
 
 @Module({
   controllers: [AuthController],
@@ -31,6 +32,7 @@ import { RecoverStrategy } from './strategy/recover.strategy';
       signOptions: { expiresIn: '1h' },
     }),
     TypeOrmModule.forFeature([OauthEntity]),
+    CommonUserService,
   ],
   exports: [AuthService, OauthService],
 })

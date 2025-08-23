@@ -22,9 +22,7 @@ export class AuthService {
   ) {}
 
   async createSignupToken(oauthId: number, email: string, image: string) {
-    const encryptOauthId = await this.encrypt(String(oauthId));
-
-    const createPayload = { id: encryptOauthId, email, image };
+    const createPayload = { sub: oauthId, email, image };
     return this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_SIGNUP_SECRET,
       expiresIn: '1h',
@@ -32,9 +30,8 @@ export class AuthService {
     });
   }
 
-  async createRecoverToken(oauthId: number) {
-    const encryptOauthId = await this.encrypt(String(oauthId));
-    const createPayload = { id: encryptOauthId };
+  async createRecoverToken(userExternalId: string) {
+    const createPayload = { sub: userExternalId };
 
     return this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_RECOVER_SECRET,
@@ -43,9 +40,8 @@ export class AuthService {
     });
   }
 
-  async createAccessToken(oauthId: number) {
-    const encryptOauthId = await this.encrypt(String(oauthId));
-    const createPayload = { id: encryptOauthId };
+  async createAccessToken(userExternalId: string) {
+    const createPayload = { sub: userExternalId };
 
     return this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_ACCESS_SECRET,
@@ -54,9 +50,8 @@ export class AuthService {
     });
   }
 
-  async createRefreshToken(userId: number) {
-    const encryptuserId = await this.encrypt(String(userId));
-    const createPayload = { id: encryptuserId };
+  async createRefreshToken(userExternalId: string) {
+    const createPayload = { sub: userExternalId };
 
     const refreshToken = await this.jwtService.signAsync(createPayload, {
       secret: process.env.JWT_REFRESH_SECRET,
@@ -76,58 +71,31 @@ export class AuthService {
     });
 
     // 추가적인 검증 로직 (예: 유저 확인, 특정 조건 등)
-    if (!payload || !payload.id) {
+    if (!payload || !payload.sub) {
       throw new UnauthorizedException('Invalid token payload');
     }
-    const decryptUserId = Number(this.decrypt(payload.id));
-    const oauth = await this.oauthService.findById(decryptUserId);
-    const oauthId = oauth.id;
+
+    const oauth = await this.oauthService.findById(payload.sub);
 
     if (oauth.userId) {
       throw new ConflictException('이미 회원가입이 되어있는 계정입니다.');
     }
 
-    return oauthId;
+    return oauth.id;
   }
 
-  async encrypt(data: string) {
-    const cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
-    let result = cipher.update(data, 'utf-8', 'base64');
-    result += cipher.final('base64');
-    return result;
-  }
-
-  public decrypt(data: string) {
-    const decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
-    let result = decipher.update(data, 'base64', 'utf-8');
-    result += decipher.final('utf-8');
-    return result;
-  }
-
-  async appEncrypt(data: string) {
-    const cipher = crypto.createCipheriv(this.algorithm, this.appKey, this.appIv);
-    let result = cipher.update(data, 'utf-8', 'base64');
-    result += cipher.final('base64');
-    return result;
-  }
-
-  public appDecrypt(data: string) {
-    const decipher = crypto.createDecipheriv(this.algorithm, this.appKey, this.appIv);
-    let result = decipher.update(data, 'base64', 'utf-8');
-    result += decipher.final('utf-8');
-    return result;
-  }
-
+  // Refresh Token 관리
+  /** 토큰 조회 */
   async getRefreshToken(userId: number): Promise<string | null> {
     const token = await this.redis.get(`refresh:${userId}`);
     return token; // 없으면 null 반환
   }
 
   /** 토큰 저장 */
-  async saveRefreshToken(userId: number, device: 'web' | 'app', token: string) {
-    const mainKey = `refresh:${userId}`;
+  async saveRefreshToken(userExternalId: string, device: 'web' | 'app', token: string) {
+    const mainKey = `refresh:${userExternalId}`;
     const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userId}:${device}:${token}`;
+    const ttlKey = `rtx:${userExternalId}:${device}:${token}`;
 
     // 1) Set에 추가
     await this.redis.sadd(mainKey, member);
@@ -137,12 +105,12 @@ export class AuthService {
   }
 
   /** 토큰 검증 */
-  async validateRefreshToken(userId: number, device: 'web' | 'app', token: string): Promise<boolean> {
+  async validateRefreshToken(userExternalId: string, device: 'web' | 'app', token: string): Promise<boolean> {
     const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userId}:${device}:${token}`;
+    const ttlKey = `rtx:${userExternalId}:${device}:${token}`;
 
     // Set에 포함 && TTL 키가 살아있으면 유효
-    const isMember = await this.redis.sismember(`refresh:${userId}`, member);
+    const isMember = await this.redis.sismember(`refresh:${userExternalId}`, member);
     const exists = await this.redis.exists(ttlKey);
 
     return isMember === 1 && exists === 1;
@@ -161,4 +129,32 @@ export class AuthService {
   async getUserTokens(userId: number): Promise<string[]> {
     return await this.redis.smembers(`refresh:${userId}`);
   }
+
+  // async encrypt(data: string) {
+  //   const cipher = crypto.createCipheriv(this.algorithm, this.key, this.iv);
+  //   let result = cipher.update(data, 'utf-8', 'base64');
+  //   result += cipher.final('base64');
+  //   return result;
+  // }
+
+  // public decrypt(data: string) {
+  //   const decipher = crypto.createDecipheriv(this.algorithm, this.key, this.iv);
+  //   let result = decipher.update(data, 'base64', 'utf-8');
+  //   result += decipher.final('utf-8');
+  //   return result;
+  // }
+
+  // async appEncrypt(data: string) {
+  //   const cipher = crypto.createCipheriv(this.algorithm, this.appKey, this.appIv);
+  //   let result = cipher.update(data, 'utf-8', 'base64');
+  //   result += cipher.final('base64');
+  //   return result;
+  // }
+
+  // public appDecrypt(data: string) {
+  //   const decipher = crypto.createDecipheriv(this.algorithm, this.appKey, this.appIv);
+  //   let result = decipher.update(data, 'base64', 'utf-8');
+  //   result += decipher.final('utf-8');
+  //   return result;
+  // }
 }

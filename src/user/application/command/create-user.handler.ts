@@ -24,11 +24,13 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     }
 
     const user = await this.userRepository.createUser(email, image, nickname, gender, birth);
+
     const userId = user.id;
     await this.oauthService.updateUserIdById(oauthId, userId);
 
-    const accessToken = await this.authService.createAccessToken(oauthId);
-    const refreshToken = await this.authService.createRefreshToken(userId);
+    const userExternalId = user.externalId;
+    const accessToken = await this.authService.createAccessToken(userExternalId);
+    const refreshToken = await this.authService.createRefreshToken(userExternalId);
 
     // this.authService.saveRefreshToken(userId, refreshToken);
 

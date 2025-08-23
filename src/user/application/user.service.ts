@@ -45,8 +45,16 @@ export class UserService {
     return await this.userRepository.findById(userId);
   }
 
+  async findByExternalId(externalId: string) {
+    return await this.userRepository.findByExternalId(externalId);
+  }
+
   async findByIdWithoutDeleted(userId: number) {
     return await this.userRepository.findByIdWithoutDeleted(userId);
+  }
+
+  async findByExternalIdWithoutDeleted(externalId: string) {
+    return await this.userRepository.findByExternalIdWithoutDeleted(externalId);
   }
 
   async findUserCarerrPrimaryByUserId(userId: number) {

@@ -6,7 +6,7 @@ import { UserController } from './interface/controller/user.controller';
 import { UserService } from './application/user.service';
 
 import { UserEntity } from './infra/db/entity/user.entity';
-import { UserFactory } from './domain/user/user.factory';
+
 import { UserRepository } from './infra/db/repository/user.repository';
 import { UserPersonalityRepository } from './infra/db/repository/user_personality.repository';
 import { UserCareerRepository } from './infra/db/repository/user_career.repository';
@@ -118,7 +118,7 @@ const queryHandlers = [
 
 const eventHandlers = [];
 
-const factories = [UserFactory];
+const factories = [];
 
 const repositories = [
   { provide: 'UserRepository', useClass: UserRepository },

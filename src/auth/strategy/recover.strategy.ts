@@ -5,7 +5,7 @@ import { Request } from 'express';
 
 import { OauthService } from '../oauth.service';
 import { AuthService } from '../auth.service';
-import { PayloadType } from '../jwt.payload';
+import { RecoverPayloadType } from '../jwt.payload';
 
 @Injectable()
 export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
@@ -25,20 +25,13 @@ export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
     });
   }
 
-  async validate(payload: PayloadType) {
-    let oauth;
-    const oauthId = Number(this.authService.decrypt(payload.id));
-
-    try {
-      oauth = await this.oauthService.findById(oauthId);
-    } catch {
-      throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
-    }
+  async validate(payload: RecoverPayloadType) {
+    const oauth = await this.oauthService.findById(payload.sub);
 
     if (!oauth || oauth.userId == null) {
       throw new UnauthorizedException('복구가 불가능한 계정입니다.', 'UNAUTHORIZED');
     }
 
-    return { userId: oauth.userId, oauthId };
+    return { userId: oauth.userId, oauthId: oauth.id };
   }
 }
