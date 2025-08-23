@@ -4,7 +4,6 @@ import { BaseEntity } from 'src/common/entity/baseEntity';
 import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.entity';
 import { PartyApplicationEntity } from 'src/party/infra/db/entity/apply/party_application.entity';
 import { PartyInvitationEntity } from 'src/party/infra/db/entity/apply/party_invitation.entity';
-import { AuthEntity } from 'src/auth/entity/auth.entity';
 import { UserCareerEntity } from './user_career.entity';
 import { OauthEntity } from '../../../../auth/entity/oauth.entity';
 import { UserLocationEntity } from './user_location.entity';
@@ -47,9 +46,6 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => FcmTokenEntity, (fcmToken) => fcmToken.user)
   fcmTokens: FcmTokenEntity[];
-
-  // @OneToOne(() => AuthEntity, (auth) => auth.user)
-  // auth: AuthEntity;
 
   @OneToMany(() => OauthEntity, (oauth) => oauth.user)
   oauths: OauthEntity[];

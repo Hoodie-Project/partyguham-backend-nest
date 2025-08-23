@@ -1,7 +1,6 @@
 import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as crypto from 'crypto';
-import { AuthRepository } from './repository/auth.repository';
 import { OauthService } from './oauth.service';
 import { InjectRedis } from '@nestjs-modules/ioredis';
 import Redis from 'ioredis';
@@ -19,7 +18,6 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     private oauthService: OauthService,
-    private authRepository: AuthRepository,
     @InjectRedis() private readonly redis: Redis,
   ) {}
 
@@ -90,12 +88,6 @@ export class AuthService {
     }
 
     return oauthId;
-  }
-
-  async findRefreshToken(userId: number, refreshToken: string) {
-    const result = this.authRepository.findRefreshToken(userId, refreshToken);
-
-    return result;
   }
 
   async encrypt(data: string) {
