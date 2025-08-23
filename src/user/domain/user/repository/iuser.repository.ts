@@ -1,12 +1,11 @@
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
-import { User } from '../user';
 
 export interface IUserRepository {
   findById: (id: number) => Promise<UserEntity>;
   findByIdWithoutDeleted: (id: number) => Promise<UserEntity>;
-  findByNickname: (nickname: string) => Promise<User | null>;
+  findByNickname: (nickname: string) => Promise<UserEntity | null>;
   prepare: () => Promise<number>;
-  createUser: (email: string, image: string, nickname: string, gender: string, birth: string) => Promise<User>;
+  createUser: (email: string, image: string, nickname: string, gender: string, birth: string) => Promise<UserEntity>;
   updateUser: (
     userId: number,
     gender: string,

@@ -28,7 +28,7 @@ export class AuthController {
     return { appEncrypt, appDecrypt };
   }
 
-  @ApiOperation({ summary: 'admin access token' })
+  @ApiOperation({ summary: 'test access token' })
   @Post('admin/token')
   async adminToken() {
     if (process.env.NODE_ENV !== 'prod') {

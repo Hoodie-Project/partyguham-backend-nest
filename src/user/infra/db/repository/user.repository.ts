@@ -3,9 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../entity/user.entity';
 
-import { UserFactory } from 'src/user/domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
-import { User } from 'src/user/domain/user/user';
 import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @Injectable()
@@ -14,7 +12,6 @@ export class UserRepository implements IUserRepository {
     readonly dataSource: DataSource,
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
-    private userFactory: UserFactory,
   ) {}
 
   async findById(id: number) {
@@ -29,7 +26,7 @@ export class UserRepository implements IUserRepository {
     });
   }
 
-  async findByNickname(nickname: string): Promise<User | null> {
+  async findByNickname(nickname: string) {
     const userEntity = await this.userRepository.findOne({
       where: { nickname },
     });
@@ -38,7 +35,7 @@ export class UserRepository implements IUserRepository {
       return null;
     }
 
-    return this.userFactory.reconstitute(userEntity);
+    return userEntity;
   }
 
   async prepare() {
@@ -47,10 +44,8 @@ export class UserRepository implements IUserRepository {
     return userEntity.id;
   }
 
-  async createUser(email: string, image: string, nickname: string, gender: string, birth: string): Promise<User> {
-    const userEntity = await this.userRepository.save({ email, image, nickname, gender, birth });
-
-    return this.userFactory.create(userEntity);
+  async createUser(email: string, image: string, nickname: string, gender: string, birth: string) {
+    return await this.userRepository.save({ email, image, nickname, gender, birth });
   }
 
   async updateUser(

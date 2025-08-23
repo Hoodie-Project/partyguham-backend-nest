@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUserCommand } from './create-user.command';
-import { UserFactory } from '../../domain/user/user.factory';
+
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { OauthService } from 'src/auth/oauth.service';
@@ -10,7 +10,6 @@ import { OauthService } from 'src/auth/oauth.service';
 @CommandHandler(CreateUserCommand)
 export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
   constructor(
-    private userFactory: UserFactory,
     @Inject('UserRepository') private userRepository: IUserRepository,
     private authService: AuthService,
     private oauthService: OauthService,
@@ -25,7 +24,7 @@ export class CreateUserHandler implements ICommandHandler<CreateUserCommand> {
     }
 
     const user = await this.userRepository.createUser(email, image, nickname, gender, birth);
-    const userId = user.getId();
+    const userId = user.id;
     await this.oauthService.updateUserIdById(oauthId, userId);
 
     const accessToken = await this.authService.createAccessToken(oauthId);
