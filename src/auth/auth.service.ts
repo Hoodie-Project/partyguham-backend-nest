@@ -84,50 +84,31 @@ export class AuthService {
     return oauth.id;
   }
 
-  // Refresh Token 관리
-  /** 토큰 조회 */
-  async getRefreshToken(userId: number): Promise<string | null> {
-    const token = await this.redis.get(`refresh:${userId}`);
-    return token; // 없으면 null 반환
-  }
+  // Redis Refresh Token 관리
 
   /** 토큰 저장 */
   async saveRefreshToken(userId: number, device: 'web' | 'app', token: string) {
-    const mainKey = `refresh:${userId}`;
-    const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userId}:${device}:${token}`;
+    const mainKey = `refresh:${userId}:${device}`;
 
-    // 1) Set에 추가
-    await this.redis.sadd(mainKey, member);
-
-    // 2) TTL용 더미 키 추가
-    await this.redis.set(ttlKey, 'active', 'EX', this.TTL_SECONDS);
+    await this.redis.set(mainKey, token, 'EX', this.TTL_SECONDS);
   }
 
   /** 토큰 검증 */
   async validateRefreshToken(userId: number, device: 'web' | 'app', token: string): Promise<boolean> {
-    const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userId}:${device}:${token}`;
+    const key = `refresh:${userId}:${device}`;
+    const stored = await this.redis.get(key); // 만료되면 null
 
-    // Set에 포함 && TTL 키가 살아있으면 유효
-    const isMember = await this.redis.sismember(`refresh:${userId}`, member);
-    const exists = await this.redis.exists(ttlKey);
-
-    return isMember === 1 && exists === 1;
+    return stored !== null && stored === token; // 값 일치 + 키 살아있음
   }
 
-  /** 토큰 삭제 */
-  async deleteRefreshToken(userId: number, device: 'web' | 'app', token: string) {
-    const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userId}:${device}:${token}`;
-
-    await this.redis.srem(`refresh:${userId}`, member);
-    await this.redis.del(ttlKey);
+  // 기기 하나만 무효화
+  async revokeRefreshToken(userId: number, device: 'web' | 'app') {
+    await this.redis.del(`refresh:${userId}:${device}`);
   }
 
-  /** 유저의 모든 토큰 조회 */
-  async getUserTokens(userId: number): Promise<string[]> {
-    return await this.redis.smembers(`refresh:${userId}`);
+  // 유저 전체(웹+앱) 무효화
+  async revokeAllRefreshTokens(userId: number) {
+    await this.redis.del(`refresh:${userId}:web`, `refresh:${userId}:app`);
   }
 
   // async encrypt(data: string) {
