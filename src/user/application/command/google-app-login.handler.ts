@@ -73,12 +73,11 @@ export class GoogleAppLoginHandler implements ICommandHandler<GoogleAppLoginComm
     }
 
     if (oauth.userId) {
-      await this.userService.validateLogin(oauth.userId, oauth.id);
+      const result = await this.userService.validateLogin(oauth.userId);
 
-      const accessToken = await this.authService.createAccessToken(oauth.id);
-      const refreshToken = await this.authService.createRefreshToken(oauth.userId);
-
-      // this.authService.saveRefreshToken(oauth.userId, refreshToken);
+      const accessToken = await this.authService.createAccessToken(result.userExternalId);
+      const refreshToken = await this.authService.createRefreshToken(result.userExternalId);
+      await this.authService.saveRefreshToken(result.userExternalId);
 
       return { type: 'login', accessToken, refreshToken };
     }

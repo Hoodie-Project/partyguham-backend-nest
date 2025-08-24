@@ -92,10 +92,10 @@ export class AuthService {
   }
 
   /** 토큰 저장 */
-  async saveRefreshToken(userExternalId: string, device: 'web' | 'app', token: string) {
-    const mainKey = `refresh:${userExternalId}`;
+  async saveRefreshToken(userId: number, device: 'web' | 'app', token: string) {
+    const mainKey = `refresh:${userId}`;
     const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userExternalId}:${device}:${token}`;
+    const ttlKey = `rtx:${userId}:${device}:${token}`;
 
     // 1) Set에 추가
     await this.redis.sadd(mainKey, member);
@@ -105,12 +105,12 @@ export class AuthService {
   }
 
   /** 토큰 검증 */
-  async validateRefreshToken(userExternalId: string, device: 'web' | 'app', token: string): Promise<boolean> {
+  async validateRefreshToken(userId: number, device: 'web' | 'app', token: string): Promise<boolean> {
     const member = `${device}:${token}`;
-    const ttlKey = `rtx:${userExternalId}:${device}:${token}`;
+    const ttlKey = `rtx:${userId}:${device}:${token}`;
 
     // Set에 포함 && TTL 키가 살아있으면 유효
-    const isMember = await this.redis.sismember(`refresh:${userExternalId}`, member);
+    const isMember = await this.redis.sismember(`refresh:${userId}`, member);
     const exists = await this.redis.exists(ttlKey);
 
     return isMember === 1 && exists === 1;

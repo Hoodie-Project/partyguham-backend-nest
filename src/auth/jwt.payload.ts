@@ -4,12 +4,6 @@ export type PayloadType = {
   exp: number;
 };
 
-export type RecoverPayloadType = {
-  sub: number; // oauthId
-  iat: number;
-  exp: number;
-};
-
 export type SignupPayloadType = {
   sub: number; // oauthId
   email: string;

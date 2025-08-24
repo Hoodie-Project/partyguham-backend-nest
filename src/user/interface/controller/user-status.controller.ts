@@ -27,11 +27,12 @@ import {
 } from 'src/common/decorators/auth.decorator';
 import { AccessJwtAuthGuard, RecoverJwtAuthGuard, SignupJwtAuthGuard } from 'src/common/guard/jwt.guard';
 import { DeleteUserCommand } from '../../application/command/delete-user.command';
-import { RecoverUserCommand } from '../../application/command/recover-user.command';
 import { NicknameQueryRequestDto } from '../dto/request/nickname.query.request.dto';
 import { GetCheckNicknameQuery } from '../../application/query/get-check-nickname.query';
 import { CreateUserRequestDto } from '../dto/request/create-user.request.dto';
 import { CreateUserCommand } from '../../application/command/create-user.command';
+import { RecoverUserWebCommand } from 'src/user/application/command/recover-user.web.command';
+import { RecoverUserAppCommand } from 'src/user/application/command/recover-user.app.command';
 
 @ApiTags('user status - 회원 상태, 계정 관리')
 @Controller('users')
@@ -203,7 +204,7 @@ export class UserStatusController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    const command = new RecoverUserCommand(recover.userId, recover.oauthId);
+    const command = new RecoverUserWebCommand(recover.userId, recover.userExternalId);
 
     const result = await this.commandBus.execute(command);
 
@@ -211,7 +212,7 @@ export class UserStatusController {
       .clearCookie('recoverToken', {
         secure: true,
         httpOnly: true,
-        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none', // CSRF 공격 방지
+        sameSite: process.env.NODE_ENV === 'prod' ? 'strict' : 'none',
       })
       .cookie('refreshToken', result.refreshToken, {
         secure: true, // HTTPS 연결에서만 쿠키 전송
@@ -247,7 +248,7 @@ export class UserStatusController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    const command = new RecoverUserCommand(recover.userId, recover.oauthId);
+    const command = new RecoverUserAppCommand(recover.userId, recover.userExternalId);
 
     const result = await this.commandBus.execute(command);
 

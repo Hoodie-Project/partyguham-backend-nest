@@ -1,8 +1,8 @@
 import { ICommand } from '@nestjs/cqrs';
 
-export class RecoverUserCommand implements ICommand {
+export class RecoverUserWebCommand implements ICommand {
   constructor(
     readonly userId: number,
-    readonly oauthId: number,
+    readonly userExternalId: string,
   ) {}
 }
