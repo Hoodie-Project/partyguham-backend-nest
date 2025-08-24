@@ -1,10 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserFactory } from '../../domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { UpdateUserCommand } from './update-user.command';
-import { ImageService } from 'src/libs/image/image.service';
 import { S3Service } from 'src/libs/aws/s3/s3.service';
 import { userImageKey } from 'src/libs/aws/s3/key.util';
 

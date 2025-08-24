@@ -61,13 +61,19 @@ export class PartyRecruitmentController {
   @Post(':partyId/recruitments')
   @PartyRecruitmentSwagger.createRecruitment()
   async createRecruitment(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() body: CreatePartyRecruitmentRequestDto,
   ) {
     const { positionId, content, recruiting_count } = body;
 
-    const command = new CreatePartyRecruitmentCommand(user.id, param.partyId, positionId, content, recruiting_count);
+    const command = new CreatePartyRecruitmentCommand(
+      currentUser.userId,
+      param.partyId,
+      positionId,
+      content,
+      recruiting_count,
+    );
     const result = this.commandBus.execute(command);
 
     return plainToInstance(CreatePartyRecruitmentsResponseDto, result);
@@ -80,11 +86,16 @@ export class PartyRecruitmentController {
   @Post(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.createPartyApplication()
   async createPartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
     @Body() dto: CreatePartyApplicationRequestDto,
   ) {
-    const command = new CreatePartyApplicationCommand(user.id, param.partyId, param.partyRecruitmentId, dto.message);
+    const command = new CreatePartyApplicationCommand(
+      currentUser.userId,
+      param.partyId,
+      param.partyRecruitmentId,
+      dto.message,
+    );
 
     const result = this.commandBus.execute(command);
 
@@ -97,7 +108,7 @@ export class PartyRecruitmentController {
   @Get(':partyId/recruitments/:partyRecruitmentId/applications')
   @PartyRecruitmentSwagger.getPartyApplication()
   async getPartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
     @Query() query: PartyApplicationQueryRequestDto,
   ) {
@@ -105,7 +116,7 @@ export class PartyRecruitmentController {
     const { page, limit, sort, order, status } = query;
 
     const application = new GetPartyApplicationsQuery(
-      user.id,
+      currentUser.userId,
       partyId,
       partyRecruitmentId,
       page,
@@ -125,10 +136,13 @@ export class PartyRecruitmentController {
   @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/recruitments/:partyRecruitmentId/applications/me')
   @PartyRecruitmentSwagger.getPartyApplicationMe()
-  async getPartyApplicationMe(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentsParamRequestDto) {
+  async getPartyApplicationMe(
+    @CurrentUser() currentUser: CurrentUserType,
+    @Param() param: PartyRecruitmentsParamRequestDto,
+  ) {
     const { partyId, partyRecruitmentId } = param;
 
-    const application = new GetPartyApplicationMeQuery(user.id, partyId, partyRecruitmentId);
+    const application = new GetPartyApplicationMeQuery(currentUser.userId, partyId, partyRecruitmentId);
 
     const result = this.queryBus.execute(application);
 

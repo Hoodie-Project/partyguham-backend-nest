@@ -31,8 +31,8 @@ export class NotificationController {
       },
     },
   })
-  async getCheckNotification(@CurrentUser() user: CurrentUserType) {
-    const hasUnchecked = await this.notificationService.hasUncheckedNotifications(user.id);
+  async getCheckNotification(@CurrentUser() currentUser: CurrentUserType) {
+    const hasUnchecked = await this.notificationService.hasUncheckedNotifications(currentUser.userId);
 
     return { hasUnchecked };
   }
@@ -56,9 +56,9 @@ export class NotificationController {
   `,
     type: NotificationPaginationResponseDto,
   })
-  async getNotification(@CurrentUser() user: CurrentUserType, @Query() query: NotificationPaginationQueryDto) {
+  async getNotification(@CurrentUser() currentUser: CurrentUserType, @Query() query: NotificationPaginationQueryDto) {
     const { limit, cursor, type } = query;
-    const result = await this.notificationService.getNotifications(user.id, limit, cursor, type);
+    const result = await this.notificationService.getNotifications(currentUser.userId, limit, cursor, type);
 
     return plainToInstance(NotificationPaginationResponseDto, result);
   }
@@ -72,8 +72,8 @@ export class NotificationController {
     description: '알람 체크 처리',
     schema: { example: { message: '모든 알림이 체크 처리되었습니다.' } },
   })
-  async checkNotification(@CurrentUser() user: CurrentUserType) {
-    await this.notificationService.markAsCheck(user.id);
+  async checkNotification(@CurrentUser() currentUser: CurrentUserType) {
+    await this.notificationService.markAsCheck(currentUser.userId);
 
     return { message: '모든 알림이 체크 처리되었습니다.' };
   }
@@ -87,9 +87,9 @@ export class NotificationController {
     description: '알람 읽음 처리',
     schema: { example: { message: '알림이 읽음 처리되었습니다.' } },
   })
-  async readNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
+  async readNotification(@CurrentUser() currentUser: CurrentUserType, @Param() param: NotificationReadQueryDto) {
     const { notificationId } = param;
-    await this.notificationService.markAsRead(user.id, notificationId);
+    await this.notificationService.markAsRead(currentUser.userId, notificationId);
 
     return { message: '알림이 읽음 처리되었습니다.' };
   }
@@ -103,8 +103,8 @@ export class NotificationController {
     status: 204,
     description: '알림 삭제 성공',
   })
-  async deleteNotification(@CurrentUser() user: CurrentUserType, @Param() param: NotificationReadQueryDto) {
+  async deleteNotification(@CurrentUser() currentUser: CurrentUserType, @Param() param: NotificationReadQueryDto) {
     const { notificationId } = param;
-    await this.notificationService.deleteNotification(user.id, notificationId);
+    await this.notificationService.deleteNotification(currentUser.userId, notificationId);
   }
 }

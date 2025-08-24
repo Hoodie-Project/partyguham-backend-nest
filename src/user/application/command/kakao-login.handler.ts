@@ -92,13 +92,15 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
 
     if (oauth.userId) {
       const user = await this.userService.findById(oauth.userId);
+      const externalId = user.externalId;
+      const userId = user.id;
 
       if (user.status === StatusEnum.DELETED) {
         return { type: USER_ERROR.USER_DELETED.error };
       }
 
       if (user.status === StatusEnum.INACTIVE) {
-        const recoverToken = await this.authService.createRecoverToken(oauth.id);
+        const recoverToken = await this.authService.createRecoverToken(externalId);
 
         return {
           type: USER_ERROR.USER_DELETED_30D.error,
@@ -112,10 +114,9 @@ export class KakaoLoginHandler implements ICommandHandler<KakaoLoginCommand> {
         return { type: USER_ERROR.USER_FORBIDDEN_DISABLED.error };
       }
 
-      const accessToken = await this.authService.createAccessToken(oauth.id);
-      const refreshToken = await this.authService.createRefreshToken(oauth.userId);
-
-      // this.authService.saveRefreshToken(oauth.userId, refreshToken);
+      const accessToken = await this.authService.createAccessToken(externalId);
+      const refreshToken = await this.authService.createRefreshToken(externalId);
+      this.authService.saveRefreshToken(userId, 'web', refreshToken);
 
       return { type: 'login', accessToken, refreshToken };
     }

@@ -27,14 +27,7 @@ export class SignupStrategy extends PassportStrategy(Strategy, 'signup') {
   }
 
   async validate(payload: SignupPayloadType) {
-    let oauth;
-    const decryptOauthId = Number(this.authService.decrypt(payload.id));
-
-    try {
-      oauth = await this.oauthService.findById(decryptOauthId);
-    } catch {
-      throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
-    }
+    const oauth = await this.oauthService.findById(payload.sub);
 
     if (!oauth) {
       throw new UnauthorizedException('OAuth 정보가 유효하지 않습니다.', 'UNAUTHORIZED');

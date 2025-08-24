@@ -84,7 +84,7 @@ export class PartyAdminController {
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.updateParty()
   async updateParty(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyRequestDto,
@@ -94,7 +94,7 @@ export class PartyAdminController {
     }
     const { partyTypeId, title, content } = dto;
 
-    const command = new UpdatePartyCommand(user.id, param.partyId, partyTypeId, title, content, file);
+    const command = new UpdatePartyCommand(currentUser.userId, param.partyId, partyTypeId, title, content, file);
 
     const result = this.commandBus.execute(command);
 
@@ -104,13 +104,13 @@ export class PartyAdminController {
   @Patch(':partyId/admin/status')
   @PartySwagger.updatePartyStatus()
   async updatePartyStatus(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() dto: UpdatePartyStatusRequestDto,
   ) {
     const { status } = dto;
 
-    const command = new UpdatePartyStatusCommand(user.id, param.partyId, status);
+    const command = new UpdatePartyStatusCommand(currentUser.userId, param.partyId, status);
 
     const result = this.commandBus.execute(command);
 
@@ -120,8 +120,8 @@ export class PartyAdminController {
   @HttpCode(204)
   @Delete(':partyId/admin/image')
   @PartySwagger.deletePartyImage()
-  async deletePartyImage(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyImageCommand(user.id, param.partyId);
+  async deletePartyImage(@CurrentUser() currentUser: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyImageCommand(currentUser.userId, param.partyId);
 
     this.commandBus.execute(command);
   }
@@ -129,8 +129,8 @@ export class PartyAdminController {
   @HttpCode(204)
   @PartySwagger.deleteParty()
   @Delete(':partyId/admin')
-  async deleteParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new DeletePartyCommand(user.id, param.partyId);
+  async deleteParty(@CurrentUser() currentUser: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new DeletePartyCommand(currentUser.userId, param.partyId);
 
     this.commandBus.execute(command);
   }
@@ -138,11 +138,11 @@ export class PartyAdminController {
   @PartySwagger.updatePartyUser()
   @Patch(':partyId/admin/users/:partyUserId')
   async updatePartyUser(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
     @Body() body: UpdatePartyUserRequestDto,
   ) {
-    const command = new UpdatePartyUserCommand(user.id, param.partyId, param.partyUserId, body.positionId);
+    const command = new UpdatePartyUserCommand(currentUser.userId, param.partyId, param.partyUserId, body.positionId);
 
     this.commandBus.execute(command);
 
@@ -153,10 +153,10 @@ export class PartyAdminController {
   @PartySwagger.kickUserFromParty()
   @Delete(':partyId/admin/users/:partyUserId')
   async kickUserFromParty(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyUserParamRequestDto,
   ): Promise<void> {
-    const command = new DeletePartyUserCommand(user.id, param.partyId, param.partyUserId);
+    const command = new DeletePartyUserCommand(currentUser.userId, param.partyId, param.partyUserId);
 
     this.commandBus.execute(command);
   }
@@ -165,14 +165,14 @@ export class PartyAdminController {
   @PartySwagger.kickUsersFromParty()
   @Post(':partyId/admin/users/batch-delete')
   async kickUsersFromParty(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Body() body: DeletePartyUsersBodyRequestDto,
     @Param() param: PartyRequestDto,
     @Res() res: Response,
   ): Promise<void> {
     const { partyUserIds } = body;
 
-    const command = new DeletePartyUsersCommand(user.id, param.partyId, partyUserIds);
+    const command = new DeletePartyUsersCommand(currentUser.userId, param.partyId, partyUserIds);
 
     return this.commandBus.execute(command);
   }
@@ -180,10 +180,14 @@ export class PartyAdminController {
   @Patch(':partyId/admin/recruitment/:partyRecruitmentId/completed')
   @PartyRecruitmentSwagger.completedPartyRecruitment()
   async completedPartyRecruitment(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
   ): Promise<void> {
-    const command = new CompletedAdminPartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
+    const command = new CompletedAdminPartyRecruitmentCommand(
+      currentUser.userId,
+      param.partyId,
+      param.partyRecruitmentId,
+    );
 
     return this.commandBus.execute(command);
   }
@@ -194,13 +198,13 @@ export class PartyAdminController {
   @PartyRecruitmentSwagger.updateRecruitmentStatusBatch()
   @HttpCode(200)
   async updateRecruitmentStatusBatch(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Body() body: PartyRecruitmentIdsBodyRequestDto,
     @Param() param: PartyRequestDto,
   ) {
     const { partyRecruitmentIds } = body;
 
-    const command = new BatchDeletePartyRecruitmentCommand(user.id, param.partyId, partyRecruitmentIds);
+    const command = new BatchDeletePartyRecruitmentCommand(currentUser.userId, param.partyId, partyRecruitmentIds);
 
     return this.commandBus.execute(command);
   }
@@ -210,14 +214,14 @@ export class PartyAdminController {
   @Patch(':partyId/admin/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.updateRecruitment()
   async updateRecruitment(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRecruitmentsParamRequestDto,
     @Body() body: CreatePartyRecruitmentRequestDto,
   ) {
     const { positionId, content, recruiting_count } = body;
 
     const command = new UpdatePartyRecruitmentCommand(
-      user.id,
+      currentUser.userId,
       param.partyId,
       param.partyRecruitmentId,
       positionId,
@@ -236,13 +240,13 @@ export class PartyAdminController {
   @PartyRecruitmentSwagger.batchDeleteRecruitment()
   @HttpCode(204)
   async batchDeleteRecruitment(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Body() body: PartyRecruitmentIdsBodyRequestDto,
     @Param() param: PartyRequestDto,
   ) {
     const { partyRecruitmentIds } = body;
 
-    const command = new BatchDeletePartyRecruitmentCommand(user.id, param.partyId, partyRecruitmentIds);
+    const command = new BatchDeletePartyRecruitmentCommand(currentUser.userId, param.partyId, partyRecruitmentIds);
 
     return this.commandBus.execute(command);
   }
@@ -252,8 +256,11 @@ export class PartyAdminController {
   @Delete(':partyId/admin/recruitments/:partyRecruitmentId')
   @PartyRecruitmentSwagger.deleteRecruitment()
   @HttpCode(204)
-  async deleteRecruitment(@CurrentUser() user: CurrentUserType, @Param() param: PartyRecruitmentsParamRequestDto) {
-    const command = new DeletePartyRecruitmentCommand(user.id, param.partyId, param.partyRecruitmentId);
+  async deleteRecruitment(
+    @CurrentUser() currentUser: CurrentUserType,
+    @Param() param: PartyRecruitmentsParamRequestDto,
+  ) {
+    const command = new DeletePartyRecruitmentCommand(currentUser.userId, param.partyId, param.partyRecruitmentId);
 
     this.commandBus.execute(command);
   }
@@ -261,10 +268,14 @@ export class PartyAdminController {
   @Post(':partyId/admin/applications/:partyApplicationId/approval')
   @PartyApplicationSwagger.approveAdminPartyApplication()
   async approvePartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new ApproveAdminPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new ApproveAdminPartyApplicationCommand(
+      currentUser.userId,
+      param.partyId,
+      param.partyApplicationId,
+    );
 
     return this.commandBus.execute(command);
   }
@@ -272,10 +283,14 @@ export class PartyAdminController {
   @Post(':partyId/admin/applications/:partyApplicationId/rejection')
   @PartyApplicationSwagger.rejectAdminPartyApplication()
   async rejectPartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new RejectionAdminPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new RejectionAdminPartyApplicationCommand(
+      currentUser.userId,
+      param.partyId,
+      param.partyApplicationId,
+    );
 
     return this.commandBus.execute(command);
   }
@@ -284,11 +299,11 @@ export class PartyAdminController {
   @Patch(':partyId/admin/delegation')
   @PartySwagger.transferPartyLeadership()
   async transferPartyLeadership(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyRequestDto,
     @Body() dto: PartyDelegationRequestDto,
   ) {
-    const command = new DelegatePartyCommand(user.id, param.partyId, dto.partyUserId);
+    const command = new DelegatePartyCommand(currentUser.userId, param.partyId, dto.partyUserId);
 
     this.commandBus.execute(command);
 

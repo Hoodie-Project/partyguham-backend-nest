@@ -6,7 +6,7 @@ import { UserController } from './interface/controller/user.controller';
 import { UserService } from './application/user.service';
 
 import { UserEntity } from './infra/db/entity/user.entity';
-import { UserFactory } from './domain/user/user.factory';
+
 import { UserRepository } from './infra/db/repository/user.repository';
 import { UserPersonalityRepository } from './infra/db/repository/user_personality.repository';
 import { UserCareerRepository } from './infra/db/repository/user_career.repository';
@@ -56,7 +56,7 @@ import { KakaoAppLinkHandler } from './application/command/kakao-app-link.handle
 import { GoogleAppLinkHandler } from './application/command/google-app-link.handler';
 import { UpdateUserCareerHandler } from './application/command/update-userCareer.handler';
 import { GetUserCareerHandler } from './application/query/get-userCareer.handler';
-import { RecoverUserHandler } from './application/command/recover-user.handler';
+import { RecoverUserAppHandler } from './application/command/recover-user.app.handler';
 
 import { WebOauthController } from './interface/controller/web-oauth.controller';
 import { AppOauthController } from './interface/controller/app-oauth.controller';
@@ -66,6 +66,7 @@ import { UserDetailsController } from './interface/controller/user-details.contr
 import { NotificationModule } from 'src/notification/notification.module';
 import { GetUserLocationHandler } from './application/query/get-userLocation.handler';
 import { GetPartiesByNicknameHandler } from './application/query/get-PartiesByNickname.handler';
+import { RecoverUserWebHandler } from './application/command/recover-user.web.handler copy';
 
 const commandHandlers = [
   CreateUserHandler,
@@ -100,7 +101,8 @@ const commandHandlers = [
   UpdateUserCareerHandler,
   DeleteUserCareerHandler,
   DeleteUserCareersHandler,
-  RecoverUserHandler,
+  RecoverUserAppHandler,
+  RecoverUserWebHandler,
 ];
 
 const queryHandlers = [
@@ -118,7 +120,7 @@ const queryHandlers = [
 
 const eventHandlers = [];
 
-const factories = [UserFactory];
+const factories = [];
 
 const repositories = [
   { provide: 'UserRepository', useClass: UserRepository },

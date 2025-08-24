@@ -3,16 +3,12 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 
-import { OauthService } from '../oauth.service';
-import { AuthService } from '../auth.service';
 import { PayloadType } from '../jwt.payload';
+import { CommonUserService } from 'src/user/application/common.user.service';
 
 @Injectable()
 export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
-  constructor(
-    private oauthService: OauthService,
-    private authService: AuthService,
-  ) {
+  constructor(private commonUserService: CommonUserService) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
         ExtractJwt.fromAuthHeaderAsBearerToken(), // header bearer 확인
@@ -26,19 +22,14 @@ export class RecoverStrategy extends PassportStrategy(Strategy, 'recover') {
   }
 
   async validate(payload: PayloadType) {
-    let oauth;
-    const oauthId = Number(this.authService.decrypt(payload.id));
+    const userExternalId = payload.sub;
 
-    try {
-      oauth = await this.oauthService.findById(oauthId);
-    } catch {
+    const user = await this.commonUserService.findByExternalIdWithoutDeleted(userExternalId);
+
+    if (!user) {
       throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
     }
 
-    if (!oauth || oauth.userId == null) {
-      throw new UnauthorizedException('복구가 불가능한 계정입니다.', 'UNAUTHORIZED');
-    }
-
-    return { userId: oauth.userId, oauthId };
+    return { userId: user.id, userExternalId };
   }
 }

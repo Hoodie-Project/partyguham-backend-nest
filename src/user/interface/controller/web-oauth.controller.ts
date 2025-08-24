@@ -419,15 +419,18 @@ export class WebOauthController {
     status: 401,
     description: '쿠키가 존재하지 않음',
   })
-  async linkOauth(@CurrentUser() user: CurrentUserType, @Req() req: Request, @Res() res: Response): Promise<void> {
-    const userId = user.id;
+  async linkOauth(
+    @CurrentUser() currentUser: CurrentUserType,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): Promise<void> {
     const linkToken = req.cookies['linkToken'];
 
     if (!linkToken) {
       throw new UnauthorizedException('linkToken이 쿠키에 없습니다.');
     }
 
-    const command = new LinkOauthCommand(userId, linkToken);
+    const command = new LinkOauthCommand(currentUser.userId, linkToken);
     await this.commandBus.execute(command);
 
     res.clearCookie('linkToken', {

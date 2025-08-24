@@ -19,15 +19,16 @@ export class UserService {
     private notificationService: NotificationService,
   ) {}
 
-  async validateLogin(userId: number, oauthId: number) {
+  async validateLogin(userId: number): Promise<{ userId: number; userExternalId: string }> {
     const user = await this.userRepository.findByIdWithoutDeleted(userId);
+    const userExternalId = user.externalId;
 
     if (user.status === StatusEnum.DELETED) {
       throw new ForbiddenException(USER_ERROR.USER_DELETED);
     }
 
     if (user.status === StatusEnum.INACTIVE) {
-      const recoverAccessToken = await this.authService.createRecoverToken(oauthId);
+      const recoverAccessToken = await this.authService.createRecoverToken(userExternalId);
       throw new ForbiddenException({
         ...USER_ERROR.USER_DELETED_30D,
         recoverAccessToken,
@@ -39,14 +40,24 @@ export class UserService {
     if (user.status !== StatusEnum.ACTIVE) {
       throw new ForbiddenException(USER_ERROR.USER_FORBIDDEN_DISABLED);
     }
+
+    return { userId, userExternalId };
   }
 
   async findById(userId: number) {
     return await this.userRepository.findById(userId);
   }
 
+  async findByExternalId(externalId: string) {
+    return await this.userRepository.findByExternalId(externalId);
+  }
+
   async findByIdWithoutDeleted(userId: number) {
     return await this.userRepository.findByIdWithoutDeleted(userId);
+  }
+
+  async findByExternalIdWithoutDeleted(externalId: string) {
+    return await this.userRepository.findByExternalIdWithoutDeleted(externalId);
   }
 
   async findUserCarerrPrimaryByUserId(userId: number) {

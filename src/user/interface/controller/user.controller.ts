@@ -127,8 +127,8 @@ export class UserController {
     description: '성공적으로 내정보 목록을 가져왔습니다.',
     type: UserResponseDto,
   })
-  async getMyInfo(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserQuery(user.id);
+  async getMyInfo(@CurrentUser() currentUser: CurrentUserType): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserQuery(currentUser.userId);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
@@ -160,8 +160,8 @@ export class UserController {
       ],
     },
   })
-  async getMyOauth(@CurrentUser() user: CurrentUserType): Promise<UserResponseDto> {
-    const getUserInfoQuery = new GetUserOauthQuery(user.id);
+  async getMyOauth(@CurrentUser() currentUser: CurrentUserType): Promise<UserResponseDto> {
+    const getUserInfoQuery = new GetUserOauthQuery(currentUser.userId);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
@@ -184,10 +184,10 @@ export class UserController {
     description: '성공적으로 목록을 가져왔습니다.',
     type: GetMyPartiesResponseDto,
   })
-  async getParties(@CurrentUser() user: CurrentUserType, @Query() query: mePartyQueryDto) {
+  async getParties(@CurrentUser() currentUser: CurrentUserType, @Query() query: mePartyQueryDto) {
     const { page, limit, sort, order, status } = query;
 
-    const getUserInfoQuery = new GetMyPartiesQuery(user.id, page, limit, sort, order, status);
+    const getUserInfoQuery = new GetMyPartiesQuery(currentUser.userId, page, limit, sort, order, status);
 
     const result = this.queryBus.execute(getUserInfoQuery);
 
@@ -213,10 +213,17 @@ export class UserController {
     description: '성공적으로 목록을 가져왔습니다.',
     type: GetMyPartyApplicationResponseDto,
   })
-  async getPartyRecruitments(@CurrentUser() user: CurrentUserType, @Query() query: mePartyApplicationQueryDto) {
+  async getPartyRecruitments(@CurrentUser() currentUser: CurrentUserType, @Query() query: mePartyApplicationQueryDto) {
     const { page, limit, sort, order, status } = query;
 
-    const getPartyApplicationQuery = new GetMyPartyApplicationsQuery(user.id, page, limit, sort, order, status);
+    const getPartyApplicationQuery = new GetMyPartyApplicationsQuery(
+      currentUser.userId,
+      page,
+      limit,
+      sort,
+      order,
+      status,
+    );
 
     const result = this.queryBus.execute(getPartyApplicationQuery);
 
@@ -247,14 +254,14 @@ export class UserController {
     type: UapdateUserRequestDto,
   })
   async updateUser(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Body() body: UapdateUserRequestDto,
   ) {
     const { gender, genderVisible, birth, birthVisible, portfolioTitle, portfolio } = body;
 
     const getUserInfoQuery = new UpdateUserCommand(
-      user.id,
+      currentUser.userId,
       gender,
       genderVisible,
       birth,
@@ -286,8 +293,8 @@ export class UserController {
     status: 409,
     description: '이미 등록된 이메일입니다.',
   })
-  async createAppNotification(@CurrentUser() user: CurrentUserType) {
-    await this.userService.createAppOpenNotifications(user.id);
+  async createAppNotification(@CurrentUser() currentUser: CurrentUserType) {
+    await this.userService.createAppOpenNotifications(currentUser.userId);
 
     return '등록이 완료되었습니다.';
   }

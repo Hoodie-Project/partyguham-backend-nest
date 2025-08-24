@@ -3,9 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthService } from './auth.service';
-import { AuthEntity } from './entity/auth.entity';
 import { AccessStrategy } from './strategy/access.strategy';
-import { AuthRepository } from './repository/auth.repository';
 import { RefreshStrategy } from './strategy/refresh.strategy';
 import { AuthController } from './auth.controller';
 import { OauthEntity } from './entity/oauth.entity';
@@ -13,6 +11,7 @@ import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
 import { SignupStrategy } from './strategy/signup.strategy';
 import { RecoverStrategy } from './strategy/recover.strategy';
+import { CommonUserModule } from 'src/user/commonUser.module';
 
 @Module({
   controllers: [AuthController],
@@ -21,11 +20,11 @@ import { RecoverStrategy } from './strategy/recover.strategy';
     RefreshStrategy,
     SignupStrategy,
     RecoverStrategy,
-    AuthRepository,
     OauthRepository,
     AuthService,
     OauthService,
   ],
+  exports: [AuthService, OauthService],
   imports: [
     ConfigModule.forRoot(),
     JwtModule.register({
@@ -33,8 +32,8 @@ import { RecoverStrategy } from './strategy/recover.strategy';
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' },
     }),
-    TypeOrmModule.forFeature([AuthEntity, OauthEntity]),
+    TypeOrmModule.forFeature([OauthEntity]),
+    CommonUserModule,
   ],
-  exports: [AuthService, OauthService],
 })
 export class AuthModule {}
