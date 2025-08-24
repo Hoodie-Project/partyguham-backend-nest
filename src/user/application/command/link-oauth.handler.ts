@@ -1,7 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 
-import { UserFactory } from '../../domain/user/user.factory';
 import { IUserRepository } from 'src/user/domain/user/repository/iuser.repository';
 import { AuthService } from 'src/auth/auth.service';
 import { OauthService } from 'src/auth/oauth.service';
@@ -11,7 +10,6 @@ import { LinkOauthCommand } from './link-oauth.command';
 @CommandHandler(LinkOauthCommand)
 export class LinkOauthHandler implements ICommandHandler<LinkOauthCommand> {
   constructor(
-    private userFactory: UserFactory,
     @Inject('UserRepository') private userRepository: IUserRepository,
     private authService: AuthService,
     private oauthService: OauthService,

@@ -15,7 +15,7 @@ export class UserEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'uuid', unique: true, nullable: true, default: () => 'uuid_generate_v4()' })
+  @Column({ type: 'uuid', unique: true, nullable: true, default: () => 'gen_random_uuid()' })
   externalId: string;
 
   @Column('varchar', { default: null })

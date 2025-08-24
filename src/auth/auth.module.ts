@@ -11,7 +11,7 @@ import { OauthRepository } from './repository/oauth.repository';
 import { OauthService } from './oauth.service';
 import { SignupStrategy } from './strategy/signup.strategy';
 import { RecoverStrategy } from './strategy/recover.strategy';
-import { CommonUserService } from 'src/user/application/common.user.service';
+import { CommonUserModule } from 'src/user/commonUser.module';
 
 @Module({
   controllers: [AuthController],
@@ -24,6 +24,7 @@ import { CommonUserService } from 'src/user/application/common.user.service';
     AuthService,
     OauthService,
   ],
+  exports: [AuthService, OauthService],
   imports: [
     ConfigModule.forRoot(),
     JwtModule.register({
@@ -32,8 +33,7 @@ import { CommonUserService } from 'src/user/application/common.user.service';
       signOptions: { expiresIn: '1h' },
     }),
     TypeOrmModule.forFeature([OauthEntity]),
-    CommonUserService,
+    CommonUserModule,
   ],
-  exports: [AuthService, OauthService],
 })
 export class AuthModule {}
