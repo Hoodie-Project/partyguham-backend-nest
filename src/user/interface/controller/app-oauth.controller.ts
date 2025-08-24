@@ -100,14 +100,12 @@ export class AppOauthController {
     },
   })
   async kakaoAppLink(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Req() req: Request,
     @Res() res: Response,
     @Body() body: AppLinkRequestDto,
   ) {
-    const userId = user.id;
-
-    const command = new KakaoAppLinkCommand(userId, body.oauthAccessToken);
+    const command = new KakaoAppLinkCommand(currentUser.userId, body.oauthAccessToken);
 
     const result = await this.commandBus.execute(command);
 
@@ -204,14 +202,12 @@ export class AppOauthController {
     },
   })
   async googleAppLink(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Req() req: Request,
     @Res() res: Response,
     @Body() body: AppGoogleLoginRequestDto,
   ) {
-    const userId = user.id;
-
-    const command = new GoogleAppLinkCommand(userId, body.idToken);
+    const command = new GoogleAppLinkCommand(currentUser.userId, body.idToken);
 
     const result = await this.commandBus.execute(command);
 

@@ -159,8 +159,8 @@ export class UserStatusController {
   @ApiOperation({ summary: '회원탈퇴' })
   @ApiResponse({ status: 204, description: '회원 탈퇴 성공' })
   @ApiResponse({ status: 403, description: '파티장 권한이 있어 탈퇴 불가' })
-  async signout(@Res() res: Response, @CurrentUser() user: CurrentUserType): Promise<void> {
-    const userId = user.id;
+  async signout(@Res() res: Response, @CurrentUser() currentUser: CurrentUserType): Promise<void> {
+    const userId = currentUser.userId;
     const command = new DeleteUserCommand(userId);
 
     await this.commandBus.execute(command);

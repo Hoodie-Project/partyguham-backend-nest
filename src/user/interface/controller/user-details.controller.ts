@@ -67,10 +67,10 @@ export class UserDetailsController {
     status: 409,
     description: '이미 저장된 데이터가 있습니다.',
   })
-  async createUserLocation(@CurrentUser() user: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
+  async createUserLocation(@CurrentUser() currentUser: CurrentUserType, @Body() body: UserLocationCreateRequestDto) {
     const { locations } = body;
 
-    const command = new CreateUserLocationCommand(user.id, locations);
+    const command = new CreateUserLocationCommand(currentUser.userId, locations);
 
     const result = await this.commandBus.execute(command);
 
@@ -86,8 +86,8 @@ export class UserDetailsController {
     description: '유저 관심지역 조회',
     type: [UserLocationResponseDto],
   })
-  async getUserLocation(@CurrentUser() user: CurrentUserType) {
-    const command = new GetUserLocationQuery(user.id);
+  async getUserLocation(@CurrentUser() currentUser: CurrentUserType) {
+    const command = new GetUserLocationQuery(currentUser.userId);
 
     const result = await this.queryBus.execute(command);
 
@@ -114,8 +114,8 @@ export class UserDetailsController {
     status: 500,
     description: '삭제 실패',
   })
-  async deleteAllLocation(@CurrentUser() user: CurrentUserType) {
-    const command = new DeleteUserLocationsCommand(user.id);
+  async deleteAllLocation(@CurrentUser() currentUser: CurrentUserType) {
+    const command = new DeleteUserLocationsCommand(currentUser.userId);
 
     await this.commandBus.execute(command);
   }
@@ -141,8 +141,8 @@ export class UserDetailsController {
     status: 500,
     description: '삭제 실패',
   })
-  async deleteLocation(@CurrentUser() user: CurrentUserType, @Param('userLocationId') userLocationId: number) {
-    const command = new DeleteUserLocationCommand(user.id, userLocationId);
+  async deleteLocation(@CurrentUser() currentUser: CurrentUserType, @Param('userLocationId') userLocationId: number) {
+    const command = new DeleteUserLocationCommand(currentUser.userId, userLocationId);
 
     await this.commandBus.execute(command);
   }
@@ -161,9 +161,12 @@ export class UserDetailsController {
     description:
       '이미 설문조사를 한 항목이 있습니다. \t\n 질문에 대한 응답 개수 조건이 맞지 않는 항목이 있습니다. \t\n 질문에 맞지 않는 선택지가 있습니다.',
   })
-  async createUserPersonality(@CurrentUser() user: CurrentUserType, @Body() body: UserPersonalityCreateRequestDto) {
+  async createUserPersonality(
+    @CurrentUser() currentUser: CurrentUserType,
+    @Body() body: UserPersonalityCreateRequestDto,
+  ) {
     const { personality } = body;
-    const command = new CreateUserPersonalityCommand(user.id, personality);
+    const command = new CreateUserPersonalityCommand(currentUser.userId, personality);
 
     const result = await this.commandBus.execute(command);
 
@@ -179,8 +182,8 @@ export class UserDetailsController {
     description: '유저 성향 조회',
     type: [UserPersonalityResponseDto],
   })
-  async getUserPersonality(@CurrentUser() user: CurrentUserType) {
-    const command = new GetUserCareerQuery(user.id);
+  async getUserPersonality(@CurrentUser() currentUser: CurrentUserType) {
+    const command = new GetUserCareerQuery(currentUser.userId);
 
     const result = await this.queryBus.execute(command);
 
@@ -209,10 +212,10 @@ export class UserDetailsController {
     description: '삭제 실패',
   })
   async deleteUserPersonality(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param('personalityQuestionId') personalityQuestionId: number,
   ) {
-    const command = new DeleteUserPersonalityByQuestionCommand(user.id, personalityQuestionId);
+    const command = new DeleteUserPersonalityByQuestionCommand(currentUser.userId, personalityQuestionId);
 
     await this.commandBus.execute(command);
   }
@@ -239,10 +242,10 @@ export class UserDetailsController {
     description: '삭제 실패',
   })
   async deleteUserPersonalityOptions(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param('userPersonalityId') userPersonalityId: number,
   ) {
-    const command = new DeleteUserPersonalityCommand(user.id, userPersonalityId);
+    const command = new DeleteUserPersonalityCommand(currentUser.userId, userPersonalityId);
 
     await this.commandBus.execute(command);
   }
@@ -260,8 +263,8 @@ export class UserDetailsController {
     status: 404,
     description: '경력 데이터가 존재하지 않습니다.',
   })
-  async getUserCareer(@CurrentUser() user: CurrentUserType) {
-    const command = new GetUserCareerQuery(user.id);
+  async getUserCareer(@CurrentUser() currentUser: CurrentUserType) {
+    const command = new GetUserCareerQuery(currentUser.userId);
 
     const result = await this.queryBus.execute(command);
 
@@ -282,10 +285,10 @@ export class UserDetailsController {
     description:
       '주 포지션에 이미 데이터가 존재합니다. \t\n 부 포지션에 이미 데이터가 존재합니다. \t\n 이미 저장된 포지션이 있습니다.',
   })
-  async createUserCareer(@CurrentUser() user: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
+  async createUserCareer(@CurrentUser() currentUser: CurrentUserType, @Body() body: UserCareerCreateRequestDto) {
     const { career } = body;
 
-    const command = new CreateUserCareerCommand(user.id, career);
+    const command = new CreateUserCareerCommand(currentUser.userId, career);
 
     const result = await this.commandBus.execute(command);
     console.log(result);
@@ -305,10 +308,10 @@ export class UserDetailsController {
     status: 403,
     description: '변경 권한이 없습니다.',
   })
-  async putUserCareer(@CurrentUser() user: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
+  async putUserCareer(@CurrentUser() currentUser: CurrentUserType, @Body() body: UpdateUserCareerRequestDto) {
     const { career } = body;
 
-    const command = new UpdateUserCareerCommand(user.id, career);
+    const command = new UpdateUserCareerCommand(currentUser.userId, career);
 
     const result = await this.commandBus.execute(command);
 
@@ -335,8 +338,8 @@ export class UserDetailsController {
     status: 500,
     description: '삭제 실패',
   })
-  async deleteUserCareers(@CurrentUser() user: CurrentUserType) {
-    const command = new DeleteUserCareersCommand(user.id);
+  async deleteUserCareers(@CurrentUser() currentUser: CurrentUserType) {
+    const command = new DeleteUserCareersCommand(currentUser.userId);
 
     await this.commandBus.execute(command);
   }
@@ -362,8 +365,8 @@ export class UserDetailsController {
     status: 500,
     description: '삭제 실패',
   })
-  async deleteUserCareer(@CurrentUser() user: CurrentUserType, @Param('userCareerId') userCareerId: number) {
-    const command = new DeleteUserCareerCommand(user.id, userCareerId);
+  async deleteUserCareer(@CurrentUser() currentUser: CurrentUserType, @Param('userCareerId') userCareerId: number) {
+    const command = new DeleteUserCareerCommand(currentUser.userId, userCareerId);
 
     await this.commandBus.execute(command);
   }
