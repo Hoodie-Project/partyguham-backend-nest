@@ -58,13 +58,13 @@ export class PartyController {
   @UseInterceptors(FileInterceptor('image'))
   @PartySwagger.createParty()
   async createParty(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreatePartyRequestDto,
   ): Promise<void> {
     const { title, content, partyTypeId, positionId } = dto;
 
-    const command = new CreatePartyCommand(user.id, title, content, partyTypeId, positionId, file);
+    const command = new CreatePartyCommand(currentUser.userId, title, content, partyTypeId, positionId, file);
 
     return this.commandBus.execute(command);
   }
@@ -93,8 +93,8 @@ export class PartyController {
   @UseGuards(AccessJwtAuthGuard)
   @Get(':partyId/users/me/authority')
   @PartySwagger.getPartyAuthority()
-  async getPartyAuthority(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto) {
-    const userId = user.id;
+  async getPartyAuthority(@CurrentUser() currentUser: CurrentUserType, @Param() param: PartyRequestDto) {
+    const userId = currentUser.userId;
 
     const party = new GetPartyUserAuthorityQuery(param.partyId, userId);
     const result = this.queryBus.execute(party);
@@ -106,8 +106,8 @@ export class PartyController {
   @HttpCode(204)
   @PartySwagger.leaveParty()
   @Delete(':partyId/users/me')
-  async leaveParty(@CurrentUser() user: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
-    const command = new LeavePartyCommand(user.id, param.partyId);
+  async leaveParty(@CurrentUser() currentUser: CurrentUserType, @Param() param: PartyRequestDto): Promise<void> {
+    const command = new LeavePartyCommand(currentUser.userId, param.partyId);
 
     this.commandBus.execute(command);
   }

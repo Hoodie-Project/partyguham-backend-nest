@@ -55,11 +55,11 @@ export class PartyLandingController {
   @Get('recruitments/personalized')
   @PartyRecruitmentSwagger.getRecruitmentsPersonalized()
   async getRecruitmentsPersonalized(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Query() query: RecruitmentsPersonalizedQueryRequestDto,
   ) {
     const { page, limit, sort, order } = query;
-    const userId = user.id;
+    const userId = currentUser.userId;
     const partyRecruitment = new GetRecruitmentsPersonalizedQuery(page, limit, sort, order, userId);
     const result = this.queryBus.execute(partyRecruitment);
 

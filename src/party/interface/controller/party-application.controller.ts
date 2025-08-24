@@ -25,10 +25,10 @@ export class PartyApplicationController {
   @Post(':partyId/applications/:partyApplicationId/approval')
   @PartyApplicationSwagger.approvePartyApplication()
   async approvePartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new ApprovePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new ApprovePartyApplicationCommand(currentUser.userId, param.partyId, param.partyApplicationId);
 
     return this.commandBus.execute(command);
   }
@@ -36,10 +36,10 @@ export class PartyApplicationController {
   @Post(':partyId/applications/:partyApplicationId/rejection')
   @PartyApplicationSwagger.rejectPartyApplication()
   async rejectPartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new RejectionPartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new RejectionPartyApplicationCommand(currentUser.userId, param.partyId, param.partyApplicationId);
 
     return this.commandBus.execute(command);
   }
@@ -49,10 +49,10 @@ export class PartyApplicationController {
   @PartyApplicationSwagger.deletePartyApplication()
   @ApiOperation({ summary: '파티 지원 삭제(취소)' })
   async deletePartyApplication(
-    @CurrentUser() user: CurrentUserType,
+    @CurrentUser() currentUser: CurrentUserType,
     @Param() param: PartyApplicationParamRequestDto,
   ): Promise<void> {
-    const command = new DeletePartyApplicationCommand(user.id, param.partyId, param.partyApplicationId);
+    const command = new DeletePartyApplicationCommand(currentUser.userId, param.partyId, param.partyApplicationId);
 
     return this.commandBus.execute(command);
   }
