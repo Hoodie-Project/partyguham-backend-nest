@@ -41,10 +41,15 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 
       const refreshToken = webRefreshToken || mobileRefreshToken;
       const userExternalId = payload.sub;
+      const user = await this.commonUserService.findByExternalId(userExternalId);
+
+      if (!user) {
+        throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
+      }
 
       // web
       if (webRefreshToken) {
-        const result = await this.authService.validateRefreshToken(userExternalId, 'web', refreshToken);
+        const result = await this.authService.validateRefreshToken(user.id, 'web', refreshToken);
         if (!result) {
           throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
         }
@@ -52,7 +57,7 @@ export class RefreshStrategy extends PassportStrategy(Strategy, 'refresh') {
 
       // mobile
       if (mobileRefreshToken) {
-        const result = await this.authService.validateRefreshToken(userExternalId, 'app', refreshToken);
+        const result = await this.authService.validateRefreshToken(user.id, 'app', refreshToken);
         if (!result) {
           throw new UnauthorizedException('Unauthorized', 'UNAUTHORIZED');
         }

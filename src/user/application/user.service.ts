@@ -19,9 +19,10 @@ export class UserService {
     private notificationService: NotificationService,
   ) {}
 
-  async validateLogin(userId: number): Promise<{ userExternalId: string }> {
+  async validateLogin(userId: number): Promise<{ userId: number; userExternalId: string }> {
     const user = await this.userRepository.findByIdWithoutDeleted(userId);
     const userExternalId = user.externalId;
+
     if (user.status === StatusEnum.DELETED) {
       throw new ForbiddenException(USER_ERROR.USER_DELETED);
     }
@@ -40,7 +41,7 @@ export class UserService {
       throw new ForbiddenException(USER_ERROR.USER_FORBIDDEN_DISABLED);
     }
 
-    return { userExternalId };
+    return { userId, userExternalId };
   }
 
   async findById(userId: number) {
