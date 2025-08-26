@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, Index } from 'typeorm';
 
 import { UserEntity } from 'src/user/infra/db/entity/user.entity';
 import { PartyRecruitmentEntity } from './party_recruitment.entity';
 import { BaseEntity } from 'src/common/entity/baseEntity';
 
 @Entity('party_application')
+@Index('idx_recruitment_status', ['partyRecruitmentId', 'status'])
 export class PartyApplicationEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
