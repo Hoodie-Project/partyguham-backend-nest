@@ -15,9 +15,10 @@
 
 ## Description
 
-NestJS (TypeScript, TypeORM), Postgres  
-DDD, CQRS
+NestJS (TypeScript, TypeORM), Postgres, CQRS
 
 - [API 문서](https://partyguham.com/api/docs)
 - [API Sequence diagram](https://www.figma.com/design/w54D4YkjhEeuVJpu9Hqpa0/API?node-id=0-1&t=kW7bYkkFYUTD91w1-1)
 - [ERD](https://www.erdcloud.com/d/PgCpHFhMniMgYLG97)
+
+<img width="6656" height="2654" alt="Partyguham System Architecture" src="https://github.com/user-attachments/assets/3797bcec-8080-45cc-a73c-f0aeeb309f56" />
