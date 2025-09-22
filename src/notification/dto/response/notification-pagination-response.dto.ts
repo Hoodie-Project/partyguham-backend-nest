@@ -60,6 +60,7 @@ class NotificationResponseDto {
   @ApiProperty({
     example: '/party/321#home',
     description: '알림 내용',
+    nullable: true,
   })
   link: string;
 

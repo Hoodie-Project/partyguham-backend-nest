@@ -6,12 +6,16 @@ import { IPartyRepository } from 'src/party/domain/party/repository/iParty.repos
 import { IPartyUserRepository } from 'src/party/domain/party/repository/iPartyUser.repository';
 import { DeletePartyCommand } from './delete-party.comand';
 import { IPartyRecruitmentRepository } from 'src/party/domain/party/repository/iPartyRecruitment.repository';
+import { NotificationService } from 'src/notification/notification.service';
+import { FcmService } from 'src/libs/firebase/fcm.service';
 
 @Injectable()
 @CommandHandler(DeletePartyCommand)
 export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
   constructor(
     private partyFactory: PartyFactory,
+    private notificationService: NotificationService,
+    private fcmService: FcmService,
     @Inject('PartyRepository') private partyRepository: IPartyRepository,
     @Inject('PartyUserRepository') private partyUserRepository: IPartyUserRepository,
     @Inject('PartyRecruitmentRepository') private partyRecruitmentRepository: IPartyRecruitmentRepository,
@@ -34,5 +38,19 @@ export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
 
     await this.partyRecruitmentRepository.deleteAll(partyId);
     await this.partyRepository.deleteById(partyId);
+
+    // 알람
+    const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
+    const partyUserIds = partyUserList.map((list) => list.userId);
+    const type = 'party';
+    const link = null;
+    const title = findParty.title;
+    const notificationMessage = `파티가 삭제되었어요. 다시 새로운 도전을 시작해보세요.`;
+
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, findParty.image, link);
+
+    partyUserIds.map((userId) => {
+      this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
+    });
   }
 }

@@ -3,7 +3,7 @@ import { PartyUserEntity } from 'src/party/infra/db/entity/party/party_user.enti
 import { UserCareerEntity } from 'src/user/infra/db/entity/user_career.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
-@Entity('postion')
+@Entity('position')
 export class PositionEntity {
   @PrimaryGeneratedColumn()
   id: number;

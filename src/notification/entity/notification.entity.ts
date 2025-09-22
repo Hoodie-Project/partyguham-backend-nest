@@ -21,7 +21,7 @@ export class NotificationEntity {
   @Column('text', { nullable: true, default: null })
   image: string;
 
-  @Column('varchar', { nullable: false })
+  @Column('varchar', { nullable: true })
   link: string;
 
   @Column({ default: false })
