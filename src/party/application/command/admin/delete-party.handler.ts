@@ -47,7 +47,7 @@ export class DeletePartyHandler implements ICommandHandler<DeletePartyCommand> {
     const title = findParty.title;
     const notificationMessage = `파티가 삭제되었어요. 다시 새로운 도전을 시작해보세요.`;
 
-    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, findParty.image, link);
+    this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, null, link);
 
     partyUserIds.map((userId) => {
       this.fcmService.sendDataPushNotificationByUserId(userId, title, notificationMessage, type);
