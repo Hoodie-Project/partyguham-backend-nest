@@ -5,6 +5,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetPartiesQuery } from './get-parties.query';
 import { PartyEntity } from 'src/party/infra/db/entity/party/party.entity';
 import { PartyTypeEntity } from 'src/party/infra/db/entity/party/party_type.entity';
+import { StatusEnum } from 'src/common/entity/baseEntity';
 
 @QueryHandler(GetPartiesQuery)
 export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
@@ -20,7 +21,9 @@ export class GetPartiesHandler implements IQueryHandler<GetPartiesQuery> {
     const partiesQuery = this.partyRepository
       .createQueryBuilder('party')
       .leftJoinAndSelect('party.partyType', 'partyType')
-      .loadRelationCountAndMap('party.recruitmentCount', 'party.partyRecruitments')
+      .loadRelationCountAndMap('party.recruitmentCount', 'party.partyRecruitments', 'recruitment', (qb) =>
+        qb.where('recruitment.status = :status', { status: StatusEnum.ACTIVE }),
+      )
       .limit(limit)
       .offset(offset)
       .orderBy(`party.${sort}`, order);
