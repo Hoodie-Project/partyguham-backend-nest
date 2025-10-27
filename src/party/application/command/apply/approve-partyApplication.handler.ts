@@ -18,6 +18,7 @@ import { IPartyApplicationRepository } from 'src/party/domain/party/repository/i
 import { StatusEnum } from 'src/common/entity/baseEntity';
 import { NotificationService } from 'src/notification/notification.service';
 import { FcmService } from 'src/libs/firebase/fcm.service';
+import { CommonUserService } from 'src/user/application/common.user.service';
 
 @Injectable()
 @CommandHandler(ApprovePartyApplicationCommand)
@@ -45,8 +46,8 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     if (!partyApplication) {
       throw new NotFoundException('승인하려는 지원데이터가 없습니다.', 'APLLICATION_NOT_EXIST');
     }
-
-    if (partyApplication.status !== StatusEnum.PROCESSING) {
+    console.log('partyApplication', partyApplication);
+    if (partyApplication.status !== StatusEnum.APPROVED) {
       throw new ForbiddenException('파티장의 수락이 선행되어야 합니다.', 'ACCESS_DENIED');
     }
 
@@ -60,7 +61,7 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
     }
 
     // 수락하기(지원자 응답 대기)
-    await this.partyApplicationRepository.updateStatusApproved(partyApplicationId);
+    await this.partyApplicationRepository.updateStatusCompleted(partyApplicationId);
 
     const recruiting = partyApplication.partyRecruitment.recruitingCount;
     const recruited = partyApplication.partyRecruitment.recruitedCount + 1;
@@ -83,12 +84,15 @@ export class ApprovePartyApplicationHandler implements ICommandHandler<ApprovePa
       partyApplication.partyRecruitment.positionId,
     );
 
+    const newPartyUser = await this.partyUserRepository.findOneWithUserDataByUserId(partyApplication.userId, partyId);
+
+    // 알림 및 푸시 발송
     const partyUserList = await this.partyUserRepository.findAllbByPartyId(partyId);
     const partyUserIds = partyUserList.map((list) => list.userId);
     const type = 'party';
     const link = `/party/${partyId}#home`;
     const title = party.title;
-    const notificationMessage = `${partyUser.user.nickname}님이 새롭게 파티에 합류했어요. 함께 파티를 시작해 보세요!`;
+    const notificationMessage = `${newPartyUser.user.nickname}님이 새롭게 파티에 합류했어요. 함께 파티를 시작해 보세요!`;
 
     this.notificationService.createNotifications(partyUserIds, type, title, notificationMessage, party.image, link);
 

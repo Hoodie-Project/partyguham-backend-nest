@@ -11,6 +11,7 @@ export interface IPartyApplicationRepository {
   update: (id: number, title: string, content: string) => Promise<void>;
   updateStatusProcessing: (id: number) => Promise<void>;
   updateStatusApproved: (id: number) => Promise<void>;
+  updateStatusCompleted: (id: number) => Promise<void>;
   updateStatusRejected: (id: number) => Promise<void>;
   softDeleteById: (id: number) => Promise<void>;
   deleteById: (id: number) => Promise<void>;

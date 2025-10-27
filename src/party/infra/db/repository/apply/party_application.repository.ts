@@ -92,6 +92,12 @@ export class PartyApplicationRepository implements IPartyApplicationRepository {
     await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.APPROVED });
   }
 
+  async updateStatusCompleted(id: number) {
+    const partyApplication = await this.findOne(id);
+
+    await this.partyApplicationRepository.save({ ...partyApplication, status: StatusEnum.COMPLETED });
+  }
+
   async updateStatusRejected(id: number) {
     const partyApplication = await this.findOne(id);
 
